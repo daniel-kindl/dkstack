@@ -14,7 +14,8 @@
     "check:links": "node scripts/check-links.mjs",
     "check:dashes": "node scripts/check-dashes.mjs",
     "check:title": "node scripts/check-title.mjs",
+    "check:workflows": "node scripts/check-workflows.mjs",
     "test": "node --test test/*.test.mjs",
-    "check": "npm run check:skills && npm run check:links && npm run check:dashes && npm test"
+    "check": "npm run check:skills && npm run check:links && npm run check:dashes && npm run check:workflows && npm test"
   }
 }

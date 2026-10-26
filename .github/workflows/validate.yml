@@ -54,6 +54,10 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:dashes
 
+      - name: Check that workflows pin actions, set permissions and use no secrets
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:workflows
+
       - name: Run the unit tests
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm test
