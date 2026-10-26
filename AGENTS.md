@@ -23,7 +23,7 @@ Start with the triage skill. It tells you which sections to read for the current
 
 The content in this repository is the source of truth for coding standards, architecture rules, skills, and tips.
 
-Update the relevant file when you learn something new. Do not duplicate rules across projects.
+Do not duplicate these rules in other projects. Link to them instead.
 
 ## General rules
 
@@ -35,6 +35,11 @@ Update the relevant file when you learn something new. Do not duplicate rules ac
 - Do not invent facts, citations, or personal experience.
 - Keep components independent. Avoid hidden coupling.
 
-## Updates
+## Changes
 
-When you learn a new rule or skill, add it to the appropriate section. Agents that read this file will follow the update.
+Do not change this repository from another project. To propose a rule, open an issue in
+[daniel-kindl/dkstack](https://github.com/daniel-kindl/dkstack/issues) or tell the owner. The owner
+approves every change.
+
+A shared rule set must change only through review. An agent edit from another project skips that
+review. See [CONTRIBUTING.md](CONTRIBUTING.md) for the change flow.

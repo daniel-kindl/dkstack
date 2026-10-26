@@ -41,4 +41,8 @@ Each section has an `index.md` that links to detailed files.
 - `skills/`: Specific skills.
 - `tips/`: Short tips and tricks.
 
-Add new sections or files as needed. Keep each file focused.
+Keep each file focused.
+
+## Changes
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
