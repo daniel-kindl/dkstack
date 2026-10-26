@@ -7,7 +7,7 @@ description: Enforce the red-green-refactor cycle when implementing behavior.
 
 Use when you implement behavior.
 
-Follow the red-green-refactor cycle from [tdd/index.md](../tdd/index.md).
+Follow the red-green-refactor cycle from [tdd/index.md](../../tdd/index.md).
 
 ## Steps
 
@@ -24,4 +24,4 @@ Follow the red-green-refactor cycle from [tdd/index.md](../tdd/index.md).
 - Do not skip the failing step.
 - Keep each cycle small.
 
-See also [coding/testing.md](../coding/testing.md).
+See also [coding/testing.md](../../coding/testing.md).

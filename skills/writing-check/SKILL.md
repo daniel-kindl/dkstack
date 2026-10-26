@@ -7,7 +7,7 @@ description: Apply ASD-STE100 writing rules to text that agents or humans will r
 
 Use when you write or edit text that agents or humans will read.
 
-Apply the rules from [writing/index.md](../writing/index.md).
+Apply the rules from [writing/index.md](../../writing/index.md).
 
 ## Steps
 

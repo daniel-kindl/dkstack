@@ -14,7 +14,7 @@ Force clarification of requirements and domain language.
 1. Restate the request in your own words.
 2. List open questions about behavior, edge cases, and constraints.
 3. Ask the questions. Do not assume answers.
-4. Capture domain terms. Prefer the language of the problem. See [architecture/domain-languages.md](../architecture/domain-languages.md).
+4. Capture domain terms. Prefer the language of the problem. See [architecture/domain-languages.md](../../architecture/domain-languages.md).
 5. Only after the intent is clear, proceed to design or implementation.
 
 ## Rules

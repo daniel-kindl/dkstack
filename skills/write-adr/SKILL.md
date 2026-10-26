@@ -7,7 +7,7 @@ description: Create an Architecture Decision Record for a durable or hard-to-rev
 
 Use when a design decision is durable or hard to reverse.
 
-Create an Architecture Decision Record using [architecture/adrs.md](../architecture/adrs.md).
+Create an Architecture Decision Record using [architecture/adrs.md](../../architecture/adrs.md).
 
 ## Steps
 
