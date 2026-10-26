@@ -1,0 +1,59 @@
+name: validate
+
+# Runs every repository check. The job name "validate" is the required
+# status check context for main. Do not rename it.
+# This workflow does not tag, release or publish.
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        id: node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      # Each check runs when an earlier check fails, so one run shows all failures.
+      - name: Check that the PR title is a conventional commit
+        if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: node scripts/check-title.mjs "$TITLE"
+
+      - name: Check that the commit title is a conventional commit
+        if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'push' }}
+        run: node scripts/check-title.mjs "$(git log -1 --format=%s)"
+
+      - name: Check the skill folders and frontmatter
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:skills
+
+      - name: Check that relative and repository links resolve
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:links
+
+      - name: Check that Markdown has no em dash or en dash
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:dashes
+
+      - name: Run the unit tests
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm test
