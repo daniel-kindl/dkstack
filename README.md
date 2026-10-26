@@ -45,5 +45,4 @@ Keep each file focused.
 
 ## Changes
 
-The owner approves every change. To propose a rule, open an issue. See
-[CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md).
