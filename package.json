@@ -12,7 +12,8 @@
     "version:check": "echo \"Current version: $(node -p \"require('./package.json').version\")\"",
     "check:skills": "node scripts/check-skills.mjs",
     "check:links": "node scripts/check-links.mjs",
+    "check:dashes": "node scripts/check-dashes.mjs",
     "test": "node --test test/*.test.mjs",
-    "check": "npm run check:skills && npm run check:links && npm test"
+    "check": "npm run check:skills && npm run check:links && npm run check:dashes && npm test"
   }
 }
