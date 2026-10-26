@@ -1,6 +1,6 @@
 # ADR 0001: How consumers follow dkstack versions
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-26
 - Deciders: Daniel Kindl (owner)
 - Author: Atlas
@@ -129,16 +129,18 @@ branch, but each update is a change in each consumer.
 
 ## Decision
 
-None yet. Daniel decides. This ADR stays "Proposed" until he accepts one option. After that, the
-status changes to "Accepted" and this section records his choice and the date.
+Daniel Kindl accepted option C on 2026-10-26 at 14:07 (Prague), as C2. Consumers follow a `v1` release
+branch. Daniel moves `v1` forward with a fast-forward push only. Each release also gets a fixed
+`vX.Y.Z` tag. Option C1, a moving tag, is rejected because it needs a force-push.
 
 ## Consequences
 
-These apply after a decision. The follow-up work is issue #5 (Forge) and issue #12 (Scribe).
+The follow-up work is issue #5 (Forge) and issue #12 (Scribe).
 
 - All files use one URL form: `README.md`, `sample-AGENTS.md` and the bootstrap skill.
 - The validate workflow can check that no file uses a different ref.
-- Option B or C: `versioning/index.md` gets the release and rollback steps.
-- Option C2: a new ruleset protects `v1` from force-push and deletion. The owner alone moves it.
-- Option B or C: test the skills install command with the real release ref before release.
-- No tag, release branch or GitHub release is created as part of this ADR. The owner publishes.
+- `versioning/index.md` gets the release and rollback steps.
+- A ruleset protects `v1` from force-push and deletion. The owner alone moves it. This is a
+  documented publish step. Nobody does it before Daniel publishes.
+- Test the skills install command with the real release ref before release.
+- No tag, `v1` branch or GitHub release is created now. Daniel creates them when he publishes.
