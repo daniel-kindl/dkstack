@@ -6,7 +6,7 @@ Start with the triage skill. It tells you which sections to read for the current
 
 ## Entry point
 
-- [skills/triage.md](skills/triage.md): Read this first. It maps tasks to the relevant sections.
+- [skills/triage/SKILL.md](skills/triage/SKILL.md): Read this first. It maps tasks to the relevant sections.
 
 ## Sections
 

@@ -1,6 +1,6 @@
 ---
 name: bootstrap
-description: Bootstrap a repository with conventional commits, short-lived branches, semver, strict editorconfig, warnings-as-errors, and deterministic checks.
+description: "Bootstrap a repository with conventional commits, short-lived branches, semver, strict editorconfig, warnings-as-errors, and deterministic checks."
 ---
 
 # Bootstrap
@@ -51,6 +51,6 @@ Apply the rules from version-control, versioning, and coding sections.
 - After bootstrap, the repository must produce a clean build with zero warnings.
 
 See also:
-- [version-control/index.md](../version-control/index.md)
-- [versioning/index.md](../versioning/index.md)
-- [coding/quality-gates.md](../coding/quality-gates.md)
+- [version-control/index.md](../../version-control/index.md)
+- [versioning/index.md](../../versioning/index.md)
+- [coding/quality-gates.md](../../coding/quality-gates.md)
