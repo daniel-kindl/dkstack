@@ -38,7 +38,8 @@ Do not duplicate these rules in other projects. Link to them instead.
 ## Changes
 
 Do not change this repository from another project. To propose a rule, open an issue in
-[daniel-kindl/dkstack](https://github.com/daniel-kindl/dkstack/issues) or tell the owner. The owner approves every change.
+[daniel-kindl/dkstack](https://github.com/daniel-kindl/dkstack/issues) or tell the owner. The owner
+approves every change.
 
 A shared rule set must change only through review. An agent edit from another project skips that
 review. See [CONTRIBUTING.md](CONTRIBUTING.md) for the change flow.
