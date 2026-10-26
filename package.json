@@ -13,6 +13,7 @@
     "check:skills": "node scripts/check-skills.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check:dashes": "node scripts/check-dashes.mjs",
+    "check:title": "node scripts/check-title.mjs",
     "test": "node --test test/*.test.mjs",
     "check": "npm run check:skills && npm run check:links && npm run check:dashes && npm test"
   }
