@@ -129,9 +129,9 @@ branch, but each update is a change in each consumer.
 
 ## Decision
 
-Daniel Kindl accepted option C on 2026-10-26 at 14:07 (Prague), as C2. Consumers follow a `v1` release
-branch. Daniel moves `v1` forward with a fast-forward push only. Each release also gets a fixed
-`vX.Y.Z` tag. Option C1, a moving tag, is rejected because it needs a force-push.
+Daniel Kindl accepted option C on 2026-10-26 at 14:07 (Prague), as C2. Consumers follow a `v1`
+release branch. Daniel moves `v1` forward with a fast-forward push only. Each release also gets a
+fixed `vX.Y.Z` tag. Option C1, a moving tag, is rejected because it needs a force-push.
 
 ## Consequences
 
