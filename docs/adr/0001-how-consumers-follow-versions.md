@@ -140,7 +140,13 @@ The follow-up work is issue #5 (Forge) and issue #12 (Scribe).
 - All files use one URL form: `README.md`, `sample-AGENTS.md` and the bootstrap skill.
 - The validate workflow can check that no file uses a different ref.
 - `versioning/index.md` gets the release and rollback steps.
-- A ruleset protects `v1` from force-push and deletion. The owner alone moves it. This is a
-  documented publish step. Nobody does it before Daniel publishes.
+- Team rule: no bot pushes to `v1` or creates a release tag. Only Daniel does this, by hand.
+  A push to `v1` releases to every consumer at once.
+- A ruleset protects `v1` from force-push and deletion. This is a documented publish step. Nobody
+  does it before Daniel publishes.
+- Residual risk: all bots use the `daniel-kindl` GitHub account. GitHub cannot tell Daniel from a
+  bot, so no ruleset can stop a bot from a fast-forward push to `v1`. Only the team rule stops it.
+- The publish steps in #13 or #14 repeat this rule, so it reaches `CONTRIBUTING.md` or
+  `versioning/index.md`.
 - Test the skills install command with the real release ref before release.
 - No tag, `v1` branch or GitHub release is created now. Daniel creates them when he publishes.
