@@ -131,3 +131,20 @@ test("percent escapes are decoded, and a bad escape is a broken link, not a cras
     "README.md:3: broken link no%20file.md",
   ]);
 });
+
+test("a fence closes only with the same character and at least the same length", async () => {
+  const result = await linksFor({
+    "README.md": [
+      "~~~",
+      "```",
+      "[in-tilde](nope.md)",
+      "~~~",
+      "````",
+      "```",
+      "[in-long](nope.md)",
+      "````",
+      "[after](missing.md)",
+    ].join("\n"),
+  });
+  assert.deepEqual(result.errors, ["README.md:9: broken link missing.md"]);
+});
