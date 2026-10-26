@@ -13,8 +13,8 @@ Consumers read dkstack in two ways:
 1. An agent fetches `AGENTS.md` from a raw GitHub URL and follows the relative links in it.
 2. A person installs the skills with `npx skills add daniel-kindl/dkstack`.
 
-Today every absolute URL points to `main`. These files have them: `README.md` (line 11),
-`sample-AGENTS.md` (line 5) and `skills/bootstrap.md` (lines 35 and 40). The version in
+Today every absolute URL points to `main`. These files have them: `README.md`,
+`sample-AGENTS.md` and the bootstrap skill. The version in
 `package.json` then protects no consumer. Each merge to `main` reaches every consumer at once, and
 a consumer cannot go back.
 
@@ -28,9 +28,10 @@ Facts that limit the options:
   to reach a consumer.
 - The team rule is: never force-push. To move a tag, you must force-push the tag ref.
 - The ruleset `protect-main` allows squash merges only. Every merge to `main` is one commit.
-- The skills CLI accepts a GitHub tree URL with a ref, for example
-  `https://github.com/<owner>/<repo>/tree/<ref>/<path>`. It is not tested on this repository yet.
-  Issue #2 changes the skills layout first.
+- The skills CLI accepts a GitHub tree URL with a ref:
+  `https://github.com/<owner>/<repo>/tree/<ref>`. On 2026-10-26, `npx skills add` with `--list`
+  found all 8 skills at the head commit SHA of the #2 branch. A ref that contains `/` fails: the CLI
+  reads only the part before the `/`. Release refs must not contain `/`.
 
 The goal "update once, all repos follow" conflicts with the goal "a breaking change must not reach
 all repos at once". The options below trade one against the other.
@@ -135,9 +136,9 @@ status changes to "Accepted" and this section records his choice and the date.
 
 These apply after a decision. The follow-up work is issue #5 (Forge) and issue #12 (Scribe).
 
-- All files use one URL form: `README.md`, `sample-AGENTS.md` and `skills/bootstrap.md`.
+- All files use one URL form: `README.md`, `sample-AGENTS.md` and the bootstrap skill.
 - The validate workflow can check that no file uses a different ref.
 - Option B or C: `versioning/index.md` gets the release and rollback steps.
 - Option C2: a new ruleset protects `v1` from force-push and deletion. The owner alone moves it.
-- Option B or C: the skills install command with a ref must be tested after issue #2.
+- Option B or C: test the skills install command with the real release ref before release.
 - No tag, release branch or GitHub release is created as part of this ADR. The owner publishes.
