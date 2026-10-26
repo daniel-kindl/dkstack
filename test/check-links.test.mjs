@@ -106,3 +106,28 @@ test("the CLI exits 1 for a broken link and 0 for a clean tree", async () => {
     await removeTree(good);
   }
 });
+
+test("a link that leaves the repository fails even when the target exists", async () => {
+  const root = await makeTree({
+    "outside.md": "x\n",
+    "repo/docs/a.md": "[out](../../outside.md) [in](../README.md)\n",
+    "repo/README.md": "x\n",
+  });
+  try {
+    const result = await checkLinks(join(root, "repo"));
+    assert.deepEqual(result.errors, ["docs/a.md:1: link leaves the repository ../../outside.md"]);
+  } finally {
+    await removeTree(root);
+  }
+});
+
+test("percent escapes are decoded, and a bad escape is a broken link, not a crash", async () => {
+  const result = await linksFor({
+    "README.md": "[a](my%20file.md)\n[b](bad%zz.md)\n[c](no%20file.md)\n",
+    "my file.md": "x\n",
+  });
+  assert.deepEqual(result.errors, [
+    "README.md:2: broken link bad%zz.md",
+    "README.md:3: broken link no%20file.md",
+  ]);
+});

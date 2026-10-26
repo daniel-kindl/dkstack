@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Check that every relative Markdown link in the repository points to a file
-// or folder that exists. External links (with a URL scheme) and pure anchors
-// are not checked. Links in fenced code blocks and inline code are ignored.
+// or folder that exists inside the repository. External links (with a URL
+// scheme) and pure anchors are not checked. Links in fenced code blocks and
+// inline code are ignored.
 
 import { readdir, readFile, stat } from "node:fs/promises";
 import { dirname, join, relative, resolve, sep } from "node:path";
@@ -66,11 +67,22 @@ export async function checkLinks(root) {
     const text = await readFile(file, "utf8");
     for (const { line, target } of linksIn(text)) {
       if (SCHEME_PATTERN.test(target) || target.startsWith("#")) continue;
-      const path = decodeURI(target.split("#")[0]);
+      let path;
+      try {
+        path = decodeURI(target.split("#")[0]);
+      } catch {
+        errors.push(`${relFile}:${line}: broken link ${target}`);
+        continue;
+      }
       const full = resolve(dirname(file), path);
       const resolved = relative(root, full).split(sep).join("/");
       links.push({ file: relFile, line, target, resolved });
-      if (!(await exists(full))) errors.push(`${relFile}:${line}: broken link ${target}`);
+      if (resolved === ".." || resolved.startsWith("../")) {
+        // GitHub and an installed copy do not have files outside the repository.
+        errors.push(`${relFile}:${line}: link leaves the repository ${target}`);
+      } else if (!(await exists(full))) {
+        errors.push(`${relFile}:${line}: broken link ${target}`);
+      }
     }
   }
   return { checked: links.length, links, errors };
