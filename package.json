@@ -1,0 +1,14 @@
+{
+  "name": "dkstack",
+  "version": "0.1.0",
+  "description": "Central guidelines, skills, rules, and standards for coding AI agents",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daniel-kindl/dkstack.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "version:check": "echo \"Current version: $(node -p \"require('./package.json').version\")\""
+  }
+}
