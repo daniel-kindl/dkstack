@@ -1,6 +1,6 @@
 ---
 name: writing-check
-description: Apply ASD-STE100 writing rules to text that agents or humans will read.
+description: "Apply ASD-STE100 writing rules to text that agents or humans will read."
 ---
 
 # Writing check

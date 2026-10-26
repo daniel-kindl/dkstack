@@ -1,6 +1,6 @@
 ---
 name: tdd-loop
-description: Enforce the red-green-refactor cycle when implementing behavior.
+description: "Enforce the red-green-refactor cycle when implementing behavior."
 ---
 
 # TDD loop

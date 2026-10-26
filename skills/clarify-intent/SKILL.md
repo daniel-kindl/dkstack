@@ -1,6 +1,6 @@
 ---
 name: clarify-intent
-description: Clarify requirements and domain language before implementing a non-trivial change.
+description: "Clarify requirements and domain language before implementing a non-trivial change."
 ---
 
 # Clarify intent

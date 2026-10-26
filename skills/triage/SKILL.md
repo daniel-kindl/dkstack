@@ -1,6 +1,6 @@
 ---
 name: triage
-description: Decide which guidelines and skills apply to the current task. Read this first.
+description: "Decide which guidelines and skills apply to the current task. Read this first."
 ---
 
 # Triage

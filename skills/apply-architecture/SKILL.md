@@ -1,6 +1,6 @@
 ---
 name: apply-architecture
-description: Check design or structure changes against the architecture principles in this repository.
+description: "Check design or structure changes against the architecture principles in this repository."
 ---
 
 # Apply architecture

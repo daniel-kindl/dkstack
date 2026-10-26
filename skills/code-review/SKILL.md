@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Review a change on two axes: standards compliance and specification fidelity.
+description: "Review a change on two axes: standards compliance and specification fidelity."
 ---
 
 # Code review
