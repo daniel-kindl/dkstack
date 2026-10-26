@@ -16,6 +16,16 @@ import { pathToFileURL } from "node:url";
 const KEYS = new Set(["name", "description"]);
 const NAME_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const MAX_NAME = 64;
+// Plain YAML scalars that YAML 1.1 or 1.2 reads as null, a boolean, a number
+// or a date. They match NAME_PATTERN, but they are not strings.
+const NOT_A_STRING = [
+  /^(null|true|false|yes|no|on|off|y|n)$/,
+  /^[0-9]+(e[0-9]+)?$/,
+  /^0x[0-9a-f]+$/,
+  /^0o[0-7]+$/,
+  /^0b[01]+$/,
+  /^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$/,
+];
 const MAX_DESCRIPTION = 1024;
 
 // Parse a double-quoted YAML scalar. The JSON string grammar is a subset of
@@ -73,6 +83,10 @@ function checkFields(fields, folder) {
   } else if (!NAME_PATTERN.test(fields.name) || fields.name.length > MAX_NAME) {
     errors.push(
       `name "${fields.name}" must use only a-z, 0-9 and single hyphens, with no hyphen at the start or end, and have ${MAX_NAME} characters or fewer.`,
+    );
+  } else if (NOT_A_STRING.some((pattern) => pattern.test(fields.name))) {
+    errors.push(
+      `name "${fields.name}" is not a string in YAML. Use a word that YAML does not read as null, a boolean, a number or a date.`,
     );
   } else if (fields.name !== folder) {
     errors.push(`name "${fields.name}" must be equal to the folder name "${folder}".`);
