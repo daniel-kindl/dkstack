@@ -4,28 +4,15 @@
 // scheme) and pure anchors are not checked. Links in fenced code blocks and
 // inline code are ignored.
 
-import { readdir, readFile, stat } from "node:fs/promises";
-import { dirname, join, relative, resolve, sep } from "node:path";
+import { readFile, stat } from "node:fs/promises";
+import { dirname, relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
+import { markdownFiles } from "./markdown-files.mjs";
 
-const SKIP_DIRS = new Set([".git", "node_modules"]);
 // [text](target) and ![alt](target). The target is <...> or has no spaces,
 // and an optional "title" can follow.
 const LINK_PATTERN = /!?\[[^\]]*\]\(\s*(<[^>]*>|[^\s)]+)(?:\s+"[^"]*")?\s*\)/g;
 const SCHEME_PATTERN = /^[a-z][a-z0-9+.-]*:/i;
-
-async function markdownFiles(root, dir = root) {
-  const found = [];
-  for (const entry of await readdir(dir, { withFileTypes: true })) {
-    const full = join(dir, entry.name);
-    if (entry.isDirectory()) {
-      if (!SKIP_DIRS.has(entry.name)) found.push(...(await markdownFiles(root, full)));
-    } else if (entry.isFile() && entry.name.endsWith(".md")) {
-      found.push(full);
-    }
-  }
-  return found.sort();
-}
 
 // Yield { line, target } for each link outside code.
 function* linksIn(text) {
