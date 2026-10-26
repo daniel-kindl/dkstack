@@ -100,7 +100,7 @@ test("the CLI exits 1 for a broken link and 0 for a clean tree", async () => {
     const passRun = spawnSync(process.execPath, [script, good], { encoding: "utf8" });
     assert.equal(passRun.stderr, "");
     assert.equal(passRun.status, 0);
-    assert.equal(passRun.stdout, "1 relative link(s) resolve.\n");
+    assert.equal(passRun.stdout, "1 link(s) resolve.\n");
   } finally {
     await removeTree(bad);
     await removeTree(good);
@@ -147,4 +147,50 @@ test("a fence closes only with the same character and at least the same length",
     ].join("\n"),
   });
   assert.deepEqual(result.errors, ["README.md:9: broken link missing.md"]);
+});
+
+test("absolute links to a file in this repository resolve against the local tree", async () => {
+  const raw = "https://raw.githubusercontent.com/daniel-kindl/dkstack";
+  const gh = "https://github.com/daniel-kindl/dkstack";
+  const result = await linksFor({
+    "README.md": [
+      `[a](${raw}/main/AGENTS.md)`,
+      `[b](${raw}/v1/coding/missing.md)`,
+      `Read ${raw}/v1.0.0/coding/index.md.`,
+      `Read ${raw}/main/coding/gone.md, then stop.`,
+      `<${gh}/blob/main/docs/x.md#part>`,
+      `[t](${gh}/tree/v1) [s](${gh}/tree/main/skills/) [u](${gh}/tree/main/nope)`,
+      `[up](${raw}/main/../outside.md)`,
+    ].join("\n"),
+    "docs/README.md": `[rel](${raw}/main/AGENTS.md) and ${gh}/blob/main/docs/missing.md`,
+    "AGENTS.md": "x\n",
+    "coding/index.md": "x\n",
+    "docs/x.md": "x\n",
+    "skills/a/SKILL.md": "x\n",
+  });
+  assert.deepEqual(result.errors, [
+    `README.md:2: broken link ${raw}/v1/coding/missing.md`,
+    `README.md:4: broken link ${raw}/main/coding/gone.md`,
+    `README.md:6: broken link ${gh}/tree/main/nope`,
+    `README.md:7: link leaves the repository ${raw}/main/../outside.md`,
+    `docs/README.md:1: broken link ${gh}/blob/main/docs/missing.md`,
+  ]);
+  assert.equal(result.checked, 11);
+});
+
+test("other absolute URLs and repository URLs in code are not checked", async () => {
+  const result = await linksFor({
+    "README.md": [
+      "https://github.com/daniel-kindl/dkstack/issues and https://github.com/daniel-kindl",
+      "[i](https://github.com/daniel-kindl/dkstack/issues/3) https://github.com/daniel-kindl/dkstack/pull/18/files",
+      "[web](https://example.com/missing.md) https://example.com/missing.md",
+      "https://github.com/daniel-kindl/other/blob/main/missing.md",
+      "`https://raw.githubusercontent.com/daniel-kindl/dkstack/main/missing.md`",
+      "```text",
+      "https://raw.githubusercontent.com/daniel-kindl/dkstack/<ref>/missing.md",
+      "```",
+    ].join("\n"),
+  });
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.checked, 0);
 });
