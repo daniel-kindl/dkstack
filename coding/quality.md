@@ -10,6 +10,4 @@
 
 ## Security
 
-- Never expose credentials or personal data.
-- Validate inputs at boundaries.
-- Prefer the least privilege that works.
+For security rules, see [security.md](security.md).
