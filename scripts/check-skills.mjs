@@ -72,7 +72,7 @@ function checkFields(fields, folder) {
     errors.push("name is missing.");
   } else if (!NAME_PATTERN.test(fields.name) || fields.name.length > MAX_NAME) {
     errors.push(
-      `name "${fields.name}" must use only a-z, 0-9 and single hyphens, with no hyphen at the start or end.`,
+      `name "${fields.name}" must use only a-z, 0-9 and single hyphens, with no hyphen at the start or end, and have ${MAX_NAME} characters or fewer.`,
     );
   } else if (fields.name !== folder) {
     errors.push(`name "${fields.name}" must be equal to the folder name "${folder}".`);

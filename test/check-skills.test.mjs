@@ -79,7 +79,7 @@ test("a name that is not equal to the folder name is rejected", async () => {
 test("a name with characters other than lowercase letters, digits and hyphens is rejected", async () => {
   const result = await errorsFor({ "skills/Bad_Name/SKILL.md": skill("Bad_Name", '"Use when bad."') });
   assert.deepEqual(result.errors, [
-    'skills/Bad_Name/SKILL.md: name "Bad_Name" must use only a-z, 0-9 and single hyphens, with no hyphen at the start or end.',
+    'skills/Bad_Name/SKILL.md: name "Bad_Name" must use only a-z, 0-9 and single hyphens, with no hyphen at the start or end, and have 64 characters or fewer.',
   ]);
 });
 
@@ -173,4 +173,28 @@ test("the CLI exits 1 when the skills folder does not exist", async () => {
   } finally {
     await removeTree(root);
   }
+});
+
+test("a name with 64 characters passes and a name with 65 characters fails", async () => {
+  const ok = "a".repeat(64);
+  const long = "a".repeat(65);
+  const result = await errorsFor({
+    [`skills/${ok}/SKILL.md`]: skill(ok, '"Use when long."'),
+    [`skills/${long}/SKILL.md`]: skill(long, '"Use when long."'),
+  });
+  assert.deepEqual(result.skills, [ok]);
+  assert.deepEqual(result.errors, [
+    `skills/${long}/SKILL.md: name "${long}" must use only a-z, 0-9 and single hyphens, with no hyphen at the start or end, and have 64 characters or fewer.`,
+  ]);
+});
+
+test("a description with 1024 characters passes and one with 1025 characters fails", async () => {
+  const result = await errorsFor({
+    "skills/fits/SKILL.md": skill("fits", `"${"d".repeat(1024)}"`),
+    "skills/over/SKILL.md": skill("over", `"${"d".repeat(1025)}"`),
+  });
+  assert.deepEqual(result.skills, ["fits"]);
+  assert.deepEqual(result.errors, [
+    "skills/over/SKILL.md: description must have 1024 characters or fewer.",
+  ]);
 });
