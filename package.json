@@ -9,6 +9,10 @@
   },
   "license": "MIT",
   "scripts": {
-    "version:check": "echo \"Current version: $(node -p \"require('./package.json').version\")\""
+    "version:check": "echo \"Current version: $(node -p \"require('./package.json').version\")\"",
+    "check:skills": "node scripts/check-skills.mjs",
+    "check:links": "node scripts/check-links.mjs",
+    "test": "node --test test/*.test.mjs",
+    "check": "npm run check:skills && npm run check:links && npm test"
   }
 }
