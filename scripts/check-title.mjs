@@ -11,6 +11,9 @@ export const TYPES = [
   "build", "ci", "perf", "style", "revert",
 ];
 const HEADER = /^([a-z]+)(?:\((.*?)\))?!?:(.*)$/;
+const MAX_CHARS = 50;
+// GitHub adds " (#NN)" when it squashes a PR. The limit applies to the title as written.
+const SQUASH_SUFFIX = / \(#\d+\)$/;
 const SCOPE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 // Return a list with the first problem, or an empty list for a valid title.
@@ -28,6 +31,11 @@ export function checkTitle(title) {
   }
   if (!/^ \S/.test(description)) return ["put one space after the colon, then a description"];
   if (/\s$/.test(title)) return ["the title must not end with a space"];
+  // Count code points, so an emoji counts as one character.
+  const chars = [...title.replace(SQUASH_SUFFIX, "")].length;
+  if (chars > MAX_CHARS) {
+    return [`the title has ${chars} characters. Use ${MAX_CHARS} or fewer, without the (#NN) suffix`];
+  }
   return [];
 }
 
