@@ -1,6 +1,6 @@
 {
   "name": "dkstack",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Central guidelines, skills, rules, and standards for coding AI agents",
   "private": true,
   "repository": {
@@ -9,13 +9,13 @@
   },
   "license": "MIT",
   "scripts": {
-    "version:check": "echo \"Current version: $(node -p \"require('./package.json').version\")\"",
     "check:skills": "node scripts/check-skills.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check:dashes": "node scripts/check-dashes.mjs",
     "check:title": "node scripts/check-title.mjs",
     "check:workflows": "node scripts/check-workflows.mjs",
+    "check:changelog": "node scripts/check-changelog.mjs",
     "test": "node --test test/*.test.mjs",
-    "check": "npm run check:skills && npm run check:links && npm run check:dashes && npm run check:workflows && npm test"
+    "check": "npm run check:skills && npm run check:links && npm run check:dashes && npm run check:workflows && npm run check:changelog && npm test"
   }
 }

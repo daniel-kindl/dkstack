@@ -58,6 +58,10 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:workflows
 
+      - name: Check that CHANGELOG.md has an entry for the package.json version
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:changelog
+
       - name: Run the unit tests
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm test
