@@ -5,7 +5,7 @@ description: "Use when you start any task in a repository that uses dkstack. Sel
 
 # Triage
 
-Use this skill first when you work in any repository that points to these guidelines.
+Use this skill first when you work in any repository that points to dkstack.
 
 Decide which sections and skills apply to the current task. Read only those.
 
@@ -41,7 +41,7 @@ Decide which sections and skills apply to the current task. Read only those.
 ## Rules
 
 - Do not read every file. Read only what the task needs.
-- When two rules conflict, prefer the more specific one.
+- If two dkstack rules conflict, follow the more specific rule.
 - To decide between two designs that both work, use the easier to change rule in [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md).
 - If no section clearly applies, read [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md) and [coding/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/index.md).
-- After you finish, the guidelines in this repository remain the source of truth.
+- After you finish, dkstack remains the source of truth.
