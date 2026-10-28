@@ -2,7 +2,7 @@
 
 Read and follow the guidelines in dkstack.
 
-> Read and follow https://raw.githubusercontent.com/daniel-kindl/dkstack/main/AGENTS.md
+> Read and follow https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md
 
 Start with the triage skill in that repository. It maps tasks to the relevant sections and skills.
 
