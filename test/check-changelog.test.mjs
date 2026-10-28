@@ -24,3 +24,29 @@ test("a missing CHANGELOG or a missing version fails", async () => {
   assert.deepEqual(await run({ "package.json": pkg("1.0.0") }), ["CHANGELOG.md: the file does not exist"]);
   assert.deepEqual(await run({ "package.json": "{}", "CHANGELOG.md": "" }), ["package.json: the version field is missing"]);
 });
+
+const missing = (v) => [`CHANGELOG.md: add a "## [${v}]" entry for the package.json version ${v}`];
+
+test("the Keep a Changelog form passes: a date, no date, the end of the file and CRLF", async () => {
+  for (const text of [
+    "## [1.0.0] - 2026-10-28\n",
+    "## [1.0.0]\n",
+    "## [Unreleased]\r\n\r\n## [1.0.0] - 2026-10-28\r\n",
+    "## [1.0.0]",
+  ]) {
+    assert.deepEqual(await run({ "package.json": pkg("1.0.0"), "CHANGELOG.md": text }), [], text);
+  }
+});
+
+test("other text right after the closing bracket does not count", async () => {
+  assert.deepEqual(await run({ "package.json": pkg("1.0.0"), "CHANGELOG.md": "## [1.0.0]x\n" }), missing("1.0.0"));
+});
+
+test("a dot in the version matches only a dot", async () => {
+  assert.deepEqual(await run({ "package.json": pkg("1.0.0"), "CHANGELOG.md": "## [1x0x0]\n" }), missing("1.0.0"));
+});
+
+test("an empty version fails", async () => {
+  assert.deepEqual(await run({ "package.json": pkg(""), "CHANGELOG.md": "## []\n" }),
+    ["package.json: the version field is missing"]);
+});
