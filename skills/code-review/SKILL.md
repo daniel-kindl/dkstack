@@ -110,7 +110,7 @@ For a re-review, post a new comment at the new head. State each earlier finding 
 
 ## Self-review
 
-Use the same steps on your own change before you open the pull request. Fix your findings, or list them in the body. A self-review never replaces the reviewer. The author never reviews, approves or merges their own pull request. See [workflow/roles.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/roles.md).
+Use the same steps on your own change before you open the pull request. Fix your findings, or list them in the body. A self-review never replaces the review. The author never gives the verdict on, approves or merges their own pull request. See [workflow/roles.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/roles.md).
 
 ## Rules
 
