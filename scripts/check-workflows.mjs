@@ -3,6 +3,8 @@
 // - Each action is pinned to a full 40-character commit SHA, with the
 //   version in a comment. A tag or a branch can move to other code.
 // - The workflow sets top-level permissions, so the token has least privilege.
+//   "write-all" is not permitted. A top-level permission cannot be "write".
+//   Give a write permission to the one job that needs it.
 // - The workflow does not use secrets.
 // The check reads lines. It does not parse YAML.
 
@@ -15,6 +17,8 @@ const USES = /^\s*(?:-\s+)?uses\s*:\s*(["']?)([^"'\s#]+)\1(?:\s+#\s*(.*?))?\s*$/
 const PINNED = /^\S+@[0-9a-f]{40}$/;
 const VERSION_COMMENT = /^v?[0-9]+(\.[0-9]+)*\b/;
 const PERMISSIONS = /^permissions\s*:/m;
+const WRITE_ALL = /^\s*permissions\s*:\s*(["']?)write-all\1\s*(#.*)?$/;
+const WRITE = /:\s*(["']?)write\1\s*(?:[,}#]|$)/;
 const SECRETS = /\bsecrets\s*[.[]/;
 
 // Return { checked, errors }, or null when the folder does not exist.
@@ -33,8 +37,17 @@ export async function checkWorkflows(root) {
     if (!PERMISSIONS.test(text)) {
       errors.push(`${rel}: set top-level permissions, as in "permissions: contents: read"`);
     }
+    let inTopPermissions = false;
     text.split(/\r?\n/).forEach((line, i) => {
       const where = `${rel}:${i + 1}`;
+      if (/^\S/.test(line) && !line.startsWith("#")) {
+        inTopPermissions = /^permissions\s*:/.test(line);
+      }
+      if (WRITE_ALL.test(line)) {
+        errors.push(`${where}: do not use "permissions: write-all"`);
+      } else if (inTopPermissions && WRITE.test(line)) {
+        errors.push(`${where}: do not give "write" at the top level; give it to one job`);
+      }
       const uses = USES.exec(line);
       if (uses && !uses[2].startsWith("./")) {
         if (!PINNED.test(uses[2])) {
