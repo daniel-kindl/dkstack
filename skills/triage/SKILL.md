@@ -1,6 +1,6 @@
 ---
 name: triage
-description: "Decide which guidelines and skills apply to the current task. Read this first."
+description: "Use when you start any task in a repository that uses dkstack. Selects the guidelines and skills that apply to the task."
 ---
 
 # Triage
