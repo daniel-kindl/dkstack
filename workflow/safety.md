@@ -16,8 +16,8 @@ action with the owner's OK. Only then can an agent do it.
   owner's OK. Reason: these changes can break live services outside the repository.
 - Do not publish or release without the owner's explicit OK for that release. This includes a
   push to a release branch, a release tag and a package publish. The OK names the exact version.
-  It never covers a production deploy or a project's release workflow, for example tangopad
-  `release.yml`. Only the owner starts these. See
+  It never covers a production deploy or a project's release workflow. Only the owner starts
+  these. See
   [ADR 0001](../docs/adr/0001-how-consumers-follow-versions.md). Reason: only the human owner
   decides when to publish.
 - Do not delete a repository or a branch with unmerged work. Archive it. Reason: deleted work can
