@@ -37,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `write-adr`: creates an architecture decision record.
   - `writing-check`: applies the ASD-STE100 writing rules to text.
 - The `validate` workflow. It checks the PR or commit title, the skills, the links, the dashes,
-  the workflows and the unit tests.
+  the workflows, the CHANGELOG entry for the version and the unit tests.
 
 [Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/daniel-kindl/dkstack/releases/tag/v1.0.0
