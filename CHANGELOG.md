@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AGENTS.md`: the entry point for agents.
 - `sample-AGENTS.md`: an `AGENTS.md` to copy into a project that uses dkstack.
 - `CONTRIBUTING.md`: how to propose a change to dkstack.
+- `SECURITY.md`: how to report a vulnerability in private.
+- `.github/pull_request_template.md`: the pull request body template.
 - Sections, each with an `index.md`:
   - `architecture/`: architecture principles.
   - `coding/`: coding standards and practices.
