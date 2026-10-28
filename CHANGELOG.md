@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   project rule, except through a documented exception. The hard limits are the rules in
   `workflow/safety.md`. The general rules are now links to the sections.
 - `skills/triage`: the conflict rule now points to the precedence rules in `AGENTS.md`.
+- `skills/code-review`: the skill now guides a review step by step. It defines severity levels,
+  maps them to one verdict and gives an output format. A checklist links to the coding,
+  architecture, testing, safety and writing rules, and it lists common code smells.
 - `workflow/safety.md` and `versioning/index.md`: an agent can publish or release only with the
   owner's explicit OK for that release. The OK names the exact version. It never covers a
   production deploy or a project's release workflow.

@@ -9,6 +9,6 @@ Skills are specific capabilities agents should apply when relevant.
 - [clarify-intent](clarify-intent/SKILL.md): Clarify requirements and domain language before coding.
 - [apply-architecture](apply-architecture/SKILL.md): Check design changes against architecture principles.
 - [tdd-loop](tdd-loop/SKILL.md): Enforce the red-green-refactor cycle.
-- [code-review](code-review/SKILL.md): Two-axis review (standards and specification).
+- [code-review](code-review/SKILL.md): Review a change step by step and give one verdict.
 - [write-adr](write-adr/SKILL.md): Create an Architecture Decision Record.
 - [writing-check](writing-check/SKILL.md): Apply ASD-STE100 to text.
