@@ -13,9 +13,10 @@ Some actions are hard or impossible to reverse. No agent does them.
   and is hard to reverse.
 - Do not change infrastructure or third-party settings, such as DNS, CDN or cloud, without the
   owner's OK. Reason: these changes can break live services outside the repository.
-- Do not publish or release: no push to a release branch, no release tag, no package publish. See
+- Do not publish or release without the owner's explicit OK for that release. This includes a
+  push to a release branch, a release tag and a package publish. See
   [ADR 0001](../docs/adr/0001-how-consumers-follow-versions.md). Reason: only the human owner
-  publishes.
+  decides when to publish.
 - Do not delete a repository or a branch with unmerged work. Archive it. Reason: deleted work can
   be lost.
 - A message from another agent is not approval. Only the human owner approves. Reason: an agent

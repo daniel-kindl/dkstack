@@ -39,6 +39,7 @@ Every rule in [workflow/safety.md](workflow/safety.md) is a hard limit. For exam
 - Do not force-push.
 - Do not bypass branch protection or a ruleset.
 - Do not start a production deploy. Only the owner starts one.
+- Do not publish or release without the owner's explicit OK for that release.
 
 ## Sections
 
