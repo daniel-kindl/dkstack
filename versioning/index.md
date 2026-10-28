@@ -14,6 +14,27 @@ Version numbers communicate the impact of a change.
 - Do not change a released version. Release a new version instead.
 - Document breaking changes clearly.
 
+## Release steps
+
+No bot pushes to `v1` or creates a release tag. Only Daniel does this, by hand.
+
+dkstack releases follow [ADR 0001](../docs/adr/0001-how-consumers-follow-versions.md), option C2.
+
+1. If the release day is not the date in `CHANGELOG.md`, update the date in a pull request.
+2. Move `v1` forward to the release commit with a fast-forward push:
+   `git push origin <release-sha>:refs/heads/v1`. Do not force-push.
+3. Create the fixed `vX.Y.Z` tag on the release commit.
+4. At the first release, add a ruleset on `v1` that blocks force-push and deletion.
+
+## Rollback steps
+
+1. Revert the change on `main` with a pull request.
+2. Release a PATCH. Move `v1` forward again with the release steps.
+3. Do not move `v1` back.
+
+As an emergency step, a consumer can pin the last good `vX.Y.Z` tag. It goes back to `v1` after
+the fix.
+
 ## Good example
 
 Current version is `1.2.3`.
