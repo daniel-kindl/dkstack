@@ -86,3 +86,18 @@ test("the bootstrap YAML examples have each key at the correct level", async () 
     "updates.schedule.interval"];
   assert.deepEqual(leaves(bot), botKeys.sort());
 });
+
+// dkstack has no npm dependencies, so its own Dependabot file is the bootstrap
+// example with only the github-actions entry (issue #36).
+test("the repository Dependabot file is the bootstrap example for github-actions", async () => {
+  const example = await exampleFile(".github/dependabot.yml");
+  const [head, ...entries] = example.split(/^(?= {2}- )/m);
+  const actions = entries.filter((e) => /package-ecosystem: "github-actions"\n/.test(e));
+  assert.equal(actions.length, 1, "the example must have one github-actions entry");
+  const file = await readFile(join(repoRoot, ".github", "dependabot.yml"), "utf8");
+  assert.equal(file, head + actions[0]);
+  const ecosystems = [...file.matchAll(/^\s*- package-ecosystem:\s*"([^"]+)"/gm)].map((m) => m[1]);
+  assert.deepEqual(ecosystems, ["github-actions"]);
+  assert.deepEqual(leaves(keyPaths(file)), ["updates.directory", "updates.package-ecosystem",
+    "updates.schedule.interval", "version"]);
+});
