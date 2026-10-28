@@ -111,3 +111,11 @@ test("a double ! fails and a single ! passes", () => {
   assert.deepEqual(checkTitle("feat!: add login"), []);
   assert.deepEqual(checkTitle("feat(x)!: add login"), []);
 });
+
+test("a title with only the (#NN) suffix as description fails", () => {
+  const reason = "put one space after the colon, then a description";
+  for (const title of ["fix: (#12)", "fix:  (#12)", "feat(x)!: (#3)"]) {
+    assert.deepEqual(checkTitle(title), [reason], title);
+  }
+  assert.deepEqual(checkTitle("fix: a (#12)"), []);
+});
