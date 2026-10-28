@@ -25,10 +25,11 @@ the ref in your URL, so you read all files on the same version. The skills link 
 ## Precedence
 
 - A dkstack rule wins over a project rule.
-- A project can differ from a dkstack rule only through a documented exception. The exception
-  names the dkstack rule, the project rule and the reason. For example, a project can use a `dev`
-  branch if its `AGENTS.md` or `CONTRIBUTING.md` states this exception.
-- The hard limits have no exceptions.
+- A project can differ from a dkstack rule only through a documented exception. Record the
+  exception in the project's `AGENTS.md` or `CONTRIBUTING.md`. The exception names the dkstack
+  rule, the project rule and the reason. For example, a project can use a `dev` branch if it
+  records this exception.
+- The rules in [workflow/safety.md](workflow/safety.md) have no exceptions.
 - If two dkstack rules conflict, follow the more specific rule.
 
 ## Hard limits
