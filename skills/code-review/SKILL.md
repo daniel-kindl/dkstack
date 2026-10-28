@@ -23,9 +23,11 @@ If you can start subagents, use them for the independent checks. Do steps 1 to 3
 - The diff command and the commit list from step 1.
 - The sources from step 2 that its check needs.
 - The full text of its step. For the standards axis, include the checklist and the smell table.
+- The severity table, the finding format from the output section (ID, `file:line`, problem, rule link, why, fix) and the evidence levels from step 8.
 - What to report, and a word limit, for example 400 words.
+- This line: "Report to me only. Do not post, approve or merge."
 
-Do steps 7 and 8 yourself. Then collect the reports. Put each report in its own section of the output. Do not merge or re-rank findings across the reports.
+Do steps 7 and 8 yourself. Then collect the reports. A report from a subagent is level 1, Stated. Check each Blocking and High finding at its `file:line` before you report it. If you cannot locate a finding, drop it and say so. Do not change a severity. Report a disagreement as your own finding. Put each report in its own section of the output. Do not merge or re-rank findings across the reports.
 
 If you cannot start subagents, do the steps one at a time in the order of this skill. Finish one axis before you start the other.
 
