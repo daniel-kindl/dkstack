@@ -11,7 +11,7 @@ Decide which sections and skills apply to the current task. Read only those.
 
 ## Steps
 
-1. Identify the type of work: design, implementation, documentation, version control, review, or mixed.
+1. Identify the type of work: design, implementation, documentation, version control, review, workflow, or mixed.
 2. Select the relevant sections and skills from the lists below.
 3. Read the section index or skill, then the detailed files it links to.
 4. Apply the rules. Prefer the smallest set that covers the task.
@@ -35,6 +35,7 @@ Decide which sections and skills apply to the current task. Read only those.
 - Version numbers or releases: [versioning/index.md](../../versioning/index.md)
 - Documentation, comments, or messages: [writing/index.md](../../writing/index.md)
 - Any text: [writing/index.md](../../writing/index.md)
+- Issues, pull requests, review, merge or release: [workflow/index.md](../../workflow/index.md)
 
 ## Rules
 
