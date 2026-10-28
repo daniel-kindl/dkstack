@@ -23,11 +23,15 @@ Use this rule as the tie-breaker when other principles do not decide between two
 - [design-by-contract.md](design-by-contract.md): Define preconditions, postconditions, and invariants. Related: [fail-fast.md](fail-fast.md).
 - [resource-balancing.md](resource-balancing.md): Pair every resource acquisition with a release.
 - [decoupling.md](decoupling.md): Minimize knowledge between components. Related: [orthogonality.md](orthogonality.md).
-- [temporal-coupling.md](temporal-coupling.md): Avoid hidden order dependencies.
+- [temporal-coupling.md](temporal-coupling.md): Avoid hidden order dependencies. Related: [concurrency.md](concurrency.md).
 - [separation-of-concerns.md](separation-of-concerns.md): Keep different responsibilities apart.
 - [prototype.md](prototype.md): Prototype to learn, then discard.
 - [adrs.md](adrs.md): Record durable decisions.
 - [small-steps.md](small-steps.md): Take small steps and get feedback after each step. Related: [yagni.md](yagni.md).
+- [concurrency.md](concurrency.md): Guard shared state. Related: [temporal-coupling.md](temporal-coupling.md), [resource-balancing.md](resource-balancing.md).
+- [actors-and-blackboards.md](actors-and-blackboards.md): Coordinate work by messages or a shared store. Related: [concurrency.md](concurrency.md), [decoupling.md](decoupling.md).
+- [state-machines.md](state-machines.md): Model events as explicit states and transitions. Related: [temporal-coupling.md](temporal-coupling.md).
+- [configuration.md](configuration.md): Keep configuration outside the code and secrets outside the repository. Related: [reversibility.md](reversibility.md).
 
 ## Application
 

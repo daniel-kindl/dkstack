@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `architecture/`: new pages `concurrency.md`, `actors-and-blackboards.md`, `state-machines.md`,
+  and `configuration.md`.
+
 ### Changed
 
 - `version-control/`: the commit subject format is now `type(scope)!: description`. The scope
