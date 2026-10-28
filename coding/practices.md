@@ -13,10 +13,7 @@ Write a failing test first. Write tests that prove behavior.
 - Do not add unjustified dependencies.
 - Run all checks before you open a pull request.
 - Report a check that did not run as NOT RUN.
-
-## Good-enough software
-
-Get the acceptance criteria before you start. Stop when the criteria are met and the gates pass. Do not polish past them. If the quality bar is not clear, ask the owner. Reason: work past the criteria adds cost and risk that nobody asked for.
+- Get the acceptance criteria before you start. Stop when the criteria are met and the gates pass. Do not polish past them. If the quality bar is not clear, ask the owner. Reason: work past the criteria adds cost and risk that nobody asked for.
 
 ## Do not program by coincidence
 

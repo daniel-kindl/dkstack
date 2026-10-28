@@ -2,7 +2,7 @@
 
 This rule comes from the topic "Don't Outrun Your Headlights" (Topic 27) in The Pragmatic Programmer.
 
-Take small steps. Get feedback after each step. Do not design for a future you cannot see.
+Take small steps. Get feedback after each step.
 
 Reason: feedback shows you where you are. A large step goes past what you can check, so errors grow before you see them.
 
@@ -11,7 +11,6 @@ Reason: feedback shows you where you are. A large step goes past what you can ch
 - Make each step small enough that one check can show if it is correct.
 - Get feedback after each step: a test result, a check or a review.
 - Do the next step only when the feedback is good.
-- Do not design for requirements that you cannot see yet.
 
 ## Related rules
 

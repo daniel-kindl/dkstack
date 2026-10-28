@@ -42,6 +42,6 @@ Decide which sections and skills apply to the current task. Read only those.
 
 - Do not read every file. Read only what the task needs.
 - When two rules conflict, prefer the more specific one.
-- When two designs both work, select the design that is easier to change. See [architecture/index.md](../../architecture/index.md).
+- To decide between two designs that both work, use the easier to change rule in [architecture/index.md](../../architecture/index.md).
 - If no section clearly applies, read [architecture/index.md](../../architecture/index.md) and [coding/index.md](../../coding/index.md).
 - After you finish, the guidelines in this repository remain the source of truth.

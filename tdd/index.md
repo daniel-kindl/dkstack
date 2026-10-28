@@ -13,6 +13,8 @@ The test defines the expected behavior. The code exists to satisfy the test.
 - Keep tests small and focused. One behavior per test.
 - Do not skip the failing step.
 
+For bug fixes, edge cases and error paths, see [coding/testing.md](../coding/testing.md).
+
 ## Good example
 
 You need a function that adds two numbers.

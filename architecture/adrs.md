@@ -26,4 +26,6 @@ Consequences: Easier to replace components. Requires message versioning.
 
 A decision exists only in a chat message or a comment that is later deleted.
 
+See the [plain text rule](../coding/practices.md#plain-text) for where to keep decisions.
+
 Related: [reversibility.md](reversibility.md).
