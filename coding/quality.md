@@ -6,7 +6,9 @@
 - Prefer readable code over clever code.
 - Name things so the purpose is clear without comments.
 - Handle errors explicitly.
-- Do not suppress warnings or tests to make a change pass.
+- Do not suppress a test to make a change pass.
+- Do not suppress a warning to make a change pass, except as described in
+  [Exceptions](quality-gates.md#exceptions).
 
 ## Broken windows
 

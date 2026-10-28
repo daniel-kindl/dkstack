@@ -2,13 +2,15 @@
 
 Never weaken a quality gate.
 
-A gate that fails must stay failing until the cause is fixed.
+A gate that fails must stay failing until the cause is fixed, except as described in
+[Exceptions](#exceptions).
 
 ## Rules
 
 - Do not disable, skip, or lower a check to make a change pass.
 - Do not suppress a test failure. Fix the code or the test.
-- Do not suppress a warning without fixing the cause, except as described in [Exceptions](#exceptions).
+- Do not suppress a warning without fixing the cause, except as described in
+  [Exceptions](#exceptions).
 - Run all checks before you open a pull request.
 - If a check cannot run, report it as NOT RUN. Do not claim it passed.
 - Fix the root cause first.
@@ -16,6 +18,7 @@ A gate that fails must stay failing until the cause is fixed.
 ## Exceptions
 
 Add an exception for a diagnostic only when you cannot fix the cause in this repository.
+A recorded exception is not a weakened gate. The gate stays active for all other code.
 Examples are generated source and an external or platform API contract that you cannot change.
 
 Each exception must have all of these parts:
@@ -23,9 +26,10 @@ Each exception must have all of these parts:
 - The rule ID of the diagnostic.
 - The smallest scope: one line, one file, or one project.
 - The reason the cause cannot be fixed here.
-- A review in the issue or pull request.
+- Approval by a reviewer who is not the author, in the issue or pull request.
 
-Record a persistent exception beside the code or in the repository docs.
+Record a persistent exception beside the code or in the repository docs. A temporary exception
+links to the issue that removes it.
 
 Never add a blanket suppression. Do not add a broad pragma, a global `NoWarn`, a disabled analyzer,
 or a general formatter exclusion.
