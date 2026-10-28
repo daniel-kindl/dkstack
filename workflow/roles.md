@@ -6,10 +6,8 @@ Give each task to one role, so that each agent has one responsibility.
 
 - Each role has the responsibility in the role map below. Reason: one owner per task prevents gaps
   and duplicate work.
-- The author must not review or merge their own pull request. Reason: a second agent finds errors
-  that the author does not see.
-- One agent can hold more than one role, but never author and reviewer on the same pull request.
-  Reason: the review must stay independent.
+- One agent can hold more than one role, but the author must not review or merge their own pull
+  request. Reason: a second agent finds errors that the author does not see.
 - The author writes the pull request body and lists the tests. The writer edits the text. Reason:
   the author knows best which tests prove the behavior.
 - The human owner approves scope, decisions and every release. Reason: only the owner is
