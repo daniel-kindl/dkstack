@@ -30,6 +30,7 @@ the ref in your URL, so you read all files on the same version. The skills link 
   rule, the project rule and the reason. For example, a project can use a `dev` branch if it
   records this exception.
 - The rules in [workflow/safety.md](workflow/safety.md) have no exceptions.
+  A rule that allows an action with the owner's OK is not an exception.
 - If two dkstack rules conflict, follow the more specific rule.
 
 ## Hard limits
@@ -66,7 +67,7 @@ Every rule in [workflow/safety.md](workflow/safety.md) is a hard limit. For exam
 ## Owner
 
 The owner of dkstack is Daniel Kindl (GitHub: `daniel-kindl`). Only the owner approves a change to
-dkstack, and only the owner releases it.
+dkstack and a release of it. See [workflow/safety.md](workflow/safety.md).
 
 ## Changes
 
