@@ -1,5 +1,11 @@
 # Architecture
 
+## Easier to change
+
+When two designs both work, select the design that is easier to change. Say why in the PR. Reason: requirements change, and a design that is easy to change costs less each time they do.
+
+Use this rule as the tie-breaker when other principles do not decide between two designs.
+
 Architecture principles and design rules.
 
 ## Principles
@@ -21,6 +27,7 @@ Architecture principles and design rules.
 - [separation-of-concerns.md](separation-of-concerns.md): Keep different responsibilities apart.
 - [prototype.md](prototype.md): Prototype to learn, then discard.
 - [adrs.md](adrs.md): Record durable decisions.
+- [small-steps.md](small-steps.md): Take small steps and get feedback after each step. Related: [yagni.md](yagni.md).
 
 ## Application
 

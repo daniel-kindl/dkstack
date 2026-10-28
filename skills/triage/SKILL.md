@@ -24,6 +24,7 @@ Decide which sections and skills apply to the current task. Read only those.
 - Design or structure: [apply-architecture](../apply-architecture/SKILL.md)
 - Implementation: [tdd-loop](../tdd-loop/SKILL.md)
 - Review: [code-review](../code-review/SKILL.md)
+- Bug or unexpected behavior: [coding/debugging.md](../../coding/debugging.md)
 - Durable decision: [write-adr](../write-adr/SKILL.md)
 - Any text: [writing-check](../writing-check/SKILL.md)
 
@@ -40,5 +41,6 @@ Decide which sections and skills apply to the current task. Read only those.
 
 - Do not read every file. Read only what the task needs.
 - When two rules conflict, prefer the more specific one.
+- When two designs both work, select the design that is easier to change. See [architecture/index.md](../../architecture/index.md).
 - If no section clearly applies, read [architecture/index.md](../../architecture/index.md) and [coding/index.md](../../coding/index.md).
 - After you finish, the guidelines in this repository remain the source of truth.
