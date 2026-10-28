@@ -21,7 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `skills/code-review`: the skill now guides a review step by step on two axes, standards and
   specification. It adds a blast radius step, evidence levels for claims, a code smell list,
   severity levels and one verdict. If the agent can start subagents, it runs the two axes and
-  the blast radius in parallel. It names no agents or tools.
+  the blast radius in parallel. It gives a fallback for each missing piece, for example no
+  pull request, no base ref, no automated checks or no specification. It names no agents or tools.
 - `workflow/safety.md` and `versioning/index.md`: an agent can publish or release only with the
   owner's explicit OK for that release. The OK names the exact version. It never covers a
   production deploy or a project's release workflow.
