@@ -86,16 +86,16 @@ A smell is a judgement, not a hard violation. Write it as "possible feature envy
 | Smell | Fix | Principle |
 | --- | --- | --- |
 | Mysterious name: a name does not say what the thing does or holds | Rename it. If no clear name fits, the design is not clear | [coding/quality.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality.md), [domain languages](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md) |
-| Duplicated code: the same logic is in more than one place | Extract the shared logic and call it from each place | [DRY](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/dry.md) |
+| Duplicated code: the same logic is in more than one place | Move the logic to one function and use it in each place | [DRY](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/dry.md) |
 | Feature envy: a function uses the data of another object more than its own | Move the function to the data it uses | [decoupling](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/decoupling.md) |
-| Data clumps: the same fields or parameters always go together | Put them in one type and pass that type | [domain languages](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md) |
-| Primitive obsession: a string or number stands for a domain concept | Give the concept its own small type | [domain languages](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md), [design by contract](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/design-by-contract.md) |
+| Data clumps: the same fields or parameters always go together | Make one type for the group and pass it | [domain languages](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md), [DRY](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/dry.md) |
+| Primitive obsession: a string or number stands for a domain concept | Make a small type for the concept | [domain languages](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md), [design by contract](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/design-by-contract.md) |
 | Repeated switches: the same switch or if chain on the same type is in more than one place | Use polymorphism, or one shared map | [SOLID](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/solid.md) (open-closed) |
 | Shotgun surgery: one logical change needs edits in many files | Put the parts that change together in one module | [orthogonality](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/orthogonality.md) |
 | Divergent change: one module changes for unrelated reasons | Split it, so that each module has one reason to change | [SOLID](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/solid.md) (single responsibility), [separation of concerns](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/separation-of-concerns.md) |
 | Speculative generality, or dead code: code, parameters or hooks with no current use | Delete it. Add it again when a real need exists | [YAGNI](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/yagni.md) |
 | Message chains: a caller walks through many objects, for example `a.b().c().d()` | Ask the first object for the result | [decoupling](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/decoupling.md) |
-| Middle man: a class or function only passes calls on | Remove it and call the real target | [KISS](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/kiss.md) |
+| Middle man: a class or function only passes calls on, and it is not a deliberate boundary | Remove it and call the target directly. Keep it if it isolates a dependency or a module boundary | [KISS](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/kiss.md), [decoupling](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/decoupling.md) |
 | Refused bequest: a subtype ignores or overrides most of what it inherits | Use composition, not inheritance | [SOLID](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/solid.md) (Liskov substitution) |
 | Long function or deep nesting | Split it into small functions with clear names | [KISS](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/kiss.md), [separation of concerns](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/separation-of-concerns.md) |
 | Magic value: a literal with no name | Use a named constant. If the value depends on the environment, make it configuration | [DRY](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/dry.md), [configuration](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/configuration.md) |
@@ -114,9 +114,9 @@ Look past the diff for what the change can break where a text search does not sh
 - Configuration, feature flags and the order in which code runs.
 - The source and the pinned version of a library that the change calls.
 
-Find the one fact that makes the change safe. Most changes that look risky are safe because of one fact. Prove that fact.
+Find the one fact that makes the change safe. Usually one fact decides if the change is safe. Prove that fact.
 
-Report confirmed risks and cleared risks separately. For each risk, give how it breaks, the `file:line`, how likely it is and how bad it is. Cite real code. Never invent a caller or an API. A search that finds nothing is also a result.
+Report confirmed risks and cleared risks separately. For each risk, give how it breaks, the `file:line`, how likely it is and how bad it is. Cite real code. Do not report a caller or an API that you did not find in the code. If a search finds nothing, report that as a result.
 
 ## 7. Tests
 
