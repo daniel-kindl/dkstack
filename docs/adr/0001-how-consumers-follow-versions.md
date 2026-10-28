@@ -133,6 +133,13 @@ Daniel Kindl accepted option C on 2026-10-26 at 14:07 (Prague), as C2. Consumers
 release branch. Daniel moves `v1` forward with a fast-forward push only. Each release also gets a
 fixed `vX.Y.Z` tag. Option C1, a moving tag, is rejected because it needs a force-push.
 
+### Amendment 2026-10-28
+
+Daniel decided that a bot can push to `v1` or create a release tag only with his explicit OK for
+that release. The OK names the exact version. It never covers a production deploy or a project's
+release workflow, for example tangopad `release.yml`. Only Daniel starts these. This amendment
+replaces the team rule "no bot pushes to `v1` or creates a release tag" in Consequences.
+
 ## Consequences
 
 The follow-up work is issue #5 (Forge) and issue #12 (Scribe).
