@@ -11,6 +11,9 @@ Decide which sections and skills apply to the current task. Read only those.
 
 ## Steps
 
+Before implementation, look for a relevant active plan under `.plans/` or the documented project location. Read and reconcile it using [feature plans](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/feature-plans.md). When planning or resuming a feature, use [plan-work](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/plan-work/SKILL.md).
+
+
 1. Identify the type of work: design, implementation, documentation, version control, review, workflow, or mixed.
 2. Select the relevant sections and skills from the lists below.
 3. Read the section index or skill, then the detailed files it links to.
