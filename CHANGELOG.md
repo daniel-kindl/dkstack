@@ -18,6 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   project rule, except through a documented exception. The hard limits are the rules in
   `workflow/safety.md`. The general rules are now links to the sections.
 - `skills/triage`: the conflict rule now points to the precedence rules in `AGENTS.md`.
+- `skills/code-review`: the skill now guides a review step by step on two axes, standards and
+  specification. It adds a blast radius step, evidence levels for claims, a code smell list,
+  severity levels and one verdict. If the agent can start subagents, it runs the two axes and
+  the blast radius in parallel. It gives a fallback for each missing piece, for example no
+  pull request, no base ref, no automated checks or no specification. It names no agents or tools.
 - `workflow/safety.md` and `versioning/index.md`: an agent can publish or release only with the
   owner's explicit OK for that release. The OK names the exact version. It never covers a
   production deploy or a project's release workflow.
