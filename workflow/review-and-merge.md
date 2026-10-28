@@ -2,30 +2,38 @@
 
 Every change goes from an issue to a reviewed pull request. No change reaches `main` without review.
 
-Status: outline. Issue #8 writes the full rules.
-
 ## Rules
 
-This file will hold these rules:
+- Implement from an issue with acceptance criteria. Reason: the issue states the scope that the
+  review checks.
+- Use one issue, one branch and one pull request. Link the issue in the pull request. Reason: each
+  change stays small and traceable.
+- The pull request body lists the tests that prove the behavior. It names each check that did not
+  run as NOT RUN. Reason: the reviewer must know what was tested.
+- The review gives one verdict: APPROVE-RECOMMENDED, CHANGES-REQUESTED or BLOCKED. Reason: one
+  verdict tells the author the next step.
+- The reviewer merges only when the review passes and all required checks are green. Reason: a
+  failed check or open finding must not reach `main`.
+- Use squash merge only and keep history linear. Reason: each pull request becomes one commit on
+  `main`.
+- The pull request title is the commit message. It must be a
+  [conventional commit](../version-control/index.md). Reason: squash merge uses the title as the
+  commit title.
+- To update a branch, merge `main` into it. Do not rebase a pushed branch. Reason: a rebase of a
+  pushed branch needs a force-push.
+- If the reviewer does not approve, escalate in this order: architect, then coordinator, then human
+  owner. Reason: each step adds authority, and the human owner decides last.
 
-- Start from an issue with acceptance criteria. No issue, no work.
-- One issue, one branch, one pull request.
-- The pull request title is a conventional commit. With squash merge, it becomes the commit title.
-- The pull request body links the issue, lists the tests that prove the behavior, and names each
-  check that did not run as NOT RUN.
-- The reviewer is not the author.
-- The review gives one verdict: APPROVE-RECOMMENDED, CHANGES-REQUESTED or BLOCKED.
-- The reviewer merges when the review passes and all required checks are green. Squash merge only.
-- To update a branch, merge `main` into it. Do not rebase a pushed branch.
-- Escalation: reviewer to architect, then to coordinator, then to the human owner.
+The author and reviewer limits are in [roles.md](roles.md).
 
 ## Good example
 
-Issue #8 adds an example.
+The pull request title is `docs(workflow): write the team operating rules`. The body says
+`Closes #8`.
 
 ## Bad example
 
-Issue #8 adds an example.
+The pull request title is `update docs`. The body does not link an issue.
 
 Related: [roles.md](roles.md), [safety.md](safety.md),
 [version-control/index.md](../version-control/index.md).
