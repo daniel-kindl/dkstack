@@ -54,6 +54,8 @@ Every rule in [workflow/safety.md](workflow/safety.md) is a hard limit. For exam
 - [tips/index.md](tips/index.md): Short tips.
 - [workflow/index.md](workflow/index.md): Workflow: roles, review and merge, and safety.
 
+For features with persistent execution plans, follow [workflow/feature-plans.md](workflow/feature-plans.md). Discover and reconcile the active plan before implementation.
+
 ## Key rules
 
 - Select the smallest design that works. See [architecture/design.md](architecture/design.md).
