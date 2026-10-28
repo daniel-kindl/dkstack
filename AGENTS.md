@@ -33,12 +33,11 @@ the ref in your URL, so you read all files on the same version. The skills link 
 
 ## Hard limits
 
+Every rule in [workflow/safety.md](workflow/safety.md) is a hard limit. For example:
+
 - Do not force-push.
 - Do not bypass branch protection or a ruleset.
 - Do not start a production deploy. Only the owner starts one.
-- Do not publish or release.
-
-See [workflow/safety.md](workflow/safety.md) for the reasons and the full list.
 
 ## Sections
 
