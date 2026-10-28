@@ -14,6 +14,36 @@ Version numbers communicate the impact of a change.
 - Do not change a released version. Release a new version instead.
 - Document breaking changes clearly.
 
+## Release dkstack
+
+These steps are for the dkstack repository only. A consumer repository does not use them.
+
+No bot pushes to `v1` or creates a release tag. Only Daniel does this, by hand.
+
+dkstack releases follow [ADR 0001](../docs/adr/0001-how-consumers-follow-versions.md), option C2.
+
+1. If the release day is not the date in `CHANGELOG.md`, update the date in a pull request.
+2. At the first release, create a branch ruleset on `refs/heads/v1`. It must block deletion and
+   non-fast-forward pushes, with no bypass.
+   The tag ruleset `protect-release-tags` already covers `refs/tags/v*`. It blocks deletion,
+   update and non-fast-forward pushes, with no bypass.
+3. Move `v1` forward to the release commit with a fast-forward push:
+   `git push origin <release-sha>:refs/heads/v1`. Do not force-push.
+4. Run `npx skills add https://github.com/daniel-kindl/dkstack/tree/v1 --list`.
+   Make sure that it lists every skill.
+   If the test fails, do not tag. Fix the problem on `main`, then move `v1` forward again.
+5. Create the fixed tag on the release commit and push it:
+   `git tag -a vX.Y.Z <release-sha> -m vX.Y.Z`, then `git push origin vX.Y.Z`.
+
+## Roll back a dkstack release
+
+1. Revert the change on `main` with a pull request.
+2. Release a PATCH. Move `v1` forward again with the release steps.
+3. Do not move `v1` back.
+
+As an emergency step, a consumer can pin the last good `vX.Y.Z` tag. It goes back to `v1` after
+the fix.
+
 ## Good example
 
 Current version is `1.2.3`.
