@@ -137,3 +137,50 @@ test("the CLI fails when the repository has no workflows folder", async () => {
     await removeTree(root);
   }
 });
+
+test("permissions: write-all fails at the top level and in a job", async () => {
+  const result = await workflowsFor({
+    ".github/workflows/a.yml": [
+      "permissions: write-all",
+      "jobs:",
+      "  a:",
+      "    permissions: write-all",
+      "    steps:",
+      "      - run: echo",
+      "",
+    ].join("\n"),
+  });
+  assert.deepEqual(result.errors, [
+    '.github/workflows/a.yml:1: do not use "permissions: write-all"',
+    '.github/workflows/a.yml:4: do not use "permissions: write-all"',
+  ]);
+});
+
+test("a top-level write permission fails, and a job-level write permission passes", async () => {
+  const result = await workflowsFor({
+    ".github/workflows/a.yml": [
+      "permissions:",
+      "  contents: read",
+      "  pull-requests: write",
+      "jobs:",
+      "  a:",
+      "    permissions:",
+      "      issues: write",
+      "    steps:",
+      "      - run: echo",
+      "",
+    ].join("\n"),
+  });
+  assert.deepEqual(result.errors, [
+    '.github/workflows/a.yml:3: do not give "write" at the top level; give it to one job',
+  ]);
+});
+
+test("a top-level flow map with a write permission fails", async () => {
+  const result = await workflowsFor({
+    ".github/workflows/a.yml": "permissions: { contents: write }\njobs: {}\n",
+  });
+  assert.deepEqual(result.errors, [
+    '.github/workflows/a.yml:1: do not give "write" at the top level; give it to one job',
+  ]);
+});
