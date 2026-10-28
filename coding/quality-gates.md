@@ -15,7 +15,7 @@ A gate that fails must stay failing until the cause is fixed.
 ## Exceptions
 
 Add an exception only when you cannot fix the cause in this repository.
-Examples are generated source and an external or platform API contract.
+Examples are generated source and an external or platform API contract that you cannot change.
 
 Each exception must have all of these parts:
 
@@ -34,9 +34,8 @@ Consumer repositories link to this rule. Do not restate it.
 ## Good example
 
 A generated file triggers an analyzer warning. You cannot change the generator. You suppress that
-rule ID for that file only, state the reason beside the suppression, and the pull request reviews
-it.
-
+rule ID for that file only. You state the reason beside the suppression. A reviewer approves it in
+the pull request.
 
 A test fails. You fix the code or the test so the real behavior is correct. The gate stays active.
 
