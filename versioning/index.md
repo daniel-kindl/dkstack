@@ -18,7 +18,9 @@ Version numbers communicate the impact of a change.
 
 These steps are for the dkstack repository only. A consumer repository does not use them.
 
-No bot pushes to `v1` or creates a release tag. Only Daniel does this, by hand.
+No bot pushes to `v1` or creates a release tag without Daniel's explicit OK for that release. The OK
+names the exact version. Without this OK, only Daniel does this, by hand. See
+[workflow/safety.md](../workflow/safety.md).
 
 dkstack releases follow [ADR 0001](../docs/adr/0001-how-consumers-follow-versions.md), option C2.
 
