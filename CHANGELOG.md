@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `version-control/`: the commit subject format is now `type(scope)!: description`. The scope
   and the `!` breaking-change marker are optional. The 50-character limit stays.
+- `coding/quality-gates.md`: an exception is allowed only for a diagnostic whose cause cannot be
+  fixed in the repository. It needs a rule ID, the smallest scope, a reason, and approval by a
+  reviewer who is not the author. Blanket suppressions and suppressed test failures stay forbidden.
+  This replaces "Do not add exceptions".
 
 ## [1.0.0] - 2026-10-28
 
