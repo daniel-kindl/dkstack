@@ -10,7 +10,7 @@ When two actions can read and change the same data at the same time, the result 
 - If a resource has no single owner, change it with one atomic operation.
 - If you use a lock, acquire and release it in the same scope. See [resource-balancing.md](resource-balancing.md).
 - Treat a random failure or a flaky test as a possible race. Look for the race before you retry.
-- Remove hidden order dependencies. Operations without a hidden order can run at the same time. See [temporal-coupling.md](temporal-coupling.md).
+- Remove hidden order dependencies. Operations can run at the same time if they have no hidden order and share no unguarded state. See [temporal-coupling.md](temporal-coupling.md).
 
 ## Good example
 

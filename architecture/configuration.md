@@ -8,7 +8,7 @@ Put values that change between environments or over time in configuration, not i
 
 - Read configuration through a small API. Do not read configuration in many places in the code.
 - Validate configuration when the application loads it. Stop on a value that is not valid.
-- Consider a configuration service. The application gets values at runtime, and you change them without a new deployment. The service validates each change.
+- Consider a configuration service. The application gets values at runtime, and you change them without a new deployment. Make the service validate each change.
 - Do not put secrets in code.
 - Do not put secrets in configuration files under version control. Get secrets from a secret store or from the environment.
 
