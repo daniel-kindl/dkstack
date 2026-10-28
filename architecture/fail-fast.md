@@ -13,6 +13,7 @@ Exit early. Let the failure be visible.
 - Do not return a partial result or a default that hides the problem.
 - Do not log an error and continue as if nothing happened.
 - Make the failure obvious so the cause can be fixed.
+- If a case cannot happen, assert it. Then the program stops if the case does happen. Reason: an impossible case that happens shows a wrong assumption, and the program must not continue on it.
 
 ## Good example
 

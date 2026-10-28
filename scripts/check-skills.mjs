@@ -20,7 +20,7 @@ const MAX_NAME = 64;
 // or a date. They match NAME_PATTERN, but they are not strings.
 const NOT_A_STRING = [
   /^(null|true|false|yes|no|on|off|y|n)$/,
-  /^[0-9]+(e[0-9]+)?$/,
+  /^[0-9]+(e-?[0-9]+)?$/,
   /^0x[0-9a-f]+$/,
   /^0o[0-7]+$/,
   /^0b[01]+$/,
