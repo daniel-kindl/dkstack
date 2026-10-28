@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   reviewer who is not the author. Blanket suppressions and suppressed test failures stay forbidden.
   This replaces "Do not add exceptions".
 
+### Fixed
+
+- `scripts/check-title.mjs`: the title check now rejects a subject longer than 50 characters.
+  It counts Unicode code points and does not count the ` (#NN)` suffix. A test now proves that
+  the check rejects a double `!`.
+
 ## [1.0.0] - 2026-10-28
 
 ### Added
