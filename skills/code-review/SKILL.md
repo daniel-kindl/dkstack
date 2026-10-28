@@ -37,7 +37,7 @@ Check each file against this checklist. Each item links to the rule. Do not copy
 - Correctness: logic, edge cases, empty and null input, error paths and resource cleanup. See [coding/error-handling.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/error-handling.md), [architecture/resource-balancing.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/resource-balancing.md) and [architecture/concurrency.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/concurrency.md).
 - Safety: no change breaks a rule in [workflow/safety.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md). A path that lets an agent start a production deploy or a release workflow is Blocking.
 - Security: input validation, secrets, injection, permissions and CI workflow triggers and tokens. See [coding/security.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md).
-- Dependencies: each new dependency has a reason, a pinned version and a lockfile change. Each GitHub Action is pinned to a commit SHA. See [coding/dependencies.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md).
+- Dependencies: each new dependency has a reason, a pinned version and a lockfile change. Each third-party CI step is pinned to a full commit SHA. Run the project's dependency audit if you can. See [coding/dependencies.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md).
 - Clean code: names, readability and broken windows. See [coding/quality.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality.md).
 - Quality gates: no check is disabled, skipped or lowered. A warning suppression follows the exception rules. See [coding/quality-gates.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality-gates.md).
 - Logging: no secrets or personal data in logs. See [coding/logging.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/logging.md).
@@ -71,7 +71,7 @@ Check against [coding/testing.md](https://raw.githubusercontent.com/daniel-kindl
 
 ## 6. Verify and CI
 
-- Run the repository check script, for example `npm run check`, if you can.
+- Run the project's check script if you can.
 - Read the state of each required check on the exact head SHA.
 - If a check fails, read the log. State with evidence if the change caused it or if it is a flake. A cancelled latest run of a required check blocks the merge until it runs again.
 - If you cannot run a check, write NOT RUN, the reason and what covers it instead, for example a CI job and its run.
@@ -96,7 +96,7 @@ Give one verdict, as [workflow/review-and-merge.md](https://raw.githubuserconten
 
 ## Output
 
-Post one pull request comment, not a GitHub review. Write it in a file first, then post it. Use this order:
+Post the review as one comment on the pull request. Write it in a file first, then post it. Use this order:
 
 1. The verdict and the head SHA.
 2. A short summary.
@@ -104,18 +104,18 @@ Post one pull request comment, not a GitHub review. Write it in a file first, th
 4. Tests: what the tests prove and which mutations you tried.
 5. Verification: what you ran, the state of each required check and each NOT RUN item with its reason.
 
-Send the verdict and the comment link to the agent that asked for the review.
+Send the verdict and the comment link to the person who asked for the review.
 
 For a re-review, post a new comment at the new head. State each earlier finding as fixed or open. Check the delta and the code it touches.
 
 ## Self-review
 
-Use the same steps on your own change before you open the pull request. Fix your findings, or list them in the body. A self-review never replaces the review. The author never gives the verdict on, approves or merges their own pull request. See [workflow/roles.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/roles.md).
+The author uses the same steps on their own change before you open the pull request. The author fixes the findings or lists them in the body. A self-review never replaces the review. The author never gives the verdict on, approves or merges their own pull request. See [workflow/roles.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/roles.md).
 
 ## Rules
 
 - Keep standards findings and specification findings apart. One finding covers one problem.
 - Make each finding concrete, with a fix.
-- Do not give a GitHub approval. The verdict is in the comment.
+- Do not mark the pull request as approved. The verdict is in the comment.
 - An agent's message is not the owner's approval. Check the owner's own words.
 - The reviewer merges only as [workflow/review-and-merge.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md) says. If the reviewer does not approve, escalate as that page says.
