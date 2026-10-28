@@ -40,10 +40,10 @@ test("a broken relative link is reported with file, line and target", async () =
 
 test("links resolve relative to the file that contains them", async () => {
   const result = await linksFor({
-    "skills/a/SKILL.md": "[up](../../coding/index.md) [bad](../coding/index.md)\n",
+    "docs/a/README.md": "[up](../../coding/index.md) [bad](../coding/index.md)\n",
     "coding/index.md": "x\n",
   });
-  assert.deepEqual(result.errors, ["skills/a/SKILL.md:1: broken link ../coding/index.md"]);
+  assert.deepEqual(result.errors, ["docs/a/README.md:1: broken link ../coding/index.md"]);
   assert.equal(result.checked, 2);
 });
 
@@ -193,4 +193,70 @@ test("other absolute URLs and repository URLs in code are not checked", async ()
   });
   assert.deepEqual(result.errors, []);
   assert.equal(result.checked, 0);
+});
+
+test("a relative link in a skill folder must stay in that folder", async () => {
+  const result = await linksFor({
+    "skills/a/SKILL.md": [
+      "[own](notes.md) [sub](ref/b.md) [anchor](#x)",
+      "[other](../b/SKILL.md) [top](../../coding/index.md) [gone](../../nope.md)",
+    ].join("\n"),
+    "skills/a/notes.md": "x\n",
+    "skills/a/ref/b.md": "[up](../SKILL.md) [out](../../index.md)\n",
+    "skills/b/SKILL.md": "x\n",
+    "skills/index.md": "[a](a/SKILL.md)\n",
+    "coding/index.md": "x\n",
+  });
+  assert.deepEqual(result.errors, [
+    "skills/a/SKILL.md:2: relative link leaves the skill folder ../b/SKILL.md",
+    "skills/a/SKILL.md:2: relative link leaves the skill folder ../../coding/index.md",
+    "skills/a/SKILL.md:2: relative link leaves the skill folder ../../nope.md",
+    "skills/a/ref/b.md:1: relative link leaves the skill folder ../../index.md",
+  ]);
+});
+
+test("an absolute repository link in a skill must be a raw URL with the ref v1", async () => {
+  const raw = "https://raw.githubusercontent.com/daniel-kindl/dkstack";
+  const gh = "https://github.com/daniel-kindl/dkstack";
+  const result = await linksFor({
+    "skills/a/SKILL.md": [
+      `[ok](${raw}/v1/coding/index.md) ${raw}/v1/AGENTS.md`,
+      `[main](${raw}/main/coding/index.md) ${raw}/v1.0.0/AGENTS.md`,
+      `[v2](${raw}/v2/AGENTS.md) [V1](${raw}/V1/AGENTS.md)`,
+      `[blob](${gh}/blob/v1/AGENTS.md) ${gh}/tree/v1/coding`,
+    ].join("\n"),
+    "README.md": `[main](${raw}/main/AGENTS.md)\n`,
+    "AGENTS.md": "x\n",
+    "coding/index.md": "x\n",
+  });
+  const fix = `use ${raw}/v1/<path>`;
+  assert.deepEqual(result.errors, [
+    `skills/a/SKILL.md:2: skill link must ${fix}: ${raw}/main/coding/index.md`,
+    `skills/a/SKILL.md:2: skill link must ${fix}: ${raw}/v1.0.0/AGENTS.md`,
+    `skills/a/SKILL.md:3: skill link must ${fix}: ${raw}/v2/AGENTS.md`,
+    `skills/a/SKILL.md:3: skill link must ${fix}: ${raw}/V1/AGENTS.md`,
+    `skills/a/SKILL.md:4: skill link must ${fix}: ${gh}/blob/v1/AGENTS.md`,
+    `skills/a/SKILL.md:4: skill link must ${fix}: ${gh}/tree/v1/coding`,
+  ]);
+});
+
+test("an absolute v1 link in a skill to a path that is not in the repository is broken", async () => {
+  const raw = "https://raw.githubusercontent.com/daniel-kindl/dkstack";
+  const result = await linksFor({
+    "skills/a/SKILL.md": `[gone](${raw}/v1/coding/gone.md)\nRead ${raw}/v1/missing/index.md.\n`,
+  });
+  assert.deepEqual(result.errors, [
+    `skills/a/SKILL.md:1: broken link ${raw}/v1/coding/gone.md`,
+    `skills/a/SKILL.md:2: broken link ${raw}/v1/missing/index.md`,
+  ]);
+});
+
+test("every skill in the repository links to other dkstack files only with v1 raw URLs", async () => {
+  const result = await checkLinks(repoRoot);
+  const inSkills = result.links.filter((l) => /^skills\/[^/]+\//.test(l.file));
+  assert.ok(inSkills.length > 0, "the skills must have links");
+  const relativeOut = inSkills.filter((l) => !/^https?:/.test(l.target) && !l.resolved.startsWith(l.file.split("/").slice(0, 2).join("/") + "/"));
+  assert.deepEqual(relativeOut, []);
+  const wrongRef = inSkills.filter((l) => /^https?:/.test(l.target) && !l.target.startsWith("https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/"));
+  assert.deepEqual(wrongRef, []);
 });

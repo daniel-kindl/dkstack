@@ -5,7 +5,9 @@
 // blob or tree URLs on GitHub, with any ref) resolve against the local tree,
 // as Markdown links or as bare URLs. Other URLs and pure anchors are not
 // checked, because a network check is not deterministic. Links in fenced code
-// blocks and inline code are ignored.
+// blocks and inline code are ignored. In a skill folder, a relative link must
+// stay in that folder, and a link to another dkstack file must be a raw URL on
+// the ref v1. The check still maps each such URL to a file at HEAD.
 
 import { readFile, stat } from "node:fs/promises";
 import { dirname, relative, resolve, sep } from "node:path";
@@ -22,6 +24,12 @@ const TRAILING_PUNCTUATION = /[.,;:!?]+$/;
 // A file or folder in this repository on GitHub. Group 1 is the path.
 const REPO_URL_PATTERN =
   /^https?:\/\/(?:raw\.githubusercontent\.com\/daniel-kindl\/dkstack\/[^/?#]+|github\.com\/daniel-kindl\/dkstack\/(?:blob|tree)\/[^/?#]+)(\/[^?#]*)?/i;
+
+// The skills CLI copies only a skill folder. A file in a skill folder can link
+// to its own folder with a relative link, and to other dkstack files only with
+// a raw URL on the release ref (ADR 0001).
+const SKILL_FILE_PATTERN = /^skills\/[^/]+\//;
+const SKILL_URL_PREFIX = "https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/";
 
 // Yield { line, target } for each link outside code.
 function* linksIn(text) {
@@ -77,6 +85,13 @@ export async function checkLinks(root) {
       const full = resolve(repoUrl ? root : dirname(file), path);
       const resolved = relative(root, full).split(sep).join("/");
       links.push({ file: relFile, line, target, resolved });
+      const skillDir = SKILL_FILE_PATTERN.exec(relFile)?.[0];
+      if (skillDir && repoUrl && !target.startsWith(SKILL_URL_PREFIX)) {
+        errors.push(`${relFile}:${line}: skill link must use ${SKILL_URL_PREFIX}<path>: ${target}`);
+      } else if (skillDir && !repoUrl && !resolved.startsWith(skillDir)) {
+        errors.push(`${relFile}:${line}: relative link leaves the skill folder ${target}`);
+        continue;
+      }
       if (resolved === ".." || resolved.startsWith("../")) {
         // GitHub and an installed copy do not have files outside the repository.
         errors.push(`${relFile}:${line}: link leaves the repository ${target}`);

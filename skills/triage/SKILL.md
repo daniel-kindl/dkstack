@@ -19,29 +19,29 @@ Decide which sections and skills apply to the current task. Read only those.
 
 ## Skills
 
-- New or non-compliant repository: [bootstrap](../bootstrap/SKILL.md)
-- Non-trivial change: [clarify-intent](../clarify-intent/SKILL.md)
-- Design or structure: [apply-architecture](../apply-architecture/SKILL.md)
-- Implementation: [tdd-loop](../tdd-loop/SKILL.md)
-- Review: [code-review](../code-review/SKILL.md)
-- Bug or unexpected behavior: [coding/debugging.md](../../coding/debugging.md)
-- Durable decision: [write-adr](../write-adr/SKILL.md)
-- Any text: [writing-check](../writing-check/SKILL.md)
+- New or non-compliant repository: [bootstrap](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/bootstrap/SKILL.md)
+- Non-trivial change: [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md)
+- Design or structure: [apply-architecture](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/apply-architecture/SKILL.md)
+- Implementation: [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md)
+- Review: [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md)
+- Bug or unexpected behavior: [coding/debugging.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/debugging.md)
+- Durable decision: [write-adr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-adr/SKILL.md)
+- Any text: [writing-check](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/writing-check/SKILL.md)
 
 ## Section map
 
-- Design or structure changes: [architecture/index.md](../../architecture/index.md)
-- Code changes: [coding/index.md](../../coding/index.md) and [tdd/index.md](../../tdd/index.md)
-- Commits or branches: [version-control/index.md](../../version-control/index.md)
-- Version numbers or releases: [versioning/index.md](../../versioning/index.md)
-- Documentation, comments, or messages: [writing/index.md](../../writing/index.md)
-- Any text: [writing/index.md](../../writing/index.md)
-- Issues, pull requests, review, merge or release: [workflow/index.md](../../workflow/index.md)
+- Design or structure changes: [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md)
+- Code changes: [coding/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/index.md) and [tdd/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md)
+- Commits or branches: [version-control/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/version-control/index.md)
+- Version numbers or releases: [versioning/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/versioning/index.md)
+- Documentation, comments, or messages: [writing/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md)
+- Any text: [writing/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md)
+- Issues, pull requests, review, merge or release: [workflow/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/index.md)
 
 ## Rules
 
 - Do not read every file. Read only what the task needs.
 - When two rules conflict, prefer the more specific one.
-- To decide between two designs that both work, use the easier to change rule in [architecture/index.md](../../architecture/index.md).
-- If no section clearly applies, read [architecture/index.md](../../architecture/index.md) and [coding/index.md](../../coding/index.md).
+- To decide between two designs that both work, use the easier to change rule in [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md).
+- If no section clearly applies, read [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md) and [coding/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/index.md).
 - After you finish, the guidelines in this repository remain the source of truth.

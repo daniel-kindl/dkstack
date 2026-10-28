@@ -32,12 +32,12 @@ Apply the rules from version-control, versioning, and coding sections.
    - Fails if any warning or error appears
 
 4. Document conventional commits and short-lived feature branches in the repo README or AGENTS.md.
-   - Point to https://raw.githubusercontent.com/daniel-kindl/dkstack/main/version-control/index.md
+   - Point to https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/version-control/index.md
 
 5. Set up semantic versioning.
    - Add or update `package.json` / equivalent with a version.
    - Add `CHANGELOG.md`.
-   - Point to https://raw.githubusercontent.com/daniel-kindl/dkstack/main/versioning/index.md
+   - Point to https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/versioning/index.md
 
 6. Ensure deterministic checks:
    - Pin dependency versions where practical.
@@ -51,6 +51,6 @@ Apply the rules from version-control, versioning, and coding sections.
 - After bootstrap, the repository must produce a clean build with zero warnings.
 
 See also:
-- [version-control/index.md](../../version-control/index.md)
-- [versioning/index.md](../../versioning/index.md)
-- [coding/quality-gates.md](../../coding/quality-gates.md)
+- [version-control/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/version-control/index.md)
+- [versioning/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/versioning/index.md)
+- [coding/quality-gates.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality-gates.md)
