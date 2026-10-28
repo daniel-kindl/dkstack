@@ -14,9 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `AGENTS.md`: names dkstack and its owner. Projects follow `v1`. The hard limits from
-  `workflow/safety.md` are listed. The general rules are now links to the sections.
-- `skills/triage`: names dkstack.
+- `AGENTS.md`: names dkstack and its owner. Projects follow `v1`. A dkstack rule wins over a
+  project rule, except through a documented exception. The hard limits from `workflow/safety.md`
+  are listed. The general rules are now links to the sections.
+- `skills/triage`: the conflict rule now points to the precedence rules in `AGENTS.md`.
 - `version-control/`: the commit subject format is now `type(scope)!: description`. The scope
   and the `!` breaking-change marker are optional. The 50-character limit stays.
 - `coding/quality-gates.md`: an exception is allowed only for a diagnostic whose cause cannot be

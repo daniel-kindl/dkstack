@@ -41,7 +41,7 @@ Decide which sections and skills apply to the current task. Read only those.
 ## Rules
 
 - Do not read every file. Read only what the task needs.
-- If two dkstack rules conflict, follow the more specific rule.
+- If two dkstack rules conflict, follow the more specific rule. If a project rule conflicts with a dkstack rule, follow the precedence rules in [AGENTS.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md).
 - To decide between two designs that both work, use the easier to change rule in [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md).
 - If no section clearly applies, read [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md) and [coding/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/index.md).
 - After you finish, dkstack remains the source of truth.
