@@ -16,7 +16,18 @@ Review on two axes:
 
 A change can pass one axis and fail the other. Code can follow every rule and do the wrong thing. Code can do the right thing and break the rules. Report the two axes separately, so that one axis does not hide the other. Do not merge or re-rank findings across the axes.
 
-If you can run independent reviews, review each axis in a separate context. If you cannot, finish one axis before you start the other.
+## Subagents
+
+If you can start subagents, use them for the independent checks. Do steps 1 to 3 first. Then run the specification axis (step 4), the standards axis (step 5) and the blast radius (step 6) at the same time, each in its own subagent. Give each subagent a brief that is complete without your context:
+
+- The diff command and the commit list from step 1.
+- The sources from step 2 that its check needs.
+- The full text of its step. For the standards axis, include the checklist and the smell table.
+- What to report, and a word limit, for example 400 words.
+
+Do steps 7 and 8 yourself. Then collect the reports. Put each report in its own section of the output. Do not merge or re-rank findings across the reports.
+
+If you cannot start subagents, do the steps one at a time in the order of this skill. Finish one axis before you start the other.
 
 ## 1. Fixed point
 
