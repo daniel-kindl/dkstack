@@ -24,7 +24,7 @@ This repository uses semantic versioning. See [versioning/index.md](versioning/i
 
 - Current version is in `package.json`.
 - Changes are tracked in `CHANGELOG.md`.
-- A GitHub Actions workflow (`.github/workflows/version.yml`) validates the structure on push to main.
+- The `validate` workflow (`.github/workflows/validate.yml`) runs the checks on each pull request and on push to main.
 - No automatic publishing or release creation is enabled yet.
 
 ## Structure
