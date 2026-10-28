@@ -3,101 +3,41 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { checkWorkflows } from "../scripts/check-workflows.mjs";
-import { makeTree, removeTree } from "./helpers.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const skillFile = join(repoRoot, "skills", "bootstrap", "SKILL.md");
 
-// Return the fenced YAML block in the bootstrap skill that starts with "# <path>".
-async function exampleFile(path) {
+// Return the text of step <n> in the Steps list of the bootstrap skill.
+async function step(n) {
   const text = await readFile(skillFile, "utf8");
-  const blocks = [...text.matchAll(/^( *)```ya?ml\r?\n([\s\S]*?)^\1```/gm)].map((m) =>
-    m[2].replace(new RegExp(`^${m[1]}`, "gm"), ""),
-  );
-  const found = blocks.filter((b) => b.startsWith(`# ${path}\n`));
-  assert.equal(found.length, 1, `the bootstrap skill must have one YAML example for ${path}`);
-  return found[0];
+  const m = new RegExp(`^${n}\\. ([\\s\\S]*?)(?=^\\d+\\. |^## )`, "m").exec(text);
+  assert.ok(m, `the bootstrap skill must have step ${n}`);
+  return m[1];
 }
 
-test("the bootstrap CI workflow example passes the dkstack workflow check", async () => {
-  const workflow = await exampleFile(".github/workflows/ci.yml");
-  const root = await makeTree({ ".github/workflows/ci.yml": workflow });
-  try {
-    assert.deepEqual(await checkWorkflows(root), { checked: 1, errors: [] });
-  } finally {
-    await removeTree(root);
-  }
+// Skills are agent- and tool-agnostic (issue #57).
+test("the bootstrap skill names no tool or platform", async () => {
+  // The dkstack links use the raw v1 URL form, so remove the URLs first.
+  const text = (await readFile(skillFile, "utf8")).replace(/https:\/\/\S+/g, "");
+  const names = [/github/i, /\.github\//, /\bgh\b/, /\bnpm\b/, /package-lock/, /package\.json/,
+    /dependabot/i, /\byarn\b/i, /\bpnpm\b/i, /\bcargo\b/i, /\bdotnet\b/i, /\.NET\b/,
+    /pip-audit/, /\bnuget\b/i, /```ya?ml/];
+  for (const name of names) assert.doesNotMatch(text, name);
 });
 
-test("the bootstrap CI example runs npm ci and fails on a high npm audit finding", async () => {
-  const lines = (await exampleFile(".github/workflows/ci.yml")).split("\n").map((l) => l.trim());
-  assert.ok(lines.includes("- run: npm ci"), "npm ci must install from the lockfile");
-  const audit = "- run: npm audit --audit-level=high";
-  assert.ok(lines.includes(audit), "npm audit must fail on high or critical");
+test("the bootstrap steps cover each supply chain rule", async () => {
+  assert.match(await step(7), /full commit SHA/);
+  assert.match(await step(7), /version in a comment/);
+  assert.match(await step(8), /least privilege/);
+  assert.match(await step(9), /[Cc]ommit the lockfile/);
+  assert.match(await step(9), /fails when the lockfile does not agree/);
+  assert.match(await step(10), /vulnerability audit/);
+  assert.match(await step(10), /every pull request/);
+  assert.match(await step(10), /fail on high or critical/);
+  assert.match(await step(11), /dependency update proposals and vulnerability alerts/);
+  assert.match(await step(11), /pinned CI actions/);
 });
 
-test("the bootstrap Dependabot example updates npm and github-actions", async () => {
-  const text = await exampleFile(".github/dependabot.yml");
-  const ecosystems = [...text.matchAll(/^\s*- package-ecosystem:\s*"([^"]+)"/gm)].map((m) => m[1]);
-  assert.deepEqual(ecosystems.sort(), ["github-actions", "npm"]);
-  assert.match(text, /^version: 2$/m);
-});
-
-// Return the key paths of a simple block YAML file, such as "jobs.check.steps".
-// The path comes from the indentation, so a key at the wrong level gets a wrong
-// path. A list item "- key:" counts as a key two columns to the right. All
-// children of one key must have the same indentation, as in YAML. A child with
-// other indentation gives the path "<parent> has mixed indentation".
-function keyPaths(text) {
-  const stack = [];
-  const paths = new Set();
-  const childIndent = new Map();
-  for (const raw of text.split("\n")) {
-    if (raw.trim() === "" || raw.trim().startsWith("#")) continue;
-    const item = /^( *)- /.exec(raw);
-    const line = item ? `${item[1]}  ${raw.slice(item[0].length)}` : raw;
-    const key = /^( *)([A-Za-z0-9_-]+):/.exec(line);
-    if (!key) continue;
-    const indent = key[1].length;
-    while (stack.length > 0 && stack[stack.length - 1].indent >= indent) stack.pop();
-    const parent = stack.map((s) => s.key).join(".");
-    if (!childIndent.has(parent)) childIndent.set(parent, indent);
-    if (childIndent.get(parent) !== indent) paths.add(`${parent} has mixed indentation`);
-    stack.push({ indent, key: key[2] });
-    paths.add(stack.map((s) => s.key).join("."));
-  }
-  return paths;
-}
-
-// Return the paths that have no child path, sorted.
-function leaves(paths) {
-  return [...paths].filter((p) => ![...paths].some((q) => q.startsWith(`${p}.`))).sort();
-}
-
-test("the bootstrap YAML examples have each key at the correct level", async () => {
-  const ci = keyPaths(await exampleFile(".github/workflows/ci.yml"));
-  const ciKeys = ["name", "on.pull_request", "on.push.branches", "permissions.contents",
-    "jobs.check.runs-on", "jobs.check.steps.uses", "jobs.check.steps.with.persist-credentials",
-    "jobs.check.steps.with.node-version", "jobs.check.steps.run"];
-  assert.deepEqual(leaves(ci), ciKeys.sort());
-  const bot = keyPaths(await exampleFile(".github/dependabot.yml"));
-  const botKeys = ["version", "updates.package-ecosystem", "updates.directory",
-    "updates.schedule.interval"];
-  assert.deepEqual(leaves(bot), botKeys.sort());
-});
-
-// dkstack has no npm dependencies, so its own Dependabot file is the bootstrap
-// example with only the github-actions entry (issue #36).
-test("the repository Dependabot file is the bootstrap example for github-actions", async () => {
-  const example = await exampleFile(".github/dependabot.yml");
-  const [head, ...entries] = example.split(/^(?= {2}- )/m);
-  const actions = entries.filter((e) => /package-ecosystem: "github-actions"\n/.test(e));
-  assert.equal(actions.length, 1, "the example must have one github-actions entry");
-  const file = await readFile(join(repoRoot, ".github", "dependabot.yml"), "utf8");
-  assert.equal(file, head + actions[0]);
-  const ecosystems = [...file.matchAll(/^\s*- package-ecosystem:\s*"([^"]+)"/gm)].map((m) => m[1]);
-  assert.deepEqual(ecosystems, ["github-actions"]);
-  assert.deepEqual(leaves(keyPaths(file)), ["updates.directory", "updates.package-ecosystem",
-    "updates.schedule.interval", "version"]);
+test("the bootstrap CI step runs on every pull request", async () => {
+  assert.match(await step(3), /every pull request/);
 });
