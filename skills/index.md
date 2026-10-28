@@ -12,3 +12,4 @@ Skills are specific capabilities agents should apply when relevant.
 - [code-review](code-review/SKILL.md): Review a change on two axes (standards and specification) and give one verdict.
 - [write-adr](write-adr/SKILL.md): Create an Architecture Decision Record.
 - [writing-check](writing-check/SKILL.md): Apply ASD-STE100 to text.
+- [plan-work](plan-work/SKILL.md): Produce and maintain a persistent feature plan with commit-sized work items.
