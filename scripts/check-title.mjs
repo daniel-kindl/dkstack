@@ -17,7 +17,9 @@ const SQUASH_SUFFIX = / \(#\d+\)$/;
 const SCOPE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 // Return a list with the first problem, or an empty list for a valid title.
-export function checkTitle(title) {
+export function checkTitle(fullTitle) {
+  // Remove the suffix once, so every rule below sees the same text.
+  const title = fullTitle.replace(SQUASH_SUFFIX, "");
   if (title.trim() === "") return ["the title is empty"];
   if (/[\r\n]/.test(title)) return ["the title must be one line"];
   const match = HEADER.exec(title);
@@ -32,7 +34,7 @@ export function checkTitle(title) {
   if (!/^ \S/.test(description)) return ["put one space after the colon, then a description"];
   if (/\s$/.test(title)) return ["the title must not end with a space"];
   // Count code points, so an emoji counts as one character.
-  const chars = [...title.replace(SQUASH_SUFFIX, "")].length;
+  const chars = [...title].length;
   if (chars > MAX_CHARS) {
     return [`the title has ${chars} characters. Use ${MAX_CHARS} or fewer, without the (#NN) suffix`];
   }
