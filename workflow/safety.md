@@ -1,6 +1,7 @@
 # Safety
 
-Some actions are hard or impossible to reverse. No agent does them.
+Some actions are hard or impossible to reverse. No agent does them. Some rules below allow an
+action with the owner's OK. Only then can an agent do it.
 
 ## Rules
 
