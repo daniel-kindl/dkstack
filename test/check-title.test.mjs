@@ -11,9 +11,9 @@ const script = join(repoRoot, "scripts", "check-title.mjs");
 test("conventional commit titles pass", () => {
   for (const title of [
     "feat: add user login",
-    "fix(skills): use the SKILL.md folder layout and valid frontmatter",
-    "fix(skills): use the SKILL.md folder layout and valid frontmatter (#18)",
-    "docs(security): extend the secrets rule to chat, issues and PRs",
+    "fix(skills): use the SKILL.md folder layout",
+    "fix(skills): use the SKILL.md folder layout (#18)",
+    "docs(security): extend the secrets rule to chat",
     "ci: add the validate workflow",
     "feat(api)!: remove the v0 endpoints",
     "refactor!: drop Node 18",
@@ -73,4 +73,41 @@ test("the CLI fails when no title is given", () => {
   const run = spawnSync(process.execPath, [script], { encoding: "utf8" });
   assert.equal(run.status, 1);
   assert.equal(run.stderr, 'title "" is not a conventional commit: the title is empty\n');
+});
+
+// Each title below has exactly the given number of code points.
+const title50 = "fix: " + "a".repeat(45);
+const title51 = "fix: " + "a".repeat(46);
+
+test("a title of 50 characters passes and a title of 51 fails", () => {
+  assert.equal([...title50].length, 50);
+  assert.deepEqual(checkTitle(title50), []);
+  assert.deepEqual(checkTitle(title51), [
+    "the title has 51 characters. Use 50 or fewer, without the (#NN) suffix",
+  ]);
+});
+
+test("the limit counts characters, not bytes or UTF-16 units", () => {
+  const emoji = "fix: " + "a".repeat(44) + "\u{1F600}";
+  const accent = "fix: " + "a".repeat(44) + "\u00e9";
+  assert.equal([...emoji].length, 50);
+  assert.ok(emoji.length > 50 && Buffer.byteLength(emoji) > 50);
+  assert.ok(Buffer.byteLength(accent) > 50);
+  assert.deepEqual(checkTitle(emoji), []);
+  assert.deepEqual(checkTitle(accent), []);
+});
+
+test("the (#NN) squash suffix does not count toward the limit", () => {
+  assert.deepEqual(checkTitle(title50 + " (#123)"), []);
+  assert.deepEqual(checkTitle(title51 + " (#123)"), [
+    "the title has 51 characters. Use 50 or fewer, without the (#NN) suffix",
+  ]);
+});
+
+test("a double ! fails and a single ! passes", () => {
+  const reason = 'the title must start with a type, as in "fix: ..."';
+  assert.deepEqual(checkTitle("feat!!: add login"), [reason]);
+  assert.deepEqual(checkTitle("feat(x)!!: add login"), [reason]);
+  assert.deepEqual(checkTitle("feat!: add login"), []);
+  assert.deepEqual(checkTitle("feat(x)!: add login"), []);
 });
