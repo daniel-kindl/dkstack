@@ -14,19 +14,24 @@ Version numbers communicate the impact of a change.
 - Do not change a released version. Release a new version instead.
 - Document breaking changes clearly.
 
-## Release steps
+## Release dkstack
+
+These steps are for the dkstack repository only. A consumer repository does not use them.
 
 No bot pushes to `v1` or creates a release tag. Only Daniel does this, by hand.
 
 dkstack releases follow [ADR 0001](../docs/adr/0001-how-consumers-follow-versions.md), option C2.
 
-1. If the release day is not the date in `CHANGELOG.md`, update the date in a pull request.
-2. Move `v1` forward to the release commit with a fast-forward push:
+1. At the first release, add a ruleset on `v1` that blocks force-push and deletion.
+   Do this before the first push to `v1`.
+2. If the release day is not the date in `CHANGELOG.md`, update the date in a pull request.
+3. Move `v1` forward to the release commit with a fast-forward push:
    `git push origin <release-sha>:refs/heads/v1`. Do not force-push.
-3. Create the fixed `vX.Y.Z` tag on the release commit.
-4. At the first release, add a ruleset on `v1` that blocks force-push and deletion.
+4. Create the fixed `vX.Y.Z` tag on the release commit.
+5. Run `npx skills add https://github.com/daniel-kindl/dkstack/tree/v1 --list`.
+   Make sure that it lists every skill.
 
-## Rollback steps
+## Roll back a dkstack release
 
 1. Revert the change on `main` with a pull request.
 2. Release a PATCH. Move `v1` forward again with the release steps.
