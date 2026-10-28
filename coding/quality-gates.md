@@ -7,14 +7,15 @@ A gate that fails must stay failing until the cause is fixed.
 ## Rules
 
 - Do not disable, skip, or lower a check to make a change pass.
-- Do not suppress a warning or a test failure without fixing the cause.
+- Do not suppress a test failure. Fix the code or the test.
+- Do not suppress a warning without fixing the cause, except as described in [Exceptions](#exceptions).
 - Run all checks before you open a pull request.
 - If a check cannot run, report it as NOT RUN. Do not claim it passed.
 - Fix the root cause first.
 
 ## Exceptions
 
-Add an exception only when you cannot fix the cause in this repository.
+Add an exception for a diagnostic only when you cannot fix the cause in this repository.
 Examples are generated source and an external or platform API contract that you cannot change.
 
 Each exception must have all of these parts:
