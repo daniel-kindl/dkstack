@@ -200,7 +200,7 @@ test("a description with 1024 characters passes and one with 1025 characters fai
 });
 
 test("a name that YAML reads as null, a boolean, a number or a date is rejected", async () => {
-  const bad = ["null", "true", "false", "yes", "no", "on", "off", "y", "n", "123", "0x1f", "0o17", "0b101", "1e3", "1e-3", "10e-10", "2026-10-26"];
+  const bad = ["null", "true", "false", "yes", "no", "on", "off", "y", "n", "123", "0x1f", "0o17", "0b101", "1e3", "1e-3", "10e-10", "9e-9", "1e9", "2026-10-26"];
   const files = { "skills/null-check/SKILL.md": skill("null-check", '"Use when x."') };
   for (const name of bad) files[`skills/${name}/SKILL.md`] = skill(name, '"Use when x."');
   const result = await errorsFor(files);
