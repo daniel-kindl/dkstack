@@ -1,6 +1,6 @@
 ---
 name: apply-architecture
-description: "Check design or structure changes against the architecture principles in this repository."
+description: "Use when a change adds, moves or splits a module, or changes a public interface. Checks the design against the architecture principles in this repository."
 ---
 
 # Apply architecture

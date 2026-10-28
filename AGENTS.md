@@ -18,6 +18,7 @@ Start with the triage skill. It tells you which sections to read for the current
 - [writing/index.md](writing/index.md): Writing style (ASD-STE100).
 - [skills/index.md](skills/index.md): Skills to apply.
 - [tips/index.md](tips/index.md): Short tips.
+- [workflow/index.md](workflow/index.md): Workflow: roles, review and merge, and safety.
 
 ## Authority
 

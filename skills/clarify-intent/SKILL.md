@@ -1,6 +1,6 @@
 ---
 name: clarify-intent
-description: "Clarify requirements and domain language before implementing a non-trivial change."
+description: "Use when the task has unclear requirements, unknown domain terms or no acceptance criteria. Clarifies the intent and the domain language before you write code."
 ---
 
 # Clarify intent

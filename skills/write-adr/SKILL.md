@@ -1,6 +1,6 @@
 ---
 name: write-adr
-description: "Create an Architecture Decision Record for a durable or hard-to-reverse decision."
+description: "Use when you make a decision that is durable or hard to reverse, such as a framework, data store or public contract. Creates an Architecture Decision Record."
 ---
 
 # Write ADR
