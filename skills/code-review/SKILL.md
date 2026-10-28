@@ -13,10 +13,10 @@ Review on two axes: standards and specification.
 
 Check the change against the relevant sections:
 
-- [coding/index.md](../../coding/index.md)
-- [architecture/index.md](../../architecture/index.md)
-- [tdd/index.md](../../tdd/index.md)
-- [version-control/index.md](../../version-control/index.md)
+- [coding/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/index.md)
+- [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md)
+- [tdd/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md)
+- [version-control/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/version-control/index.md)
 
 List violations. Order by severity.
 
@@ -30,4 +30,4 @@ List gaps or extra scope.
 
 - Do not mix the two axes in one finding.
 - Prefer concrete, actionable findings.
-- Do not approve a change that weakens a quality gate. See [coding/quality-gates.md](../../coding/quality-gates.md).
+- Do not approve a change that weakens a quality gate. See [coding/quality-gates.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality-gates.md).

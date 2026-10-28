@@ -7,7 +7,7 @@ description: "Use when you add or change behavior in code, or fix a bug. Runs th
 
 Use when you implement behavior.
 
-Follow the red-green-refactor cycle from [tdd/index.md](../../tdd/index.md).
+Follow the red-green-refactor cycle from [tdd/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md).
 
 ## Steps
 
@@ -24,4 +24,4 @@ Follow the red-green-refactor cycle from [tdd/index.md](../../tdd/index.md).
 - Do not skip the failing step.
 - Keep each cycle small.
 
-See also [coding/testing.md](../../coding/testing.md).
+See also [coding/testing.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/testing.md).

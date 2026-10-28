@@ -7,7 +7,7 @@ description: "Use when you make a decision that is durable or hard to reverse, s
 
 Use when a design decision is durable or hard to reverse.
 
-Create an Architecture Decision Record using [architecture/adrs.md](../../architecture/adrs.md).
+Create an Architecture Decision Record using [architecture/adrs.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/adrs.md).
 
 ## Steps
 
