@@ -1,31 +1,27 @@
 #!/usr/bin/env node
-// Check that every relative Markdown link in the repository points to a file
-// or folder that exists inside the repository. External links (with a URL
-// scheme) and pure anchors are not checked. Links in fenced code blocks and
-// inline code are ignored.
+// Check that every Markdown link in the repository points to a file or folder
+// that exists inside the repository. Relative links resolve against the file
+// that contains them. Absolute links to a file in this repository (raw and
+// blob or tree URLs on GitHub, with any ref) resolve against the local tree,
+// as Markdown links or as bare URLs. Other URLs and pure anchors are not
+// checked, because a network check is not deterministic. Links in fenced code
+// blocks and inline code are ignored.
 
-import { readdir, readFile, stat } from "node:fs/promises";
-import { dirname, join, relative, resolve, sep } from "node:path";
+import { readFile, stat } from "node:fs/promises";
+import { dirname, relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
+import { markdownFiles } from "./markdown-files.mjs";
 
-const SKIP_DIRS = new Set([".git", "node_modules"]);
 // [text](target) and ![alt](target). The target is <...> or has no spaces,
 // and an optional "title" can follow.
 const LINK_PATTERN = /!?\[[^\]]*\]\(\s*(<[^>]*>|[^\s)]+)(?:\s+"[^"]*")?\s*\)/g;
 const SCHEME_PATTERN = /^[a-z][a-z0-9+.-]*:/i;
-
-async function markdownFiles(root, dir = root) {
-  const found = [];
-  for (const entry of await readdir(dir, { withFileTypes: true })) {
-    const full = join(dir, entry.name);
-    if (entry.isDirectory()) {
-      if (!SKIP_DIRS.has(entry.name)) found.push(...(await markdownFiles(root, full)));
-    } else if (entry.isFile() && entry.name.endsWith(".md")) {
-      found.push(full);
-    }
-  }
-  return found.sort();
-}
+// A bare URL in prose. Trailing punctuation is not part of the URL.
+const BARE_URL_PATTERN = /https?:\/\/[^\s<>()[\]"'`]+/g;
+const TRAILING_PUNCTUATION = /[.,;:!?]+$/;
+// A file or folder in this repository on GitHub. Group 1 is the path.
+const REPO_URL_PATTERN =
+  /^https?:\/\/(?:raw\.githubusercontent\.com\/daniel-kindl\/dkstack\/[^/?#]+|github\.com\/daniel-kindl\/dkstack\/(?:blob|tree)\/[^/?#]+)(\/[^?#]*)?/i;
 
 // Yield { line, target } for each link outside code.
 function* linksIn(text) {
@@ -45,6 +41,9 @@ function* linksIn(text) {
       let target = match[1];
       if (target.startsWith("<")) target = target.slice(1, -1);
       yield { line: i + 1, target };
+    }
+    for (const match of prose.replace(LINK_PATTERN, "").matchAll(BARE_URL_PATTERN)) {
+      yield { line: i + 1, target: match[0].replace(TRAILING_PUNCTUATION, "") };
     }
   }
 }
@@ -66,15 +65,16 @@ export async function checkLinks(root) {
     const relFile = relative(root, file).split(sep).join("/");
     const text = await readFile(file, "utf8");
     for (const { line, target } of linksIn(text)) {
-      if (SCHEME_PATTERN.test(target) || target.startsWith("#")) continue;
+      const repoUrl = REPO_URL_PATTERN.exec(target);
+      if (!repoUrl && (SCHEME_PATTERN.test(target) || target.startsWith("#"))) continue;
       let path;
       try {
-        path = decodeURI(target.split("#")[0]);
+        path = decodeURI(repoUrl ? (repoUrl[1] ?? "").replace(/^\//, "") : target.split("#")[0]);
       } catch {
         errors.push(`${relFile}:${line}: broken link ${target}`);
         continue;
       }
-      const full = resolve(dirname(file), path);
+      const full = resolve(repoUrl ? root : dirname(file), path);
       const resolved = relative(root, full).split(sep).join("/");
       links.push({ file: relFile, line, target, resolved });
       if (resolved === ".." || resolved.startsWith("../")) {
@@ -96,7 +96,7 @@ async function main() {
     process.exitCode = 1;
     return;
   }
-  console.log(`${checked} relative link(s) resolve.`);
+  console.log(`${checked} link(s) resolve.`);
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
