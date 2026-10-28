@@ -4,10 +4,14 @@ Use conventional commits. Keep history clear and machine-readable. Use short-liv
 
 ## Rules
 
-- Use the format: `type: description`
+- Use the format: `type(scope)!: description`
+- The scope is optional. It names the part of the project that the change touches, for example
+  `fix(skills): ...`. Use only `a-z`, `0-9` and single hyphens.
+- The `!` is optional. It marks a breaking change, for example `feat(api)!: ...`. A breaking change
+  needs a MAJOR version. See [versioning](../versioning/index.md).
 - Common types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`.
 - Write the description in imperative mood. Start with a verb.
-- Keep the subject line short (50 characters or fewer).
+- Keep the subject line short (50 characters or fewer). The type, the scope and the `!` count.
 - Put extra detail in the body when needed.
 - One logical change per commit.
 - Do not mix unrelated changes in one commit.
@@ -25,6 +29,16 @@ Accept email and password. Return a session token on success.
 ```
 
 The type and description are clear. The body adds context.
+
+## Example with a scope and a breaking change
+
+```
+feat(api)!: remove the v0 endpoints
+
+Clients must use the v1 endpoints.
+```
+
+The scope names the changed part. The `!` tells readers and tools that this is a breaking change.
 
 ## Bad example
 
