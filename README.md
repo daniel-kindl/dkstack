@@ -9,8 +9,10 @@ Update this repository once. Point agents at it so they follow the current rules
 Consumers follow the `v1` release branch. See
 [ADR 0001](docs/adr/0001-how-consumers-follow-versions.md).
 
-The `v1` branch and the `vX.Y.Z` tags do not exist yet. The owner creates them at the first
-release. Until then, each URL and command in this file that uses `v1` fails.
+The owner creates the `v1` branch at the first release and moves it forward at each later
+compatible release. Each release also gets a fixed `vX.Y.Z` tag. Before the first release, the
+URLs and commands in this file that use `v1` fail. See [CHANGELOG.md](CHANGELOG.md) for the
+releases.
 
 ## How to use
 
