@@ -1,6 +1,6 @@
 ---
 name: bootstrap
-description: "Bootstrap a repository with conventional commits, short-lived branches, semver, strict editorconfig, warnings-as-errors, and deterministic checks."
+description: "Use when you create a new repository or a repository has no commit, branch or version rules yet. Sets up conventional commits, short-lived branches, semver, strict editorconfig, warnings as errors and deterministic checks."
 ---
 
 # Bootstrap

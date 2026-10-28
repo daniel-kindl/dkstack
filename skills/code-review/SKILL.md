@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: "Review a change on two axes: standards compliance and specification fidelity."
+description: "Use when you review a pull request or a diff, including your own before you open a PR. Checks the change against the repository standards and the specification."
 ---
 
 # Code review
