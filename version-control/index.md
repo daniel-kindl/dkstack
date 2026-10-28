@@ -12,7 +12,8 @@ Use conventional commits. Keep history clear and machine-readable. Use short-liv
 - Common types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`.
 - Write the description in imperative mood. Start with a verb.
 - Keep the subject line short (50 characters or fewer). The type, the scope and the `!` count.
-  A character is one Unicode code point, so an emoji or an accented letter counts as one.
+  A character is one Unicode code point. Some marks that look like one character, such as a flag
+  emoji or a letter with a combining accent, are more than one code point.
   The ` (#NN)` suffix that GitHub adds to a squash commit does not count.
 - Put extra detail in the body when needed.
 - One logical change per commit.
