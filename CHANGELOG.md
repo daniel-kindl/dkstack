@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `coding/quality-gates.md`: an exception is allowed only when the cause cannot be fixed in the
+  repository. It needs a rule ID, the smallest scope, a reason, and a review. Blanket suppressions
+  stay forbidden. This replaces "Do not add exceptions".
+
 ## [1.0.0] - 2026-10-28
 
 ### Added
