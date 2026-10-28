@@ -12,6 +12,7 @@ Coding standards and practices.
 - [security.md](security.md): Security basics.
 - [testing.md](testing.md): Testing rules.
 - [dependencies.md](dependencies.md): No unjustified dependencies.
+- [debugging.md](debugging.md): Reproduce the problem and fix the cause.
 
 ## Application
 
