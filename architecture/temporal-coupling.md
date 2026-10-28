@@ -19,5 +19,4 @@ Each operation receives all the data it needs. Order of calls does not matter.
 
 You must call `initialize` before `process`, and `process` before `finish`, or the component fails or produces wrong results. The requirement is not visible in the interface.
 
-Related: [design-by-contract.md](design-by-contract.md), [orthogonality.md](orthogonality.md),
-[concurrency.md](concurrency.md).
+Related: [design-by-contract.md](design-by-contract.md), [orthogonality.md](orthogonality.md), [concurrency.md](concurrency.md).

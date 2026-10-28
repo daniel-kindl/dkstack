@@ -2,8 +2,7 @@
 
 Model event-driven behavior as explicit states and transitions.
 
-Do not track behavior with many loose boolean flags. Flags allow combinations that must never
-occur. A state machine has a fixed set of states and a named transition for each allowed event.
+Do not track behavior with many boolean flags. Flags allow combinations that must never occur. A state machine has a fixed set of states and a named transition for each allowed event.
 
 ## Rules
 
@@ -25,7 +24,7 @@ connecting + failed     -> closed
 open       + disconnect -> closed
 ```
 
-An impossible combination cannot be stored. Each transition is named and testable.
+The field cannot store an impossible combination. Each transition has a name and a test.
 
 ## Bad example
 
@@ -37,16 +36,12 @@ is_open = true
 is_closed = false
 ```
 
-The flags say that the connection is connecting and open at the same time. No code stops this
-combination.
+The flags say that the connection is connecting and open at the same time. No code stops this combination.
 
-## Related ways to handle events
+## Other event patterns
 
 - Observer: an object tells its registered listeners when it changes.
-- Publish/subscribe: a channel carries events from publishers to subscribers that do not know
-  each other.
-- Streams: you process events as a sequence of values, with operations such as filter and map.
+- Publish/subscribe: a channel carries events from publishers to subscribers that do not know each other.
+- Streams: code processes events as a sequence of values, with operations such as filter and map.
 
-Related: [temporal-coupling.md](temporal-coupling.md),
-[actors-and-blackboards.md](actors-and-blackboards.md),
-[design-by-contract.md](design-by-contract.md).
+Related: [temporal-coupling.md](temporal-coupling.md), [actors-and-blackboards.md](actors-and-blackboards.md), [design-by-contract.md](design-by-contract.md).
