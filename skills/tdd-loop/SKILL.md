@@ -9,6 +9,8 @@ Use when you implement behavior.
 
 Follow the red-green-refactor cycle from [tdd/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md).
 
+If an active feature plan exists, read its next unblocked item first. After implementation and verification, record actual evidence, commit reference and status according to [feature plans](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/feature-plans.md).
+
 ## Steps
 
 1. Write a failing test that describes the desired behavior. Confirm it fails for the right reason.
