@@ -40,7 +40,7 @@ The steps expect a pull request on a code host, a base ref, a specification, aut
 - No base ref, for example a working tree or a patch: review the uncommitted changes or the given patch. State exactly what you reviewed, for example "uncommitted changes on branch `x` at commit `abc1234`" or the patch name.
 - No pull request text yet, for example when you review your own change before you open a pull request: in step 3, check the planned title and body and the commit messages. If none of them exists, write NOT RUN for step 3.
 - No automated checks on the code host: say so in step 8. Run the project's own checks locally if you can. A local run is level 4, Run, only for the operating system that you ran it on. Name that system.
-- No specification or issue: say so in step 4 and use the search order in step 2. If the intent decides the verdict, ask the requester before you give the verdict.
+- No specification or issue: say so in step 4 and use the search order in step 2. If the intent decides the verdict, ask the requester before you give the verdict. If you cannot ask, or get no answer, give BLOCKED and state the question.
 - You cannot build or run the artifact: say so in step 8. Each claim then reaches level 3, Reasoned, at most.
 - You cannot read a dkstack page or a project rule, for example because there is no network: say which source you could not read, and do not guess its rules. Use a local copy if one exists, and state its version.
 
@@ -194,7 +194,7 @@ Give one verdict, as [workflow/review-and-merge.md](https://raw.githubuserconten
 
 Post the review as one comment on the pull request. Write it in a file first, then post it. If you cannot post it, see [When a piece is missing](#when-a-piece-is-missing). Use this order:
 
-1. The verdict and the head SHA.
+1. The verdict and the head SHA, or what you reviewed (see [When a piece is missing](#when-a-piece-is-missing)).
 2. A short summary: the number of findings on each axis and the worst finding on each axis.
 3. Standards: the findings, most severe first.
 4. Specification: the findings, most severe first, or "no specification available".
