@@ -8,7 +8,13 @@ Closes #
 
 ## Tests
 
-<!-- List the tests that prove the behavior. For a docs-only change, say why no test covers it. -->
+<!--
+List the tests that prove the behavior.
+Say which tests you wrote first and how each one failed before the change.
+For a docs-only change, say why no test covers it.
+Rules: https://github.com/daniel-kindl/dkstack/blob/main/tdd/index.md
+and https://github.com/daniel-kindl/dkstack/blob/main/coding/testing.md
+-->
 
 ## Checks
 
@@ -22,4 +28,5 @@ Closes #
 - [ ] The title is a [conventional commit](https://github.com/daniel-kindl/dkstack/blob/main/version-control/index.md).
 - [ ] The change has the scope of one issue. See
   [workflow/review-and-merge.md](https://github.com/daniel-kindl/dkstack/blob/main/workflow/review-and-merge.md).
-- [ ] No em dash or en dash. See [writing/index.md](https://github.com/daniel-kindl/dkstack/blob/main/writing/index.md).
+- [ ] No em dash or en dash. See
+  [writing/index.md](https://github.com/daniel-kindl/dkstack/blob/main/writing/index.md).
