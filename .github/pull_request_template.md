@@ -25,8 +25,10 @@ and https://github.com/daniel-kindl/dkstack/blob/main/coding/testing.md
 
 ## Checklist
 
-- [ ] The title is a [conventional commit](https://github.com/daniel-kindl/dkstack/blob/main/version-control/index.md).
-- [ ] The change has the scope of one issue. See
-  [workflow/review-and-merge.md](https://github.com/daniel-kindl/dkstack/blob/main/workflow/review-and-merge.md).
-- [ ] No em dash or en dash. See
-  [writing/index.md](https://github.com/daniel-kindl/dkstack/blob/main/writing/index.md).
+- [ ] The title is a [conventional commit][cc].
+- [ ] The change has the scope of one issue. See [review and merge][rm].
+- [ ] No em dash or en dash. See [writing][wr].
+
+[cc]: https://github.com/daniel-kindl/dkstack/blob/main/version-control/index.md
+[rm]: https://github.com/daniel-kindl/dkstack/blob/main/workflow/review-and-merge.md
+[wr]: https://github.com/daniel-kindl/dkstack/blob/main/writing/index.md
