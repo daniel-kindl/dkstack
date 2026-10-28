@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `version-control/`: the commit subject format is now `type(scope)!: description`. The scope
+  and the `!` breaking-change marker are optional. The 50-character limit stays.
+
 ## [1.0.0] - 2026-10-28
 
 ### Added
