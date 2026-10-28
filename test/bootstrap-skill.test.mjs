@@ -30,10 +30,11 @@ test("the bootstrap CI workflow example passes the dkstack workflow check", asyn
   }
 });
 
-test("the bootstrap CI workflow example runs npm ci and fails on a high npm audit finding", async () => {
+test("the bootstrap CI example runs npm ci and fails on a high npm audit finding", async () => {
   const lines = (await exampleFile(".github/workflows/ci.yml")).split("\n").map((l) => l.trim());
-  assert.ok(lines.includes("- run: npm ci"), "npm ci installs from the committed lockfile");
-  assert.ok(lines.includes("- run: npm audit --audit-level=high"), "npm audit fails on high or critical");
+  assert.ok(lines.includes("- run: npm ci"), "npm ci must install from the lockfile");
+  const audit = "- run: npm audit --audit-level=high";
+  assert.ok(lines.includes(audit), "npm audit must fail on high or critical");
 });
 
 test("the bootstrap Dependabot example updates npm and github-actions", async () => {
