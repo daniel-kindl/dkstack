@@ -9,6 +9,8 @@ Use when you design or change system structure.
 
 Read the relevant architecture principles and check the change against them.
 
+If the feature has a plan, read its constraints and decisions before you check the design. Record each important new decision in the plan. Keep the permanent decisions in an ADR or in the permanent documentation. Follow [feature plans](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/feature-plans.md).
+
 ## Steps
 
 1. Identify the design decisions in the task.

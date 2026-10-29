@@ -2,6 +2,8 @@
 
 Every change goes from an issue to a reviewed pull request. No change reaches `main` without review.
 
+If the feature has a plan, follow [feature plans](feature-plans.md) for review and cleanup. Review the plan before you remove it in a last commit on the branch. A commit that only removes the plan does not need a new review. Any other change does.
+
 ## Rules
 
 - Implement from an issue with acceptance criteria. Reason: the issue states the scope that the
