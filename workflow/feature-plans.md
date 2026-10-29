@@ -12,7 +12,7 @@ A feature can have one plan that stays in the repository while the work continue
 
 ## Status and evidence
 
-Use `PENDING`, `IN_PROGRESS`, `BLOCKED` and `COMPLETED` for work items. Mark an item `COMPLETED` only after you commit its changes and do its required checks. A failed check or a check that did not run is not a pass. For each blocker, write what must happen to remove it. Keep a handoff note with the next action and the risks that remain.
+Use `PENDING`, `IN_PROGRESS`, `BLOCKED` and `COMPLETED` for work items. The `Status` field of the feature uses the same values. Mark an item `COMPLETED` only after you commit its changes and do its required checks. A failed check or a check that did not run is not a pass. For each blocker, write what must happen to remove it. Keep a handoff note with the next action and the risks that remain.
 
 A planned commit is a proposal. It does not say that the commit exists. A commit can contain many small TDD cycles, or one cycle can go across commits. The final pull request must pass the required quality gates. Do not say that each commit in the red phase passed all checks.
 
