@@ -22,7 +22,7 @@ test("the plan-work skill uses subagents with a complete brief", async () => {
   assert.match(text, /If you can start subagents/);
   assert.match(text, /complete without your context/);
   assert.match(text, /word limit/);
-  assert.match(text, /"Report to me only\. Do not change the plan, commit or push\."/);
+  assert.match(text, /"Report to me only\. Do not change the plan, commit, push, post, approve or merge\."/);
   assert.match(text, /Check each difference that a report gives against its source/);
 });
 

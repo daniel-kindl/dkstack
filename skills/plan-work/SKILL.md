@@ -65,7 +65,7 @@ If you can start subagents, use them for the checks that do not depend on each o
 - The source for its comparison: the issue text, the list of commits on the branch, or the check results.
 - The full text of step 6 and the status and evidence rules in the shared protocol.
 - What to report, and a word limit, for example 300 words.
-- This line: "Report to me only. Do not change the plan, commit or push."
+- This line: "Report to me only. Do not change the plan, commit, push, post, approve or merge."
 
 Collect the reports. Check each difference that a report gives against its source before you change the plan. If you cannot find the difference in the source, do not change the plan for it, and say so. Then update the plan yourself.
 
