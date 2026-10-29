@@ -48,3 +48,8 @@ test("the plan-work skill names no tool or platform", async () => {
     assert.doesNotMatch(text, name);
   }
 });
+
+test("the plan-work skill links the small steps principle", async () => {
+  const text = await section("Steps");
+  assert.match(text, /architecture\/small-steps\.md/);
+});
