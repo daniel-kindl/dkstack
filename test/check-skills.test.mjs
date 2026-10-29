@@ -29,6 +29,7 @@ test("the repository skills use the folder layout and valid frontmatter", async 
     "bootstrap",
     "clarify-intent",
     "code-review",
+    "plan-work",
     "tdd-loop",
     "triage",
     "write-adr",
