@@ -80,7 +80,7 @@ The steps expect an issue, a feature branch, a pull request, automated checks an
 - No pull request yet: write `not created` in the `PR` field. Update the field when the pull request exists.
 - No automated checks: run the project checks locally if you can, and record the real result as evidence. If you cannot run a check, record it as not run. A check that did not run is not a pass.
 - You cannot write to the plan path: do not write the plan to a different path on your own. Give the plan in your report, say why you could not write it, and ask where to put it.
-- The plan changed since you read it, for example because another agent edited it: read the latest version again. Do not overwrite the other edits. Compare the two changes and keep both where they agree. If they disagree, record the conflict in the plan as an open question and ask.
+- The plan changed since you read it, for example because another agent edited it: follow step 5 in [feature-plans.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/feature-plans.md).
 
 ## Boundaries
 
