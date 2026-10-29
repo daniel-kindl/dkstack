@@ -8,7 +8,7 @@ A feature can have one plan that stays in the repository while the work continue
 2. Read its goal, constraints, tasks, decisions and handoff note. Compare the statuses in the plan with the working tree, the commit history and the real check results. Do not trust a claim that you did not check.
 3. Select the next item that is not blocked. If the plan conflicts with the code or a requirement is not clear, solve this before you start.
 4. Update the plan after each important step. Record the identifiers of the commits that are done and the real check results. Record the failed checks and the checks that did not run.
-5. Before you write to the plan, read its latest version. Do not overwrite the edits of another agent. If the plan changed since you read it, read the latest version again. Keep the other edits. Add your edits where they change different items. If both change the same item, record the conflict in the plan as an open question and ask.
+5. Before you write to the plan, read its latest version. Do not overwrite the edits of another agent. Keep the other edits. Add your edits where they change different items. If both change the same item, record the conflict in the plan as an open question and ask.
 
 ## Status and evidence
 
