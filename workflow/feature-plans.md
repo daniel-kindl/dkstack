@@ -18,6 +18,6 @@ A planned commit is a proposal. It does not say that the commit exists. A commit
 
 ## Review and cleanup
 
-Review the plan against the final change, the acceptance criteria of the issue and the check results. Keep the permanent decisions in an ADR or in the permanent documentation. By default, after the final review passes, remove the completed plan in a last commit on the feature branch, before the merge. The reviewers must read the plan before it is removed. If a change comes after that review, review it again. Do not remove a plan that is not complete or that is blocked. A project can choose to archive or keep its plans, if it says so explicitly. Removing a plan does not prove that the work is complete.
+Review the plan against the final change, the acceptance criteria of the issue and the check results. Keep the permanent decisions in an ADR or in the permanent documentation. By default, after the final review passes, remove the completed plan in a last commit on the feature branch, before the merge. The reviewers must read the plan before it is removed. A commit that only removes the plan does not need a new review. Any other change does. Do not remove a plan that is not complete or that is blocked. A project can choose to archive or keep its plans, if it says so explicitly. Removing a plan does not prove that the work is complete.
 
 A plan helps agents work together. It does not give permission to break the dkstack safety rules or the project requirements.
