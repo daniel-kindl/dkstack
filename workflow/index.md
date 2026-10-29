@@ -6,11 +6,10 @@ These rules prevent real damage in a shared repository. Read them before you cha
 
 ## Sections
 
-- [feature-plans.md](feature-plans.md): Shared protocol for persistent feature plans and agent handoffs.
-
 - [roles.md](roles.md): Who does what. Generic role names, mapped to one team.
 - [review-and-merge.md](review-and-merge.md): The issue to merge flow, review, merge and
   escalation.
+- [feature-plans.md](feature-plans.md): The plan for a feature, and how agents hand it over.
 - [safety.md](safety.md): Actions that no agent does, and what counts as approval.
 
 ## Flow

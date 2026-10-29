@@ -9,7 +9,7 @@ Use when you implement behavior.
 
 Follow the red-green-refactor cycle from [tdd/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md).
 
-If an active feature plan exists, read its next unblocked item first. After implementation and verification, record actual evidence, commit reference and status according to [feature plans](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/feature-plans.md).
+If the feature has an active plan, read its next item that is not blocked first. After you implement and verify the item, record the real evidence, the commit identifier and the status. Follow [feature plans](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/feature-plans.md).
 
 ## Steps
 

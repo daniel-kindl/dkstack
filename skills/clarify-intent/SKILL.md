@@ -9,7 +9,7 @@ Use before you implement a non-trivial change.
 
 Force clarification of requirements and domain language.
 
-If a relevant feature plan exists, consult its open questions and requirements. Record clarified decisions there without inventing answers. See [feature plans](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/feature-plans.md).
+If the feature has a plan, read its open questions and requirements. Record each decision that you clarify in the plan. Do not invent answers. See [feature plans](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/feature-plans.md).
 
 ## Steps
 

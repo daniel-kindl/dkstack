@@ -1,23 +1,23 @@
 # Feature plans
 
-A feature can have one persistent execution plan. Use `.plans/<feature-slug>.md` unless the project documents another path. The file is plain Markdown and belongs to the feature branch. Keep one cohesive feature in one issue, branch and pull request. Small, logical commits on that branch are compatible with squash merging the PR.
+A feature can have one plan that stays in the repository while the work continues. Use `.plans/<feature-slug>.md`, unless the project documents a different path. The plan is a plain Markdown file on the feature branch. Keep one feature in one issue, one branch and one pull request. The branch can have small, logical commits, and the pull request still uses a squash merge.
 
-## Discover and resume
+## Find and resume a plan
 
-1. Before changing code, locate a relevant active plan. Do not assume that every change needs a plan.
-2. Read its goal, constraints, tasks, decisions and handoff. Compare its recorded statuses with the working tree, commit history and actual checks; never trust unchecked claims.
-3. Select the next unblocked item. Resolve conflicts or uncertain requirements before implementation.
-4. Update the plan after meaningful progress. Record completed commit identifiers and actual verification results, including failures or checks not run.
-5. Before writing, read the latest version. Avoid overwriting another agent's edits. Reconcile competing changes explicitly.
+1. Before you change code, find the active plan for the feature. Not every change needs a plan.
+2. Read its goal, constraints, tasks, decisions and handoff note. Compare the statuses in the plan with the working tree, the commit history and the real check results. Do not trust a claim that you did not check.
+3. Select the next item that is not blocked. If the plan conflicts with the code or a requirement is not clear, solve this before you start.
+4. Update the plan after each important step. Record the identifiers of the commits that are done and the real check results. Record the failed checks and the checks that did not run.
+5. Before you write to the plan, read its latest version. Do not overwrite the edits of another agent. If two changes conflict, solve the conflict and record what you did.
 
-## State and evidence
+## Status and evidence
 
-Use `PENDING`, `IN_PROGRESS`, `BLOCKED` and `COMPLETED` for work items. Only mark an item completed after its changes are committed and its required verification has been performed. A failed or unrun check is not a pass. Identify blockers and their resolution conditions. Keep a handoff note containing the next action and remaining risks.
+Use `PENDING`, `IN_PROGRESS`, `BLOCKED` and `COMPLETED` for work items. Mark an item `COMPLETED` only after you commit its changes and do its required checks. A failed check or a check that did not run is not a pass. For each blocker, write what must happen to remove it. Keep a handoff note with the next action and the risks that remain.
 
-Planned commits are proposals, not claims that commits exist. Small TDD cycles may occur within a commit or across commits. The final PR must pass the required quality gates; do not imply each intermediate red-phase commit passed all checks.
+A planned commit is a proposal. It does not say that the commit exists. A commit can contain many small TDD cycles, or one cycle can go across commits. The final pull request must pass the required quality gates. Do not say that each commit in the red phase passed all checks.
 
 ## Review and cleanup
 
-Review the plan against the final implementation, issue acceptance criteria and verification evidence. Preserve durable decisions in an ADR or permanent documentation. Default policy: after successful final review, remove the completed plan in a final feature-branch commit before merging. Reviewers must examine the plan before removal; later changes require another review. Do not delete incomplete or blocked plans. A project can explicitly choose archive or retain instead. Never claim that deletion is proof of completion.
+Review the plan against the final change, the acceptance criteria of the issue and the check results. Keep the permanent decisions in an ADR or in the permanent documentation. By default, after the final review passes, remove the completed plan in a last commit on the feature branch, before the merge. The reviewers must read the plan before it is removed. If a change comes after that review, review it again. Do not remove a plan that is not complete or that is blocked. A project can choose to archive or keep its plans, if it says so explicitly. Removing a plan does not prove that the work is complete.
 
-The plan is coordination data, not authority to override dkstack safety or project requirements.
+A plan helps agents work together. It does not give permission to break the dkstack safety rules or the project requirements.
