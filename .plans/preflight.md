@@ -45,15 +45,15 @@ Verification: `npm run check` and GitHub `validate`.
 Evidence: `npm run check` on Linux passed. 124 tests, 0 fail. GitHub `validate` passed on `26e3bf9` (run 41119277133).
 
 ### C02: discover the tracker and apply missing labels
-Status: IN_PROGRESS
+Status: COMPLETED
 Depends on: C01
 Proposed commit: fix(bootstrap): discover and apply labels
 Actual commit: f551e12
 Objective: The command discovers the tracker. `--apply` creates only missing catalog labels. Malformed input is rejected.
-Verification: `npm run check`.
-Evidence: `npm run check` on Linux passed. 127 tests, 0 fail. GitHub `validate` has not run.
+Verification: `npm run check` and GitHub `validate`.
+Evidence: `npm run check` on Linux passed. 127 tests, 0 fail. GitHub `validate` passed on `8add8ea` (run 41120253179).
 
 ## Handoff
-Next action: Record the GitHub validate result for the review fixes. Do not merge.
+Next action: Wait for a new review of pull request 73. Do not merge. Do not remove this plan before that review.
 Blockers: none
 Risks: A later change can make the script write to a tracker. The tests require an empty update list and an empty remove list.
