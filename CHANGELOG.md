@@ -32,6 +32,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `skills/bootstrap`: the steps now describe each need and name no tools or platforms. Steps 7 to
   11 still cover each supply chain rule in `coding/dependencies.md`. The tool-specific examples
   are removed, and the tests now check the agnostic text.
+- `skills/writing-check`, `skills/apply-architecture`, `skills/write-adr` and
+  `skills/clarify-intent`: each skill has a Subagents section. A new reader checks the text in
+  `writing-check`. Each design gets its own subagent in `apply-architecture`. Each option gets
+  its own subagent in `write-adr`. One subagent reads the code and one subagent reads the docs in
+  `clarify-intent`. The agent checks the reports itself. If the agent cannot start subagents, it
+  does the steps one at a time in order.
 - `workflow/safety.md` and `versioning/index.md`: an agent can publish or release only with the
   owner's explicit OK for that release. The OK names the exact version. It never covers a
   production deploy or a project's release workflow.

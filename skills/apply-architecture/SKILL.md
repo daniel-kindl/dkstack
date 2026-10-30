@@ -19,6 +19,20 @@ If the feature has a plan, read its constraints and decisions before you check t
 4. Prefer the smallest design that satisfies the principles.
 5. If a principle is violated, propose a smaller or more reversible alternative.
 
+## Subagents
+
+If you can start subagents, use them when two or more designs are possible. Do step 1 yourself. Then check each design against the principles at the same time, each design in its own subagent. Give each subagent a brief that is complete without your context:
+
+- The task, the design decisions from step 1 and the full text of the one design that it checks.
+- The full text of steps 2 and 3, and the rules of this skill.
+- What to report: for each decision, the principle that it follows or violates, with a link to the principle file. Also the trade-offs.
+- A word limit, for example 400 words.
+- This line: "Report to me only. Do not change code, post, approve or merge."
+
+Then collect the reports. Do steps 4 and 5 yourself. A report from a subagent is a claim. Read each principle file that a report links before you use its result. Compare the designs yourself. Do not select a design only because a report prefers it.
+
+If you cannot start subagents, do the steps one at a time in the order of this skill. For each design, do steps 2 and 3. Do steps 4 and 5 once, after you have checked every design.
+
 ## Rules
 
 - Do not invent new principles. Use only the files in architecture/.
