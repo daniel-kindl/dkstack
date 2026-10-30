@@ -67,6 +67,16 @@ Apply the rules from version-control, versioning, and coding sections. Steps 7 t
     - Cover the pinned CI actions from step 7, because pinned versions do not update themselves.
     - Check for updates at least weekly.
 
+12. Run the tracker preflight before you change the tracker.
+    - Read [preflight.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/preflight.md).
+    - Run scripts/preflight.mjs. The default is a dry run.
+    - Report each unsupported capability and its fallback.
+    - Create a missing catalog label only when the plan mode is apply.
+    - Do not change an existing label color or description.
+    - Do not remove a label.
+    - Do not change protection, settings or infrastructure.
+    - Run the preflight again after a create. The second plan has no new create.
+
 ## Rules
 
 - Do not weaken existing quality gates.

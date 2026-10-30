@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `scripts/preflight.mjs` and `workflow/preflight.md`: a dry-run tracker preflight. It reports
+  unsupported capabilities and their fallbacks. It plans missing catalog labels. It does not
+  change an existing label, remove a label, or change protection, settings or infrastructure.
+  A second run plans no new create. The page includes an optional mapping for a label name, a
+  color and a description. `skills/bootstrap` runs this preflight.
 - `workflow/work.md`: the work contract. It defines the issue lifecycle, readiness, sources,
   authorization and session isolation. It links the safety, role, review and feature-plan rules
   and does not copy them. A prerequisite unlocks work only when it is complete. A rejected or
