@@ -60,7 +60,7 @@ Evidence: `npm run check` on Linux passed. 111 tests, 0 fail. GitHub `validate` 
 Status: IN_PROGRESS
 Depends on: C01
 Proposed commit: docs(workflow): fix blocker and mapping rules
-Actual commit: none until this commit exists
+Actual commit: 5dc729426f377ff1498fc9770c3772ed1d9f6057
 Objective: A closed rejected or abandoned prerequisite does not unlock work. Routine in-scope mapping does not need a new owner approval.
 Work: Change the readiness rule and the mapping authorization in `workflow/work.md`. Lock both with tests.
 Verification: `npm run check`.
@@ -71,6 +71,6 @@ Evidence: `npm run check` on Linux passed. 113 tests, 0 fail. GitHub `validate` 
 `npm run check` on Linux passed. 111 tests, 0 fail. GitHub `validate` passed on `d676a8e` (run 41117498945). No tag.
 
 ## Handoff
-Next action: Push the review fixes and record the GitHub validate result. Do not merge. Do not remove this plan before review.
+Next action: Record the GitHub validate result for the review fixes. Do not mark C02 complete until that check passes. Do not merge.
 Blockers: none
 Risks: A later issue can copy these rules into a skill. The test forbids a copy of the force-push rule and of the reviewed-head merge sentence.
