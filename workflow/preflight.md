@@ -3,7 +3,12 @@
 Check the tracker before an agent changes it. These rules do not require a named product. Read
 [work.md](work.md) for the issue contract. This page does not copy those rules.
 
-The command is `scripts/preflight.mjs`. It prints a plan. It does not change the tracker.
+Run `scripts/preflight.mjs` with no arguments. The command discovers the tracker for this
+repository and prints a plan. The default is a dry run. It does not create labels.
+
+Run `scripts/preflight.mjs --apply` to create labels. That run creates only the missing catalog
+labels. It does not change an existing label. It does not remove a label. A report file is an
+explicit plan input. It does not replace discovery when the command has no file.
 
 ## Capabilities
 
@@ -73,9 +78,11 @@ owner. See [safety.md](safety.md).
 A tracker may store a label as a name, a color and a description. The color is six hexadecimal
 digits. The catalog name is the label name.
 
-One such tracker is GitHub. The catalog name, color and description are the label fields. The
-portable contract does not require GitHub. Another tracker maps the same three fields to its own
-label record.
+One such tracker is GitHub. The command then uses the GitHub client. It reads the repository
+record and the label list. With `--apply`, it creates each missing catalog label by name, color
+and description. It does not pass an update flag. It does not delete a label. The portable
+contract does not require GitHub. Another tracker maps the same three fields to its own label
+record.
 
 ## Related
 
