@@ -14,8 +14,10 @@ If the feature has a plan, follow [feature plans](feature-plans.md) for review a
   run as NOT RUN. Reason: the reviewer must know what was tested.
 - The review gives one verdict: APPROVE-RECOMMENDED, CHANGES-REQUESTED or BLOCKED. Reason: one
   verdict tells the author the next step.
-- The reviewer merges only when the review passes and all required checks are green. Reason: a
-  failed check or open finding must not reach `main`.
+- The reviewer merges only the head that they reviewed, and only when the review passes, all
+  required checks are green, and the code host shows the pull request as ready to merge with no
+  rule bypassed. Reason: a later push, a failed check, an open finding or a bypassed rule must
+  not reach `main`.
 - Use squash merge only and keep history linear. Reason: each pull request becomes one commit on
   `main`.
 - The pull request title is the commit message. It must be a

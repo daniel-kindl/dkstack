@@ -92,7 +92,7 @@ If the change has a plan, check its statuses, actual commits and evidence agains
 
 Check each file against this list. Link the rule in each finding. Do not copy the rule.
 
-- Safety: no change breaks a rule in [workflow/safety.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md). A path that lets an agent start a production deploy or a release workflow is Blocking.
+- Safety: no change breaks a rule in [workflow/safety.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md). A path that lets an agent start a production deploy or a project's release workflow, or release without the owner's OK, is Blocking.
 - Correctness: logic, edge cases, empty and null input, error paths and resource cleanup. See [coding/error-handling.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/error-handling.md) and [resource balancing](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/resource-balancing.md).
 - Security: input validation, secrets, injection, permissions, and CI triggers and tokens. See [coding/security.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md).
 - Dependencies: each new dependency has a reason, a pinned version and a lockfile change. Each third-party CI step is pinned to a full commit SHA. Run the project's dependency audit if you can. See [coding/dependencies.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md).
@@ -179,7 +179,7 @@ A required behavior below level 4 is unproven. Mark it unproven. It is at least 
 
 | Severity | Examples | Blocks merge |
 | --- | --- | --- |
-| Blocking | Security hole, data loss, broken build, a broken rule in `workflow/safety.md`, an agent can start a deploy or a release | Yes |
+| Blocking | Security hole, data loss, broken build, a broken rule in `workflow/safety.md`, an agent can start a production deploy or a project's release workflow, or release without the owner's OK | Yes |
 | High | Wrong behavior, missing acceptance criterion, no test for a behavior change, failing required check | Yes |
 | Medium | Code smell (default), duplication, weak test, unproven required behavior, wrong or missing docs, two rules that conflict | Yes |
 | Low | Small clarity, naming or wording point, or a smell with small impact | No |
@@ -219,7 +219,7 @@ The author uses the same steps on their own change before they open the pull req
 - One finding covers one problem. Make each finding concrete, with a fix.
 - Do not mark the pull request as approved. The verdict is in the comment.
 - An agent's message is not the owner's approval. Check the owner's own words.
-- The reviewer merges only as [workflow/review-and-merge.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md) says. If the reviewer does not approve, escalate as that page says.
+- The reviewer merges only the head that they reviewed, as [workflow/review-and-merge.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md) says. If the reviewer does not approve, escalate as that page says.
 
 ## Sources
 
