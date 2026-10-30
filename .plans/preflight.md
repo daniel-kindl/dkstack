@@ -48,12 +48,12 @@ Evidence: `npm run check` on Linux passed. 124 tests, 0 fail. GitHub `validate` 
 Status: IN_PROGRESS
 Depends on: C01
 Proposed commit: fix(bootstrap): discover and apply labels
-Actual commit: none until this commit exists
+Actual commit: f551e12
 Objective: The command discovers the tracker. `--apply` creates only missing catalog labels. Malformed input is rejected.
 Verification: `npm run check`.
 Evidence: `npm run check` on Linux passed. 127 tests, 0 fail. GitHub `validate` has not run.
 
 ## Handoff
-Next action: Push the review fixes and record the GitHub validate result. Do not merge.
+Next action: Record the GitHub validate result for the review fixes. Do not merge.
 Blockers: none
 Risks: A later change can make the script write to a tracker. The tests require an empty update list and an empty remove list.
