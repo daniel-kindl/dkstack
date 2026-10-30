@@ -2,7 +2,7 @@
 Status: IN_PROGRESS
 Issue: https://github.com/daniel-kindl/dkstack/issues/67
 Branch: docs/67-work-contract
-PR: not created
+PR: https://github.com/daniel-kindl/dkstack/pull/72
 
 ## Goal
 
@@ -45,20 +45,20 @@ Document the portable work contract. Do not add a tracker adapter.
 ## Commit plan
 
 ### C01: work contract
-Status: IN_PROGRESS
+Status: COMPLETED
 Depends on: none
 Proposed commit: docs(workflow): define work management contract
 Actual commit: adb76d03c5a5593893927a173d974ac806db7ccb
 Objective: The work contract states the lifecycle, the sources, the readiness checks, fail closed and session isolation.
 Work: One commit. The tests cover the page and the index, so a split commit would leave the branch red.
-Verification: `npm run check`.
-Evidence: `npm run check` on Linux passed. 111 tests, 0 fail. GitHub `validate` has not run.
+Verification: `npm run check` and GitHub `validate`.
+Evidence: `npm run check` on Linux passed. 111 tests, 0 fail. GitHub `validate` passed on `d676a8e` (run 41117498945).
 
 ## Final verification
 
-`npm run check` on Linux passed. 111 tests, 0 fail. GitHub `validate`: not yet run. No tag.
+`npm run check` on Linux passed. 111 tests, 0 fail. GitHub `validate` passed on `d676a8e` (run 41117498945). No tag.
 
 ## Handoff
-Next action: Open the pull request and record the GitHub validate result. Do not mark C01 complete until that check passes.
+Next action: Wait for review of pull request 72. Do not merge. Do not remove this plan before that review.
 Blockers: none
 Risks: A later issue can copy these rules into a skill. The test forbids a copy of the force-push rule and of the reviewed-head merge sentence.
