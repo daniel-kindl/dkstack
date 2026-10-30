@@ -43,6 +43,7 @@ test("the writing-check skill gives the brief before step 2", async () => {
   assert.notEqual(brief, -1);
   assert.notEqual(step2, -1);
   assert.ok(brief < step2, "the brief must come before step 2");
+  assert.match(text, /has not seen your draft or your context/);
 });
 
 test("the apply-architecture skill chooses only after every design is checked", async () => {

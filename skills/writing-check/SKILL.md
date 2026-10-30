@@ -18,7 +18,7 @@ Apply the rules from [writing/index.md](https://raw.githubusercontent.com/daniel
 
 ## Subagents
 
-If you can start subagents, use one as a new reader. A new reader finds unclear text that the author does not see. Do step 1 yourself. Then start one subagent that has not seen your draft. Give it a brief that is complete without your context before it reads:
+If you can start subagents, use one as a new reader. A new reader finds unclear text that the author does not see. Do step 1 yourself. Then start one subagent that has not seen your draft or your context. Give it a brief that is complete without your context before it reads:
 
 - The full text to check, or its file path.
 - Who the readers are, for example agents or people with limited English.
