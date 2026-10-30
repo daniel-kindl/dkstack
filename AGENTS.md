@@ -52,7 +52,7 @@ Every rule in [workflow/safety.md](workflow/safety.md) is a hard limit. For exam
 - [writing/index.md](writing/index.md): Writing style (ASD-STE100).
 - [skills/index.md](skills/index.md): Skills to apply.
 - [tips/index.md](tips/index.md): Short tips.
-- [workflow/index.md](workflow/index.md): Workflow: roles, review and merge, and safety.
+- [workflow/index.md](workflow/index.md): Workflow: work, roles, review and merge, and safety.
 - [workflow/feature-plans.md](workflow/feature-plans.md): Feature plans. If a feature has a plan,
   find it and compare it with the repository before you implement.
 

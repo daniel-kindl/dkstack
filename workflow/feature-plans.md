@@ -2,6 +2,8 @@
 
 A feature can have one plan that stays in the repository while the work continues. Use `.plans/<feature-slug>.md`, unless the project documents a different path. The plan is a plain Markdown file on the feature branch. Keep one feature in one issue, one branch and one pull request. The branch can have small, logical commits, and the pull request still uses a squash merge.
 
+For the issue lifecycle and for map-work, see [work.md](work.md).
+
 ## Find and resume a plan
 
 1. Before you change code, find the active plan for the feature. Not every change needs a plan.

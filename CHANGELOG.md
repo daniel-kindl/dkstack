@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `workflow/work.md`: the work contract. It defines the issue lifecycle, readiness, sources,
+  authorization and session isolation. It links the safety, role, review and feature-plan rules
+  and does not copy them. The session that maps issues must not implement those issues.
 - `skills/release`: guides a release. It links `versioning/index.md` and `workflow/safety.md` and
   does not copy their rules. An agent publishes only with the owner's explicit OK for that version.
   The OK never covers a production deploy or a project's release workflow.
