@@ -2,7 +2,7 @@
 Status: IN_PROGRESS
 Issue: https://github.com/daniel-kindl/dkstack/issues/64
 Branch: docs/64-release-skill
-PR: not created
+PR: not created until the pull request exists
 
 ## Goal
 
@@ -47,7 +47,7 @@ Add a release skill that links the versioning and safety rules, and add a short 
 Status: IN_PROGRESS
 Depends on: none
 Proposed commit: docs(skills): add release skill and ladder
-Actual commit: none until this commit exists
+Actual commit: 8fea687b84ad0754f028e51a78ed32d5ed6c50b5
 Objective: The release skill links the rules and states the publish rule. Triage maps a bug fix, a feature and a release to skills in order.
 Work: One commit. The tests cover both parts, so a split commit would leave the branch red.
 Verification: `npm run check`.
@@ -58,6 +58,6 @@ Evidence: `npm run check` on Linux passed. 107 tests, 0 fail. GitHub `validate` 
 `npm run check` on Linux passed. 107 tests, 0 fail. GitHub `validate`: not yet run. No tag.
 
 ## Handoff
-Next action: Commit, open the pull request, and record the commit identifier and the CI result.
+Next action: Push the branch, open the pull request, and record the CI result. Do not mark C01 complete until GitHub validate passes.
 Blockers: none
 Risks: A later edit can copy a versioning sentence into the skill. The test forbids the release commands and the SemVer increment sentence.
