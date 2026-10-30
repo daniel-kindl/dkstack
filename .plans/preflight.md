@@ -38,12 +38,12 @@ Add a dry-run tracker preflight and the label catalog to bootstrap.
 Status: IN_PROGRESS
 Depends on: none
 Proposed commit: feat(bootstrap): add preflight and labels
-Actual commit: none until this commit exists
+Actual commit: 51e591e
 Objective: The preflight plans missing labels, reports fallbacks, and does not write.
 Verification: `npm run check`.
 Evidence: `npm run check` on Linux passed. 124 tests, 0 fail. GitHub `validate` has not run.
 
 ## Handoff
-Next action: Commit, open the pull request, and record the validate result.
+Next action: Open the pull request and record the GitHub validate result. Do not mark C01 complete until that check passes.
 Blockers: none
 Risks: A later change can make the script write to a tracker. The tests require an empty update list and an empty remove list.
