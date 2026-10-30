@@ -48,7 +48,7 @@ Document the portable work contract. Do not add a tracker adapter.
 Status: IN_PROGRESS
 Depends on: none
 Proposed commit: docs(workflow): define work management contract
-Actual commit: none until this commit exists
+Actual commit: adb76d03c5a5593893927a173d974ac806db7ccb
 Objective: The work contract states the lifecycle, the sources, the readiness checks, fail closed and session isolation.
 Work: One commit. The tests cover the page and the index, so a split commit would leave the branch red.
 Verification: `npm run check`.
@@ -59,6 +59,6 @@ Evidence: `npm run check` on Linux passed. 111 tests, 0 fail. GitHub `validate` 
 `npm run check` on Linux passed. 111 tests, 0 fail. GitHub `validate`: not yet run. No tag.
 
 ## Handoff
-Next action: Run `npm run check`, commit, open the pull request, and record the result.
+Next action: Open the pull request and record the GitHub validate result. Do not mark C01 complete until that check passes.
 Blockers: none
 Risks: A later issue can copy these rules into a skill. The test forbids a copy of the force-push rule and of the reviewed-head merge sentence.
