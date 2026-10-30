@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `skills/release`: guides a release. It links `versioning/index.md` and `workflow/safety.md` and
+  does not copy their rules. An agent publishes only with the owner's explicit OK for that version.
+  The OK never covers a production deploy or a project's release workflow.
 - `architecture/`: new pages `concurrency.md`, `actors-and-blackboards.md`, `state-machines.md`,
   and `configuration.md`.
 - `skills/plan-work` and `workflow/feature-plans.md`: an agent can write a plan for one feature
@@ -23,7 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AGENTS.md`: names dkstack and its owner. Projects follow `v1`. A dkstack rule wins over a
   project rule, except through a documented exception. The hard limits are the rules in
   `workflow/safety.md`. The general rules are now links to the sections.
-- `skills/triage`: the conflict rule now points to the precedence rules in `AGENTS.md`.
+- `skills/triage`: the conflict rule now points to the precedence rules in `AGENTS.md`. A scale
+  ladder maps a bug fix, a feature and a release to skills in order. A small task uses one or two
+  skills. A review finding goes back to the implementation step. A design finding goes back to the
+  architecture step.
 - `skills/code-review`, `workflow/review-and-merge.md` and `workflow/index.md`: the Blocking row
   and the Safety bullet use the same three cases. The reviewer merges only the head that they
   reviewed, and only when the code host shows the pull request as ready to merge with no rule
