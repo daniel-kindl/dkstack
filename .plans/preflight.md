@@ -2,7 +2,7 @@
 Status: IN_PROGRESS
 Issue: https://github.com/daniel-kindl/dkstack/issues/68
 Branch: feat/68-tracker-preflight
-PR: not created
+PR: https://github.com/daniel-kindl/dkstack/pull/73
 
 ## Goal
 
@@ -35,15 +35,15 @@ Add a dry-run tracker preflight and the label catalog to bootstrap.
 ## Commit plan
 
 ### C01: preflight and labels
-Status: IN_PROGRESS
+Status: COMPLETED
 Depends on: none
 Proposed commit: feat(bootstrap): add preflight and labels
 Actual commit: 51e591e
 Objective: The preflight plans missing labels, reports fallbacks, and does not write.
-Verification: `npm run check`.
-Evidence: `npm run check` on Linux passed. 124 tests, 0 fail. GitHub `validate` has not run.
+Verification: `npm run check` and GitHub `validate`.
+Evidence: `npm run check` on Linux passed. 124 tests, 0 fail. GitHub `validate` passed on `26e3bf9` (run 41119277133).
 
 ## Handoff
-Next action: Open the pull request and record the GitHub validate result. Do not mark C01 complete until that check passes.
+Next action: Wait for review of pull request 73. Do not merge. Do not remove this plan before that review.
 Blockers: none
 Risks: A later change can make the script write to a tracker. The tests require an empty update list and an empty remove list.
