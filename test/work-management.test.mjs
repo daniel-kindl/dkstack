@@ -27,7 +27,7 @@ test("the work contract defines the lifecycle, readiness and sources", async () 
   assert.match(flat, /If eligibility is absent, the issue is not ready/);
   assert.match(flat, /state is ready/);
   assert.match(flat, /eligibility is agent/);
-  assert.match(flat, /[Ee]very prerequisite is closed/);
+  assert.match(flat, /[Ee]very prerequisite is complete/);
   assert.match(flat, /acceptance criteria exist/);
   assert.match(flat, /native hierarchy/);
   assert.match(flat, /native blocker link/);
@@ -45,6 +45,24 @@ test("the work contract fails closed and isolates the mapping session", async ()
   assert.match(flat, /map-work/);
   assert.match(flat, /plan-work/);
   assert.match(flat, /plan-work plans the commits of one issue/);
+});
+
+test("a closed prerequisite unlocks work only when it is complete", async () => {
+  const flat = (await pageText()).replace(/\s+/g, " ");
+  assert.match(flat, /only when that prerequisite is complete/);
+  assert.match(flat, /Closed is not enough/);
+  assert.match(flat, /A rejected prerequisite is not complete/);
+  assert.match(flat, /An abandoned prerequisite is not complete/);
+  assert.match(flat, /does not say whether it is complete, rejected or abandoned, fail closed/);
+  assert.doesNotMatch(flat, /every prerequisite is closed/i);
+});
+
+test("in-scope mapping does not need a separate owner record", async () => {
+  const flat = (await pageText()).replace(/\s+/g, " ");
+  assert.match(flat, /does not need a new approval from the owner/);
+  assert.match(flat, /material expansion of that scope/);
+  assert.match(flat, /restricted action/);
+  assert.doesNotMatch(flat, /authorized map-work in the parent issue/);
 });
 
 test("the work contract links the existing rules and does not copy them", async () => {

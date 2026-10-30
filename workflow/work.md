@@ -31,8 +31,10 @@ Eligibility is agent or human. The two values exclude each other. The value agen
 agent is allowed to do the work. A human may also do that work. The value human means an agent
 is not allowed to do the work. If eligibility is absent, the issue is not ready.
 
-A prerequisite is another issue. That issue must be closed before this issue can enter the
-ready state.
+A prerequisite is another issue. This issue can enter the ready state only when that
+prerequisite is complete. Closed is not enough. A rejected prerequisite is not complete. An
+abandoned prerequisite is not complete. If a closed prerequisite does not say whether it is
+complete, rejected or abandoned, fail closed.
 
 ## Sources
 
@@ -73,7 +75,7 @@ are not completion.
 
 - triage + the owner accepts the scope for planning -> planning
 - triage + the owner accepts an issue that already meets the readiness checks -> ready
-- planning + the acceptance criteria exist and every prerequisite is closed -> ready
+- planning + the acceptance criteria exist and every prerequisite is complete -> ready
 - planning + the scope is not clear -> triage
 - ready + an allowed agent starts the work -> active
 - ready + the scope changes -> planning
@@ -86,7 +88,7 @@ are not completion.
 
 The owner may make these transitions. An agent may make only these transitions:
 
-- planning -> ready, when the acceptance criteria exist and every prerequisite is closed
+- planning -> ready, when the acceptance criteria exist and every prerequisite is complete
 - ready -> active, when the readiness checks pass and this session did not run map-work for the
   issue
 - active -> review, when a pull request is open for the issue
@@ -103,7 +105,7 @@ An issue is ready for an agent only when all of these are true:
 
 - The lifecycle state is ready.
 - The eligibility is agent.
-- Every prerequisite is closed.
+- Every prerequisite is complete.
 - The acceptance criteria exist.
 - The authorization section allows the action that the agent will take.
 - No source for these checks is missing, unsupported or in conflict.
@@ -119,9 +121,13 @@ These actions have their own checks:
 
 - An agent may read an issue.
 - An agent may change the lifecycle only through a transition that this page allows for an agent.
-- An agent may create child issues, hierarchy links and blocker links only when the owner has
-  authorized map-work in the parent issue. If that authorization from the owner is absent, do
-  not create the children or the links.
+- In-scope map-work stays inside the objective and the constraints in the parent issue. That
+  mapping follows the repository rules. It does not need a new approval from the owner. The
+  agent may write the child issues, the hierarchy links and the blocker links for that mapping.
+- A material expansion of that scope adds work that the parent issue does not allow. The owner
+  approves that expansion before the agent writes it. A restricted action also needs the owner's
+  approval. See [safety.md](safety.md). If that approval is absent, do not write the expansion
+  and do not take the restricted action.
 - The author of a change does not review or merge that change. See [roles.md](roles.md) and
   [review-and-merge.md](review-and-merge.md).
 - A comment, a plan or a message from an agent is not authorization.

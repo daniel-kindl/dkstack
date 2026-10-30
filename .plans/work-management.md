@@ -40,6 +40,8 @@ Document the portable work contract. Do not add a tracker adapter.
 - Absent eligibility means the issue is not ready. Decision: from the fail-closed rule and from issue #70, agent-ready is explicit.
 - Priority does not change readiness. Decision: issue #68 makes priority optional.
 - This issue does not change `skills/triage`. Decision: issue #71 routes triage to the contract.
+- A prerequisite unlocks work only when it is complete. A rejected or abandoned prerequisite does not. Decision: review of pull request 72.
+- In-scope map-work follows the repository rules and does not need a new owner approval. A material scope expansion or a restricted action needs the owner. Decision: review of pull request 72.
 - No open question.
 
 ## Commit plan
@@ -54,11 +56,21 @@ Work: One commit. The tests cover the page and the index, so a split commit woul
 Verification: `npm run check` and GitHub `validate`.
 Evidence: `npm run check` on Linux passed. 111 tests, 0 fail. GitHub `validate` passed on `d676a8e` (run 41117498945).
 
+### C02: complete prerequisites and in-scope mapping
+Status: IN_PROGRESS
+Depends on: C01
+Proposed commit: docs(workflow): fix blocker and mapping rules
+Actual commit: none until this commit exists
+Objective: A closed rejected or abandoned prerequisite does not unlock work. Routine in-scope mapping does not need a new owner approval.
+Work: Change the readiness rule and the mapping authorization in `workflow/work.md`. Lock both with tests.
+Verification: `npm run check`.
+Evidence: `npm run check` on Linux passed. 113 tests, 0 fail. GitHub `validate` has not run.
+
 ## Final verification
 
 `npm run check` on Linux passed. 111 tests, 0 fail. GitHub `validate` passed on `d676a8e` (run 41117498945). No tag.
 
 ## Handoff
-Next action: Wait for review of pull request 72. Do not merge. Do not remove this plan before that review.
+Next action: Push the review fixes and record the GitHub validate result. Do not merge. Do not remove this plan before review.
 Blockers: none
 Risks: A later issue can copy these rules into a skill. The test forbids a copy of the force-push rule and of the reviewed-head merge sentence.
