@@ -24,9 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   project rule, except through a documented exception. The hard limits are the rules in
   `workflow/safety.md`. The general rules are now links to the sections.
 - `skills/triage`: the conflict rule now points to the precedence rules in `AGENTS.md`.
-- `skills/code-review` and `workflow/review-and-merge.md`: the Blocking row matches the release
-  rule. The reviewer merges only the head that they reviewed, and only when the code host shows
-  the pull request as ready to merge with no rule bypassed.
+- `skills/code-review`, `workflow/review-and-merge.md` and `workflow/index.md`: the Blocking row
+  and the Safety bullet use the same three cases. The reviewer merges only the head that they
+  reviewed, and only when the code host shows the pull request as ready to merge with no rule
+  bypassed. The flow states the same gates.
 - `skills/code-review`: the skill now guides a review step by step on two axes, standards and
   specification. It adds a blast radius step, evidence levels for claims, a code smell list,
   severity levels and one verdict. If the agent can start subagents, it runs the two axes and

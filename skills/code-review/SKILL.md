@@ -92,7 +92,7 @@ If the change has a plan, check its statuses, actual commits and evidence agains
 
 Check each file against this list. Link the rule in each finding. Do not copy the rule.
 
-- Safety: no change breaks a rule in [workflow/safety.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md). A path that lets an agent start a production deploy or a release workflow is Blocking.
+- Safety: no change breaks a rule in [workflow/safety.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md). A path that lets an agent start a production deploy or a project's release workflow, or release without the owner's OK, is Blocking.
 - Correctness: logic, edge cases, empty and null input, error paths and resource cleanup. See [coding/error-handling.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/error-handling.md) and [resource balancing](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/resource-balancing.md).
 - Security: input validation, secrets, injection, permissions, and CI triggers and tokens. See [coding/security.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md).
 - Dependencies: each new dependency has a reason, a pinned version and a lockfile change. Each third-party CI step is pinned to a full commit SHA. Run the project's dependency audit if you can. See [coding/dependencies.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md).
