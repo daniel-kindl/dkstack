@@ -6,6 +6,7 @@ These rules prevent real damage in a shared repository. Read them before you cha
 
 ## Sections
 
+- [work.md](work.md): The work contract. Lifecycle, readiness, sources and session isolation.
 - [roles.md](roles.md): Who does what. Generic role names, mapped to one team.
 - [review-and-merge.md](review-and-merge.md): The issue to merge flow, review, merge and
   escalation.
