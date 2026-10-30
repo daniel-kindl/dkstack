@@ -31,7 +31,7 @@ If you can start subagents, use them when two or more designs are possible. Do s
 
 Then collect the reports. Do steps 4 and 5 yourself. A report from a subagent is a claim. Read each principle file that a report links before you use its result. Compare the designs yourself. Do not select a design only because a report prefers it.
 
-If you cannot start subagents, do the steps one at a time in the order of this skill. Check one design fully before you start the next design.
+If you cannot start subagents, do the steps one at a time in the order of this skill. For each design, do steps 2 and 3. Do steps 4 and 5 once, after you have checked every design.
 
 ## Rules
 

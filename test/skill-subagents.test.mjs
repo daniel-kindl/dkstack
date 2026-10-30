@@ -35,3 +35,32 @@ for (const skill of skills) {
     for (const name of names) assert.doesNotMatch(text, name);
   });
 }
+
+test("the writing-check skill gives the brief before step 2", async () => {
+  const text = await subagents("writing-check");
+  const brief = text.indexOf("complete without your context");
+  const step2 = text.search(/do step 2 yourself/i);
+  assert.notEqual(brief, -1);
+  assert.notEqual(step2, -1);
+  assert.ok(brief < step2, "the brief must come before step 2");
+});
+
+test("the apply-architecture skill chooses only after every design is checked", async () => {
+  const text = await subagents("apply-architecture");
+  assert.match(text, /For each design, do steps 2 and 3\./);
+  assert.match(text, /Do steps 4 and 5 once, after you have checked every design\./);
+  assert.doesNotMatch(text, /Check one design fully/);
+});
+
+test("the changelog states each subagent procedure in its own sentence", async () => {
+  const text = await readFile(join(repoRoot, "CHANGELOG.md"), "utf8");
+  const start = text.indexOf("- `skills/writing-check`, `skills/apply-architecture`, `skills/write-adr` and");
+  assert.notEqual(start, -1);
+  const end = text.indexOf("\n- `", start + 1);
+  const bullet = text.slice(start, end).replace(/\s+/g, " ");
+  assert.match(bullet, /A new reader checks the text in `writing-check`\./);
+  assert.match(bullet, /Each design gets its own subagent in `apply-architecture`\./);
+  assert.match(bullet, /Each option gets its own subagent in `write-adr`\./);
+  assert.match(bullet, /One subagent reads the code and one subagent reads the docs in `clarify-intent`\./);
+  assert.doesNotMatch(bullet, / or /);
+});

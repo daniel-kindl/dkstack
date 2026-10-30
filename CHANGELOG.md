@@ -33,10 +33,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   11 still cover each supply chain rule in `coding/dependencies.md`. The tool-specific examples
   are removed, and the tests now check the agnostic text.
 - `skills/writing-check`, `skills/apply-architecture`, `skills/write-adr` and
-  `skills/clarify-intent`: each skill has a Subagents section. If the agent can start subagents,
-  a new reader checks the text, each design or each option gets its own subagent, or the code and
-  the docs are read at the same time. The agent checks the reports itself. If the agent cannot
-  start subagents, it does the steps one at a time in order.
+  `skills/clarify-intent`: each skill has a Subagents section. A new reader checks the text in
+  `writing-check`. Each design gets its own subagent in `apply-architecture`. Each option gets
+  its own subagent in `write-adr`. One subagent reads the code and one subagent reads the docs in
+  `clarify-intent`. The agent checks the reports itself. If the agent cannot start subagents, it
+  does the steps one at a time in order.
 - `workflow/safety.md` and `versioning/index.md`: an agent can publish or release only with the
   owner's explicit OK for that release. The OK names the exact version. It never covers a
   production deploy or a project's release workflow.
