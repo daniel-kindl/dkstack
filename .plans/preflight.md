@@ -58,11 +58,12 @@ Evidence: `npm run check` on Linux passed. 127 tests, 0 fail. GitHub `validate` 
 Status: IN_PROGRESS
 Depends on: C02
 Proposed commit: fix(bootstrap): guard apply and probes
+Actual commit: ca0cf77
 Objective: `--apply` does not accept a report file. A probe that did not run is unverified, not unsupported.
 Verification: `npm run check` and GitHub `validate`.
-Evidence: `npm run check` on Linux passed. 130 tests, 0 fail. GitHub `validate` has not run.
+Evidence: `npm run check` on Linux passed. 130 tests, 0 fail. GitHub `validate` has not run on `ca0cf77`.
 
 ## Handoff
-Next action: Finish C03. Do not merge. Do not remove this plan before the next review.
+Next action: Wait for GitHub validate on the C03 commits. Do not merge. Do not remove this plan before the next review.
 Blockers: none
 Risks: A later change can make the script write to a tracker. The tests require an empty update list and an empty remove list.
