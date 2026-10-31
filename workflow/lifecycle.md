@@ -16,7 +16,8 @@ their rules.
    child passes readiness.
 5. An independent reviewer reviews the implementation pull request.
 6. The reviewer merges only the reviewed head when the review passes and the required checks
-   are green. See [review-and-merge.md](review-and-merge.md).
+   are green. The reviewer is not the author. The merge method is squash. Branch protection
+   allows the merge. See [review-and-merge.md](review-and-merge.md).
 
 `scripts/lifecycle.mjs` records these decisions. It does not copy the linked procedures.
 

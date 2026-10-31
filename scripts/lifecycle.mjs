@@ -15,6 +15,22 @@ function triageSkill(pullRequestCount) {
   return null;
 }
 
+function sameReviewedHead(input) {
+  const reviewed = input.reviewedHead;
+  const current = input.currentHead;
+  return typeof reviewed === "string" && reviewed.length > 0 && reviewed === current;
+}
+
+function routeMerge(input) {
+  if (input.reviewPassed !== true) return stop("unreviewed");
+  if (input.checksGreen !== true) return stop("checks");
+  if (!sameReviewedHead(input)) return stop("head");
+  if (input.reviewerIndependent !== true) return stop("independent");
+  if (input.mergeMethod !== "squash") return stop("method");
+  if (input.protectionAllowsMerge !== true) return stop("protection");
+  return go("merge");
+}
+
 function routeImplement(input) {
   if (input.sessionMappedIssue === true) return stop("same-session");
   if (input.mappedChild === true && input.mappingMerged !== true) return stop("mapping-handoff");
@@ -29,10 +45,6 @@ function routeImplement(input) {
 export function routeWork(input = {}) {
   if (input.phase === "triage") return go("classify", triageSkill(input.pullRequestCount));
   if (input.phase === "implement") return routeImplement(input);
-  if (input.phase === "merge") {
-    if (input.reviewPassed !== true) return stop("unreviewed");
-    if (input.checksGreen !== true) return stop("checks");
-    return go("merge");
-  }
+  if (input.phase === "merge") return routeMerge(input);
   return stop("phase");
 }

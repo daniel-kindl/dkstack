@@ -111,7 +111,30 @@ test("collision, an open prerequisite, a missing permission and an unreviewed me
   assert.equal(unreviewed.action, "stop");
   assert.equal(unreviewed.reason, "unreviewed");
   assert.equal(routeWork({ phase: "merge", reviewPassed: true, checksGreen: false }).reason, "checks");
-  assert.equal(routeWork({ phase: "merge", reviewPassed: true, checksGreen: true }).action, "merge");
+  const thin = routeWork({ phase: "merge", reviewPassed: true, checksGreen: true });
+  assert.equal(thin.action, "stop");
+  assert.equal(thin.reason, "head");
+});
+
+const readyMerge = {
+  phase: "merge",
+  reviewPassed: true,
+  checksGreen: true,
+  reviewedHead: "abc",
+  currentHead: "abc",
+  reviewerIndependent: true,
+  mergeMethod: "squash",
+  protectionAllowsMerge: true,
+};
+
+test("a merge needs the reviewed head, an independent reviewer, squash and protection", () => {
+  assert.equal(routeWork(readyMerge).action, "merge");
+  assert.equal(routeWork({ ...readyMerge, currentHead: "def" }).reason, "head");
+  assert.equal(routeWork({ ...readyMerge, reviewedHead: "" }).reason, "head");
+  assert.equal(routeWork({ ...readyMerge, reviewerIndependent: false }).reason, "independent");
+  assert.equal(routeWork({ ...readyMerge, mergeMethod: "rebase" }).reason, "method");
+  assert.equal(routeWork({ ...readyMerge, protectionAllowsMerge: false }).reason, "protection");
+  assert.equal(routeWork({ ...readyMerge, protectionAllowsMerge: "unverified" }).reason, "protection");
 });
 
 test("plan-work and tdd-loop keep the claim and the fresh session", async () => {

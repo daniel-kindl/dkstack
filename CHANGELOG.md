@@ -12,7 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `workflow/lifecycle.md` and `scripts/lifecycle.mjs`: the route from an external request through
   preflight, mapping, a fresh session, independent review and a merge of the reviewed head.
   Triage classifies a request that has no lifecycle label and no eligibility label. Implementation
-  readiness applies before implementation. Named failures stop and link the contract that holds
+  readiness applies before implementation. A merge also requires the reviewed head, an independent
+  reviewer, a squash merge and branch protection that allows the merge. Named failures stop and
+  link the contract that holds
   the procedure. `.github/ISSUE_TEMPLATE/external-request.md` asks for an outcome, constraints,
   context and acceptance intent. `triage`, `plan-work` and `tdd-loop` link the work and claim
   contracts.
