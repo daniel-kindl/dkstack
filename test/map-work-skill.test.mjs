@@ -91,3 +91,17 @@ test("the parent stays in review until its objective is complete", async () => {
   assert.match(skill, /parent.*review.*while.*children.*work/i);
   assert.match(skill, /parent.*completion.*acceptance criteria/i);
 });
+
+test("publication precedes agent readiness", async () => {
+  const skill = await skillText();
+  const handoff = skill.indexOf("Store a map handoff");
+  const promotion = skill.indexOf("Promote agent children");
+  assert.ok(handoff >= 0, "the skill must store a map handoff");
+  assert.ok(promotion > handoff, "the skill must publish before it promotes agent children");
+  assert.match(skill, /lost.*response.*mapping pull request.*parent comment/i);
+});
+
+test("a reused ready child needs verified native links", async () => {
+  const skill = await skillText();
+  assert.match(skill, /already-ready child.*native.*links.*readiness/i);
+});

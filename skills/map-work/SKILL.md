@@ -56,34 +56,40 @@ resolve its state before mapping. Do not use map-work to change the parent's sco
    the ready-to-active transition. Stop if a check or transition fails. Search for duplicate
    issues again immediately before each creation.
 7. Create only the missing child issues. Create each child with its type and `status:planning`.
-   If you reuse an issue, check that its type and status match the draft. Stop on a conflict.
+   If you reuse an issue, check that its type and status match the draft. For an already-ready
+   child, check its native parent link, its native blocker links and its readiness checks before
+   reuse. Stop for owner review if the reused issue does not match the draft.
    Add native parent/sub-issue relationships and native blocker links when the map requires
    them. Check write permission through each write result. A successful read probe does not
    prove write permission. Reread the created issues, labels, native relationships and
    prerequisites. On a failed or ambiguous write, stop. Record the partial state and do not
    delete history or retry blindly.
-8. After the native graph matches the draft, set a milestone only when useful and supported.
-   Before setting `status:ready`, check each child's acceptance criteria, prerequisites,
-   authorization and native fact sources. Leave a child in `status:planning` if a check fails.
-   For an agent child that passes, set `agent:ready`, then use the planning-to-ready transition
-   to set `status:ready`. Reread its fields and prerequisites. Run the full readiness check.
-   Stop and report a failed post-write check. For a human child, set `agent:human-only`. Move it
-   to ready only when its criteria and prerequisites permit human work. Blocked or unclear
-   children stay in planning without an agent-ready label.
-9. Store a map handoff in `.maps/<parent-issue-id>.md` on a mapping branch. Record the parent,
-   child links, native prerequisite links, labels, milestone if any, decisions, evidence, blocked
-   work and the next action. Push the branch and open a mapping pull request for independent
-   review. Link the pull request to the parent without a closing keyword. Move the parent
-   lifecycle state from active to review when the pull request opens. The parent stays in review
-   while children do work. The mapping pull request does not complete the parent objective.
-   Parent completion requires its acceptance criteria and required child outcomes. The map file
-   is a handoff record. The tracker remains the source of relationships and issue facts. Publish
-   a map summary to the parent issue with child links, branch, map file path and mapping pull
-   request.
-10. Stop after publishing the map. The mapping agent must not implement a mapped child in the
-   same session or context window. A context-sharing subagent is the same session. Do not open
-   an implementation pull request for a child. A fresh independent session must read the
-   persisted tracker and repository artifacts, check readiness, claim the child and use
+8. Store a map handoff in `.maps/<parent-issue-id>.md` on a mapping branch after the native graph
+   matches the draft. Record the parent, child links, native prerequisites, planned labels,
+   milestone if any, decisions, evidence, blocked work and next action. Push the branch and open
+   a mapping pull request for independent review. Link it to the parent without a closing
+   keyword. Move the parent lifecycle state from active to review when the pull request opens.
+   The parent stays in review while children do work. The mapping pull request does not complete
+   the parent objective. Parent completion requires its acceptance criteria and required child
+   outcomes. Publish a map summary to the parent issue with child links, branch, map file path
+   and pull request. Check that the branch, the pull request and the parent comment exist. If one
+   of them is missing, stop. Leave each new child in `status:planning`. The map file is a handoff
+   record. The tracker remains the source of relationships and issue facts.
+9. Promote agent children only after the map file, mapping pull request and parent summary are
+   stored. Set a milestone only when useful and supported. Before setting `status:ready`, check
+   each child's acceptance criteria, prerequisites, authorization and native fact sources.
+   Leave a child in `status:planning` if a check fails. For an agent child that passes, set
+   `agent:ready`, then use the planning-to-ready transition to set `status:ready`. Reread its
+   fields and prerequisites. Run the full readiness check. Stop and report a failed post-write
+   check. For a human child, set `agent:human-only`. Move it to ready only when its criteria and
+   prerequisites permit human work. Blocked or unclear children stay in planning without an
+   agent-ready label. The parent summary lists the planned labels. After promotion, add the final
+   child labels to the parent comment. A fresh session reads the live issue fields.
+10. Stop after publishing the map and recording the final child labels. The mapping agent must not
+   implement a mapped child in the same session or context window. A context-sharing subagent is
+   the same session. Do not open an implementation pull request for a child. A fresh independent
+   session must read the persisted tracker and repository artifacts, check readiness, claim the
+   child and use
    plan-work for its commits.
 
 ## Write failures and retries
@@ -92,6 +98,11 @@ Before a retry, reread the parent and all native child and blocker links. Match 
 by scope and acceptance criteria. Do not create a second issue because a write response was
 lost. If a partial graph cannot be reconciled, stop and report the exact completed writes and
 the missing links to the owner. Do not mark any affected child ready.
+
+If a response is lost when opening the mapping pull request or posting the parent comment,
+reread the pull requests for the branch and the parent comments. Use a record that names the map
+file and the pull request. Do not create a duplicate. If no single record matches, stop and leave
+each new child in `status:planning`.
 
 If the tracker lacks native parent/sub-issue links, stop before creating a graph. If the map
 requires a native blocker link and that capability is unavailable, stop the entire map before

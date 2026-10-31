@@ -61,23 +61,34 @@ Verification: Run the changelog check and full repository checks.
 Evidence: `npm run check` passed after the commit with 139 tests.
 
 ### C03: Resolve review findings
-Status: IN_PROGRESS
+Status: COMPLETED
 Depends on: C02
 Proposed commit: fix(skills): classify mapped children first
-Actual commit: none
+Actual commit: 8a5ea7c
 Objective: Make child creation and readiness checks safe after partial writes.
 Work: Create children in planning, check readiness inputs before ready labels, and state the
 parent review lifecycle.
 Verification: Run focused tests, the full check and the STE linter.
-Evidence: focused tests passed; full check not yet run.
+Evidence: The commit exists. The full check for the later publication change covers this commit.
+
+### C04: Publish the map before readiness
+Status: IN_PROGRESS
+Depends on: C03
+Proposed commit: fix(skills): publish map before ready
+Objective: Keep new children in planning until the map file, mapping pull request and parent
+summary exist. Check an existing pull request or parent comment before a retry.
+Work: Reorder publication and promotion. Add the lost-response check and the already-ready reuse
+check.
+Verification: Run focused tests and `npm run check`.
+Evidence: `npm run check` on Linux passed. 143 tests, 0 fail. GitHub `validate` has not run.
 
 ## Final verification
 
-The first full check passed after C02. The self-review found a circular readiness check and
-unclassified child issues after a partial write. C03 addresses them.
+The first full check passed after C02. C03 classified children before readiness. C04 publishes the
+map before a child becomes ready.
 
 ## Handoff
 
-Next action: Run the full check, commit C03 and open the pull request.
+Next action: Finish C04, commit it and open the pull request. Do not merge.
 Blockers: none.
 Risks: A tracker can permit relationship reads but reject writes.
