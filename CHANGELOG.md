@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `coding/brace-style.md`: prefer Allman braces where supported. Document Go and formatter
+  exceptions, C# and clang-format settings, and CI enforcement. Bootstrap links the guideline
+  and selects supported settings without weakening existing quality gates.
+
 - `skills/write-pr`: writes a pull request body with Summary, Evidence, Risk and rollback, and
   References. The detail matches the change. Evidence separates verified, unverified and known
   risk, and names a required check that did not run as NOT RUN. A trivial change does not need a
