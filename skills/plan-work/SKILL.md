@@ -17,7 +17,7 @@ Read [feature-plans.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v
 4. Divide the feature into the smallest increments that are complete and that a reviewer can review alone. Plan each increment as a logical conventional commit. Do not plan a fixed number of commits. For each increment, write its dependencies, its risks and how to verify it. Write full details only for the items that the known facts support. For the later items, write only the outcome. See [small steps](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/small-steps.md).
 5. Make sure that each acceptance criterion maps to planned work. Make sure that no item adds scope that nobody asked for.
 6. When you do the work or hand it over, compare the plan with the real commits and checks. Update the status, the evidence and the next action as the shared protocol tells you. After each commit, if its result shows a new fact, change the later items.
-7. Follow the review and cleanup steps of the shared protocol. Do not remove the plan only because all its items show as complete.
+7. When the implementation and the required checks are complete, remove the completed plan before you open the pull request. Do not remove a plan that is incomplete or blocked. Follow [feature plans](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/feature-plans.md). Do not remove the plan only because all its items show as complete.
 
 ## Plan format
 

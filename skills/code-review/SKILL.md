@@ -86,7 +86,7 @@ Report three types of findings. Quote the specification line for each finding.
 
 If the issue has no acceptance criteria, write assumed criteria from the issue title, body and linked discussion. Put them in the review. Suggest that the issue gets criteria. See [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md). If the intent is not clear enough to decide the verdict, ask the issue author or the coordinator. Do not approve on a guess.
 
-If the change has a plan, check its statuses, actual commits and evidence against the diff, the checks and the issue. Do not remove the plan. See [feature plans](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/feature-plans.md).
+A feature plan is optional. You may read a plan that is still in the change when it adds context. Do not require a plan. Judge the change from the issue, the diff and the verification evidence. Do not remove a plan. See [feature plans](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/feature-plans.md).
 
 ## 5. Standards axis
 
