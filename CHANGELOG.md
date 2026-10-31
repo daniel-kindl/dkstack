@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `workflow/claims.md`: define durable owner disposition and independent validation for
+  malformed claim events. Preserve valid history and require owner recovery for ambiguous
+  ownership. Include reconciliation outcomes and the netknife issue 3 example.
+
 - `coding/brace-style.md`: prefer Allman braces where supported. Document Go and formatter
   exceptions, C# and clang-format settings, and CI enforcement. Bootstrap links the guideline
   and selects supported settings without weakening existing quality gates.
