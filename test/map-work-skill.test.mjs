@@ -39,7 +39,7 @@ test("map-work records native relationships and checks readiness", async () => {
   assert.match(skill, /milestone/);
   assert.match(skill, /type.*lifecycle state.*agent eligibility/);
   assert.match(skill, /reread.*relationships/i);
-  assert.match(skill, /agent:ready.*only for unblocked children.*readiness checks pass/);
+  assert.match(skill, /agent child that passes.*agent:ready.*planning-to-ready.*status:ready.*full readiness check/);
   assert.match(skill, /map summary.*parent issue/);
   assert.match(skill, /\.maps\//);
 });
@@ -77,4 +77,17 @@ test("required blockers stop the whole map and child labels reflect eligibility"
   assert.match(skill, /requires.*blocker link.*stop the entire map/i);
   assert.match(skill, /human-only/);
   assert.match(skill, /blocked.*planning/i);
+});
+
+test("created children start classified and become ready only after checks", async () => {
+  const skill = await skillText();
+  assert.match(skill, /create.*child.*type.*status:planning/i);
+  assert.match(skill, /before.*status:ready.*acceptance criteria.*prerequisites/i);
+  assert.match(skill, /status:ready.*reread.*full readiness check/i);
+});
+
+test("the parent stays in review until its objective is complete", async () => {
+  const skill = await skillText();
+  assert.match(skill, /parent.*review.*while.*children.*work/i);
+  assert.match(skill, /parent.*completion.*acceptance criteria/i);
 });

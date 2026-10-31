@@ -27,8 +27,8 @@ Implementing mapped children, a scheduler or automatic fresh sessions.
 
 ## Dependencies and constraints
 
-Issues #67 and #68 are complete. The current tracker has native hierarchy and blocker links.
-The skill remains portable and names no required tracker product.
+Issues #67 and #68 are complete. Live read probes reached the native hierarchy and blocker-link
+endpoints. Write permission is not verified. The skill remains portable.
 
 ## Decisions and open questions
 
@@ -51,21 +51,33 @@ Evidence: The new tests failed before the skill existed. After the change, the f
 `npm run check` passed. The full check ran 139 tests. The STE linter found no violations.
 
 ### C02: Record the skill
-Status: IN_PROGRESS
+Status: COMPLETED
 Depends on: C01
 Proposed commit: docs(changelog): record map-work
-Actual commit: none
+Actual commit: d4aa448
 Objective: Record the feature in Unreleased.
 Work: Update CHANGELOG.md.
 Verification: Run the changelog check and full repository checks.
-Evidence: not yet run
+Evidence: `npm run check` passed after the commit with 139 tests.
+
+### C03: Resolve review findings
+Status: IN_PROGRESS
+Depends on: C02
+Proposed commit: fix(skills): classify mapped children first
+Actual commit: none
+Objective: Make child creation and readiness checks safe after partial writes.
+Work: Create children in planning, check readiness inputs before ready labels, and state the
+parent review lifecycle.
+Verification: Run focused tests, the full check and the STE linter.
+Evidence: focused tests passed; full check not yet run.
 
 ## Final verification
 
-Not yet run.
+The first full check passed after C02. The self-review found a circular readiness check and
+unclassified child issues after a partial write. C03 addresses them.
 
 ## Handoff
 
-Next action: Add the Unreleased entry, commit it and rerun all checks.
+Next action: Run the full check, commit C03 and open the pull request.
 Blockers: none.
 Risks: A tracker can permit relationship reads but reject writes.
