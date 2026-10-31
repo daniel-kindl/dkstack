@@ -84,6 +84,11 @@ The steps expect an issue, a feature branch, a pull request, automated checks an
 
 ## Boundaries
 
+- Read [claims.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/claims.md).
+  Do not start without a verified claim.
+- Stay inside the issue scope. Do not add work that the issue does not allow.
+- If this session mapped the issue, stop. A fresh session does the implementation. See
+  [work.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/work.md).
 - Only plan, unless someone also asks you to do the work.
 - Use one feature, one issue, one feature branch and one pull request. The branch can have many commits. The squash merge rule does not change.
 - Do not tell the project which models, agents, languages, tools or repository hosts to use.
