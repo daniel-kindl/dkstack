@@ -265,6 +265,13 @@ if (args[0] === "repo") {
   process.stdout.write(process.env.GH_ISSUES ?? JSON.stringify([{ number: 1 }]));
 } else if (args[0] === "pr") {
   process.stdout.write("[]");
+} else if (args[0] === "api" && args[1].endsWith("/dependencies/blocked_by")) {
+  if (process.env.GH_BLOCKERS_FAIL !== "1") {
+    process.stdout.write("[]");
+    process.exit(0);
+  }
+  process.stderr.write("gh: Not Found (HTTP 404)");
+  process.exit(1);
 } else if (args[0] === "api" && args[1].endsWith("/dependencies")) {
   process.stderr.write("gh: Not Found (HTTP 404)");
   process.exit(1);
@@ -302,7 +309,7 @@ function runPreflight(args, bin, env = {}) {
   });
 }
 
-test("the command discovers the tracker and a dry run creates nothing", async () => {
+test("the command detects native blocking links and creates nothing", async () => {
   const tracker = await fakeTracker();
   const run = runPreflight([], tracker.bin);
   assert.equal(run.status, 0, run.stderr);
@@ -310,13 +317,24 @@ test("the command discovers the tracker and a dry run creates nothing", async ()
   assert.equal(plan.mode, "dry-run");
   assert.deepEqual(plan.created, []);
   assert.equal(plan.unsupported.some((item) => item.capability === "labels"), false);
-  assert.equal(plan.unsupported.some((item) => item.capability === "blocking links"), true);
+  assert.equal(plan.unsupported.some((item) => item.capability === "blocking links"), false);
   assert.equal(plan.unverified.some((item) => item.capability === "blocking links"), false);
   assert.equal(plan.unverified.some((item) => item.capability === "parent/sub-issues"), false);
   const calls = (await readFile(tracker.log, "utf8")).trim().split("\n").map((line) => JSON.parse(line));
   assert.ok(calls.some((args) => args[0] === "repo" && args[1] === "view"));
   assert.ok(calls.some((args) => args[0] === "label" && args[1] === "list"));
+  assert.ok(calls.some((args) => args[0] === "api" && args[1] === "repos/acme/demo/issues/1/dependencies/blocked_by"));
   assert.equal(calls.some((args) => args[0] === "label" && args[1] === "create"), false);
+});
+
+test("a failed native blocker read remains unsupported", async () => {
+  const tracker = await fakeTracker();
+  const run = runPreflight([], tracker.bin, { GH_BLOCKERS_FAIL: "1" });
+  assert.equal(run.status, 0, run.stderr);
+  const plan = JSON.parse(run.stdout);
+  assert.equal(plan.unsupported.some((item) => item.capability === "blocking links"), true);
+  const calls = (await readFile(tracker.log, "utf8")).trim().split("\n").map((line) => JSON.parse(line));
+  assert.ok(calls.some((args) => args[0] === "api" && args[1] === "repos/acme/demo/issues/1/dependencies/blocked_by"));
 });
 
 test("an empty issue list leaves relation capabilities unverified", async () => {

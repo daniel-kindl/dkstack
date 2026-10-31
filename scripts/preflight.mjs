@@ -237,7 +237,7 @@ export function discoverTracker({ ghRun = gh } = {}) {
       labels: issuesOn && labelsOk,
       milestones: issuesOn && probe(ghRun, ["api", `repos/${nwo}/milestones`]),
       "parent/sub-issues": relationCapability(sample, ghRun, `repos/${nwo}/issues/${sample}/sub_issues`),
-      "blocking links": relationCapability(sample, ghRun, `repos/${nwo}/issues/${sample}/dependencies`),
+      "blocking links": relationCapability(sample, ghRun, `repos/${nwo}/issues/${sample}/dependencies/blocked_by`),
       assignment: issuesOn,
       comments: issuesOn,
       "PRs/reviews": probe(ghRun, ["pr", "list", "--limit", "1", "--json", "number"]),
