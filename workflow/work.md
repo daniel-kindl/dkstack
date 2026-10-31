@@ -38,8 +38,9 @@ complete, rejected or abandoned, fail closed.
 
 ## Sources
 
-Each fact has one source. Read that source. A copy of that fact in a comment, a plan or a chat
-is not the source.
+Each issue fact in this contract has one source. Read that source. A copy of that fact in a
+comment, a plan or a chat is not the source. [Claim events](claims.md) use issue comments; they
+do not replace any issue fact below.
 
 - Parent and child: the tracker's native hierarchy.
 - Prerequisite: the tracker's native blocker link.
@@ -111,6 +112,12 @@ An issue is ready for an agent only when all of these are true:
 - No source for these checks is missing, unsupported or in conflict.
 
 If one check fails, the issue is not ready. Stop. Do not start the work.
+
+These checks govern an initial claim. A replacement claimant may resume an active or review
+issue only through a valid handoff or owner recovery under [claim events](claims.md). The
+replacement claimant checks every readiness fact except the `ready` lifecycle state. It also
+checks the current lifecycle state, claim history and authorization. It does not make a new
+issue state transition to start the resumed work. If any check fails, stop.
 
 ## Authorization
 
