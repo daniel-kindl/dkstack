@@ -88,14 +88,15 @@ Evidence: `npm run check` on Linux passed. 143 tests, 0 fail. GitHub `validate` 
 `4d1d7da` (run 41193098514).
 
 ### C05: Separate map review from parent completion
-Status: IN_PROGRESS
+Status: COMPLETED
 Depends on: C04
 Proposed commit: fix(skills): separate map review
 Actual commit: acc89b8
 Objective: Keep the parent active while children do the work. Make children actionable only after
 the mapping pull request passes independent review and is merged.
 Verification: Run focused tests and `npm run check`.
-Evidence: `npm run check` on Linux passed. 145 tests, 0 fail. GitHub `validate` has not run on `acc89b8`.
+Evidence: `npm run check` on Linux passed. 145 tests, 0 fail. GitHub `validate` passed on
+`5717c76` (run 41194714600).
 
 ## Final verification
 
@@ -104,6 +105,6 @@ map before a child becomes ready.
 
 ## Handoff
 
-Next action: Finish C05. Do not merge. Do not remove this plan before the next review.
+Next action: Wait for a new review of pull request 78. Do not merge. Do not remove this plan before that review.
 Blockers: none.
 Risks: A tracker can permit relationship reads but reject writes.
