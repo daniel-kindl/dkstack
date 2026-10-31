@@ -90,8 +90,8 @@ are not completion.
 The owner may make these transitions. An agent may make only these transitions:
 
 - planning -> ready, when the acceptance criteria exist and every prerequisite is complete
-- ready -> active, when the readiness checks pass and this session did not run map-work for the
-  issue
+- ready -> active, when the readiness checks pass and this session did not map the issue as a
+  child
 - active -> review, when a pull request is open for the issue
 - review -> active, when the review asks for changes
 - review -> closed, when the completion rule is met and the agent is not the author of the change
@@ -142,7 +142,9 @@ These actions have their own checks:
 ## Session isolation
 
 The session that runs map-work must not implement a mapped issue in that same session. A
-context-sharing subagent is the same session. A context-sharing subagent can read this session's
+mapped issue is a child issue in the map. The parent objective is not a mapped issue for this
+boundary. The mapping session may work on the parent to create the map. A context-sharing
+subagent is the same session. A context-sharing subagent can read this session's
 context. After you store the map in the tracker and in the repository, stop. A fresh session
 implements the mapped issue. That session reads the tracker and the repository. It does not
 receive the mapping session's context.

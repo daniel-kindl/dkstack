@@ -47,6 +47,12 @@ test("the work contract fails closed and isolates the mapping session", async ()
   assert.match(flat, /plan-work plans the commits of one issue/);
 });
 
+test("mapping isolation applies to children, not the parent", async () => {
+  const flat = (await pageText()).replace(/\s+/g, " ");
+  assert.match(flat, /mapped issue.*child issue/);
+  assert.match(flat, /parent objective.*not a mapped issue/);
+});
+
 test("a closed prerequisite unlocks work only when it is complete", async () => {
   const flat = (await pageText()).replace(/\s+/g, " ");
   assert.match(flat, /only when that prerequisite is complete/);
