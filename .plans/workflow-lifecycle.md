@@ -46,12 +46,22 @@ Verification: `npm run check` and GitHub `validate`.
 Evidence: `npm run check` on Linux passed. 152 tests, 0 fail. GitHub `validate` passed on
 `9ca49e3` (run 41200126207).
 
+### C02: Separate triage from implementation readiness
+Status: COMPLETED
+Depends on: C01
+Proposed commit: fix(workflow): classify before readiness
+Actual commit: f5a4e53
+Objective: An unlabeled external request can be classified. Implementation still stops when readiness, the mapping handoff or a denial condition fails.
+Work: Add a scenario function and point triage at classification before implementation readiness.
+Verification: `npm run check` and GitHub `validate`.
+Evidence: `npm run check` on Linux passed. 156 tests, 0 fail. GitHub `validate` is not run yet.
+
 ## Final verification
 
 Not run yet.
 
 ## Handoff
 
-Next action: Wait for review of pull request 79. Do not merge. Do not remove this plan before that review.
+Next action: Wait for GitHub `validate` on this branch. Do not merge. Do not remove this plan before the next review.
 Blockers: none.
 Risks: A skill link can copy a rule that the tests forbid.
