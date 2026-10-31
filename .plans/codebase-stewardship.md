@@ -2,7 +2,7 @@
 Status: IN_PROGRESS
 Issue: https://github.com/daniel-kindl/dkstack/issues/77
 Branch: docs/77-codebase-stewardship
-PR: not created
+PR: https://github.com/daniel-kindl/dkstack/pull/82
 Claim-ID: 2d544c36-af14-423e-82bd-2a0b17202b1a
 
 ## Goal
@@ -94,7 +94,8 @@ links, dashes, workflows and the changelog check passed. GitHub `validate` is NO
 and changelog checks passed. GitHub `validate` is NOT RUN until the pull request exists.
 
 ## Handoff
-Next action: Push the branch and open the pull request. Do not merge it.
+Next action: An independent reviewer reviews https://github.com/daniel-kindl/dkstack/pull/82.
+Do not merge it from this session.
 Blockers: none
 Risks: The signal list exists in two files. A later edit can make them disagree. The test locks
 the shared phrases.
