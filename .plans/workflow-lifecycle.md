@@ -57,10 +57,21 @@ Verification: `npm run check` and GitHub `validate`.
 Evidence: `npm run check` on Linux passed. 156 tests, 0 fail. GitHub `validate` passed on
 `d4403cb` (run 41201027236).
 
+### C03: Gate the merge decision
+Status: COMPLETED
+Depends on: C02
+Proposed commit: fix(workflow): gate the merge decision
+Actual commit: 8d85ae3
+Objective: A merge requires the reviewed head, an independent reviewer, a squash merge and branch protection that allows the merge.
+Work: Add a negative test for each missing merge fact, then enforce those facts in the decision function.
+Verification: `npm run check` and GitHub `validate`.
+Evidence: `npm run check` on Linux passed. 157 tests, 0 fail. GitHub `validate` passed on
+`8d85ae3` (run 41201540943).
+
 ## Final verification
 
-`npm run check` on Linux passed. 156 tests, 0 fail. GitHub `validate` passed on `d4403cb`
-(run 41201027236).
+`npm run check` on Linux passed. 157 tests, 0 fail. GitHub `validate` passed on `8d85ae3`
+(run 41201540943).
 
 ## Handoff
 
