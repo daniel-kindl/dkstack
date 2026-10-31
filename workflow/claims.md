@@ -26,8 +26,11 @@ unstructured comment as a replacement claim.
 Assignment and comment creation are separate writes. Comments do not provide an atomic test
 that no other session is writing a claim. A read after a write can miss a concurrent claim that
 has not arrived yet. The server order selects one effective claimant after both comments exist.
-Before any implementation, the owner or coordinator must serialize claim attempts and confirm
-that no other session is still claiming. Without that coordination, stop after reconciliation.
+Routine work may start after the post-write checks below. The comment-based protocol has a
+temporary limit: two sessions can work at the same time until the losing session sees both
+claims and stops. There is no time bound for that overlap. If overlap is unacceptable, the
+owner records that requirement in the issue or an ADR before a claim. The owner or coordinator
+then serializes claim attempts. If no such requirement is recorded, use the routine claim steps.
 Do not treat one read as exclusive access. A lock service is outside this protocol.
 
 ## Event record
@@ -121,10 +124,11 @@ an active issue to ready.
    comment history for that ID before retrying. Do not create a second comment for the same
    claim.
 5. Read the complete history, assignee, issue facts and prerequisites again. Reconcile all valid
-   events. If this claim ID is effective and the checks still pass, obtain confirmation that
-   claim attempts are serialized and no other session is still claiming. Without that
-   confirmation, stop. Use the allowed `ready` to `active` issue transition. Check that it
-   succeeded. Then begin implementation.
+   events. If this claim ID is effective and the checks still pass, use the allowed `ready` to
+   `active` issue transition. Check that it succeeded. Then begin implementation. Reread the
+   claim history before each write to a shared issue or code host record, including an issue
+   field, comment, branch push or PR change. Reread when another claim becomes known. These
+   reads reduce the time to detect a collision; they do not guarantee exclusive work.
 
 For competing initial claims, the valid `CLAIM` with the earliest server timestamp wins. If
 timestamps match, the smaller server comment ID wins under the tracker's documented ID order.
@@ -172,7 +176,7 @@ resolves the conflict in a recorded decision. Keep every claim event in the issu
 
 | Case | Required result |
 | --- | --- |
-| Two sessions claim at once. | Order their valid comments by server timestamp, then comment ID. Only the first claim is effective. The loser stops when it sees the collision. |
+| Two sessions claim at once. | Order their valid comments by server timestamp, then comment ID. Only the first claim is effective. Both can work until the loser sees the collision and stops. There is no time bound. |
 | Two sessions use the same model. | Their claim IDs differ. Model equality does not imply one session. |
 | Assignment succeeds but comment creation fails. | No claim exists. Stop and inspect the comment history before any retry. Assignment alone grants no claim. |
 | Comment creation succeeds but its response is lost. | Search for that claim ID. Reuse the existing event and do not post it again. |

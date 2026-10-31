@@ -64,15 +64,26 @@ Work: Clarify assignee, server ordering, serialization and recovery cases.
 Verification: Run the full checks and compare the corrected diff with issue #69.
 Evidence: `npm run check` passed before commit: 130 tests and all repository checks passed.
 
+### C04: Clarify autonomous claim limit
+Status: IN_PROGRESS
+Depends on: C03
+Proposed commit: docs(workflow): allow routine claims
+Actual commit: none
+Objective: Keep routine claims autonomous and state the temporary race limit.
+Work: Remove mandatory serialization from initial claims. Keep serialization for work that
+cannot tolerate overlap.
+Verification: Run repository checks and inspect the claim steps and collision example.
+Evidence: not yet run
+
 ## Final verification
 
 `npm run check` passed after C02 and before C03. The specification, standards and blast reviews
-found gaps in the first draft. C03 corrected the assignee, resume, comment-order and concurrent
-claim rules. The pull request still needs an independent review.
+found gaps in the first draft. C03 corrected the assignee, resume and comment-order rules. The
+owner requested a change to the mandatory serialization rule after PR #74 opened.
 
 ## Handoff
 
-Next action: An independent reviewer checks PR #74 and this plan. Keep this plan until that
-review passes.
+Next action: Commit C04, update PR #74 and rerun checks. Keep this plan until independent review
+passes.
 Blockers: none.
 Risks: Tracker comments cannot make assignment and claim writes atomic.
