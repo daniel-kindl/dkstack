@@ -38,8 +38,9 @@ complete, rejected or abandoned, fail closed.
 
 ## Sources
 
-Each fact has one source. Read that source. A copy of that fact in a comment, a plan or a chat
-is not the source.
+Each issue fact in this contract has one source. Read that source. A copy of that fact in a
+comment, a plan or a chat is not the source. [Claim events](claims.md) use issue comments; they
+do not replace any issue fact below.
 
 - Parent and child: the tracker's native hierarchy.
 - Prerequisite: the tracker's native blocker link.
