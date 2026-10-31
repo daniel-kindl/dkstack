@@ -6,6 +6,7 @@ Coding standards and practices.
 
 - [practices.md](practices.md): Development practices.
 - [quality.md](quality.md): Code quality rules.
+- [naming.md](naming.md): Identifier forms, meaning and enforcement.
 - [quality-gates.md](quality-gates.md): Never weaken a quality gate.
 - [error-handling.md](error-handling.md): Handle errors explicitly.
 - [logging.md](logging.md): Logging and observability.

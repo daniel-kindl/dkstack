@@ -4,7 +4,7 @@
 
 - Apply clean code, SOLID, DRY, KISS, and YAGNI.
 - Prefer readable code over clever code.
-- Name things so the purpose is clear without comments.
+- Follow [naming.md](naming.md) for identifier forms and meaning.
 - Handle errors explicitly.
 - Do not suppress a test to make a change pass.
 - Do not suppress a warning to make a change pass, except as described in
