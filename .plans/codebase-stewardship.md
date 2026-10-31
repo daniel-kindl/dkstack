@@ -88,14 +88,27 @@ Verification: `npm run check`
 Evidence: `npm run check` passed on this tree before the commit. 161 tests passed. Skills,
 links, dashes, workflows and the changelog check passed. GitHub `validate` is NOT RUN.
 
+### C03: Fix the review findings
+Status: COMPLETED
+Depends on: C02
+Proposed commit: docs: fix stewardship review findings
+Actual commit: 0f09786
+Objective: Triage names the obsolete-ADR signal. A refactor stays in scope and keeps tests green.
+Work: Add the ADR signal to the page list and to triage. Replace the coverage limit in
+  `tdd-loop`.
+Verification: The new assertions failed before the text change. `npm run check` then passed.
+Evidence: Triage omitted `ADR no longer matches` from its signal list. `tdd-loop` still said
+  `current tests cover`. After the edit, `npm run check` passed with 162 tests. GitHub
+  `validate` on this commit is NOT RUN.
+
 ## Final verification
 
-`npm run check` passed locally on the C02 tree: 161 tests, and the skill, link, dash, workflow
-and changelog checks passed. GitHub `validate` is NOT RUN until the pull request exists.
+`npm run check` passed locally after C03: 162 tests, and the skill, link, dash, workflow and
+changelog checks passed. GitHub `validate` passed on `7b36f24` and is NOT RUN on the review fix.
 
 ## Handoff
-Next action: An independent reviewer reviews https://github.com/daniel-kindl/dkstack/pull/82.
-Do not merge it from this session.
+Next action: An independent reviewer reviews the new head of
+https://github.com/daniel-kindl/dkstack/pull/82. Do not merge it from this session.
 Blockers: none
-Risks: The signal list exists in two files. A later edit can make them disagree. The test locks
-the shared phrases.
+Risks: The signal list exists in two files. The test now compares the two signal sections,
+including the ADR signal.
