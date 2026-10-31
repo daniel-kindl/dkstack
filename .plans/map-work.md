@@ -2,7 +2,7 @@
 Status: IN_PROGRESS
 Issue: #70
 Branch: feat/70-map-work
-PR: not created
+PR: https://github.com/daniel-kindl/dkstack/pull/78
 Claim-ID: 1473f429-3a29-4546-a702-1baff3865d92
 
 ## Goal
@@ -72,7 +72,7 @@ Verification: Run focused tests, the full check and the STE linter.
 Evidence: The commit exists. The full check for the later publication change covers this commit.
 
 ### C04: Publish the map before readiness
-Status: IN_PROGRESS
+Status: COMPLETED
 Depends on: C03
 Proposed commit: fix(skills): publish map before ready
 Actual commit: b5094d8
@@ -81,7 +81,8 @@ summary exist. Check an existing pull request or parent comment before a retry.
 Work: Reorder publication and promotion. Add the lost-response check and the already-ready reuse
 check.
 Verification: Run focused tests and `npm run check`.
-Evidence: `npm run check` on Linux passed. 143 tests, 0 fail. GitHub `validate` has not run.
+Evidence: `npm run check` on Linux passed. 143 tests, 0 fail. GitHub `validate` passed on
+`4d1d7da` (run 41193098514).
 
 ## Final verification
 
@@ -90,6 +91,6 @@ map before a child becomes ready.
 
 ## Handoff
 
-Next action: Open the pull request and wait for GitHub validate. Do not merge.
+Next action: Wait for review of pull request 78. Do not merge. Do not remove this plan before that review.
 Blockers: none.
 Risks: A tracker can permit relationship reads but reject writes.
