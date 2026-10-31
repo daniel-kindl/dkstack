@@ -6,13 +6,14 @@ identify the session. A subagent acts under its parent session's claim. It does 
 second claim. A context-sharing subagent cannot implement an issue that its parent session
 mapped. See [session isolation](work.md#session-isolation).
 
-This protocol adds claim ownership to the [work contract](work.md). It does not change that
-contract's issue states, sources, authorization rules or safety limits.
+This protocol adds claim ownership and resume checks to the [work contract](work.md). It does
+not change the issue states, native issue fact sources or safety limits.
 
 ## Requirements for a tracker
 
 The tracker must support assignment and durable issue comments. Each comment must have a stable
-server ID and server timestamp. A session must be able to read the complete comment history,
+server ID and server timestamp. The tracker must define a total order for comment IDs when two
+timestamps match. A session must be able to read the complete comment history,
 including comments written by another session, in a stable order. It must also read the issue
 facts and prerequisite records that [readiness](work.md#readiness) requires. A client must read
 all pages of comments. A partial response is not a complete history.
@@ -22,12 +23,12 @@ Ask the owner or coordinator to assign one session outside this protocol and rec
 tracker cannot provide a reliable claim audit. Do not treat the assignee, a plan, chat or an
 unstructured comment as a replacement claim.
 
-Assignment and comment creation are separate writes. Comments also do not provide an atomic
-test that no other session is writing a claim. A read after a write can miss a concurrent claim
-that has not arrived yet. The server order selects one effective claimant after both comments
-exist, but it cannot prevent a short period of duplicate work. If the work requires exclusive
-execution before that order is known, the owner must serialize the sessions outside this
-protocol. A lock service is outside this protocol.
+Assignment and comment creation are separate writes. Comments do not provide an atomic test
+that no other session is writing a claim. A read after a write can miss a concurrent claim that
+has not arrived yet. The server order selects one effective claimant after both comments exist.
+Before any implementation, the owner or coordinator must serialize claim attempts and confirm
+that no other session is still claiming. Without that coordination, stop after reconciliation.
+Do not treat one read as exclusive access. A lock service is outside this protocol.
 
 ## Event record
 
@@ -72,12 +73,13 @@ If a recovery replaces a receiver that has not claimed, add `Supersedes-Claim-ID
 receiver's reserved claim ID. Use `none` for a branch, PR, plan, evidence or blocker that does
 not exist. `Next-Step` must name an action. Do not use `none` for `Authority` or either claim ID.
 Use `unknown` for a fact that could not be verified. An unknown required fact stops a handoff or
-recovery. `Authority` identifies the owner's recorded decision. A `RECOVERY` event records that
-decision; it does not grant permission. The owner decision must exist before the event.
+recovery. `Authority` links to the owner's decision in the issue or an ADR. A `RECOVERY` event
+records that decision; it does not grant permission. The owner decision must exist before the
+event.
 
 The server comment ID and timestamp are authoritative. The text must not supply its own order
-or timestamp. A malformed marked comment, duplicate claim ID for a different session, edited
-event or missing required field stops reconciliation. Ask the owner to review the complete
+or timestamp. A malformed marked comment, a second `CLAIM` with the same claim ID, an edited
+event or a missing required field stops reconciliation. Ask the owner to review the complete
 history. Never repair history by deleting a comment.
 
 ## Claim states and transitions
@@ -112,17 +114,21 @@ an active issue to ready.
 1. Read the issue, its native prerequisite records, assignee and complete comment history.
 2. Check [readiness](work.md#readiness) and the acceptance criteria. Stop if another valid claim
    is effective, or if an owner recovery or handoff is pending.
-3. Assign the configured shared account. Read the assignee field again. Stop if the write failed
-   or the field does not contain that account.
+3. If any assignee other than the configured shared account exists, stop for owner review. Assign
+   the shared account when the assignee field is empty. Read the field again. Stop if the write
+   failed or the assignee set is not exactly the shared account.
 4. Create one `CLAIM` comment with a new claim ID. If the write result is lost, search the full
    comment history for that ID before retrying. Do not create a second comment for the same
    claim.
 5. Read the complete history, assignee, issue facts and prerequisites again. Reconcile all valid
-   events. Begin implementation only if this claim ID is the effective claimant and the checks
-   still pass. Then use the allowed `ready` to `active` issue transition.
+   events. If this claim ID is effective and the checks still pass, obtain confirmation that
+   claim attempts are serialized and no other session is still claiming. Without that
+   confirmation, stop. Use the allowed `ready` to `active` issue transition. Check that it
+   succeeded. Then begin implementation.
 
 For competing initial claims, the valid `CLAIM` with the earliest server timestamp wins. If
-timestamps match, the smaller server comment ID wins. The losing session stops and does not
+timestamps match, the smaller server comment ID wins under the tracker's documented ID order.
+If the tracker cannot order the tied IDs, stop for owner review. The losing session does not
 change the winning claim, assignment or issue state. A later reread that reveals a losing claim
 requires that session to stop at once and record any work for the winner. The winner remains the
 only effective accountable claimant.
@@ -173,6 +179,9 @@ resolves the conflict in a recorded decision. Keep every claim event in the issu
 | A claimant crashes. | Keep its claim. The owner examines the work and authorizes recovery; time alone changes nothing. |
 | A session replays a claim. | The existing claim ID identifies the prior event. A duplicate event grants no new ownership. |
 | A claimant hands off work. | Its `HANDOFF` names both IDs and all work references. The receiver validates and posts the matching `CLAIM` before work. |
+| A claimant releases an active issue. | The claim becomes unclaimed. A replacement needs owner recovery because the issue remains active. |
+| A receiver cannot accept recovery. | Work stays stopped. The owner can authorize a new `RECOVERY` that names the reserved receiver in `Supersedes-Claim-ID`. |
+| A marked comment is malformed. | Reconciliation stops. The owner reviews the full history; no session deletes the comment. |
 | The owner recovers work. | The owner's recorded decision precedes `RECOVERY`. The new claimant validates, posts a new `CLAIM` and rereads. |
 
 Keep material claim events in issue comments. Keep routine detailed progress in the feature

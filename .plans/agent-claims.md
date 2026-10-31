@@ -45,21 +45,32 @@ Verification: Run repository checks and compare each acceptance criterion with t
 Evidence: `npm run check` passed before commit; `npm run check:links`, `npm run check:dashes` and `git diff --check` passed before commit.
 
 ### C02: Record the change
-Status: IN_PROGRESS
+Status: COMPLETED
 Depends on: C01
 Proposed commit: docs(changelog): record claim protocol
-Actual commit: none
+Actual commit: 0997202
 Objective: Record the new protocol in Unreleased.
 Work: Update CHANGELOG.md.
 Verification: Run the changelog check and full repository checks.
+Evidence: `npm run check` passed after commit: 130 tests passed and all repository checks passed.
+
+### C03: Resolve review findings
+Status: IN_PROGRESS
+Depends on: C02
+Proposed commit: docs(workflow): clarify claim coordination
+Actual commit: none
+Objective: Make ownership checks and resume authorization precise.
+Work: Clarify assignee, server ordering, serialization and recovery cases.
+Verification: Run the full checks and compare the corrected diff with issue #69.
 Evidence: not yet run
 
 ## Final verification
 
-Not yet run.
+`npm run check` passed after C02. The specification and standards reviews found gaps in the
+initial draft. The author is correcting them before the pull request.
 
 ## Handoff
 
-Next action: Commit the changelog entry and run all checks.
+Next action: Commit the review fixes, run checks, and open the pull request.
 Blockers: none.
 Risks: Tracker comments cannot make assignment and claim writes atomic.
