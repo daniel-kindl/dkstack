@@ -87,6 +87,9 @@ The steps expect an issue, a feature branch, a pull request, automated checks an
 - Read [claims.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/claims.md).
   Do not start without a verified claim.
 - Stay inside the issue scope. Do not add work that the issue does not allow.
+- Record a design risk in the plan only when
+  [stewardship](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/stewardship.md)
+  says to analyze. Do not add that record for ordinary work.
 - If this session mapped the issue, stop. A fresh session does the implementation. See
   [work.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/work.md).
 - Only plan, unless someone also asks you to do the work.

@@ -100,6 +100,7 @@ Check each file against this list. Link the rule in each finding. Do not copy th
 - Quality gates: no check is disabled, skipped or lowered. A warning suppression follows the exception rules. See [coding/quality-gates.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality-gates.md).
 - Logging: no secrets or personal data in logs. See [coding/logging.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/logging.md).
 - Architecture: the change follows the ADRs and [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md). For a structural change, use [apply-architecture](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/apply-architecture/SKILL.md).
+- Sustainability: follow [stewardship](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/stewardship.md) when the change matches a signal on that page. An unrelated refactor is work the specification did not ask for. Do not require a stewardship report for ordinary work.
 - Performance: hot paths, allocations, repeated queries and blocking I/O on the UI thread.
 - Docs: the README, user docs, ADRs and `CHANGELOG.md` match the change.
 - Writing: all text follows [writing/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md). Use [writing-check](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/writing-check/SKILL.md).
