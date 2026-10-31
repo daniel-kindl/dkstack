@@ -39,7 +39,7 @@ If a feature plan exists, follow [feature-plans.md](https://raw.githubuserconten
 ## Work route
 
 Read the issue before you select a skill. A missing lifecycle or eligibility does not stop triage.
-Classify the request. Check implementation readiness in
+Classify the request. For an explicit instruction from the verified repository owner to implement a named issue, follow the owner-directed transition in work.md: fill missing non-conflicting tracker metadata, establish readiness, re-read tracker state and claim before implementation. Do not infer approval from issue authorship or a request to triage. Check implementation readiness in
 [work.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/work.md)
 before implementation. Run
 [preflight](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/preflight.md)
