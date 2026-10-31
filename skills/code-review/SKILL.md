@@ -66,6 +66,11 @@ Find the standards:
 - The project's documented exceptions to dkstack rules. A dkstack rule wins over a project rule, except through a documented exception. See the precedence rules in [AGENTS.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md).
 
 Skip what an automated check in the project already enforces.
+For naming, review the meaning rules in
+[coding/naming.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/naming.md).
+Check intent, accuracy and domain terms in the changed identifiers. Do not repeat a naming form
+check that the project's automated checks reliably enforce. Review forms that have no reliable
+automated check.
 
 ## 3. Pull request text
 
@@ -96,7 +101,7 @@ Check each file against this list. Link the rule in each finding. Do not copy th
 - Correctness: logic, edge cases, empty and null input, error paths and resource cleanup. See [coding/error-handling.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/error-handling.md) and [resource balancing](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/resource-balancing.md).
 - Security: input validation, secrets, injection, permissions, and CI triggers and tokens. See [coding/security.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md).
 - Dependencies: each new dependency has a reason, a pinned version and a lockfile change. Each third-party CI step is pinned to a full commit SHA. Run the project's dependency audit if you can. See [coding/dependencies.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md).
-- Clean code: names, readability and broken windows. See [coding/quality.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality.md).
+- Clean code: semantic naming, readability and broken windows. See [coding/quality.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality.md) and [coding/naming.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/naming.md).
 - Quality gates: no check is disabled, skipped or lowered. A warning suppression follows the exception rules. See [coding/quality-gates.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality-gates.md).
 - Logging: no secrets or personal data in logs. See [coding/logging.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/logging.md).
 - Architecture: the change follows the ADRs and [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md). For a structural change, use [apply-architecture](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/apply-architecture/SKILL.md).
@@ -114,7 +119,7 @@ A smell is a judgement, not a hard violation. Write it as "possible feature envy
 
 | Smell | Fix | Principle |
 | --- | --- | --- |
-| Mysterious name: a name does not say what the thing does or holds | Rename it. If no clear name fits, the design is not clear | [coding/quality.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality.md), [domain languages](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md) |
+| Mysterious name: a name does not say what the thing does or holds | Rename it. If no clear name fits, the design is not clear | [coding/naming.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/naming.md), [domain languages](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md) |
 | Duplicated code: the same logic is in more than one place | Move the logic to one function and use it in each place | [DRY](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/dry.md) |
 | Feature envy: a function uses the data of another object more than its own | Move the function to the data it uses | [decoupling](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/decoupling.md) |
 | Data clumps: the same fields or parameters always go together | Make one type for the group and pass it | [domain languages](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md), [DRY](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/dry.md) |

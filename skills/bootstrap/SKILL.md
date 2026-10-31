@@ -43,6 +43,10 @@ Apply the rules from version-control, versioning, and coding sections. Steps 7 t
    - Pin dependency versions where practical.
    - Make test and build output stable.
    - Fail the build on any non-zero warning count.
+   - Follow [coding/naming.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/naming.md).
+     Configure naming rules that native tools can check reliably, such as supported Roslyn,
+     ESLint or Ruff rules. Run those checks in CI as errors. An `.editorconfig` file alone does
+     not enforce naming in every language. Leave unsupported or semantic rules to review.
 
 7. Pin each third-party CI action or reusable CI step to a full commit SHA.
    - Put the version in a comment on the same line.
