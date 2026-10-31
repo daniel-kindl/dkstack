@@ -55,22 +55,24 @@ Verification: Run the changelog check and full repository checks.
 Evidence: `npm run check` passed after commit: 130 tests passed and all repository checks passed.
 
 ### C03: Resolve review findings
-Status: IN_PROGRESS
+Status: COMPLETED
 Depends on: C02
 Proposed commit: docs(workflow): clarify claim coordination
-Actual commit: none
+Actual commit: 9e32fb5
 Objective: Make ownership checks and resume authorization precise.
 Work: Clarify assignee, server ordering, serialization and recovery cases.
 Verification: Run the full checks and compare the corrected diff with issue #69.
-Evidence: not yet run
+Evidence: `npm run check` passed before commit: 130 tests and all repository checks passed.
 
 ## Final verification
 
-`npm run check` passed after C02. The specification and standards reviews found gaps in the
-initial draft. The author is correcting them before the pull request.
+`npm run check` passed after C02 and before C03. The specification, standards and blast reviews
+found gaps in the first draft. C03 corrected the assignee, resume, comment-order and concurrent
+claim rules. The pull request still needs an independent review.
 
 ## Handoff
 
-Next action: Commit the review fixes, run checks, and open the pull request.
+Next action: Open the pull request and request independent review. Keep this plan until that
+review passes.
 Blockers: none.
 Risks: Tracker comments cannot make assignment and claim writes atomic.
