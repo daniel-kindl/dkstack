@@ -13,4 +13,5 @@ Skills are specific capabilities agents should apply when relevant.
 - [write-adr](write-adr/SKILL.md): Create an Architecture Decision Record.
 - [writing-check](writing-check/SKILL.md): Apply ASD-STE100 to text.
 - [plan-work](plan-work/SKILL.md): Write and keep a feature plan with commit-sized work items.
+- [map-work](map-work/SKILL.md): Map an accepted multi-PR objective to child issues and stop before implementation.
 - [release](release/SKILL.md): Prepare a release. Link the versioning and safety rules. Do not publish.
