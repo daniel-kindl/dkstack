@@ -71,8 +71,8 @@ Apply the rules from version-control, versioning, and coding sections. Steps 7 t
     - Read [preflight.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/preflight.md).
     - Run scripts/preflight.mjs with no arguments. The command discovers the tracker for this
       repository. The default is a dry run.
-    - Report each unsupported capability and its fallback.
-    - Run scripts/preflight.mjs --apply to create missing labels. That run creates only the missing catalog labels. It does not change an existing label. It does not remove a label.
+    - Report each unsupported capability and its fallback. Report each unverified capability. Do not report an unverified capability as unsupported.
+    - Run scripts/preflight.mjs --apply to create missing labels. That run creates only the missing catalog labels. It does not change an existing label. It does not remove a label. Do not pass a report file with --apply.
     - Do not change protection, settings or infrastructure.
     - Run scripts/preflight.mjs again with no arguments. The second plan has no new create.
 

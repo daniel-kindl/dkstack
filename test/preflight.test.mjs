@@ -115,16 +115,32 @@ test("unsupported capabilities name a fallback and do not create labels", () => 
   assert.match(labels.fallback, /Do not create labels/);
   assert.deepEqual(plan.creates, []);
   assert.equal(plan.unsupported.length, 1);
+  assert.deepEqual(plan.unverified, []);
+});
+
+test("an unverified capability is not reported as unsupported", () => {
+  const plan = planPreflight({
+    capabilities: supported({
+      "parent/sub-issues": "unverified",
+      "blocking links": "unverified",
+    }),
+    labels: [],
+  });
+  assert.deepEqual(plan.unsupported, []);
+  assert.deepEqual(plan.unverified.map((item) => item.capability), ["parent/sub-issues", "blocking links"]);
+  assert.match(plan.unverified[0].fallback, /probe did not run/);
+  assert.match(plan.unverified[0].fallback, /Do not report the capability as unsupported/);
+  assert.match(plan.unverified[0].fallback, /fails closed/);
 });
 
 test("malformed input is rejected", () => {
   assert.throws(
     () => planPreflight({ capabilities: { issues: true }, labels: [] }),
-    /capability record must set every capability to true or false/,
+    /capability record must set every capability to true, false or unverified/,
   );
   assert.throws(
     () => planPreflight({ capabilities: supported({ labels: "yes" }), labels: [] }),
-    /capability record must set every capability to true or false/,
+    /capability record must set every capability to true, false or unverified/,
   );
   assert.throws(
     () => planPreflight({
@@ -202,6 +218,9 @@ test("the preflight page documents the catalog, the mapping and the rules", asyn
   assert.match(flat, /discovers the tracker/);
   assert.match(flat, /--apply/);
   assert.match(flat, /creates only the missing catalog labels/);
+  assert.match(flat, /Do not pass a report file with --apply/);
+  assert.match(flat, /unverified/);
+  assert.match(flat, /Do not report an unverified capability as unsupported/);
   assert.match(flat, /Do not change an existing label/);
   assert.match(flat, /Do not remove a label/);
   assert.match(flat, /one type label/);
@@ -243,7 +262,7 @@ if (args[0] === "repo") {
   state.push({ name, color, description });
   writeFileSync(process.env.GH_STATE, JSON.stringify(state));
 } else if (args[0] === "issue") {
-  process.stdout.write(JSON.stringify([{ number: 1 }]));
+  process.stdout.write(process.env.GH_ISSUES ?? JSON.stringify([{ number: 1 }]));
 } else if (args[0] === "pr") {
   process.stdout.write("[]");
 } else if (args[0] === "api" && args[1].endsWith("/dependencies")) {
@@ -269,11 +288,17 @@ if (args[0] === "repo") {
   return { dir, state, log, bin };
 }
 
-function runPreflight(args, bin) {
+function runPreflight(args, bin, env = {}) {
   return spawnSync(process.execPath, ["scripts/preflight.mjs", ...args], {
     cwd: repoRoot,
     encoding: "utf8",
-    env: { ...process.env, PATH: `${bin}:${process.env.PATH}`, GH_STATE: join(bin, "..", "labels.json"), GH_LOG: join(bin, "..", "gh.log") },
+    env: {
+      ...process.env,
+      PATH: `${bin}:${process.env.PATH}`,
+      GH_STATE: join(bin, "..", "labels.json"),
+      GH_LOG: join(bin, "..", "gh.log"),
+      ...env,
+    },
   });
 }
 
@@ -286,10 +311,42 @@ test("the command discovers the tracker and a dry run creates nothing", async ()
   assert.deepEqual(plan.created, []);
   assert.equal(plan.unsupported.some((item) => item.capability === "labels"), false);
   assert.equal(plan.unsupported.some((item) => item.capability === "blocking links"), true);
+  assert.equal(plan.unverified.some((item) => item.capability === "blocking links"), false);
+  assert.equal(plan.unverified.some((item) => item.capability === "parent/sub-issues"), false);
   const calls = (await readFile(tracker.log, "utf8")).trim().split("\n").map((line) => JSON.parse(line));
   assert.ok(calls.some((args) => args[0] === "repo" && args[1] === "view"));
   assert.ok(calls.some((args) => args[0] === "label" && args[1] === "list"));
   assert.equal(calls.some((args) => args[0] === "label" && args[1] === "create"), false);
+});
+
+test("an empty issue list leaves relation capabilities unverified", async () => {
+  const tracker = await fakeTracker();
+  const run = runPreflight([], tracker.bin, { GH_ISSUES: "[]" });
+  assert.equal(run.status, 0, run.stderr);
+  const plan = JSON.parse(run.stdout);
+  assert.equal(plan.unsupported.some((item) => item.capability === "parent/sub-issues"), false);
+  assert.equal(plan.unsupported.some((item) => item.capability === "blocking links"), false);
+  assert.deepEqual(
+    plan.unverified.map((item) => item.capability),
+    ["parent/sub-issues", "blocking links"],
+  );
+  const calls = (await readFile(tracker.log, "utf8")).trim().split("\n").map((line) => JSON.parse(line));
+  assert.equal(calls.some((args) => args[0] === "api" && /sub_issues|dependencies/.test(args[1] ?? "")), false);
+});
+
+test("apply rejects a report file and does not create labels", async () => {
+  const tracker = await fakeTracker();
+  const existing = JSON.stringify([{ name: "type:feature", color: "1F6FEB", description: "A new behavior." }]);
+  await writeFile(tracker.state, existing);
+  const report = join(tracker.dir, "report.json");
+  await writeFile(report, JSON.stringify({ capabilities: supported(), labels: [] }));
+  const run = runPreflight(["--apply", report], tracker.bin);
+  assert.equal(run.status, 1);
+  assert.match(run.stderr, /Do not apply a report file/);
+  assert.equal(await readFile(tracker.state, "utf8"), existing);
+  const log = await readFile(tracker.log, "utf8");
+  const calls = log.trim() === "" ? [] : log.trim().split("\n").map((line) => JSON.parse(line));
+  assert.equal(calls.some((args) => args[1] === "create"), false);
 });
 
 test("apply creates only missing catalog labels and the second run creates none", async () => {
@@ -321,6 +378,8 @@ test("bootstrap runs the preflight and names no tracker product", async () => {
   assert.match(step[1], /discovers the tracker/);
   assert.match(step[1], /--apply/);
   assert.match(step[1], /creates only the missing catalog labels/);
+  assert.match(step[1], /Do not pass a report file with --apply/);
+  assert.match(step[1], /unverified/);
   assert.match(step[1], /dry run/);
   assert.match(step[1], /https:\/\/raw\.githubusercontent\.com\/daniel-kindl\/dkstack\/v1\/workflow\/preflight\.md/);
   assert.match(step[1], /Do not change protection, settings or infrastructure/);

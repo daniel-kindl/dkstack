@@ -7,13 +7,16 @@ Run `scripts/preflight.mjs` with no arguments. The command discovers the tracker
 repository and prints a plan. The default is a dry run. It does not create labels.
 
 Run `scripts/preflight.mjs --apply` to create labels. That run creates only the missing catalog
-labels. It does not change an existing label. It does not remove a label. A report file is an
-explicit plan input. It does not replace discovery when the command has no file.
+labels. It does not change an existing label. It does not remove a label. Do not pass a report
+file with --apply. The apply run discovers the tracker. A report file is input only for a dry
+run. It does not replace discovery when the command has no file.
 
 ## Capabilities
 
-Report a capability when the tracker does not support it. Use the fallback. Do not invent a
-second store in a comment.
+A capability is true, false or unverified. Report a capability as unsupported only when its value
+is false. Use the fallback. Do not invent a second store in a comment. A probe that did not run
+sets the value to unverified. Do not report an unverified capability as unsupported. An action
+that needs an unverified capability fails closed.
 
 - issues: Do not track work in a second store. Report that the tracker has no issues.
 - labels: Do not create labels. Do not store the catalog in a comment.
@@ -80,7 +83,10 @@ digits. The catalog name is the label name.
 
 One such tracker is GitHub. The command then uses the GitHub client. It reads the repository
 record and the label list. With `--apply`, it creates each missing catalog label by name, color
-and description. It does not pass an update flag. It does not delete a label. The portable
+and description. It does not pass an update flag. It does not delete a label. When the repository
+has no issue to probe, the parent and sub-issue probe and the blocking-link probe do not run.
+Those capabilities are unverified. When a probe runs and the endpoint is missing, that capability
+is false. The portable
 contract does not require GitHub. Another tracker maps the same three fields to its own label
 record.
 

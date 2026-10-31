@@ -30,7 +30,8 @@ Add a dry-run tracker preflight and the label catalog to bootstrap.
 
 - The script prints a plan. It does not change the tracker on a dry run. Decision: a write client would bind the portable core to one product. Review of pull request 73: the command discovers the tracker, and `--apply` creates only missing catalog labels.
 - The bootstrap skill does not name a product. The optional mapping that names one tracker is in `workflow/preflight.md`.
-- A capability record must set every capability to true or false. A duplicate label name is rejected. Decision: review of pull request 73.
+- A capability record must set every capability to true, false or unverified. A duplicate label name is rejected. Decision: review of pull request 73.
+- `--apply` does not accept a report file. Apply discovers the live tracker. A probe that did not run is unverified. It is not unsupported. Decision: second review of pull request 73.
 - No open question.
 
 ## Commit plan
@@ -53,7 +54,15 @@ Objective: The command discovers the tracker. `--apply` creates only missing cat
 Verification: `npm run check` and GitHub `validate`.
 Evidence: `npm run check` on Linux passed. 127 tests, 0 fail. GitHub `validate` passed on `8add8ea` (run 41120253179).
 
+### C03: guard apply and unprobed capabilities
+Status: IN_PROGRESS
+Depends on: C02
+Proposed commit: fix(bootstrap): guard apply and probes
+Objective: `--apply` does not accept a report file. A probe that did not run is unverified, not unsupported.
+Verification: `npm run check` and GitHub `validate`.
+Evidence: `npm run check` on Linux passed. 130 tests, 0 fail. GitHub `validate` has not run.
+
 ## Handoff
-Next action: Wait for a new review of pull request 73. Do not merge. Do not remove this plan before that review.
+Next action: Finish C03. Do not merge. Do not remove this plan before the next review.
 Blockers: none
 Risks: A later change can make the script write to a tracker. The tests require an empty update list and an empty remove list.

@@ -79,9 +79,11 @@ function readCapabilities(capabilities) {
   const keys = Object.keys(capabilities);
   const sameKeys = keys.length === CAPABILITIES.length
     && CAPABILITIES.every((name) => Object.hasOwn(capabilities, name));
-  const booleans = CAPABILITIES.every((name) => typeof capabilities[name] === "boolean");
-  if (!sameKeys || !booleans) {
-    throw new Error("the capability record must set every capability to true or false");
+  const values = CAPABILITIES.every((name) => (
+    typeof capabilities[name] === "boolean" || capabilities[name] === "unverified"
+  ));
+  if (!sameKeys || !values) {
+    throw new Error("the capability record must set every capability to true, false or unverified");
   }
   return capabilities;
 }
@@ -95,8 +97,14 @@ export function planPreflight(input = {}) {
   const apply = input.apply === true;
   const names = new Set(CATALOG.map((entry) => entry.name));
   const unsupported = CAPABILITIES
-    .filter((capability) => capabilities[capability] !== true)
+    .filter((capability) => capabilities[capability] === false)
     .map((capability) => ({ capability, fallback: FALLBACKS[capability] }));
+  const unverified = CAPABILITIES
+    .filter((capability) => capabilities[capability] === "unverified")
+    .map((capability) => ({
+      capability,
+      fallback: `The ${capability} probe did not run. Do not report the capability as unsupported. An action that needs it fails closed.`,
+    }));
   const creates = [];
   const differs = [];
   const kept = [];
@@ -159,6 +167,7 @@ export function planPreflight(input = {}) {
     differs,
     kept,
     unsupported,
+    unverified,
     conflicts,
     missing,
     blocked,
@@ -186,6 +195,11 @@ function probe(ghRun, args, allow) {
   const result = ghRun(args);
   if (result.status === 0) return true;
   return Boolean(allow && allow.test(result.stderr ?? ""));
+}
+
+function relationCapability(sample, ghRun, path) {
+  if (sample === null) return "unverified";
+  return probe(ghRun, ["api", path]);
 }
 
 export function discoverTracker({ ghRun = gh } = {}) {
@@ -222,8 +236,8 @@ export function discoverTracker({ ghRun = gh } = {}) {
       issues: issuesOn,
       labels: issuesOn && labelsOk,
       milestones: issuesOn && probe(ghRun, ["api", `repos/${nwo}/milestones`]),
-      "parent/sub-issues": sample !== null && probe(ghRun, ["api", `repos/${nwo}/issues/${sample}/sub_issues`]),
-      "blocking links": sample !== null && probe(ghRun, ["api", `repos/${nwo}/issues/${sample}/dependencies`]),
+      "parent/sub-issues": relationCapability(sample, ghRun, `repos/${nwo}/issues/${sample}/sub_issues`),
+      "blocking links": relationCapability(sample, ghRun, `repos/${nwo}/issues/${sample}/dependencies`),
       assignment: issuesOn,
       comments: issuesOn,
       "PRs/reviews": probe(ghRun, ["pr", "list", "--limit", "1", "--json", "number"]),
@@ -256,6 +270,9 @@ export function createMissingLabels(creates, { ghRun = gh } = {}) {
 }
 
 export function executePreflight({ report = null, apply = false, ghRun } = {}) {
+  if (apply && report !== null) {
+    throw new Error("Do not apply a report file. Apply discovers the tracker.");
+  }
   const source = report ?? discoverTracker({ ghRun });
   const plan = planPreflight({ ...source, apply });
   const created = apply ? createMissingLabels(plan.creates, { ghRun }) : [];
