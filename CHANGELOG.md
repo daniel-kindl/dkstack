@@ -78,6 +78,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `scripts/preflight.mjs`: probe GitHub's native blocked-by endpoint. The live preflight now
+  reports blocking links as supported when the endpoint works and remains fail-closed on error.
 - `scripts/check-title.mjs`: the title check now rejects a subject longer than 50 characters.
   It counts Unicode code points and does not count the ` (#NN)` suffix. A test now proves that
   the check rejects a double `!`.
