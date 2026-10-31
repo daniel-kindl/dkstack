@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   exceptions, C# and clang-format settings, and CI enforcement. Bootstrap links the guideline
   and selects supported settings without weakening existing quality gates.
 
+## [1.1.0] - 2026-10-31
+
+### Added
+
+- `coding/naming.md`: language-agnostic identifier naming guidance, preferred naming forms, semantic review criteria, and native analyzer enforcement recommendations.
+- Owner-directed issue triage: a verified explicit owner request can authorize preparation of missing readiness metadata while preserving prerequisite, eligibility, claim and safety checks.
 - `skills/write-pr`: writes a pull request body with Summary, Evidence, Risk and rollback, and
   References. The detail matches the change. Evidence separates verified, unverified and known
   risk, and names a required check that did not run as NOT RUN. A trivial change does not need a
@@ -152,5 +158,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `validate` workflow. It checks the PR or commit title, the skills, the links, the dashes,
   the workflows, the CHANGELOG entry for the version and the unit tests.
 
-[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/daniel-kindl/dkstack/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/daniel-kindl/dkstack/releases/tag/v1.0.0
