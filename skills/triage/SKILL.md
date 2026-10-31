@@ -35,9 +35,10 @@ If a feature plan exists, follow [feature-plans.md](https://raw.githubuserconten
 
 ## Work route
 
-Read the issue before you select a skill. Check readiness in
-[work.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/work.md). If a
-readiness check fails, stop. Run
+Read the issue before you select a skill. A missing lifecycle or eligibility does not stop triage.
+Classify the request. Check implementation readiness in
+[work.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/work.md)
+before implementation. Run
 [preflight](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/preflight.md)
 before a tracker write. One pull request uses plan-work. More than one pull request uses
 map-work, then that session stops.

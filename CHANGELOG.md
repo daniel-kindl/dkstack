@@ -9,11 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `workflow/lifecycle.md`: the route from an external request through preflight, mapping, a fresh
-  session, independent review and a merge of the reviewed head. Named failures stop and link the
-  contract that holds the procedure. `.github/ISSUE_TEMPLATE/external-request.md` asks for an
-  outcome, constraints, context and acceptance intent. `triage`, `plan-work` and `tdd-loop` link
-  the work and claim contracts.
+- `workflow/lifecycle.md` and `scripts/lifecycle.mjs`: the route from an external request through
+  preflight, mapping, a fresh session, independent review and a merge of the reviewed head.
+  Triage classifies a request that has no lifecycle label and no eligibility label. Implementation
+  readiness applies before implementation. Named failures stop and link the contract that holds
+  the procedure. `.github/ISSUE_TEMPLATE/external-request.md` asks for an outcome, constraints,
+  context and acceptance intent. `triage`, `plan-work` and `tdd-loop` link the work and claim
+  contracts.
 - `skills/map-work`: maps an accepted multi-PR objective to bounded child issues. It checks
   native relationships and readiness, records a repository handoff, and stops before child
   implementation. New children stay in planning until the mapping pull request has passed

@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { routeWork } from "../scripts/lifecycle.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -48,13 +49,69 @@ test("the external request template does not ask for a decomposition", async () 
   assert.doesNotMatch(text, /map-work/);
 });
 
-test("triage checks readiness and chooses plan-work or map-work", async () => {
+test("triage classifies before implementation readiness", async () => {
   const text = await flat("skills/triage/SKILL.md");
   assert.match(text, /workflow\/work\.md/);
   assert.match(text, /workflow\/preflight\.md/);
-  assert.match(text, /readiness check fails.*stop/i);
+  assert.match(text, /missing lifecycle or eligibility does not stop triage/i);
+  assert.match(text, /implementation readiness.*before implementation/i);
+  assert.doesNotMatch(text, /If a readiness check fails, stop/);
   assert.match(text, /one pull request.*plan-work/i);
   assert.match(text, /more than one pull request.*map-work/i);
+});
+
+const readyImplement = {
+  phase: "implement",
+  sessionMappedIssue: false,
+  mappedChild: false,
+  mappingMerged: false,
+  readiness: true,
+  prerequisiteComplete: true,
+  permission: "present",
+  claim: "effective",
+};
+
+test("an unlabeled external request is classified", () => {
+  const many = routeWork({ phase: "triage", lifecycle: null, eligibility: null, pullRequestCount: 2 });
+  assert.equal(many.action, "classify");
+  assert.equal(many.skill, "map-work");
+  assert.equal(many.stop, false);
+  const one = routeWork({ phase: "triage", lifecycle: null, eligibility: null, pullRequestCount: 1 });
+  assert.equal(one.action, "classify");
+  assert.equal(one.skill, "plan-work");
+  assert.equal(one.stop, false);
+  const unread = routeWork({ phase: "triage", lifecycle: null, eligibility: null });
+  assert.equal(unread.action, "classify");
+  assert.equal(unread.skill, null);
+  assert.equal(unread.stop, false);
+});
+
+test("missing implementation readiness stops implementation only", () => {
+  const triage = routeWork({ phase: "triage", lifecycle: null, eligibility: null, readiness: false, pullRequestCount: 1 });
+  assert.equal(triage.stop, false);
+  const implement = routeWork({ ...readyImplement, readiness: false });
+  assert.deepEqual(implement, { action: "stop", skill: null, stop: true, reason: "readiness" });
+});
+
+test("a mapping handoff blocks the mapping session and an unmerged map", () => {
+  const same = routeWork({ ...readyImplement, sessionMappedIssue: true, mappedChild: true, mappingMerged: true });
+  assert.equal(same.reason, "same-session");
+  const waiting = routeWork({ ...readyImplement, mappedChild: true, mappingMerged: false });
+  assert.equal(waiting.reason, "mapping-handoff");
+  const fresh = routeWork({ ...readyImplement, mappedChild: true, mappingMerged: true });
+  assert.equal(fresh.action, "implement");
+});
+
+test("collision, an open prerequisite, a missing permission and an unreviewed merge stop", () => {
+  assert.equal(routeWork({ ...readyImplement, claim: "collision" }).reason, "collision");
+  assert.equal(routeWork({ ...readyImplement, prerequisiteComplete: false }).reason, "prerequisite");
+  assert.equal(routeWork({ ...readyImplement, permission: "missing" }).reason, "permission");
+  assert.equal(routeWork({ ...readyImplement, permission: "unverified" }).reason, "permission");
+  const unreviewed = routeWork({ phase: "merge", reviewPassed: false, checksGreen: true });
+  assert.equal(unreviewed.action, "stop");
+  assert.equal(unreviewed.reason, "unreviewed");
+  assert.equal(routeWork({ phase: "merge", reviewPassed: true, checksGreen: false }).reason, "checks");
+  assert.equal(routeWork({ phase: "merge", reviewPassed: true, checksGreen: true }).action, "merge");
 });
 
 test("plan-work and tdd-loop keep the claim and the fresh session", async () => {
