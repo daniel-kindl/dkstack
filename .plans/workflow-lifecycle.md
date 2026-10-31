@@ -54,14 +54,16 @@ Actual commit: f5a4e53
 Objective: An unlabeled external request can be classified. Implementation still stops when readiness, the mapping handoff or a denial condition fails.
 Work: Add a scenario function and point triage at classification before implementation readiness.
 Verification: `npm run check` and GitHub `validate`.
-Evidence: `npm run check` on Linux passed. 156 tests, 0 fail. GitHub `validate` is not run yet.
+Evidence: `npm run check` on Linux passed. 156 tests, 0 fail. GitHub `validate` passed on
+`d4403cb` (run 41201027236).
 
 ## Final verification
 
-Not run yet.
+`npm run check` on Linux passed. 156 tests, 0 fail. GitHub `validate` passed on `d4403cb`
+(run 41201027236).
 
 ## Handoff
 
-Next action: Wait for GitHub `validate` on this branch. Do not merge. Do not remove this plan before the next review.
+Next action: Wait for an independent review of PR #79. Do not merge. Do not remove this plan before that review.
 Blockers: none.
 Risks: A skill link can copy a rule that the tests forbid.
