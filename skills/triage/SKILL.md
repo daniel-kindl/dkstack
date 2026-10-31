@@ -27,6 +27,9 @@ If a feature plan exists, follow [feature-plans.md](https://raw.githubuserconten
 - Plan or resume a feature: [plan-work](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/plan-work/SKILL.md)
 - Map a multi-PR objective: [map-work](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/map-work/SKILL.md)
 - Implementation: [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md)
+- Pull request body: [write-pr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-pr/SKILL.md).
+  Use it when you write or materially update the body. Do not use it for a review that leaves
+  the body unchanged.
 - Review: [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md)
 - Bug or unexpected behavior: [coding/debugging.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/debugging.md)
 - Durable decision: [write-adr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-adr/SKILL.md)

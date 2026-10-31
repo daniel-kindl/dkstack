@@ -1,27 +1,27 @@
-<!-- The PR title is the squash commit title. Use a conventional commit. -->
+<!-- The title is the squash commit title. Use a conventional commit of 50 characters or fewer. -->
 
 Closes #
 
-## Changes
+## Summary
 
-<!-- List what changed. Keep to the scope of the issue. -->
+<!-- What changed, why it matters, and who it affects. Do not list only files. Add a visual only when it helps. -->
 
-## Tests
+## Evidence
 
-<!--
-List the tests that prove the behavior.
-Say which tests you wrote first and how each one failed before the change.
-For a docs-only change, say why no test covers it.
-Rules: https://github.com/daniel-kindl/dkstack/blob/main/tdd/index.md
-and https://github.com/daniel-kindl/dkstack/blob/main/coding/testing.md
--->
+<!-- Verified, unverified, and known risk. Name each required check that did not run as NOT RUN. For a documentation-only change, say why it has no test. -->
 
-## Checks
-
-<!-- Give the npm run check result. Name each check that did not run as NOT RUN. -->
-
-- `npm run check`:
+- Verified:
+- Unverified:
+- Known risk:
 - NOT RUN:
+
+## Risk and rollback
+
+<!-- One short sentence when the risk is low. Name blast radius, migration, and rollback only when they matter. -->
+
+## References
+
+<!-- The issue link and any rule the change depends on. Remove this section when it adds nothing. -->
 
 ## Checklist
 

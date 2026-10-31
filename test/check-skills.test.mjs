@@ -35,6 +35,7 @@ test("the repository skills use the folder layout and valid frontmatter", async 
     "tdd-loop",
     "triage",
     "write-adr",
+    "write-pr",
     "writing-check",
   ]);
 });

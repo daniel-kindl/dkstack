@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `skills/write-pr`: writes a pull request body with Summary, Evidence, Risk and rollback, and
+  References. The detail matches the change. Evidence separates verified, unverified and known
+  risk, and names a required check that did not run as NOT RUN. A trivial change does not need a
+  diagram or a long risk form. The skill does not review or merge. `triage` routes pull request
+  text to the skill and leaves an unchanged review on `code-review`. The pull request template
+  uses the same sections. `workflow/review-and-merge.md` links the skill and keeps the merge rules.
 - `architecture/stewardship.md`: three levels of codebase stewardship. Awareness applies to every
   task and adds no step. Analysis applies only for a named signal or a human request. Intervention
   stays inside the authorized scope. The principles have no fixed rank. Seven scenarios show the
