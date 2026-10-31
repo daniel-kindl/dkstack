@@ -20,6 +20,13 @@ Apply the rules from version-control, versioning, and coding sections. Steps 7 t
    - `insert_final_newline = true`
    - Language-specific indent sizes as needed
    - `trim_trailing_whitespace = false` for Markdown
+   - Follow [brace style](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/brace-style.md).
+     For C# tools that read Roslyn settings, add `[*.cs]` with
+     `csharp_new_line_before_open_brace = all`. For C and C++ with clang-format, merge
+     `BreakBeforeBraces: Allman` into `.clang-format`. Check the result with the selected
+     formatter and enforce it in CI. Keep Go on `gofmt` and use the documented exceptions.
+     EditorConfig has no standard brace-placement property. If the tool has no supported
+     setting, record the preference as documentation only. Keep existing quality gates.
 
 2. Configure the build so warnings are errors and the build produces zero warnings and zero hints.
    - Set the compiler or build option that treats warnings as errors.

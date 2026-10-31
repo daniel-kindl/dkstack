@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `coding/brace-style.md`: prefer Allman braces where supported. Document Go and formatter
+  exceptions, C# and clang-format settings, and CI enforcement. Bootstrap links the guideline
+  and selects supported settings without weakening existing quality gates.
+
 ## [1.1.0] - 2026-10-31
 
 ### Added

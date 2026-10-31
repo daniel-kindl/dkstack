@@ -4,6 +4,7 @@ Coding standards and practices.
 
 ## Sections
 
+- [brace-style.md](brace-style.md): Brace placement and formatter exceptions.
 - [practices.md](practices.md): Development practices.
 - [quality.md](quality.md): Code quality rules.
 - [naming.md](naming.md): Identifier forms, meaning and enforcement.
