@@ -13,6 +13,8 @@ Use this rule as the tie-breaker when other principles do not decide between two
 - [orthogonality.md](orthogonality.md): Keep components independent. Related: [reversibility.md](reversibility.md), [decoupling.md](decoupling.md).
 - [solid.md](solid.md): SOLID principles.
 - [design.md](design.md): Design choices and trade-offs.
+- [stewardship.md](stewardship.md): Consider long-term ease of change. Analyze only when a signal
+  or a request justifies it.
 - [fail-fast.md](fail-fast.md): Stop immediately on bad state. Related: [design-by-contract.md](design-by-contract.md).
 - [dry.md](dry.md): Do not repeat knowledge.
 - [kiss.md](kiss.md): Keep it simple. Related: [yagni.md](yagni.md).

@@ -83,6 +83,22 @@ One agent can do all the steps. Many agents can share the steps. A skill does no
 - Any text: [writing/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md)
 - Issues, pull requests, review, merge or release: [workflow/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/index.md)
 
+## Stewardship
+
+Routine work does not read
+[stewardship](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/stewardship.md).
+Read it when a human asks for the analysis, or when the task has one of these signals:
+
+- A new public interface.
+- A changed module boundary or a new dependency.
+- A workaround that avoids the current architecture.
+- The same knowledge appears again.
+- Two principles conflict.
+- A trade-off affects compatibility, performance or security.
+- An ADR no longer matches the code or the current decision.
+
+Do not add a phase, a checklist or a report for ordinary work. The page holds the rules.
+
 ## Rules
 
 - Do not read every file. Read only what the task needs.

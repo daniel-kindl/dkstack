@@ -35,6 +35,10 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 
 ## Rules
 
+- When this skill applies, also read
+  [stewardship](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/stewardship.md).
+  Judge the long-term consequences, the alternatives, the reversibility and the documented intent.
+  Keeping the current design is a valid result. Do not copy that page.
 - Do not invent new principles. Use only the files in architecture/.
 - State trade-offs when two principles pull in different directions.
 - Keep the change reversible when possible. See [reversibility.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/reversibility.md).

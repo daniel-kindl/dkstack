@@ -59,6 +59,9 @@ Every rule in [workflow/safety.md](workflow/safety.md) is a hard limit. For exam
 ## Key rules
 
 - Select the smallest design that works. See [architecture/design.md](architecture/design.md).
+- Consider coherence, coupling, complexity, compatibility and ease of future change while you
+  work. Read [architecture/stewardship.md](architecture/stewardship.md) when triage says to read
+  it.
 - Write a failing test first. Tests must prove behavior. See [tdd/index.md](tdd/index.md).
 - Write each commit title as a conventional commit of 50 characters or fewer. See
   [version-control/index.md](version-control/index.md).
