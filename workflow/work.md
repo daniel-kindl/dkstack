@@ -87,8 +87,11 @@ are not completion.
 - From triage, planning, ready, active or review, the owner abandons the issue -> closed
 - closed + the owner opens the issue again -> triage
 
+An explicit instruction from the authenticated repository owner to implement a specific issue counts as owner acceptance for that issue, provided the request's identity and scope are verified. An agent acting on that instruction may complete triage -> planning -> ready, or triage -> ready, after all applicable readiness checks pass. It may set missing lifecycle, type and agent eligibility fields when supported by the tracker, but it must not override conflicting fields or a human-only designation. Record and re-read each transition before claiming work. A request to triage only is not implementation authorization. An issue author or another agent is not proof of owner authorization. If the requester cannot be verified as the owner, stop before any owner-only transition.
+
 The owner may make these transitions. An agent may make only these transitions:
 
+- triage -> ready, or triage -> planning -> ready, when a verified explicit owner instruction requests implementation of this issue and the readiness checks pass
 - planning -> ready, when the acceptance criteria exist and every prerequisite is complete
 - ready -> active, when the readiness checks pass and this session did not map the issue as a
   child
@@ -131,7 +134,7 @@ Those rules win over this page.
 These actions have their own checks:
 
 - An agent may read an issue.
-- An agent may change the lifecycle only through a transition that this page allows for an agent.
+- An agent may change the lifecycle only through a transition that this page allows for an agent. Owner-directed work authorization is scoped to one issue and does not waive any readiness, claim or safety check.
 - In-scope map-work stays inside the objective and the constraints in the parent issue. That
   mapping follows the repository rules. It does not need a new approval from the owner. The
   agent may write the child issues, the hierarchy links and the blocker links for that mapping.

@@ -9,7 +9,7 @@ their rules.
    intent. Use the external request template. The author does not decompose the work.
 2. Triage reads the issue and classifies it. A missing lifecycle or eligibility does not stop
    triage. Triage runs preflight before a tracker write. See [preflight.md](preflight.md) and
-   [work.md](work.md). Check implementation readiness before implementation.
+   [work.md](work.md). A verified, explicit owner instruction to implement the issue can authorize completing its missing administrative triage-to-ready transition. Verify the tracker state again after writes. This never waives prerequisites, eligibility conflicts, claims or safety. Check implementation readiness before implementation.
 3. When the objective fits one pull request, use plan-work. When it needs more than one pull
    request, use map-work. The map-work session stops before implementation.
 4. A fresh session implements a mapped child after the mapping pull request is merged and the
