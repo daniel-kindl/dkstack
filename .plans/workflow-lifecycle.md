@@ -39,7 +39,7 @@ No open question.
 Status: IN_PROGRESS
 Depends on: none
 Proposed commit: feat(workflow): integrate the lifecycle
-Actual commit: none
+Actual commit: 5578be5
 Objective: Skills and a lifecycle page route external work and stop on the named failures.
 Work: Write failing tests, then add the page, the template and the skill links.
 Verification: `npm run check` and GitHub `validate`.
@@ -51,6 +51,6 @@ Not run yet.
 
 ## Handoff
 
-Next action: Write the failing lifecycle tests, then the page and skill links.
+Next action: Open the pull request and wait for GitHub validate. Do not merge.
 Blockers: none.
 Risks: A skill link can copy a rule that the tests forbid.
