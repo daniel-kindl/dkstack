@@ -164,3 +164,26 @@ test("the workflow index links the lifecycle page", async () => {
   const index = await readFile(join(root, "workflow", "index.md"), "utf8");
   assert.match(index, /\[lifecycle\.md\]\(lifecycle\.md\)/);
 });
+
+test("verified owner direction permits preparation of missing readiness metadata", () => {
+  const request = {
+    phase: "prepare", ownerInstruction: true, ownerVerified: true,
+    lifecycle: null, eligibility: null, conflict: false, humanOnly: false,
+    permission: "present", prerequisiteComplete: true,
+    acceptanceCriteria: true, trackerSupported: true,
+  };
+  assert.equal(routeWork(request).action, "prepare-ready");
+  assert.equal(routeWork({ ...request, lifecycle: "triage" }).action, "prepare-ready");
+  assert.equal(routeWork({ ...request, lifecycle: "planning", eligibility: "agent" }).action, "prepare-ready");
+  assert.equal(routeWork({ ...request, ownerInstruction: false }).reason, "owner-authorization");
+  assert.equal(routeWork({ ...request, ownerVerified: false }).reason, "owner-authorization");
+  assert.equal(routeWork({ ...request, humanOnly: true }).reason, "conflict");
+  assert.equal(routeWork({ ...request, eligibility: "human" }).reason, "eligibility");
+  assert.equal(routeWork({ ...request, lifecycle: "active" }).reason, "state");
+  assert.equal(routeWork({ ...request, prerequisiteComplete: false }).reason, "prerequisite");
+  assert.equal(routeWork({ ...request, acceptanceCriteria: false }).reason, "criteria");
+  assert.equal(routeWork({ ...request, permission: "missing" }).reason, "permission");
+  assert.equal(routeWork({ ...request, trackerSupported: false }).reason, "tracker");
+  assert.equal(routeWork({ ...request, conflict: true }).reason, "conflict");
+  assert.equal(routeWork({ ...request, phase: "implement", readiness: false, claim: "effective" }).reason, "readiness");
+});
