@@ -2,7 +2,7 @@
 Status: IN_PROGRESS
 Issue: #69
 Branch: docs/69-agent-claims
-PR: not created
+PR: #74
 Claim-ID: c5a7b43c-e0e7-4029-813b-e31794cf9d3c
 
 ## Goal
@@ -72,7 +72,7 @@ claim rules. The pull request still needs an independent review.
 
 ## Handoff
 
-Next action: Open the pull request and request independent review. Keep this plan until that
+Next action: An independent reviewer checks PR #74 and this plan. Keep this plan until that
 review passes.
 Blockers: none.
 Risks: Tracker comments cannot make assignment and claim writes atomic.
