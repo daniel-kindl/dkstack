@@ -86,10 +86,23 @@ test("created children start classified and become ready only after checks", asy
   assert.match(skill, /status:ready.*reread.*full readiness check/i);
 });
 
-test("the parent stays in review until its objective is complete", async () => {
+test("the parent stays active while children do the work", async () => {
   const skill = await skillText();
-  assert.match(skill, /parent.*review.*while.*children.*work/i);
+  assert.match(skill, /do not move the parent to review when the mapping pull request opens/i);
+  assert.match(skill, /parent stays active while children do the work/i);
+  assert.match(skill, /active to review only when a pull request is open for the completed parent objective/i);
   assert.match(skill, /parent.*completion.*acceptance criteria/i);
+  assert.doesNotMatch(skill, /parent stays in review while children/i);
+});
+
+test("children stay in planning until the mapping pull request is merged", async () => {
+  const skill = await skillText();
+  const gate = skill.search(/passed independent review and is merged/i);
+  const promotion = skill.indexOf("Promote agent children");
+  assert.ok(gate >= 0, "the skill must require an independent review and a merge");
+  assert.ok(promotion > gate, "the skill must merge the map before it promotes children");
+  assert.match(skill, /do not set `agent:ready` or `status:ready` until the mapping pull request has passed independent review and is merged/i);
+  assert.match(skill, /until that merge, leave every new child in `status:planning`/i);
 });
 
 test("publication precedes agent readiness", async () => {

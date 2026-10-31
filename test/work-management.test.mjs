@@ -47,6 +47,13 @@ test("the work contract fails closed and isolates the mapping session", async ()
   assert.match(flat, /plan-work plans the commits of one issue/);
 });
 
+test("a mapping pull request does not move the parent to review", async () => {
+  const flat = (await pageText()).replace(/\s+/g, " ");
+  assert.match(flat, /mapping pull request does not move the parent from active to review/);
+  assert.match(flat, /parent stays active while the children do the work/);
+  assert.match(flat, /not actionable until that mapping pull request has passed independent review and is merged/);
+});
+
 test("mapping isolation applies to children, not the parent", async () => {
   const flat = (await pageText()).replace(/\s+/g, " ");
   assert.match(flat, /mapped issue.*child issue/);

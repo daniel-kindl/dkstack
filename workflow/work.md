@@ -80,7 +80,7 @@ are not completion.
 - planning + the scope is not clear -> triage
 - ready + an allowed agent starts the work -> active
 - ready + the scope changes -> planning
-- active + a pull request is open for the issue -> review
+- active + a pull request is open for the completed objective of the issue -> review
 - review + the review asks for changes -> active
 - review + the completion rule is met -> closed
 - triage, planning or ready + the owner rejects the issue -> closed
@@ -92,9 +92,13 @@ The owner may make these transitions. An agent may make only these transitions:
 - planning -> ready, when the acceptance criteria exist and every prerequisite is complete
 - ready -> active, when the readiness checks pass and this session did not map the issue as a
   child
-- active -> review, when a pull request is open for the issue
+- active -> review, when a pull request is open for the completed objective of the issue
 - review -> active, when the review asks for changes
 - review -> closed, when the completion rule is met and the agent is not the author of the change
+
+A mapping pull request publishes the child map. A mapping pull request does not move the parent
+from active to review. The parent stays active while the children do the work. Children are not
+actionable until that mapping pull request has passed independent review and is merged.
 
 An agent does not reject an issue and does not abandon an issue. An agent who authored the
 change does not move that issue to closed. This limit does not apply to the owner. The owner may
@@ -146,8 +150,9 @@ mapped issue is a child issue in the map. The parent objective is not a mapped i
 boundary. The mapping session may work on the parent to create the map. A context-sharing
 subagent is the same session. A context-sharing subagent can read this session's
 context. After you store the map in the tracker and in the repository, stop. A fresh session
-implements the mapped issue. That session reads the tracker and the repository. It does not
-receive the mapping session's context.
+implements the mapped issue only after the mapping pull request has passed independent review
+and is merged. That session reads the tracker and the repository. It does not receive the
+mapping session's context.
 
 This boundary applies to map-work. It does not apply to plan-work. plan-work plans the commits of
 one issue. The same session may implement that issue when that session did not run map-work for it.

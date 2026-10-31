@@ -36,6 +36,9 @@ Use the number of independently reviewable pull requests to route work. A map fi
 repository is a handoff record; native tracker links remain the source for relationships.
 Do not invent a numeric size threshold. A successful capability read does not prove write
 permission, so the mapping agent checks each write result and rereads native records.
+A mapping pull request does not move the parent to review. The parent stays active while
+children do the work. Children become actionable only after that pull request passes independent
+review and is merged. Decision: review of pull request 78.
 
 ## Commit plan
 
@@ -84,6 +87,15 @@ Verification: Run focused tests and `npm run check`.
 Evidence: `npm run check` on Linux passed. 143 tests, 0 fail. GitHub `validate` passed on
 `4d1d7da` (run 41193098514).
 
+### C05: Separate map review from parent completion
+Status: IN_PROGRESS
+Depends on: C04
+Proposed commit: fix(skills): separate map review
+Objective: Keep the parent active while children do the work. Make children actionable only after
+the mapping pull request passes independent review and is merged.
+Verification: Run focused tests and `npm run check`.
+Evidence: `npm run check` on Linux passed. 145 tests, 0 fail. GitHub `validate` has not run.
+
 ## Final verification
 
 The first full check passed after C02. C03 classified children before readiness. C04 publishes the
@@ -91,6 +103,6 @@ map before a child becomes ready.
 
 ## Handoff
 
-Next action: Wait for review of pull request 78. Do not merge. Do not remove this plan before that review.
+Next action: Finish C05. Do not merge. Do not remove this plan before the next review.
 Blockers: none.
 Risks: A tracker can permit relationship reads but reject writes.

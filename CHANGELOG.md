@@ -11,9 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `skills/map-work`: maps an accepted multi-PR objective to bounded child issues. It checks
   native relationships and readiness, records a repository handoff, and stops before child
-  implementation. New children stay in planning until the map file, the mapping pull request and
-  the parent summary exist. `triage` routes one-PR work to `plan-work` and multi-PR work to
-  `map-work`.
+  implementation. New children stay in planning until the mapping pull request has passed
+  independent review and is merged. The parent stays active while children do the work.
+  `triage` routes one-PR work to `plan-work` and multi-PR work to `map-work`.
 - `workflow/claims.md`: defines claim events for agent sessions that share a tracker account.
   It specifies server-ordered collision handling, handoff, release and owner recovery. It keeps
   claim history in issue comments and states when the tracker cannot support reliable claims.
@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and does not copy them. A prerequisite unlocks work only when it is complete. A rejected or
   abandoned prerequisite does not. In-scope map-work follows the repository rules and does not
   need a new owner approval. A material scope expansion or a restricted action needs the owner.
+  A mapping pull request does not move the parent from active to review. Children are not
+  actionable until that pull request has passed independent review and is merged.
   The session that maps issues must not implement those issues.
 - `skills/release`: guides a release. It links `versioning/index.md` and `workflow/safety.md` and
   does not copy their rules. An agent publishes only with the owner's explicit OK for that version.

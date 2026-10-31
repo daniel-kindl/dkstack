@@ -68,29 +68,35 @@ resolve its state before mapping. Do not use map-work to change the parent's sco
    matches the draft. Record the parent, child links, native prerequisites, planned labels,
    milestone if any, decisions, evidence, blocked work and next action. Push the branch and open
    a mapping pull request for independent review. Link it to the parent without a closing
-   keyword. Move the parent lifecycle state from active to review when the pull request opens.
-   The parent stays in review while children do work. The mapping pull request does not complete
+   keyword. Do not move the parent to review when the mapping pull request opens. The parent stays
+   active while children do the work. Move the parent from active to review only when a pull
+   request is open for the completed parent objective. The mapping pull request does not complete
    the parent objective. Parent completion requires its acceptance criteria and required child
    outcomes. Publish a map summary to the parent issue with child links, branch, map file path
    and pull request. Check that the branch, the pull request and the parent comment exist. If one
    of them is missing, stop. Leave each new child in `status:planning`. The map file is a handoff
    record. The tracker remains the source of relationships and issue facts.
-9. Promote agent children only after the map file, mapping pull request and parent summary are
-   stored. Set a milestone only when useful and supported. Before setting `status:ready`, check
-   each child's acceptance criteria, prerequisites, authorization and native fact sources.
-   Leave a child in `status:planning` if a check fails. For an agent child that passes, set
-   `agent:ready`, then use the planning-to-ready transition to set `status:ready`. Reread its
-   fields and prerequisites. Run the full readiness check. Stop and report a failed post-write
-   check. For a human child, set `agent:human-only`. Move it to ready only when its criteria and
-   prerequisites permit human work. Blocked or unclear children stay in planning without an
-   agent-ready label. The parent summary lists the planned labels. After promotion, add the final
-   child labels to the parent comment. A fresh session reads the live issue fields.
-10. Stop after publishing the map and recording the final child labels. The mapping agent must not
+9. Do not set `agent:ready` or `status:ready` until the mapping pull request has passed
+   independent review and is merged. Until that merge, leave every new child in `status:planning`.
+   Do not promote children in this session.
+10. Stop after publishing the map. The mapping agent must not
    implement a mapped child in the same session or context window. A context-sharing subagent is
    the same session. Do not open an implementation pull request for a child. A fresh independent
    session must read the persisted tracker and repository artifacts, check readiness, claim the
-   child and use
-   plan-work for its commits.
+   child and use plan-work for its commits.
+
+## After the map merges
+
+A fresh session may promote children only after the mapping pull request has passed independent
+review and is merged. Promote agent children only after that merge. Set a milestone only when
+useful and supported. Before setting `status:ready`, check each child's acceptance criteria,
+prerequisites, authorization and native fact sources. Leave a child in `status:planning` if a
+check fails. For an agent child that passes, set `agent:ready`, then use the planning-to-ready
+transition to set `status:ready`. Reread its fields and prerequisites. Run the full readiness
+check. Stop and report a failed post-write check. For a human child, set `agent:human-only`.
+Move it to ready only when its criteria and prerequisites permit human work. Blocked or unclear
+children stay in planning without an agent-ready label. Add the final child labels to the parent
+comment. A fresh session reads the live issue fields.
 
 ## Write failures and retries
 
