@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `skills/map-work`: maps an accepted multi-PR objective to bounded child issues. It checks
+  native relationships and readiness, records a repository handoff, and stops before child
+  implementation. `triage` routes one-PR work to `plan-work` and multi-PR work to `map-work`.
 - `workflow/claims.md`: defines claim events for agent sessions that share a tracker account.
   It specifies server-ordered collision handling, handoff, release and owner recovery. It keeps
   claim history in issue comments and states when the tracker cannot support reliable claims.

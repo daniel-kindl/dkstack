@@ -40,17 +40,18 @@ permission, so the mapping agent checks each write result and rereads native rec
 ## Commit plan
 
 ### C01: Define and test map-work
-Status: IN_PROGRESS
+Status: COMPLETED
 Depends on: none
 Proposed commit: feat(skills): add isolated map-work
-Actual commit: none
+Actual commit: 61bb90b
 Objective: Add the skill and route only multi-PR objectives to it.
 Work: Write failing tests, then add the skill, index and triage route.
 Verification: Run the focused tests and repository checks.
-Evidence: not yet run
+Evidence: The new tests failed before the skill existed. After the change, the focused tests and
+`npm run check` passed. The full check ran 139 tests. The STE linter found no violations.
 
 ### C02: Record the skill
-Status: PENDING
+Status: IN_PROGRESS
 Depends on: C01
 Proposed commit: docs(changelog): record map-work
 Actual commit: none
@@ -65,6 +66,6 @@ Not yet run.
 
 ## Handoff
 
-Next action: Write the failing skill tests.
+Next action: Add the Unreleased entry, commit it and rerun all checks.
 Blockers: none.
 Risks: A tracker can permit relationship reads but reject writes.
