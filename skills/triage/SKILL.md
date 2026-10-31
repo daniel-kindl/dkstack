@@ -33,6 +33,16 @@ If a feature plan exists, follow [feature-plans.md](https://raw.githubuserconten
 - Any text: [writing-check](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/writing-check/SKILL.md)
 - Version number or release: [release](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/release/SKILL.md)
 
+## Work route
+
+Read the issue before you select a skill. A missing lifecycle or eligibility does not stop triage.
+Classify the request. Check implementation readiness in
+[work.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/work.md)
+before implementation. Run
+[preflight](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/preflight.md)
+before a tracker write. One pull request uses plan-work. More than one pull request uses
+map-work, then that session stops.
+
 ## Scale
 
 The ladder is a guide, not a gate. Use the smallest set of skills. A small task uses one or two skills. It does not go through every step.

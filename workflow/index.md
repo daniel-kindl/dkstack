@@ -7,6 +7,7 @@ These rules prevent real damage in a shared repository. Read them before you cha
 ## Sections
 
 - [work.md](work.md): The work contract. Lifecycle, readiness, sources and session isolation.
+- [lifecycle.md](lifecycle.md): The route from an external request to a reviewed merge.
 - [claims.md](claims.md): Agent claims, handoff and owner recovery.
 - [preflight.md](preflight.md): Tracker capabilities, the label catalog and the dry-run preflight.
 - [roles.md](roles.md): Who does what. Generic role names, mapped to one team.

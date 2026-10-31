@@ -21,6 +21,10 @@ If the feature has an active plan, read its next item that is not blocked first.
 
 ## Rules
 
+- Read [claims.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/claims.md).
+  Do not implement without a verified claim.
+- You must not implement a mapped issue in the session that mapped it. A fresh session does that
+  work. See [work.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/work.md).
 - Do not write production code before a failing test exists.
 - Tests must prove behavior, not implementation details.
 - Do not skip the failing step.
