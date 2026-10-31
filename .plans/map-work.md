@@ -75,6 +75,7 @@ Evidence: The commit exists. The full check for the later publication change cov
 Status: IN_PROGRESS
 Depends on: C03
 Proposed commit: fix(skills): publish map before ready
+Actual commit: b5094d8
 Objective: Keep new children in planning until the map file, mapping pull request and parent
 summary exist. Check an existing pull request or parent comment before a retry.
 Work: Reorder publication and promotion. Add the lost-response check and the already-ready reuse
@@ -89,6 +90,6 @@ map before a child becomes ready.
 
 ## Handoff
 
-Next action: Finish C04, commit it and open the pull request. Do not merge.
+Next action: Open the pull request and wait for GitHub validate. Do not merge.
 Blockers: none.
 Risks: A tracker can permit relationship reads but reject writes.
