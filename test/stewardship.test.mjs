@@ -51,11 +51,23 @@ test("the index and the agent entry link the stewardship page", async () => {
   assert.match(agents, /\[architecture\/stewardship\.md\]\(architecture\/stewardship\.md\)/);
 });
 
+function between(body, start, end) {
+  const at = body.indexOf(start);
+  assert.notEqual(at, -1, `missing start: ${start}`);
+  const rest = body.slice(at + start.length);
+  const stop = rest.indexOf(end);
+  assert.notEqual(stop, -1, `missing end: ${end}`);
+  return rest.slice(0, stop);
+}
+
 test("triage reads stewardship only for a signal or a human request", async () => {
   const triage = await text("skills/triage/SKILL.md");
+  const page = await text("architecture/stewardship.md");
   assert.ok(triage.includes(raw));
   assert.match(triage, /Routine work does not read/);
   assert.match(triage, /human asks/);
+  const triageSignals = between(triage, "these signals:", "Do not add a phase");
+  const pageSignals = between(page, "A signal is one of these:", "Examine the consequences");
   for (const signal of [
     "new public interface",
     "module boundary",
@@ -63,9 +75,21 @@ test("triage reads stewardship only for a signal or a human request", async () =
     "same knowledge",
     "principles conflict",
     "compatibility",
+    "ADR no longer matches",
   ]) {
-    assert.ok(triage.includes(signal), `triage does not name ${signal}`);
+    assert.ok(triageSignals.includes(signal), `triage signal list omits ${signal}`);
+    assert.ok(pageSignals.includes(signal), `page signal list omits ${signal}`);
   }
+});
+
+test("a refactor stays in scope and does not depend on existing coverage", async () => {
+  const tdd = (await text("skills/tdd-loop/SKILL.md")).replaceAll(/\s+/g, " ");
+  assert.equal(tdd.includes("current tests cover"), false);
+  assert.match(tdd, /stay inside the task scope/);
+  assert.match(tdd, /Do not change unrelated code/);
+  assert.match(tdd, /Keep every existing test green/);
+  assert.match(tdd, /Do not limit the refactor to code that a test already executes/);
+  assert.match(tdd, /write a test for that behavior first/);
 });
 
 test("specialized skills point at stewardship and do not copy it", async () => {

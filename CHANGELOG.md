@@ -13,7 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   task and adds no step. Analysis applies only for a named signal or a human request. Intervention
   stays inside the authorized scope. The principles have no fixed rank. Seven scenarios show the
   expected decision. `AGENTS.md` and `architecture/index.md` link the page. `triage` names the
-  signals and does not send ordinary work to the page. `apply-architecture`, `plan-work`,
+  signals, including an ADR that no longer matches the code, and does not send ordinary work to
+  the page. `tdd-loop` keeps a refactor inside the task scope and keeps existing tests green. It
+  does not limit a refactor to code that a test already executes. `apply-architecture`, `plan-work`,
   `tdd-loop` and `code-review` point at the page and do not copy it.
 - `workflow/lifecycle.md` and `scripts/lifecycle.mjs`: the route from an external request through
   preflight, mapping, a fresh session, independent review and a merge of the reviewed head.

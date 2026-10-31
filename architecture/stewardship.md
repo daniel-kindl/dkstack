@@ -28,6 +28,7 @@ A signal is one of these:
 - The same knowledge appears again.
 - Two principles conflict.
 - A trade-off affects compatibility, performance or security.
+- An ADR no longer matches the code or the current decision.
 
 Examine the consequences and the alternatives. A valid result is to keep the current design.
 Analysis does not give permission to change the architecture.

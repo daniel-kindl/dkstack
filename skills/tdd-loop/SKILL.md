@@ -25,8 +25,10 @@ If the feature has an active plan, read its next item that is not blocked first.
   Do not implement without a verified claim.
 - You must not implement a mapped issue in the session that mapped it. A fresh session does that
   work. See [work.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/work.md).
-- In the refactor step, change only the code that the current tests cover. Do not change unrelated
-  code. See
+- In the refactor step, stay inside the task scope. Do not change unrelated code. Keep every
+  existing test green. Do not limit the refactor to code that a test already executes. When no
+  test checks a behavior that this refactor can change, write a test for that behavior first.
+  That test must pass before you change the code. See
   [stewardship](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/stewardship.md).
 - Do not write production code before a failing test exists.
 - Tests must prove behavior, not implementation details.

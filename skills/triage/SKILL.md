@@ -95,6 +95,7 @@ Read it when a human asks for the analysis, or when the task has one of these si
 - The same knowledge appears again.
 - Two principles conflict.
 - A trade-off affects compatibility, performance or security.
+- An ADR no longer matches the code or the current decision.
 
 Do not add a phase, a checklist or a report for ordinary work. The page holds the rules.
 
