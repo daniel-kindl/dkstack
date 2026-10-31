@@ -57,7 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and `configuration.md`.
 - `skills/plan-work` and `workflow/feature-plans.md`: an agent can write a plan for one feature
   that lists small, logical commits, and keep it up to date. Another agent can resume the plan. By
-  default, the agent removes the completed plan after the final review, before the merge. If the
+  default, the agent removes the completed plan before the pull request is opened. The review
+  does not require the plan. If the
   agent can start subagents, it compares the plan with the issue, the commits and the checks in
   parallel. It gives a fallback for each missing piece. `triage`, `clarify-intent`,
   `apply-architecture`, `tdd-loop`, `AGENTS.md` and the workflow pages link to the plan.
