@@ -91,10 +91,11 @@ Evidence: `npm run check` on Linux passed. 143 tests, 0 fail. GitHub `validate` 
 Status: IN_PROGRESS
 Depends on: C04
 Proposed commit: fix(skills): separate map review
+Actual commit: acc89b8
 Objective: Keep the parent active while children do the work. Make children actionable only after
 the mapping pull request passes independent review and is merged.
 Verification: Run focused tests and `npm run check`.
-Evidence: `npm run check` on Linux passed. 145 tests, 0 fail. GitHub `validate` has not run.
+Evidence: `npm run check` on Linux passed. 145 tests, 0 fail. GitHub `validate` has not run on `acc89b8`.
 
 ## Final verification
 
