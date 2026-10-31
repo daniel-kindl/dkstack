@@ -35,17 +35,17 @@ The tracker comment ID and timestamp order events. The assignee identifies the s
 ## Commit plan
 
 ### C01: Define claim events and lifecycle
-Status: IN_PROGRESS
+Status: COMPLETED
 Depends on: none
 Proposed commit: docs(workflow): define agent claims
-Actual commit: none
+Actual commit: 4110aac
 Objective: Define the schema, transitions, reconciliation and fallback.
 Work: Add the protocol page, link it from the workflow index, and add scenario examples.
 Verification: Run repository checks and compare each acceptance criterion with the page.
-Evidence: not yet run
+Evidence: `npm run check` passed before commit; `npm run check:links`, `npm run check:dashes` and `git diff --check` passed before commit.
 
 ### C02: Record the change
-Status: PENDING
+Status: IN_PROGRESS
 Depends on: C01
 Proposed commit: docs(changelog): record claim protocol
 Actual commit: none
@@ -60,6 +60,6 @@ Not yet run.
 
 ## Handoff
 
-Next action: Write the protocol page.
+Next action: Commit the changelog entry and run all checks.
 Blockers: none.
 Risks: Tracker comments cannot make assignment and claim writes atomic.

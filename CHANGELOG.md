@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `workflow/claims.md`: defines claim events for agent sessions that share a tracker account.
+  It specifies server-ordered collision handling, handoff, release and owner recovery. It keeps
+  claim history in issue comments and states when the tracker cannot support reliable claims.
 - `scripts/preflight.mjs` and `workflow/preflight.md`: a dry-run tracker preflight. It reports
   unsupported capabilities and their fallbacks. It plans missing catalog labels. It does not
   change an existing label, remove a label, or change protection, settings or infrastructure.
