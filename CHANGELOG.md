@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-11-01
+
 ### Changed
 
 - Let agents complete authorized development tasks through PR creation without repeated approval.
@@ -175,7 +177,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `validate` workflow. It checks the PR or commit title, the skills, the links, the dashes,
   the workflows, the CHANGELOG entry for the version and the unit tests.
 
-[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/daniel-kindl/dkstack/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/daniel-kindl/dkstack/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/daniel-kindl/dkstack/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/daniel-kindl/dkstack/releases/tag/v1.0.0
