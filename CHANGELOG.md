@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Add a reviewed map-work path for owner-approved child additions to active parents. Keep the initial mapping path and parent lifecycle unchanged. Require the effective claim, preflight, duplicate checks, valid prerequisites and independent review.
+
 ## [1.1.2] - 2026-11-01
 
 ### Changed

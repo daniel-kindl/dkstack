@@ -27,6 +27,7 @@ test("the lifecycle page orders the route and links the contracts", async () => 
   assert.match(page, /\[preflight\.md\]\(preflight\.md\)/);
   assert.match(page, /\[review-and-merge\.md\]\(review-and-merge\.md\)/);
   assert.match(page, /\[safety\.md\]\(safety\.md\)/);
+  assert.match(page, /active-parent map amendments.*owner approval, preflight and claim checks/i);
   assert.doesNotMatch(page, /Do not force-push/);
 });
 
@@ -217,4 +218,42 @@ test("owner direction cannot prepare a mapped child before reviewed map handoff"
 
 test("attestation cannot substitute for normal review before a merge", () => {
   assert.equal(routeWork({ ...readyMerge, reviewPassed: false, ownerAttestation: true }).reason, "unreviewed");
+});
+
+test("active-parent map amendments require every approval and safety fact", () => {
+  const amendment = {
+    phase: "map-amendment",
+    lifecycle: "active",
+    ownerApprovalRecorded: true,
+    approvalMatchesScope: true,
+    acceptanceCriteriaIncluded: true,
+    claim: "effective",
+    preflightPassed: true,
+    permission: "present",
+    trackerSupported: true,
+    duplicateChild: false,
+    prerequisiteConflict: false,
+    dependencyCycle: false,
+  };
+  assert.equal(routeWork(amendment).action, "amend-map");
+  assert.equal(routeWork({ ...amendment, lifecycle: "planning" }).reason, "state");
+  assert.equal(routeWork({ ...amendment, ownerApprovalRecorded: false }).reason, "owner-approval");
+  assert.equal(routeWork({ ...amendment, approvalMatchesScope: false }).reason, "owner-approval");
+  assert.equal(routeWork({ ...amendment, acceptanceCriteriaIncluded: false }).reason, "criteria");
+  assert.equal(routeWork({ ...amendment, claim: "collision" }).reason, "collision");
+  assert.equal(routeWork({ ...amendment, claim: null }).reason, "claim");
+  assert.equal(routeWork({ ...amendment, preflightPassed: false }).reason, "preflight");
+  assert.equal(routeWork({ ...amendment, permission: "unverified" }).reason, "permission");
+  assert.equal(routeWork({ ...amendment, trackerSupported: false }).reason, "tracker");
+  assert.equal(routeWork({ ...amendment, duplicateChild: true }).reason, "duplicate");
+  assert.equal(routeWork({ ...amendment, duplicateChild: undefined }).reason, "duplicate");
+  assert.equal(routeWork({ ...amendment, prerequisiteConflict: true }).reason, "prerequisite-conflict");
+  assert.equal(routeWork({ ...amendment, prerequisiteConflict: undefined }).reason, "prerequisite-conflict");
+  assert.equal(routeWork({ ...amendment, dependencyCycle: true }).reason, "prerequisite-conflict");
+  assert.equal(routeWork({ ...amendment, dependencyCycle: undefined }).reason, "prerequisite-conflict");
+});
+
+test("active-parent amendments do not change the initial mapping route", () => {
+  assert.equal(routeWork({ phase: "map-amendment", lifecycle: "active" }).action, "stop");
+  assert.equal(routeWork({ phase: "prepare", lifecycle: "active", ownerInstruction: true, ownerVerified: true }).action, "stop");
 });

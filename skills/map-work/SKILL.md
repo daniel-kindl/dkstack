@@ -20,9 +20,14 @@ fits one pull request goes directly to [plan-work](https://raw.githubusercontent
 A large objective can also use plan-work if it has one coherent pull request. Use map-work only
 when the child deliverables need separate reviews or can complete independently.
 
-The parent must have an accepted scope, acceptance criteria and an agent-eligible planning or
-ready state. If it is in triage, human-only, active, review or closed, stop and ask the owner to
-resolve its state before mapping. Do not use map-work to change the parent's scope.
+For an initial map, the parent must have an accepted scope, acceptance criteria and an
+agent-eligible planning or ready state. If it is in triage, human-only, active, review or closed,
+stop and ask the owner to resolve its state before mapping. Do not use the initial map path to
+change the parent's scope.
+
+Use the active-parent amendment path below only when the owner explicitly approves the added
+scope and records that approval on the parent issue or a linked ADR. This path adds children to
+an existing map. It does not change the parent lifecycle or replace the initial map rules.
 
 ## Steps
 
@@ -84,6 +89,37 @@ resolve its state before mapping. Do not use map-work to change the parent's sco
    the same session. Do not open an implementation pull request for a child. A fresh independent
    session must read the persisted tracker and repository artifacts, check readiness, claim the
    child and use plan-work for its commits.
+
+## Amend an active parent
+
+1. Read the active parent, its complete native child and prerequisite graph, its comments or
+   linked ADR, and its current claim record. Check that the owner records approval on the parent
+   issue or a linked ADR. The approval must name the added scope and its acceptance criteria.
+   A general request, agent claim, plan or comment without owner approval is not enough.
+2. Check that this session holds the parent's effective claim. Stop on a claim collision or when no
+   effective claim exists. Do not replace, renew, or transfer the active claim as part of mapping.
+3. Run normal preflight. Check issue fields, labels, comments, native hierarchy and required
+   blocker links, write permission, and supported tracker capabilities. Stop if a required fact is
+   missing, unsupported or unverified.
+4. Draft only the new children and prerequisite edges. Search open and closed issues for
+   duplicates immediately before each creation.
+   Reject duplicate children, cycles, missing prerequisites and edges that conflict with the
+   existing graph. If the graph cannot be reconciled, stop before writes.
+5. Create only missing children in `status:planning`, add the required native links, and reread
+   the complete graph. Keep the parent active. Do not change its lifecycle, existing children, parent links, claims,
+   assignments, existing prerequisites or comments. If a write fails or is unclear, reread before any
+   retry and report partial state.
+6. Store the amended map in `.maps/<parent-issue-id>.md`, preserving the prior handoff and
+   recording the approval evidence, new children, prerequisites and unchanged parent state. Open
+   a mapping pull request for independent review. Keep new children in `status:planning` until
+   that pull request passes independent review and the owner merges it. Do not promote children in
+   this session.
+7. Stop after publishing the amendment. A fresh session checks the merged review evidence,
+   native graph and child readiness before it claims or implements a child.
+
+The initial map path in Steps 1 to 10 remains unchanged. Do not use an active-parent amendment to
+repair an incomplete initial map or to bypass any normal preflight, permission, claim or review
+gate.
 
 ## After the map merges
 

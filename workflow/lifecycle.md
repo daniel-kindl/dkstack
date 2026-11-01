@@ -20,7 +20,8 @@ their rules.
    are green. The reviewer is not the author. The merge method is squash. Branch protection
    allows the merge. See [review-and-merge.md](review-and-merge.md).
 
-`scripts/lifecycle.mjs` records these decisions. Callers set `mappingReviewVerified` only after
+`scripts/lifecycle.mjs` records these decisions. It routes active-parent map amendments only after
+owner approval, preflight and claim checks. Callers set `mappingReviewVerified` only after
 validating the evidence under [review and merge](review-and-merge.md#missing-review-evidence-after-merge).
 The router consumes verified facts; it does not authenticate chat or fetch review records. It does not copy the linked procedures.
 
