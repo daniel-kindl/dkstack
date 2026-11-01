@@ -95,8 +95,7 @@ request, review evidence, native hierarchy and blockers, and each child's curren
 Verify evidence under
 [review and merge](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md#missing-review-evidence-after-merge).
 Run preflight before writes. Before setting `status:ready`, check acceptance criteria,
-prerequisites and established eligibility under the work contract. Do not infer missing
-eligibility from the mapping approval.
+prerequisites and established eligibility under the work contract. An authorized mapping objective allows filling missing eligibility for unambiguous agent children when the objective permits agent work. Do not override human-only or conflicting fields.
 Reread fields after each permitted transition, perform the full readiness check and claim the
 child before implementation. Stop and report missing, conflicting or unverifiable facts.
 
@@ -110,7 +109,7 @@ is absent, follow the already-merged resolution above before promoting or claimi
 
 Missing child lifecycle or eligibility fields are a separate failure. A verified instruction
 for that child may authorize filling missing metadata through the owner-directed path.
-A planning-to-ready transition alone cannot supply missing eligibility. Fixing labels does not
+Fill missing agent eligibility only when supported by the authorized parent objective; otherwise stop for a real scope decision. Never overwrite conflicting labels. Fixing labels does not
 repair absent review evidence; obtaining review evidence does not establish eligibility.
 This example explains the checks, not the current readiness of those issues. A closed child
 cannot be claimed as new work.
