@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Allow the verified human owner to merge an authored pull request after independent review and
+  all merge checks pass. Require explicit owner authorization for any agent merge. Preserve
+  independent review, required checks, the reviewed head, squash merge and branch protection.
+
 ## [1.1.2] - 2026-11-01
 
 ### Changed
