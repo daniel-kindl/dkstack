@@ -33,6 +33,28 @@ keeps the review and merge rules.
 
 The author and reviewer limits are in [roles.md](roles.md).
 
+## Missing review evidence after merge
+
+The native pull request review record is the normal evidence source. Verify that independent
+review passed for the reviewed head. A merged pull request without that evidence stays blocked
+for dependent work until the following resolution is complete.
+
+For an already-merged pull request with no native review record, the owner may attest that
+independent review actually occurred. Record the attestation durably on that pull request or a
+linked issue. It must identify the pull request, the full reviewed head commit, the reviewer,
+the verdict and the owner's explicit confirmation that this independent review occurred.
+Verify the owner's authorization under [owner instructions in chat](work.md#owner-instructions-in-chat).
+Verify that the reviewer was independent of the author and the passing verdict covered the
+head that was merged. Missing, unverifiable or conflicting facts keep dependent work blocked.
+
+If the owner cannot confirm that review occurred, obtain a genuine independent review of the
+merged change and record its verdict and reviewed head on the pull request. Dependent work
+stays blocked until that review passes. Never backdate or fabricate a native review record.
+
+This exception repairs evidence for an already-merged change. It never permits self-review,
+waives independent review or authorizes merging an unreviewed open pull request. Ordinary merge
+gates remain unchanged.
+
 ## Good example
 
 The pull request title is `docs(workflow): write the team operating rules`. The body says

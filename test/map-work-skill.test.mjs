@@ -39,7 +39,9 @@ test("map-work records native relationships and checks readiness", async () => {
   assert.match(skill, /milestone/);
   assert.match(skill, /type.*lifecycle state.*agent eligibility/);
   assert.match(skill, /reread.*relationships/i);
-  assert.match(skill, /agent child that passes.*agent:ready.*planning-to-ready.*status:ready.*full readiness check/);
+  assert.match(skill, /post-map readiness/);
+  assert.match(skill, /do not infer missing eligibility/i);
+  assert.match(skill, /planning-to-ready transition alone cannot supply missing eligibility/i);
   assert.match(skill, /map summary.*parent issue/);
   assert.match(skill, /\.maps\//);
 });

@@ -88,15 +88,32 @@ resolve its state before mapping. Do not use map-work to change the parent's sco
 ## After the map merges
 
 A fresh session may promote children only after the mapping pull request has passed independent
-review and is merged. Promote agent children only after that merge. Set a milestone only when
-useful and supported. Before setting `status:ready`, check each child's acceptance criteria,
-prerequisites, authorization and native fact sources. Leave a child in `status:planning` if a
-check fails. For an agent child that passes, set `agent:ready`, then use the planning-to-ready
-transition to set `status:ready`. Reread its fields and prerequisites. Run the full readiness
-check. Stop and report a failed post-write check. For a human child, set `agent:human-only`.
-Move it to ready only when its criteria and prerequisites permit human work. Blocked or unclear
-children stay in planning without an agent-ready label. Add the final child labels to the parent
-comment. A fresh session reads the live issue fields.
+review and is merged. Promote agent children only after that merge. Use
+[post-map readiness](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/work.md#post-map-readiness)
+for responsibilities and permitted transitions. Independently read the map, mapping pull
+request, review evidence, native hierarchy and blockers, and each child's current fields.
+Verify evidence under
+[review and merge](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md#missing-review-evidence-after-merge).
+Run preflight before writes. Before setting `status:ready`, check acceptance criteria,
+prerequisites and established eligibility under the work contract. Do not infer missing
+eligibility from the mapping approval.
+Reread fields after each permitted transition, perform the full readiness check and claim the
+child before implementation. Stop and report missing, conflicting or unverifiable facts.
+
+### Example: netknife handoff
+
+For [parent #3](https://github.com/daniel-kindl/netknife/issues/3),
+[mapping PR #10](https://github.com/daniel-kindl/netknife/pull/10) and
+[child #4](https://github.com/daniel-kindl/netknife/issues/4), check the records independently.
+The merged mapping PR alone does not establish review evidence. If its native review record
+is absent, follow the already-merged resolution above before promoting or claiming a child.
+
+Missing child lifecycle or eligibility fields are a separate failure. A verified instruction
+for that child may authorize filling missing metadata through the owner-directed path.
+A planning-to-ready transition alone cannot supply missing eligibility. Fixing labels does not
+repair absent review evidence; obtaining review evidence does not establish eligibility.
+This example explains the checks, not the current readiness of those issues. A closed child
+cannot be claimed as new work.
 
 ## Write failures and retries
 

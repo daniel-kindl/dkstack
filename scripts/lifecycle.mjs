@@ -31,7 +31,17 @@ function routeMerge(input) {
   return go("merge");
 }
 
+function mappingStop(input) {
+  if (input.sessionMappedIssue === true) return stop("same-session");
+  if (input.mappedChild !== true) return null;
+  if (input.mappingMerged !== true) return stop("mapping-handoff");
+  if (input.mappingReviewVerified !== true) return stop("mapping-review");
+  return null;
+}
+
 function routePrepare(input) {
+  const blocked = mappingStop(input);
+  if (blocked) return blocked;
   if (input.ownerInstruction !== true || input.ownerVerified !== true) return stop("owner-authorization");
   if (input.conflict === true || input.humanOnly === true) return stop("conflict");
   if (input.permission !== "present") return stop("permission");
@@ -44,8 +54,8 @@ function routePrepare(input) {
 }
 
 function routeImplement(input) {
-  if (input.sessionMappedIssue === true) return stop("same-session");
-  if (input.mappedChild === true && input.mappingMerged !== true) return stop("mapping-handoff");
+  const blocked = mappingStop(input);
+  if (blocked) return blocked;
   if (input.claim === "collision") return stop("collision");
   if (input.permission !== "present") return stop("permission");
   if (input.prerequisiteComplete !== true) return stop("prerequisite");
