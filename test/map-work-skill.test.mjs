@@ -120,3 +120,28 @@ test("a reused ready child needs verified native links", async () => {
   const skill = await skillText();
   assert.match(skill, /already-ready child.*native.*links.*readiness/i);
 });
+
+test("active-parent amendments require recorded owner approval and preserve existing map state", async () => {
+  const skill = await skillText();
+  const amendment = skill.slice(skill.indexOf("## Amend an active parent"), skill.indexOf("## After the map merges"));
+  assert.match(amendment, /owner records approval on the parent issue or a linked ADR/i);
+  assert.match(amendment, /added scope and its acceptance criteria/i);
+  assert.match(amendment, /effective claim/i);
+  assert.match(amendment, /normal preflight/i);
+  assert.match(amendment, /write permission/i);
+  assert.match(amendment, /Search open and closed issues for duplicates/i);
+  assert.match(amendment, /duplicate children, cycles, missing prerequisites/i);
+  assert.match(amendment, /Keep the parent active/i);
+  assert.match(amendment, /existing children, parent links, claims.*existing prerequisites or comments/i);
+  assert.match(amendment, /independent review/i);
+  assert.match(amendment, /status:planning/);
+  assert.match(amendment, /independent review and the owner merges it/i);
+  assert.match(amendment, /fresh session/i);
+  assert.match(amendment, /initial map path.*remains unchanged/i);
+});
+
+test("initial map-work still stops for active parents", async () => {
+  const skill = await skillText();
+  assert.match(skill, /For an initial map.*planning or ready state.*active.*stop and ask the owner to resolve its state/i);
+  assert.match(skill, /Do not use the initial map path to change the parent's scope/i);
+});

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Add a reviewed map-work path for owner-approved child additions to active parents. Keep the initial mapping path and parent lifecycle unchanged. Require the effective claim, preflight, duplicate checks, valid prerequisites and independent review.
+
 - Allow the verified human owner to merge an authored pull request after independent review and
   all merge checks pass. Require explicit owner authorization for any agent merge. Preserve
   independent review, required checks, the reviewed head, squash merge and branch protection.

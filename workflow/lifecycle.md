@@ -22,7 +22,8 @@ their rules.
    checks, an independent reviewer, squash merge and branch protection. See
    [review-and-merge.md](review-and-merge.md).
 
-`scripts/lifecycle.mjs` records these decisions. For a merge, callers set `mergeActor` to
+`scripts/lifecycle.mjs` records these decisions. It routes active-parent map amendments only after
+owner approval, preflight and claim checks. For a merge, callers set `mergeActor` to
 `human-owner` only when owner identity is verified. They set `mergeActor` to `agent` only when
 the acting agent is known. `ownerMergeApproved` means the owner explicitly authorized that agent
 to merge that exact pull request; shared account identity and PR authorship do not establish this

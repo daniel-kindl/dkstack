@@ -60,6 +60,24 @@ function routePrepare(input) {
   return go("prepare-ready");
 }
 
+function routeMapAmendment(input) {
+  if (input.lifecycle !== "active") return stop("state");
+  if (input.ownerApprovalRecorded !== true || input.approvalMatchesScope !== true) {
+    return stop("owner-approval");
+  }
+  if (input.acceptanceCriteriaIncluded !== true) return stop("criteria");
+  if (input.claim === "collision") return stop("collision");
+  if (input.claim !== "effective") return stop("claim");
+  if (input.preflightPassed !== true) return stop("preflight");
+  if (input.permission !== "present") return stop("permission");
+  if (input.trackerSupported !== true) return stop("tracker");
+  if (input.duplicateChild !== false) return stop("duplicate");
+  if (input.prerequisiteConflict !== false || input.dependencyCycle !== false) {
+    return stop("prerequisite-conflict");
+  }
+  return go("amend-map", "map-work");
+}
+
 function routeImplement(input) {
   const blocked = mappingStop(input);
   if (blocked) return blocked;
@@ -73,6 +91,7 @@ function routeImplement(input) {
 
 export function routeWork(input = {}) {
   if (input.phase === "prepare") return routePrepare(input);
+  if (input.phase === "map-amendment") return routeMapAmendment(input);
   if (input.phase === "triage") return go("classify", triageSkill(input.pullRequestCount));
   if (input.phase === "implement") return routeImplement(input);
   if (input.phase === "merge") return routeMerge(input);
