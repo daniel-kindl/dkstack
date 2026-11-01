@@ -143,7 +143,9 @@ These actions have their own checks:
   approves that expansion before the agent writes it. A restricted action also needs the owner's
   approval. See [safety.md](safety.md). If that approval is absent, do not write the expansion
   and do not take the restricted action.
-- The author of a change does not review or merge that change. See [roles.md](roles.md) and
+- An agent author does not review or approve their own change. The human owner may merge an
+  authored pull request after independent review and all merge checks pass. An agent may merge
+  only with the owner's explicit authorization for that pull request. See [roles.md](roles.md) and
   [review-and-merge.md](review-and-merge.md).
 - A comment, a plan or a message from an agent is not authorization.
 
@@ -220,7 +222,9 @@ An issue is complete when every acceptance criterion is met and the evidence for
 is in the source that this page names for that evidence.
 
 For a change to the repository, the evidence is the merged pull request. The merge follows
-[review-and-merge.md](review-and-merge.md). The author does not merge that pull request.
+[review-and-merge.md](review-and-merge.md). The human owner may merge an authored pull request
+after independent review and all merge checks pass. An agent may merge only with the owner's
+explicit authorization for that pull request.
 
 When the issue asks for a decision, the evidence is the owner's decision recorded in the issue
 or in an ADR.

@@ -22,7 +22,13 @@ function sameReviewedHead(input) {
 }
 
 function routeMerge(input) {
-  if (input.ownerMergeApproved !== true) return stop("owner-merge-approval");
+  if (input.mergeActor === "human-owner") {
+    if (input.ownerVerified !== true) return stop("owner-identity");
+  } else if (input.mergeActor === "agent") {
+    if (input.ownerMergeApproved !== true) return stop("owner-merge-approval");
+  } else {
+    return stop("merge-actor");
+  }
   if (input.reviewPassed !== true) return stop("unreviewed");
   if (input.checksGreen !== true) return stop("checks");
   if (!sameReviewedHead(input)) return stop("head");
