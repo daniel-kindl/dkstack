@@ -107,11 +107,11 @@ test("collision, an open prerequisite, a missing permission and an unreviewed me
   assert.equal(routeWork({ ...readyImplement, prerequisiteComplete: false }).reason, "prerequisite");
   assert.equal(routeWork({ ...readyImplement, permission: "missing" }).reason, "permission");
   assert.equal(routeWork({ ...readyImplement, permission: "unverified" }).reason, "permission");
-  const unreviewed = routeWork({ phase: "merge", reviewPassed: false, checksGreen: true });
+  const unreviewed = routeWork({ phase: "merge", ownerMergeApproved: true, reviewPassed: false, checksGreen: true });
   assert.equal(unreviewed.action, "stop");
   assert.equal(unreviewed.reason, "unreviewed");
-  assert.equal(routeWork({ phase: "merge", reviewPassed: true, checksGreen: false }).reason, "checks");
-  const thin = routeWork({ phase: "merge", reviewPassed: true, checksGreen: true });
+  assert.equal(routeWork({ phase: "merge", ownerMergeApproved: true, reviewPassed: true, checksGreen: false }).reason, "checks");
+  const thin = routeWork({ phase: "merge", ownerMergeApproved: true, reviewPassed: true, checksGreen: true });
   assert.equal(thin.action, "stop");
   assert.equal(thin.reason, "head");
 });
