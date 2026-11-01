@@ -125,10 +125,13 @@ const readyMerge = {
   reviewerIndependent: true,
   mergeMethod: "squash",
   protectionAllowsMerge: true,
+  ownerMergeApproved: true,
 };
 
 test("a merge needs the reviewed head, an independent reviewer, squash and protection", () => {
   assert.equal(routeWork(readyMerge).action, "merge");
+  assert.equal(routeWork({ ...readyMerge, ownerMergeApproved: false }).reason, "owner-merge-approval");
+  assert.equal(routeWork({ ...readyMerge, ownerMergeApproved: undefined }).reason, "owner-merge-approval");
   assert.equal(routeWork({ ...readyMerge, currentHead: "def" }).reason, "head");
   assert.equal(routeWork({ ...readyMerge, reviewedHead: "" }).reason, "head");
   assert.equal(routeWork({ ...readyMerge, reviewerIndependent: false }).reason, "independent");
