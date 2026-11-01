@@ -68,5 +68,6 @@ test("the template and the review page agree with the skill", async () => {
   assert.match(template, /NOT RUN/);
   assert.doesNotMatch(template, /require a diagram|must include a diagram/i);
   assert.match(review, /skills\/write-pr\/SKILL\.md/);
-  assert.match(review, /Only the human owner may authorize a merge of the exact PR/);
+  assert.match(review, /human owner may merge a pull request they authored after independent review/i);
+  assert.match(review, /agent may merge only with the owner's explicit authorization for that exact pull request/i);
 });

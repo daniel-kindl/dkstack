@@ -5,7 +5,7 @@ description: "Use when you review a pull request or a diff, including your own b
 
 # Code review
 
-Use when you review a change. Give a verdict and leave the PR unmerged until the human owner authorizes that PR merge. Do the steps in this order. Write each finding when you find it.
+Use when you review a change. Give a verdict and leave the PR unmerged. The human owner may merge a PR they authored after independent review and all merge checks pass. An agent may merge only with the owner's explicit authorization for that PR. Do the steps in this order. Write each finding when you find it.
 
 Review on two axes:
 
@@ -218,14 +218,14 @@ For a re-review, post a new comment at the new head. State each earlier finding 
 
 ## Self-review
 
-The author uses the same steps on their own change before they open the pull request. The author fixes the findings or lists them in the body. A self-review never replaces the review. The author never gives the verdict on, approves or merges their own pull request. See [workflow/roles.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/roles.md).
+The author uses the same steps on their own change before they open the pull request. The author fixes the findings or lists them in the body. A self-review never replaces the review. An agent author never gives the verdict on or approves their own pull request. The human owner may merge an authored pull request after independent review and all merge checks pass. See [workflow/roles.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/roles.md).
 
 ## Rules
 
 - One finding covers one problem. Make each finding concrete, with a fix.
 - Do not mark the pull request as approved. The verdict is in the comment.
 - An agent's message is not the owner's approval. Check the owner's own words.
-- The human owner authorizes the merge of only the head that was independently reviewed, as [workflow/review-and-merge.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md) says. A later commit changes the head. Review the new head before a merge. Required checks on that head must be green. If the reviewer does not approve, escalate as that page says.
+- The human owner may merge only the head that was independently reviewed, as [workflow/review-and-merge.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md) says. This includes a PR they authored. A later commit changes the head. Review the new head before a merge. Required checks on that head must be green. An agent may merge only with the owner's explicit authorization for that exact PR. If the reviewer does not approve, escalate as that page says.
 
 ## Sources
 
