@@ -22,17 +22,17 @@ Allow a map-work session to add reviewed children to an active parent after expl
 
 ### C01: Add the active-parent amendment route and regression tests
 Status: COMPLETED
-Actual commit: pending
+Actual commit: 5fb6a1b
 Evidence: The focused lifecycle and map-work tests passed. They cover recorded scope approval, acceptance criteria, claim ownership, preflight, permissions, tracker support, duplicates, prerequisite conflicts and cycles. They also check that initial mapping still stops for active parents.
 
 ### C02: Document the owner-approved amendment procedure
 Status: COMPLETED
-Actual commit: pending
+Actual commit: 5fb6a1b
 Evidence: The map-work skill defines the separate active-parent procedure. It preserves existing issue state, requires duplicate and graph checks, keeps children in planning, and requires independent review and owner merge. The lifecycle page documents the route.
 
 ### C03: Record the change
 Status: COMPLETED
-Actual commit: pending
+Actual commit: 5fb6a1b
 Evidence: The Unreleased changelog records the amendment path.
 
 ## Final verification
