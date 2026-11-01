@@ -17,9 +17,9 @@ keeps the review and merge rules.
   run as NOT RUN. Reason: the reviewer must know what was tested.
 - The review gives one verdict: APPROVE-RECOMMENDED, CHANGES-REQUESTED or BLOCKED. Reason: one
   verdict tells the author the next step.
-- The reviewer merges only the head that they reviewed, and only when the review passes, all
-  required checks are green, and the code host shows the pull request as ready to merge with no
-  rule bypassed. Reason: a later push, a failed check, an open finding or a bypassed rule must
+- An agent may review and recommend approval, but does not merge. Only the human owner may
+  authorize a merge of the exact PR after independent review, green required checks and no rule bypass.
+  Review feedback and fixes within the task scope need no new owner authorization. Reason: a later push, a failed check, an open finding or a bypassed rule must
   not reach `main`.
 - Use squash merge only and keep history linear. Reason: each pull request becomes one commit on
   `main`.
@@ -31,7 +31,7 @@ keeps the review and merge rules.
 - If the reviewer does not approve, escalate in this order: architect, then coordinator, then human
   owner. Reason: each step adds authority, and the human owner decides last.
 
-The author and reviewer limits are in [roles.md](roles.md).
+The author and reviewer limits are in [roles.md](roles.md). A review verdict is advice, not merge permission. Agents stop at the merge boundary and leave PRs open unless the owner explicitly authorizes that merge.
 
 ## Missing review evidence after merge
 
