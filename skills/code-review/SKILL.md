@@ -5,7 +5,7 @@ description: "Use when you review a pull request or a diff, including your own b
 
 # Code review
 
-Use when you review a change. Do the steps in this order. Write each finding when you find it.
+Use when you review a change. Give a verdict and leave the PR unmerged until the human owner authorizes that PR merge. Do the steps in this order. Write each finding when you find it.
 
 Review on two axes:
 
