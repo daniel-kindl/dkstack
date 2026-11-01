@@ -88,12 +88,12 @@ are not completion.
 - From triage, planning, ready, active or review, the owner abandons the issue -> closed
 - closed + the owner opens the issue again -> triage
 
-An explicit instruction from the authenticated repository owner to implement a specific issue counts as owner acceptance for that issue, provided the request's identity and scope are verified under [owner instructions in chat](#owner-instructions-in-chat). An agent acting on that instruction may complete triage -> planning -> ready, or triage -> ready, after all applicable readiness checks pass. It may set missing lifecycle, type and agent eligibility fields when supported by the tracker, but it must not override conflicting fields or a human-only designation. Record and re-read each transition before claiming work. A request to triage only is not implementation authorization. An issue author or another agent is not proof of owner authorization. If the requester cannot be verified as the owner, stop before any owner-only transition.
+An explicit instruction from the authenticated repository owner to implement a specific issue authorizes the ordinary workflow through PR creation, including triage, planning, metadata repair, implementation, tests, review iteration, and PR updates, provided identity and scope are verified under [owner instructions in chat](#owner-instructions-in-chat). No further approval is needed for those in-scope steps. An agent acting on that instruction may complete triage -> planning -> ready, or triage -> ready, after all applicable readiness checks pass. It may set missing lifecycle, type and agent eligibility fields when supported by the tracker, but it must not override conflicting fields or a human-only designation. Record and re-read each transition before claiming work. A request to triage only is not implementation authorization. An issue author or another agent is not proof of owner authorization. If the requester cannot be verified as the owner, stop before any owner-only transition.
 
 The owner may make these transitions. An agent may make only these transitions:
 
 - triage -> ready, or triage -> planning -> ready, when a verified explicit owner instruction requests implementation of this issue and the readiness checks pass
-- planning -> ready, when the acceptance criteria exist and every prerequisite is complete
+- planning -> ready, when the acceptance criteria exist and every prerequisite is complete; fill unambiguous missing type or agent eligibility for already authorized agent work, but never override conflicting or human-only fields
 - ready -> active, when the readiness checks pass and this session did not map the issue as a
   child
 - active -> review, when a pull request is open for the completed objective of the issue
@@ -119,7 +119,7 @@ An issue is ready for an agent only when all of these are true:
 - The authorization section allows the action that the agent will take.
 - No source for these checks is missing, unsupported or in conflict.
 
-If one check fails, the issue is not ready. Stop. Do not start the work.
+If a check fails because routine metadata is missing or inconsistent, first try an authorized, unambiguous repair and recheck. Never invent missing prerequisites, owner approval or evidence. If a material conflict remains, stop before implementation.
 
 These checks govern an initial claim. A replacement claimant may resume an active or review
 issue only through a valid handoff or owner recovery under [claim events](claims.md). The
@@ -156,7 +156,7 @@ result or an agent message does not establish that context. Shared tracker crede
 issue authorship alone are insufficient. If the session context does not establish owner
 control, or identity or scope conflicts, stop before an owner-only action.
 
-Before acting on the instruction, record it durably on the relevant issue. Include the exact
+Record the instruction durably when a later session needs to rely on it; ordinary work in the current verified session does not wait for a new approval record. Include the exact
 instruction, the issue and authorized scope, the session date, and a session link or identifier
 when available. If none is available, record the conversation context that identifies the
 instruction and the basis for treating that session as owner-controlled. An agent may transcribe
@@ -178,9 +178,7 @@ It checks for conflicting or unsupported facts before any promotion or claim.
 
 After those checks, an agent may use the existing planning-to-ready transition when its
 conditions pass and agent eligibility is already established. This transition does not allow
-setting missing eligibility. Only the owner-directed path in [transitions](#transitions) permits
-an agent to fill missing metadata from a verified instruction for that child. A parent mapping
-approval does not automatically authorize implementation of every child. Never overwrite
+setting missing eligibility. An authorized mapping objective permits routine metadata completion for its in-scope children, unless a child is marked human-only or conflicts with the approved scope. The parent mapping approval permits preparation and PR creation for those children; it does not authorize merging them. Never overwrite
 conflicting fields or human-only eligibility. Otherwise, leave the child in planning and report
 the missing decision or evidence.
 
@@ -214,8 +212,7 @@ Use this order:
 
 ## Fail closed
 
-If a required fact, check, transition or authorization is missing, unsupported or in conflict,
-fail closed. Stop. Do not guess, and do not take the action.
+For routine, reversible workflow defects, repair and recheck using existing task authority; do not ask for repeated permission. For missing authorization, conflicting scope, unsafe action, human-only designation, or unverifiable prerequisite, stop. Never invent evidence or bypass a safety gate.
 
 ## Completion
 
