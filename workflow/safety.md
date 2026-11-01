@@ -28,6 +28,10 @@ action with the owner's OK. Only then can an agent do it.
   the only control.
 - Do not put secrets in chat. See [coding/security.md](../coding/security.md).
 
+For verification of a human instruction in chat, use
+[owner instructions in chat](work.md#owner-instructions-in-chat). That policy does not waive
+any hard limit on this page.
+
 ## Good example
 
 The reviewer asks for changes. The author pushes a new commit with a normal push.

@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Post-map handoff checks require verified mapping review evidence during child preparation
+  and implementation. Define owner-controlled chat authorization, durable instruction records,
+  child promotion responsibilities and exceptional owner attestation for already-merged PRs
+  without native review records. Normal independent review and merge gates remain in force.
+
 - `workflow/claims.md`: define durable owner disposition and independent validation for
   malformed claim events. Preserve valid history and require owner recovery for ambiguous
   ownership. Include reconciliation outcomes and the netknife issue 3 example.

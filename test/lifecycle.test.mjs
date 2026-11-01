@@ -98,7 +98,7 @@ test("a mapping handoff blocks the mapping session and an unmerged map", () => {
   assert.equal(same.reason, "same-session");
   const waiting = routeWork({ ...readyImplement, mappedChild: true, mappingMerged: false });
   assert.equal(waiting.reason, "mapping-handoff");
-  const fresh = routeWork({ ...readyImplement, mappedChild: true, mappingMerged: true });
+  const fresh = routeWork({ ...readyImplement, mappedChild: true, mappingMerged: true, mappingReviewVerified: true });
   assert.equal(fresh.action, "implement");
 });
 
@@ -186,4 +186,32 @@ test("verified owner direction permits preparation of missing readiness metadata
   assert.equal(routeWork({ ...request, trackerSupported: false }).reason, "tracker");
   assert.equal(routeWork({ ...request, conflict: true }).reason, "conflict");
   assert.equal(routeWork({ ...request, phase: "implement", readiness: false, claim: "effective" }).reason, "readiness");
+});
+
+test("mapped child implementation requires verified review evidence after merge", () => {
+  const child = { ...readyImplement, mappedChild: true, mappingMerged: true };
+  assert.equal(routeWork(child).reason, "mapping-review");
+  assert.equal(routeWork({ ...child, mappingReviewVerified: false }).reason, "mapping-review");
+  assert.equal(routeWork({ ...child, mappingReviewVerified: true }).action, "implement");
+  assert.equal(routeWork({ ...child, mappingReviewVerified: true, sessionMappedIssue: true }).reason, "same-session");
+});
+
+test("owner direction cannot prepare a mapped child before reviewed map handoff", () => {
+  const child = {
+    phase: "prepare", ownerInstruction: true, ownerVerified: true,
+    conflict: false, humanOnly: false, permission: "present",
+    prerequisiteComplete: true, acceptanceCriteria: true, trackerSupported: true,
+    lifecycle: "planning", eligibility: null, mappedChild: true,
+    mappingMerged: true, mappingReviewVerified: true,
+  };
+  assert.equal(routeWork(child).action, "prepare-ready");
+  assert.equal(routeWork({ ...child, mappingMerged: false }).reason, "mapping-handoff");
+  assert.equal(routeWork({ ...child, mappingReviewVerified: undefined }).reason, "mapping-review");
+  assert.equal(routeWork({ ...child, sessionMappedIssue: true }).reason, "same-session");
+  assert.equal(routeWork({ ...child, ownerVerified: false }).reason, "owner-authorization");
+  assert.equal(routeWork({ ...child, humanOnly: true }).reason, "conflict");
+});
+
+test("attestation cannot substitute for normal review before a merge", () => {
+  assert.equal(routeWork({ ...readyMerge, reviewPassed: false, ownerAttestation: true }).reason, "unreviewed");
 });

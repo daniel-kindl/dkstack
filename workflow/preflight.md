@@ -27,8 +27,9 @@ that needs an unverified capability fails closed.
   fails closed.
 - assignment: Do not record an assignee in a comment.
 - comments: Do not claim that a comment was stored.
-- PRs/reviews: Use the code host record for a pull request and a review. If that record is
-  missing, fail closed.
+- PRs/reviews: Use the code host record and the evidence rules in
+  [review-and-merge.md](review-and-merge.md#missing-review-evidence-after-merge).
+  Only that page defines the already-merged exception. Missing evidence otherwise fails closed.
 - checks: Report that checks are unsupported. Do not treat a missing check as a pass.
 - protection: Do not change protection. A change to protection needs the owner.
 

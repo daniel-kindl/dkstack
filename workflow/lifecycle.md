@@ -13,13 +13,16 @@ their rules.
 3. When the objective fits one pull request, use plan-work. When it needs more than one pull
    request, use map-work. The map-work session stops before implementation.
 4. A fresh session implements a mapped child after the mapping pull request is merged and the
-   child passes readiness.
+   child passes readiness. The fresh session verifies mapping review evidence under
+   [post-map readiness](work.md#post-map-readiness).
 5. An independent reviewer reviews the implementation pull request.
 6. The reviewer merges only the reviewed head when the review passes and the required checks
    are green. The reviewer is not the author. The merge method is squash. Branch protection
    allows the merge. See [review-and-merge.md](review-and-merge.md).
 
-`scripts/lifecycle.mjs` records these decisions. It does not copy the linked procedures.
+`scripts/lifecycle.mjs` records these decisions. Callers set `mappingReviewVerified` only after
+validating the evidence under [review and merge](review-and-merge.md#missing-review-evidence-after-merge).
+The router consumes verified facts; it does not authenticate chat or fetch review records. It does not copy the linked procedures.
 
 Release follows [the release skill](../skills/release/SKILL.md). That skill links
 [safety.md](safety.md). This page does not copy the publish rule.
