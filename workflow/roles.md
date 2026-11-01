@@ -10,7 +10,7 @@ Give each task to one role, so that each agent has one responsibility.
   request. Reason: a second agent finds errors that the author does not see.
 - The author writes the pull request body and lists the tests. The writer edits the text. Reason:
   the author knows best which tests prove the behavior.
-- The human owner approves scope, decisions and every release. Reason: only the owner is
+- The human owner approves material scope changes, every pull request merge and every release. Routine steps within an assigned task do not require repeated approval. Reason: only the owner is
   accountable for the repository.
 
 ## Role map
@@ -20,7 +20,7 @@ Use the generic role names in all rules. Each team maps them to its own agents.
 | Role | Responsibility | This team |
 | --- | --- | --- |
 | Implementer | Writes code and tests from an issue | Forge |
-| Reviewer | Reviews pull requests and merges them | Sentinel |
+| Reviewer | Independently reviews pull requests and recommends changes or approval | Sentinel |
 | Architect | Writes ADRs and reviews design | Atlas |
 | Writer | Writes docs and edits pull request text | Scribe |
 | Coordinator | Plans the work and escalates to the owner | Pip |
@@ -28,7 +28,7 @@ Use the generic role names in all rules. Each team maps them to its own agents.
 
 ## Good example
 
-The implementer opens a pull request. The reviewer reviews it and merges it.
+The implementer opens a pull request. The reviewer reviews it. The human owner authorizes the merge.
 
 ## Bad example
 
