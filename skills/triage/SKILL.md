@@ -38,10 +38,10 @@ If a feature plan exists, follow [feature-plans.md](https://raw.githubuserconten
 
 ## Work route
 
-Read the issue before you select a skill. A missing lifecycle or eligibility does not stop triage.
+Read the issue before you select a skill. A missing lifecycle or eligibility does not stop triage. An authorized task carries permission through PR creation and review fixes. Repair unambiguous missing metadata without asking permission again; never override a human-only or conflicting designation.
 Classify the request. Verify chat instructions under
 [owner instructions in chat](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/work.md#owner-instructions-in-chat).
-For an explicit instruction from the verified repository owner to implement a named issue, follow the owner-directed transition in work.md: fill missing non-conflicting tracker metadata, establish readiness, re-read tracker state and claim before implementation. Do not infer approval from issue authorship or a request to triage. Check implementation readiness in
+For an explicit instruction from the verified repository owner to implement a named issue, follow the owner-directed transition in work.md: fill missing non-conflicting tracker metadata, establish readiness, re-read tracker state and claim before implementation. Do not infer approval from issue authorship or a request to triage. Do not request repeated approvals for in-scope steps after an authenticated implementation instruction. Check implementation readiness in
 [work.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/work.md)
 before implementation. Run
 [preflight](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/preflight.md)

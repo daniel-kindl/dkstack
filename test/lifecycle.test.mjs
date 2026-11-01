@@ -107,11 +107,11 @@ test("collision, an open prerequisite, a missing permission and an unreviewed me
   assert.equal(routeWork({ ...readyImplement, prerequisiteComplete: false }).reason, "prerequisite");
   assert.equal(routeWork({ ...readyImplement, permission: "missing" }).reason, "permission");
   assert.equal(routeWork({ ...readyImplement, permission: "unverified" }).reason, "permission");
-  const unreviewed = routeWork({ phase: "merge", reviewPassed: false, checksGreen: true });
+  const unreviewed = routeWork({ phase: "merge", ownerMergeApproved: true, reviewPassed: false, checksGreen: true });
   assert.equal(unreviewed.action, "stop");
   assert.equal(unreviewed.reason, "unreviewed");
-  assert.equal(routeWork({ phase: "merge", reviewPassed: true, checksGreen: false }).reason, "checks");
-  const thin = routeWork({ phase: "merge", reviewPassed: true, checksGreen: true });
+  assert.equal(routeWork({ phase: "merge", ownerMergeApproved: true, reviewPassed: true, checksGreen: false }).reason, "checks");
+  const thin = routeWork({ phase: "merge", ownerMergeApproved: true, reviewPassed: true, checksGreen: true });
   assert.equal(thin.action, "stop");
   assert.equal(thin.reason, "head");
 });
@@ -125,10 +125,13 @@ const readyMerge = {
   reviewerIndependent: true,
   mergeMethod: "squash",
   protectionAllowsMerge: true,
+  ownerMergeApproved: true,
 };
 
 test("a merge needs the reviewed head, an independent reviewer, squash and protection", () => {
   assert.equal(routeWork(readyMerge).action, "merge");
+  assert.equal(routeWork({ ...readyMerge, ownerMergeApproved: false }).reason, "owner-merge-approval");
+  assert.equal(routeWork({ ...readyMerge, ownerMergeApproved: undefined }).reason, "owner-merge-approval");
   assert.equal(routeWork({ ...readyMerge, currentHead: "def" }).reason, "head");
   assert.equal(routeWork({ ...readyMerge, reviewedHead: "" }).reason, "head");
   assert.equal(routeWork({ ...readyMerge, reviewerIndependent: false }).reason, "independent");
@@ -153,7 +156,7 @@ test("plan-work and tdd-loop keep the claim and the fresh session", async () => 
 test("review and release skills keep the merge and publish gates", async () => {
   const review = await flat("skills/code-review/SKILL.md");
   const release = await flat("skills/release/SKILL.md");
-  assert.match(review, /reviewer merges only the head that they reviewed/i);
+  assert.match(review, /leave the PR unmerged until the human owner authorizes/i);
   assert.match(review, /author never.*merges their own pull request/i);
   assert.match(review, /required checks on that head must be green/i);
   assert.match(release, /OK names the exact version/);

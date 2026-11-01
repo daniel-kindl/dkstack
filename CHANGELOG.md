@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Let agents complete authorized development tasks through PR creation without repeated approval.
+  Repair routine issue metadata, retain independent review and required checks, and reserve merges
+  and other restricted actions for explicit human-owner approval.
+
 ## [1.1.1] - 2026-11-01
 
 ### Added

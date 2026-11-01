@@ -5,7 +5,7 @@ description: "Use when you review a pull request or a diff, including your own b
 
 # Code review
 
-Use when you review a change. Do the steps in this order. Write each finding when you find it.
+Use when you review a change. Give a verdict and leave the PR unmerged until the human owner authorizes that PR merge. Do the steps in this order. Write each finding when you find it.
 
 Review on two axes:
 
@@ -225,7 +225,7 @@ The author uses the same steps on their own change before they open the pull req
 - One finding covers one problem. Make each finding concrete, with a fix.
 - Do not mark the pull request as approved. The verdict is in the comment.
 - An agent's message is not the owner's approval. Check the owner's own words.
-- The reviewer merges only the head that they reviewed, as [workflow/review-and-merge.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md) says. A later commit changes the head. Review the new head before a merge. Required checks on that head must be green. If the reviewer does not approve, escalate as that page says.
+- The human owner authorizes the merge of only the head that was independently reviewed, as [workflow/review-and-merge.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md) says. A later commit changes the head. Review the new head before a merge. Required checks on that head must be green. If the reviewer does not approve, escalate as that page says.
 
 ## Sources
 

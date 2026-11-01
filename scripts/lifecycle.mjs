@@ -22,6 +22,7 @@ function sameReviewedHead(input) {
 }
 
 function routeMerge(input) {
+  if (input.ownerMergeApproved !== true) return stop("owner-merge-approval");
   if (input.reviewPassed !== true) return stop("unreviewed");
   if (input.checksGreen !== true) return stop("checks");
   if (!sameReviewedHead(input)) return stop("head");

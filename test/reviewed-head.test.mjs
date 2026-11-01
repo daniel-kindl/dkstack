@@ -16,12 +16,12 @@ test("the Blocking row matches the release rule", async () => {
   );
 });
 
-test("the reviewer merges only the reviewed head", async () => {
+test("the owner authorizes merging the reviewed head", async () => {
   const text = await readFile(join(repoRoot, "workflow/review-and-merge.md"), "utf8");
   const flat = text.replace(/\s+/g, " ");
   assert.match(
     flat,
-    /The reviewer merges only the head that they reviewed, and only when the review passes, all required checks are green, and the code host shows the pull request as ready to merge with no rule bypassed\./,
+    /Only the human owner may authorize a merge of the exact PR after independent review, green required checks and no rule bypass/,
   );
 });
 
@@ -30,7 +30,7 @@ test("the workflow flow uses the same merge gates", async () => {
   const flat = text.replace(/\s+/g, " ");
   assert.match(
     flat,
-    /The reviewer merges only the head that they reviewed, and only when the review passes, all required checks are green, and the code host shows the pull request as ready to merge with no rule bypassed/,
+    /human owner authorizes the merge of the reviewed head.*Required checks must be green/,
   );
 });
 
@@ -48,6 +48,6 @@ test("the code-review rules link the reviewed-head rule", async () => {
   const text = await readFile(join(repoRoot, "skills/code-review/SKILL.md"), "utf8");
   const rules = /^## Rules\r?\n([\s\S]*?)(?=^## )/m.exec(text);
   assert.ok(rules, "the code-review skill must have a Rules section");
-  assert.match(rules[1], /merges only the head that they reviewed/);
+  assert.match(rules[1], /owner authorizes the merge of only the head that was independently reviewed/);
   assert.match(rules[1], /workflow\/review-and-merge\.md/);
 });
