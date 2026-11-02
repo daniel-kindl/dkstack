@@ -21,9 +21,9 @@ These rules prevent real damage in a shared repository. Read them before you cha
 1. The owner or the coordinator opens an issue with acceptance criteria.
 2. The implementer, architect or writer does the work on one branch and opens one pull request.
 3. The reviewer reviews the pull request.
-4. The human owner may merge an authored PR after independent review. Agents may merge only with
-   explicit owner authorization for that PR. Required checks must be green, the code host must show
-   the reviewed head as mergeable, and no rule may be bypassed.
+4. The reviewer merges only the head that they reviewed, and only when the review passes, all
+   required checks are green, and the code host shows the pull request as ready to merge with no
+   rule bypassed. The author never merges. The [human owner](roles.md#human-owner) may also merge.
 
 Related: [version-control/index.md](../version-control/index.md),
 [CONTRIBUTING.md](../CONTRIBUTING.md).
