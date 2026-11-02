@@ -19,8 +19,7 @@ Give each task to one role, so that each agent has one responsibility.
 ## Human owner
 
 The human owner is only the owner who acts in person, or the owner's own words. A bot or an agent
-that acts through the owner's account is always an agent. It is never the human owner. An
-agent's message about the owner's words is not the owner's words.
+that acts through the owner's account is always an agent. It is never the human owner.
 
 ## Role map
 
