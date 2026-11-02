@@ -90,3 +90,13 @@ test("the work contract links the existing rules and does not copy them", async 
   assert.doesNotMatch(text, /gitea/i);
   assert.doesNotMatch(text, /gitlab/i);
 });
+
+test("the work contract records an owner instruction durably", async () => {
+  const flat = (await pageText()).replace(/\s+/g, " ");
+  assert.match(flat, /records the instruction durably on the relevant issue/);
+  assert.match(flat, /\[human owner\]\(roles\.md#human-owner\)/);
+  assert.match(flat, /Ordinary work in the same verified session can continue without a new record/);
+  assert.match(flat, /A repair never covers these/);
+  assert.match(flat, /A merge, a release or a tag/);
+  assert.match(flat, /\[safety\.md\]\(safety\.md\) limits/);
+});
