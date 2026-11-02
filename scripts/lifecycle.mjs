@@ -24,9 +24,7 @@ function sameReviewedHead(input) {
 function routeMerge(input) {
   if (input.mergeActor === "human-owner") {
     if (input.ownerVerified !== true) return stop("owner-identity");
-  } else if (input.mergeActor === "agent") {
-    if (input.ownerMergeApproved !== true) return stop("owner-merge-approval");
-  } else {
+  } else if (input.mergeActor !== "agent") {
     return stop("merge-actor");
   }
   if (input.reviewPassed !== true) return stop("unreviewed");

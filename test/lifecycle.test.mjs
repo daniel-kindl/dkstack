@@ -130,7 +130,7 @@ const readyMerge = {
   protectionAllowsMerge: true,
 };
 
-test("a verified human owner may merge their own PR after all existing gates", () => {
+test("the human owner may merge their own PR after all gates", () => {
   assert.equal(routeWork(readyMerge).action, "merge");
   assert.equal(routeWork({ ...readyMerge, ownerVerified: false }).reason, "owner-identity");
   assert.equal(routeWork({ ...readyMerge, reviewerIndependent: false }).reason, "independent");
@@ -142,13 +142,24 @@ test("a verified human owner may merge their own PR after all existing gates", (
   assert.equal(routeWork({ ...readyMerge, protectionAllowsMerge: "unverified" }).reason, "protection");
 });
 
-test("an agent needs exact owner authorization and cannot self-approve", () => {
-  const agent = { ...readyMerge, mergeActor: "agent", ownerVerified: true, pullRequestAuthorIsOwner: false };
-  assert.equal(routeWork(agent).reason, "owner-merge-approval");
-  assert.equal(routeWork({ ...agent, ownerMergeApproved: true }).action, "merge");
-  assert.equal(routeWork({ ...agent, ownerMergeApproved: true, reviewerIndependent: false }).reason, "independent");
-  assert.equal(routeWork({ ...agent, mergeActor: "unknown", ownerMergeApproved: true }).reason, "merge-actor");
+test("the independent reviewer merges only after every common gate", () => {
+  const agent = { ...readyMerge, mergeActor: "agent", ownerVerified: false, pullRequestAuthorIsOwner: false };
+  assert.equal(routeWork(agent).action, "merge");
+  assert.equal(routeWork({ ...agent, reviewerIndependent: false }).reason, "independent");
+  assert.equal(routeWork({ ...agent, reviewPassed: false }).reason, "unreviewed");
+  assert.equal(routeWork({ ...agent, checksGreen: false }).reason, "checks");
+  assert.equal(routeWork({ ...agent, currentHead: "def" }).reason, "head");
+  assert.equal(routeWork({ ...agent, mergeMethod: "merge" }).reason, "method");
+  assert.equal(routeWork({ ...agent, protectionAllowsMerge: false }).reason, "protection");
+  assert.equal(routeWork({ ...agent, mergeActor: "unknown" }).reason, "merge-actor");
   assert.equal(routeWork({ ...readyMerge, mergeActor: undefined }).reason, "merge-actor");
+});
+
+test("ownerMergeApproved has no effect on an agent merge", () => {
+  const agent = { ...readyMerge, mergeActor: "agent", ownerVerified: false, pullRequestAuthorIsOwner: false };
+  assert.equal(routeWork({ ...agent, ownerMergeApproved: false }).action, "merge");
+  assert.equal(routeWork({ ...agent, ownerMergeApproved: true, reviewerIndependent: false }).reason, "independent");
+  assert.equal(routeWork({ ...agent, ownerMergeApproved: true, reviewPassed: false }).reason, "unreviewed");
 });
 
 test("plan-work and tdd-loop keep the claim and the fresh session", async () => {
@@ -167,10 +178,10 @@ test("plan-work and tdd-loop keep the claim and the fresh session", async () => 
 test("review and release skills keep the merge and publish gates", async () => {
   const review = await flat("skills/code-review/SKILL.md");
   const release = await flat("skills/release/SKILL.md");
-  assert.match(review, /human owner may merge a PR they authored after independent review/i);
-  assert.match(review, /human owner may merge a PR they authored/i);
-  assert.match(review, /agent author never gives the verdict on or approves their own pull request/i);
-  assert.match(review, /agent may merge only with the owner's explicit authorization/i);
+  assert.match(review, /author never gives the verdict on, approves or merges their own pull request/i);
+  assert.match(review, /human owner\]\([^)]*roles\.md#human-owner\) may merge a pull request that they authored/i);
+  assert.match(review, /reviewer merges only the head that they reviewed/i);
+  assert.doesNotMatch(review, /agent may merge only with the owner's explicit authorization/i);
   assert.match(review, /required checks on that head must be green/i);
   assert.match(release, /OK names the exact version/);
   assert.match(release, /never covers a production deploy/);

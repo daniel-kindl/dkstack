@@ -8,16 +8,15 @@ action with the owner's OK. Only then can an agent do it.
 - Do not force-push. Reason: a force-push can delete commits that other agents use.
 - Do not bypass branch protection or a ruleset. Do not change them without the owner's OK. Reason:
   they protect `main` from unreviewed changes.
-- Do not push to `main`. Change it only through a reviewed pull request. The human owner may merge
-  a pull request directly after independent review and all merge checks pass. An agent may merge
-  only with the owner's explicit authorization for that pull request.
+- Do not push to `main`. Change it only through a reviewed pull request. Reason: every change on
+  `main` must have a review.
 - Do not start a production deploy. Only the human owner starts one. Reason: a deploy affects users
   and is hard to reverse.
 - Do not change infrastructure or third-party settings, such as DNS, CDN or cloud, without the
   owner's OK. Reason: these changes can break live services outside the repository.
-- An agent must not merge a pull request without the human owner's explicit approval for that PR.
-  The human owner may merge directly, including a pull request they authored, after independent
-  review and green checks.
+- Only the independent reviewer or the [human owner](roles.md#human-owner) merges a pull request.
+  The author agent never merges. See [review-and-merge.md](review-and-merge.md). Reason: every
+  merge needs an independent review.
 - Do not publish or release without the owner's explicit OK for that release. This includes a
   push to a release branch, a release tag and a package publish. The OK names the exact version.
   It never covers a production deploy or a project's release workflow. Only the owner starts

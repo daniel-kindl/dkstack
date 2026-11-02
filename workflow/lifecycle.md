@@ -16,18 +16,17 @@ their rules.
    child passes readiness. The fresh session verifies mapping review evidence under
    [post-map readiness](work.md#post-map-readiness).
 5. An independent reviewer reviews the implementation pull request.
-6. The verified human owner may merge the pull request directly, including one they authored,
-   after independent review passes. An agent may merge only with the owner's explicit approval
-   for that exact pull request. Both paths require the current reviewed head, green required
-   checks, an independent reviewer, squash merge and branch protection. See
-   [review-and-merge.md](review-and-merge.md).
+6. The reviewer merges only the reviewed head when the review passes and the required checks
+   are green. The reviewer is not the author. The author never merges. The
+   [human owner](roles.md#human-owner) may also merge, including a pull request that the owner
+   authored. Both paths need the same checks. The merge method is squash. Branch protection
+   allows the merge. See [review-and-merge.md](review-and-merge.md).
 
 `scripts/lifecycle.mjs` records these decisions. It routes active-parent map amendments only after
 owner approval, preflight and claim checks. For a merge, callers set `mergeActor` to
-`human-owner` only when owner identity is verified. They set `mergeActor` to `agent` only when
-the acting agent is known. `ownerMergeApproved` means the owner explicitly authorized that agent
-to merge that exact pull request; shared account identity and PR authorship do not establish this
-fact. The router still requires all common merge gates. Callers set `mappingReviewVerified` only after
+`human-owner` only when the actor is the [human owner](roles.md#human-owner). A shared account
+identity does not make an agent the human owner. Callers set `mergeActor` to `agent` for the
+independent reviewer. The router still requires all common merge gates. Callers set `mappingReviewVerified` only after
 validating the evidence under [review and merge](review-and-merge.md#missing-review-evidence-after-merge).
 The router consumes verified facts; it does not authenticate chat or fetch review records. It does not copy the linked procedures.
 
