@@ -178,10 +178,10 @@ test("plan-work and tdd-loop keep the claim and the fresh session", async () => 
 test("review and release skills keep the merge and publish gates", async () => {
   const review = await flat("skills/code-review/SKILL.md");
   const release = await flat("skills/release/SKILL.md");
-  assert.match(review, /human owner may merge a PR they authored after independent review/i);
-  assert.match(review, /human owner may merge a PR they authored/i);
-  assert.match(review, /agent author never gives the verdict on or approves their own pull request/i);
-  assert.match(review, /agent may merge only with the owner's explicit authorization/i);
+  assert.match(review, /author never gives the verdict on, approves or merges their own pull request/i);
+  assert.match(review, /human owner\]\([^)]*roles\.md#human-owner\) may merge a pull request that they authored/i);
+  assert.match(review, /reviewer merges only the head that they reviewed/i);
+  assert.doesNotMatch(review, /agent may merge only with the owner's explicit authorization/i);
   assert.match(review, /required checks on that head must be green/i);
   assert.match(release, /OK names the exact version/);
   assert.match(release, /never covers a production deploy/);
