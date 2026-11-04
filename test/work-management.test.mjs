@@ -91,12 +91,73 @@ test("the work contract links the existing rules and does not copy them", async 
   assert.doesNotMatch(text, /gitlab/i);
 });
 
+function sectionText(text, heading) {
+  const lines = text.split("\n");
+  const level = heading.match(/^#+/)[0].length;
+  const start = lines.findIndex((line) => line === heading);
+  assert.notEqual(start, -1, `missing heading: ${heading}`);
+  let end = lines.length;
+  for (let i = start + 1; i < lines.length; i += 1) {
+    const match = lines[i].match(/^(#+) /);
+    if (match && match[1].length <= level) {
+      end = i;
+      break;
+    }
+  }
+  return lines.slice(start, end).join("\n");
+}
+
+function flatten(text) {
+  return text.replace(/\s+/g, " ").trim();
+}
+
+function listAfter(section, lead) {
+  const lines = section.split("\n");
+  const start = lines.findIndex((line) => flatten(line).endsWith(lead));
+  assert.notEqual(start, -1, `missing list lead: ${lead}`);
+  const items = [];
+  let i = start + 1;
+  while (i < lines.length && lines[i].trim() === "") i += 1;
+  for (; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (line.startsWith("- ")) items.push(line.slice(2));
+    else if (line.startsWith("  ") && items.length > 0) items[items.length - 1] += ` ${line}`;
+    else break;
+  }
+  return items.map(flatten);
+}
+
 test("the work contract records an owner instruction durably", async () => {
-  const flat = (await pageText()).replace(/\s+/g, " ");
-  assert.match(flat, /records the instruction durably on the relevant issue/);
-  assert.match(flat, /\[human owner\]\(roles\.md#human-owner\)/);
-  assert.match(flat, /Ordinary work in the same verified session can continue without a new record/);
-  assert.match(flat, /A repair never covers these/);
-  assert.match(flat, /A merge, a release or a tag/);
-  assert.match(flat, /\[safety\.md\]\(safety\.md\) limits/);
+  const section = flatten(sectionText(await pageText(), "## Owner instructions in chat"));
+  for (const sentence of [
+    "Before an agent relies on an owner instruction in a later session, it records the instruction durably on the relevant issue.",
+    "The instruction must come from the [human owner](roles.md#human-owner).",
+    "Ordinary work in the same verified session can continue without a new record.",
+    "Include the owner's own words, where they came from, the issue and authorized scope, the session date, and a session link or identifier when available.",
+    "An agent may transcribe the human decision; the agent's own agreement is not approval.",
+  ]) {
+    assert.ok(section.includes(sentence), `missing sentence: ${sentence}`);
+  }
+});
+
+test("the work contract limits a fail-closed repair to a closed list", async () => {
+  const raw = sectionText(await pageText(), "## Fail closed");
+  const section = flatten(raw);
+  for (const sentence of [
+    "Do not ask for permission again.",
+    "Routine, reversible workflow defects are only these:",
+  ]) {
+    assert.ok(section.includes(sentence), `missing sentence: ${sentence}`);
+  }
+  assert.deepEqual(listAfter(raw, "Routine, reversible workflow defects are only these:"), [
+    "A missing lifecycle, type or agent eligibility field that the tracker supports, when the correct value is not in doubt. See [transitions](#transitions).",
+    "A missing catalog label, created with the preflight apply mode. See [preflight.md](preflight.md).",
+    "A tracker transition that an agent must record again and read again.",
+  ]);
+  assert.deepEqual(listAfter(raw, "A repair never covers these:"), [
+    "A merge, a release or a tag.",
+    "An action that [safety.md](safety.md) limits.",
+    "A change to the scope of the issue.",
+    "A field that conflicts with another source, or a human-only designation.",
+  ]);
 });
