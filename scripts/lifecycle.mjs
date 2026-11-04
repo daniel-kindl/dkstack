@@ -50,10 +50,16 @@ function mappingStop(input) {
   return null;
 }
 
+// A recorded parent mapping approval replaces a new owner instruction only for a mapped child.
+function prepareAuthorized(input) {
+  if (input.mappedChild === true && input.parentMappingApproved === true) return true;
+  return input.ownerInstruction === true && input.ownerVerified === true;
+}
+
 function routePrepare(input) {
   const blocked = mappingStop(input);
   if (blocked) return blocked;
-  if (input.ownerInstruction !== true || input.ownerVerified !== true) return stop("owner-authorization");
+  if (!prepareAuthorized(input)) return stop("owner-authorization");
   if (input.conflict === true || input.humanOnly === true) return stop("conflict");
   if (input.permission !== "present") return stop("permission");
   if (input.prerequisiteComplete !== true) return stop("prerequisite");
