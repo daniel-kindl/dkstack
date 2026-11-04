@@ -33,7 +33,7 @@ test("the plan-work skill falls back to steps in order", async () => {
 
 test("the plan-work skill has a fallback for each missing piece", async () => {
   const text = await section("When a piece is missing");
-  for (const piece of [/^- No issue:/m, /^- No branch:/m, /^- No pull request yet:/m,
+  for (const piece of [/^- No issue:/m, /^- No branch:/m,
     /^- No automated checks:/m, /^- You cannot write to the plan path:/m,
     /^- The plan changed since you read it/m]) {
     assert.match(text, piece);

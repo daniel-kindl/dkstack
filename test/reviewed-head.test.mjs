@@ -78,6 +78,10 @@ test("roles.md defines the human owner under its own heading", async () => {
   assert.ok(section, "roles.md must have a Human owner section");
   assert.equal(
     section[1].replace(/\s+/g, " ").trim(),
-    "The human owner is only the owner who acts in person, or the owner's own words. A bot or an agent that acts through the owner's account is always an agent. It is never the human owner.",
+    "The human owner is only the owner who acts in person, or the owner's own words. A bot or an agent that acts through the owner's account is always an agent. It is never the human owner. " +
+      "A relayed decision counts as the owner's words only if it quotes the owner's exact words " +
+      "with the time and the place where the owner wrote them, and the agent records that quote " +
+      "in the issue or pull request before relying on it in a later session. A paraphrase or an " +
+      "agent's summary never counts.",
   );
 });

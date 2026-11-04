@@ -64,9 +64,8 @@ test("a closed prerequisite unlocks work only when it is complete", async () => 
   const flat = (await pageText()).replace(/\s+/g, " ");
   assert.match(flat, /only when that prerequisite is complete/);
   assert.match(flat, /Closed is not enough/);
-  assert.match(flat, /A rejected prerequisite is not complete/);
-  assert.match(flat, /An abandoned prerequisite is not complete/);
-  assert.match(flat, /does not say whether it is complete, rejected or abandoned, fail closed/);
+  assert.match(flat, /A closed prerequisite is complete or not complete\./);
+  assert.match(flat, /If the outcome of a closed prerequisite has no source, fail closed\./);
   assert.doesNotMatch(flat, /every prerequisite is closed/i);
 });
 
