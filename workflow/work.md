@@ -32,9 +32,8 @@ agent is allowed to do the work. A human may also do that work. The value human 
 is not allowed to do the work. If eligibility is absent, the issue is not ready.
 
 A prerequisite is another issue. This issue can enter the ready state only when that
-prerequisite is complete. Closed is not enough. A rejected prerequisite is not complete. An
-abandoned prerequisite is not complete. If a closed prerequisite does not say whether it is
-complete, rejected or abandoned, fail closed.
+prerequisite is complete. Closed is not enough. A closed prerequisite is complete or not
+complete. If the outcome of a closed prerequisite has no source, fail closed.
 
 ## Sources
 
@@ -47,6 +46,8 @@ do not replace any issue fact below.
 - Milestone: the tracker's milestone.
 - Assignee: the tracker's assignee field.
 - Type, lifecycle, priority and eligibility: the tracker's fields for those facts.
+- Outcome of a closed prerequisite: the completion evidence that [Completion](#completion) names.
+  The tracker's close reason is a copy of that fact.
 - Feature plan: the plan file in the repository.
 - Pull request: the pull request on the code host.
 - Review evidence: the review record on that pull request, with only the
@@ -81,6 +82,8 @@ are not completion.
 - planning + the scope is not clear -> triage
 - ready + an allowed agent starts the work -> active
 - ready + the scope changes -> planning
+- active + a new prerequisite link to an issue that is not complete, or a scope change that the
+  owner recorded on the issue -> planning
 - active + a pull request is open for the completed objective of the issue -> review
 - review + the review asks for changes -> active
 - review + the completion rule is met -> closed
@@ -96,6 +99,10 @@ The owner may make these transitions. An agent may make only these transitions:
 - planning -> ready, when the acceptance criteria exist and every prerequisite is complete; fill unambiguous missing type or agent eligibility for already authorized agent work, but never override conflicting or human-only fields
 - ready -> active, when the readiness checks pass and this session did not map the issue as a
   child
+- active -> planning, when a new prerequisite link names an issue that is not complete, or the
+  owner recorded a scope change on the issue. Record the reason on the issue. Move the issue to
+  planning and read it again. Only then write `RELEASE` with the disposition planning. See
+  [claims.md](claims.md).
 - active -> review, when a pull request is open for the completed objective of the issue
 - review -> active, when the review asks for changes
 - review -> closed, when the completion rule is met and the agent is not the author of the change
@@ -159,7 +166,8 @@ control, or identity or scope conflicts, stop before an owner-only action.
 
 Before an agent relies on an owner instruction in a later session, it records the instruction
 durably on the relevant issue. The instruction must come from the
-[human owner](roles.md#human-owner). Ordinary work in the same verified session can continue
+[human owner](roles.md#human-owner). For a relayed decision, follow the relay rule in
+[roles.md](roles.md#human-owner). Ordinary work in the same verified session can continue
 without a new record. Include the owner's own words, where they came from, the issue and
 authorized scope, the session date, and a session link or identifier
 when available. If none is available, record the conversation context that identifies the
