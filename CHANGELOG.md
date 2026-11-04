@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `workflow/roles.md`: define the human owner under its own heading. A bot or an agent that acts
   through the owner's account is always an agent. Add the relay rule: a relayed decision counts
-  as the owner's words only when the agent records the exact quote, its time and its place.
+  as the owner's words only when it quotes the owner's exact words with the time and the place.
+  The agent records that quote in the issue or pull request before a later session relies on it.
 - `workflow/work.md`: an agent may move an active issue to planning after a new prerequisite link
   to an issue that is not complete, or after a scope change that the owner recorded. The agent
   moves the issue before it writes `RELEASE`. `workflow/feature-plans.md` says how an item leaves
@@ -23,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Restore the reviewer merge rule. The independent reviewer merges only the reviewed head. The
-  author never merges. The human owner may still merge, also their own pull request.
+  author never merges. The human owner may merge, and may merge their own pull request.
 - `workflow/work.md`: restore the durable record of an owner instruction that a later session
   relies on. List the routine, reversible workflow defects that an agent may repair, and the
   actions that a repair never covers.
