@@ -8,7 +8,7 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 // Skills that use subagents where they help.
 const skills = ["code-review", "writing-check", "apply-architecture", "write-adr", "clarify-intent",
-  "release"];
+  "release", "triage"];
 
 // Return the text of the "Subagents" section of a skill.
 async function subagents(skill) {
@@ -65,4 +65,13 @@ test("the changelog states each subagent procedure in its own sentence", async (
   assert.match(bullet, /Each option gets its own subagent in `write-adr`\./);
   assert.match(bullet, /One subagent reads the code and one subagent reads the docs in `clarify-intent`\./);
   assert.doesNotMatch(bullet, / or /);
+});
+
+test("the triage Subagents section gives the exact brief line and fallback", async () => {
+  const text = await subagents("triage");
+  const lines = text.split(/\r?\n/);
+  assert.ok(lines.includes('- This line: "Report to me only. Do not change files, commit, push, post, approve or merge."'));
+  assert.ok(lines.includes("Then do steps 4 and 5 yourself. A report from a subagent is a claim. " +
+    "Check each rule that you apply at its source."));
+  assert.ok(lines.includes("If you cannot start subagents, do the steps one at a time in the order of this skill."));
 });

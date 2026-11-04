@@ -15,9 +15,9 @@ Read [versioning/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstac
 2. List the changes that this release contains.
 3. Check compatibility and breaking changes. Check the changelog entry for this release.
 4. Choose the version number. Follow the versioning page.
-5. Follow the release steps on the versioning page. That includes packaging when the page gives packaging steps. Do not invent packaging steps. Obey any limit on which repository those steps are for.
-6. Verify the release as the versioning page says. If a check fails, stop.
-7. Apply the publish rule. Stop when the rule does not allow the release.
+5. Apply the publish rule. Stop when the rule does not allow the release. Do not start step 6 before this check passes.
+6. Follow the release steps on the versioning page. That includes packaging when the page gives packaging steps. Do not invent packaging steps. Obey any limit on which repository those steps are for.
+7. Verify the release as the versioning page says. If a check fails, stop.
 
 ## Subagents
 
@@ -32,6 +32,14 @@ If you can start subagents, use them for step 3. Do steps 1 and 2 yourself. Then
 Then do steps 4 to 7 yourself. A report from a subagent is a claim. Check each claim that the version depends on at its source.
 
 If you cannot start subagents, do the steps one at a time in the order of this skill.
+
+## When a piece is missing
+
+The steps expect a changelog entry, the rights to create a tag and the owner's OK for this release. If a piece is missing, stop and report it. Do not guess the missing piece.
+
+- No changelog entry for this release: stop at step 3. Report that the entry is missing. Do not write an entry that nobody reviewed.
+- No rights to create a tag or to do another release step: stop before step 6. Report the step and the right that is missing. Do not use other rights and do not change the protection.
+- No OK from the owner for this release and this version: stop at step 5. Report the version that you chose and ask the owner. An OK for a different version is not the OK.
 
 ## Rules
 

@@ -2,7 +2,7 @@
 name: External request
 about: Ask for an outcome without splitting the work.
 title: ""
-labels: []
+labels: ["status:triage"]
 ---
 
 # External request
