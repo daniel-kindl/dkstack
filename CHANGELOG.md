@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `workflow/roles.md`: define the human owner under its own heading. A bot or an agent that acts
+  through the owner's account is always an agent. Add the relay rule: a relayed decision counts
+  as the owner's words only when the agent records the exact quote, its time and its place.
+- `workflow/work.md`: an agent may move an active issue to planning after a new prerequisite link
+  to an issue that is not complete, or after a scope change that the owner recorded. The agent
+  moves the issue before it writes `RELEASE`. `workflow/feature-plans.md` says how an item leaves
+  `BLOCKED`.
+- `skills/release`: a "When a piece is missing" section for no changelog entry, no rights to
+  create a tag and no OK. Each one stops and reports.
+- `skills/triage`: a Subagents section with a fallback that does the steps in order.
+
+### Changed
+
+- Restore the reviewer merge rule. The independent reviewer merges only the reviewed head. The
+  author never merges. The human owner may still merge, also their own pull request.
+- `workflow/work.md`: restore the durable record of an owner instruction that a later session
+  relies on. List the routine, reversible workflow defects that an agent may repair, and the
+  actions that a repair never covers.
+- `workflow/work.md`: a closed prerequisite is complete or not complete. The completion evidence
+  is the source of the outcome. The tracker's close reason is a copy. If no source exists, fail
+  closed.
+- `skills/plan-work`: remove the `PR` field from the plan format.
+- `skills/release`: apply the publish rule before the release steps.
+- The external request issue template sets the `status:triage` label.
+
+### Fixed
+
+- The lifecycle router prepares a mapped child with the parent mapping approval only when the
+  child's eligibility is already agent. The approval never allows a merge.
+- The lifecycle router stops triage with the reason `scope` when the pull request count is
+  unknown or zero.
+
 ## [1.1.3] - 2026-11-01
 
 ### Changed
