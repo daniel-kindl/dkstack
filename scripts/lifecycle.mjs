@@ -11,8 +11,14 @@ function go(action, skill = null) {
 
 function triageSkill(pullRequestCount) {
   if (pullRequestCount === 1) return "plan-work";
-  if (typeof pullRequestCount === "number" && pullRequestCount > 1) return "map-work";
+  if (Number.isInteger(pullRequestCount) && pullRequestCount > 1) return "map-work";
   return null;
+}
+
+function routeTriage(input) {
+  const skill = triageSkill(input.pullRequestCount);
+  if (skill === null) return stop("scope");
+  return go("classify", skill);
 }
 
 function sameReviewedHead(input) {
@@ -90,7 +96,7 @@ function routeImplement(input) {
 export function routeWork(input = {}) {
   if (input.phase === "prepare") return routePrepare(input);
   if (input.phase === "map-amendment") return routeMapAmendment(input);
-  if (input.phase === "triage") return go("classify", triageSkill(input.pullRequestCount));
+  if (input.phase === "triage") return routeTriage(input);
   if (input.phase === "implement") return routeImplement(input);
   if (input.phase === "merge") return routeMerge(input);
   return stop("phase");

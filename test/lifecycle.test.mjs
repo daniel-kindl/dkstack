@@ -80,10 +80,16 @@ test("an unlabeled external request is classified", () => {
   assert.equal(one.action, "classify");
   assert.equal(one.skill, "plan-work");
   assert.equal(one.stop, false);
-  const unread = routeWork({ phase: "triage", lifecycle: null, eligibility: null });
-  assert.equal(unread.action, "classify");
-  assert.equal(unread.skill, null);
-  assert.equal(unread.stop, false);
+});
+
+test("triage stops on scope when the pull request count is unknown or zero", () => {
+  const scope = { action: "stop", skill: null, stop: true, reason: "scope" };
+  const base = { phase: "triage", lifecycle: null, eligibility: null };
+  assert.deepEqual(routeWork(base), scope);
+  for (const pullRequestCount of [0, undefined, null, "1", "2", -1, 1.5, Number.NaN]) {
+    assert.deepEqual(routeWork({ ...base, pullRequestCount }), scope, `count ${String(pullRequestCount)}`);
+  }
+  assert.equal(routeWork({ ...base, pullRequestCount: 3 }).skill, "map-work");
 });
 
 test("missing implementation readiness stops implementation only", () => {
