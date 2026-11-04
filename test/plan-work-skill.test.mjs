@@ -59,3 +59,20 @@ test("plan-work step 6 changes the later items after a new fact", async () => {
   const step6 = steps.slice(steps.indexOf(" 6. "), steps.indexOf(" 7. "));
   assert.match(step6, /After each commit, if its result shows a new fact, change the later items\./);
 });
+
+test("the plan format has no pull request field", async () => {
+  const text = await readFile(skillFile, "utf8");
+  const start = text.indexOf("\n## Plan format\n");
+  assert.notEqual(start, -1, "the plan-work skill must have a Plan format section");
+  const fence = text.slice(start).match(/```\w*\n([\s\S]*?)\n```/);
+  assert.ok(fence, "the Plan format section must have a fenced plan template");
+  assert.doesNotMatch(fence[1], /^PR:/m);
+  assert.match(fence[1], /^Branch: <name or not created>\n\n## Goal$/m);
+});
+
+test("the missing-piece section expects no pull request", async () => {
+  const text = (await section("When a piece is missing")).replace(/\s+/g, " ");
+  assert.match(text, /The steps expect an issue, a feature branch, automated checks and write access to the plan path\./);
+  assert.doesNotMatch(text, /a pull request/);
+  assert.doesNotMatch(text, /No pull request yet/);
+});
