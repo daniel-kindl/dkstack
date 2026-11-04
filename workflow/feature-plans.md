@@ -14,7 +14,7 @@ For the issue lifecycle and for map-work, see [work.md](work.md).
 
 ## Status and evidence
 
-Use `PENDING`, `IN_PROGRESS`, `BLOCKED` and `COMPLETED` for work items. The `Status` field of the feature uses the same values. Mark an item `COMPLETED` only after you commit its changes and do its required checks. A failed check or a check that did not run is not a pass. For each blocker, write what must happen to remove it. Keep a handoff note with the next action and the risks that remain.
+Use `PENDING`, `IN_PROGRESS`, `BLOCKED` and `COMPLETED` for work items. The `Status` field of the feature uses the same values. Mark an item `COMPLETED` only after you commit its changes and do its required checks. A failed check or a check that did not run is not a pass. For each blocker, write what must happen to remove it. When that action happens, record the evidence and set the item to its earlier status, or to `PENDING` if no work started. Keep a handoff note with the next action and the risks that remain.
 
 A planned commit is a proposal. It does not say that the commit exists. A commit can contain many small TDD cycles, or one cycle can go across commits. The final pull request must pass the required quality gates. Do not say that each commit in the red phase passed all checks.
 
@@ -27,7 +27,8 @@ decision in an ADR or in the permanent documentation. Then remove the completed 
 open the pull request.
 
 Do not remove a plan that is not complete or that is blocked. A project can keep or archive its
-plans when it says so. By default, do not add an archive. Git history keeps the removed plan.
+plans when it says so. A blocked plan stays in the repository until its blockers are removed or
+the owner abandons the issue. By default, do not add an archive. Git history keeps the removed plan.
 
 The reviewer uses the issue, its acceptance criteria, the pull request diff and the verification
 evidence. The reviewer may read the plan when it is present and it adds context. The review does

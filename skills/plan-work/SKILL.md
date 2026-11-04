@@ -28,7 +28,6 @@ Use these headings. Add details only when they are necessary.
 Status: PENDING
 Issue: <reference or none>
 Branch: <name or not created>
-PR: <reference or not created>
 
 ## Goal
 ## Requirements and acceptance criteria
@@ -73,11 +72,10 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 
 ## When a piece is missing
 
-The steps expect an issue, a feature branch, a pull request, automated checks and write access to the plan path. If a piece is missing, use its fallback below. In the plan or in your report, say which fallback you used and why.
+The steps expect an issue, a feature branch, automated checks and write access to the plan path. If a piece is missing, use its fallback below. In the plan or in your report, say which fallback you used and why.
 
 - No issue: write `none` in the `Issue` field. In step 1, take the goal and the acceptance criteria from the person who asked for the plan. If you cannot find them, ask. Do not invent them.
 - No branch: write `not created` in the `Branch` field. Do the planning steps. Do not create the branch unless someone asked you to do the work.
-- No pull request yet: write `not created` in the `PR` field. Update the field when the pull request exists.
 - No automated checks: run the project checks locally if you can, and record the real result as evidence. If you cannot run a check, record it as not run. A check that did not run is not a pass.
 - You cannot write to the plan path: do not write the plan to a different path on your own. Give the plan in your report, say why you could not write it, and ask where to put it.
 - The plan changed since you read it, for example because another agent edited it: follow step 5 in [feature-plans.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/feature-plans.md).

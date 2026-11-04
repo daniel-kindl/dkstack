@@ -39,3 +39,16 @@ test("plan-work removes a completed plan before the pull request", async () => {
   assert.match(skill, /remove the completed plan before you open the pull request/);
   assert.match(skill, /Do not remove a plan that is incomplete or blocked/);
 });
+
+test("a blocked item has an exit and a blocked plan stays", async () => {
+  const text = await readFile(join(root, "workflow/feature-plans.md"), "utf8");
+  const part = (heading) => {
+    const start = text.indexOf(`\n## ${heading}\n`);
+    assert.notEqual(start, -1, `feature-plans.md must have a "${heading}" section`);
+    const rest = text.slice(start + heading.length + 5);
+    const end = rest.search(/^## /m);
+    return (end === -1 ? rest : rest.slice(0, end)).replace(/\s+/g, " ");
+  };
+  assert.match(part("Status and evidence"), /For each blocker, write what must happen to remove it\. When that action happens, record the evidence and set the item to its earlier status, or to `PENDING` if no work started\./);
+  assert.match(part("Review and cleanup"), /A blocked plan stays in the repository until its blockers are removed or the owner abandons the issue\./);
+});
