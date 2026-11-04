@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-04
+
 ### Added
 
 - `workflow/roles.md`: define the human owner under its own heading. A bot or an agent that acts
@@ -20,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `skills/release`: a "When a piece is missing" section for no changelog entry, no rights to
   create a tag and no OK. Each one stops and reports.
 - `skills/triage`: a Subagents section with a fallback that does the steps in order.
+- Tests that pin the author never merges rule in `workflow/review-and-merge.md`,
+  `workflow/roles.md` and `workflow/index.md`, and that an agent merge needs the independent
+  reviewer. Tests that the work.md transition lists have exactly one active to planning item.
 
 ### Changed
 
@@ -226,7 +231,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `validate` workflow. It checks the PR or commit title, the skills, the links, the dashes,
   the workflows, the CHANGELOG entry for the version and the unit tests.
 
-[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.1.3...HEAD
+[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/daniel-kindl/dkstack/compare/v1.1.3...v1.2.0
 [1.1.3]: https://github.com/daniel-kindl/dkstack/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/daniel-kindl/dkstack/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/daniel-kindl/dkstack/compare/v1.1.0...v1.1.1
