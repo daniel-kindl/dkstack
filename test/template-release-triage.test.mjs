@@ -42,12 +42,18 @@ test("the release skill applies the publish rule at step 5, before steps 6 and 7
 });
 
 test("the release skill stops at the right step when a piece is missing", async () => {
-  const items = sectionText(await read("skills/release/SKILL.md"), "## When a piece is missing")
-    .filter((line) => line.startsWith("- "));
-  assert.equal(items.length, 3);
-  assert.match(items[0], /^- No changelog entry for this release: stop at step 3\./);
-  assert.match(items[1], /^- No rights to create a tag or to do another release step: stop before step 6\./);
-  assert.match(items[2], /^- No OK from the owner for this release and this version: stop at step 5\./);
+  const lines = sectionText(await read("skills/release/SKILL.md"), "## When a piece is missing")
+    .filter((line) => line.trim() !== "");
+  assert.deepEqual(lines, [
+    "The steps expect a changelog entry, the rights to create a tag and the owner's OK for this release. " +
+      "If a piece is missing, stop and report it. Do not guess the missing piece.",
+    "- No changelog entry for this release: stop at step 3. Report that the entry is missing. " +
+      "Do not write an entry that nobody reviewed.",
+    "- No rights to create a tag or to do another release step: stop before step 6. " +
+      "Report the step and the right that is missing. Do not use other rights and do not change the protection.",
+    "- No OK from the owner for this release and this version: stop at step 5. " +
+      "Report the version that you chose and ask the owner. An OK for a different version is not the OK.",
+  ]);
 });
 
 test("the release skill Rules section keeps the publish rule", async () => {
