@@ -322,6 +322,13 @@ test("parent mapping approval never allows a merge", () => {
   assert.equal(routeWork({ ...merge, reviewerIndependent: false }).reason, "independent");
   assert.equal(routeWork({ ...merge, mergeActor: undefined }).reason, "merge-actor");
   assert.equal(routeWork({ ...merge, mergeActor: "human-owner", ownerVerified: false }).reason, "owner-identity");
+  const agent = { ...merge, mergeActor: "agent", pullRequestAuthorIsOwner: false };
+  assert.equal(routeWork(agent).action, "merge");
+  for (const actor of [merge, agent]) {
+    assert.equal(routeWork({ ...actor, currentHead: "def" }).reason, "head");
+    assert.equal(routeWork({ ...actor, mergeMethod: "rebase" }).reason, "method");
+    assert.equal(routeWork({ ...actor, protectionAllowsMerge: false }).reason, "protection");
+  }
 });
 
 test("the lifecycle page names the parent mapping approval", async () => {
