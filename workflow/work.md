@@ -223,7 +223,7 @@ task. Do not ask for permission again. Routine, reversible workflow defects are 
   correct value is not in doubt. See [transitions](#transitions).
 - A missing catalog label, created with the preflight apply mode. See
   [preflight.md](preflight.md).
-- A tracker transition that you must record again and read again.
+- A tracker transition that an agent must record again and read again.
 
 A repair never covers these:
 
