@@ -355,3 +355,18 @@ test("parent mapping approval needs established agent eligibility", () => {
   assert.equal(routeWork({ ...owner, eligibility: "human" }).reason, "eligibility");
   assert.equal(routeWork({ ...owner, mappedChild: false, eligibility: null }).action, "prepare-ready");
 });
+
+test("an agent merge needs the reviewer, never the author", () => {
+  const reviewer = { ...readyMerge, mergeActor: "agent", ownerVerified: false, pullRequestAuthorIsOwner: false };
+  assert.equal(routeWork(reviewer).action, "merge");
+  const author = { ...reviewer, reviewerIndependent: false };
+  assert.equal(routeWork(author).reason, "independent");
+  assert.equal(routeWork({ ...author, ownerVerified: true }).reason, "independent");
+  assert.equal(routeWork({ ...author, ownerMergeApproved: true }).reason, "independent");
+  assert.equal(routeWork({ ...author, parentMappingApproved: true, mappedChild: true }).reason, "independent");
+  for (const value of [undefined, null, "true", 1, "reviewer"]) {
+    const unknown = routeWork({ ...reviewer, reviewerIndependent: value });
+    assert.equal(unknown.reason, "independent", `reviewerIndependent ${String(value)} must stop`);
+    assert.equal(unknown.stop, true);
+  }
+});
