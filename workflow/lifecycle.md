@@ -28,6 +28,10 @@ owner approval, preflight and claim checks. For a merge, callers set `mergeActor
 identity does not make an agent the human owner. Callers set `mergeActor` to `agent` for the
 independent reviewer. The router still requires all common merge gates. Callers set `mappingReviewVerified` only after
 validating the evidence under [review and merge](review-and-merge.md#missing-review-evidence-after-merge).
+For a mapped child, callers set `parentMappingApproved` only when the
+[human owner](roles.md#human-owner) approval of the parent mapping is recorded on the parent issue.
+With that approval, the router allows preparation and pull request creation for the child without a new
+owner instruction. It never allows a merge. See [post-map readiness](work.md#post-map-readiness).
 The router consumes verified facts; it does not authenticate chat or fetch review records. It does not copy the linked procedures.
 
 Release follows [the release skill](../skills/release/SKILL.md). That skill links
