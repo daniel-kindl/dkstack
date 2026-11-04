@@ -336,3 +336,22 @@ test("the lifecycle page names the parent mapping approval", async () => {
   assert.match(page, /For a mapped child, callers set `parentMappingApproved` only when the \[human owner\]\(roles\.md#human-owner\) approval of the parent mapping is recorded on the parent issue\./);
   assert.match(page, /With that approval, the router allows preparation and pull request creation for the child without a new owner instruction\. It never allows a merge\./);
 });
+
+test("parent mapping approval needs established agent eligibility", () => {
+  const child = {
+    phase: "prepare", parentMappingApproved: true,
+    conflict: false, humanOnly: false, permission: "present",
+    prerequisiteComplete: true, acceptanceCriteria: true, trackerSupported: true,
+    lifecycle: "planning", eligibility: "agent", mappedChild: true,
+    mappingMerged: true, mappingReviewVerified: true,
+  };
+  assert.equal(routeWork(child).action, "prepare-ready");
+  for (const eligibility of [null, undefined, "human", "Agent", ""]) {
+    assert.equal(routeWork({ ...child, eligibility }).reason, "eligibility", `eligibility ${String(eligibility)}`);
+  }
+  const owner = { ...child, parentMappingApproved: undefined, ownerInstruction: true, ownerVerified: true };
+  assert.equal(routeWork({ ...owner, eligibility: null }).action, "prepare-ready");
+  assert.equal(routeWork({ ...owner, eligibility: "agent" }).action, "prepare-ready");
+  assert.equal(routeWork({ ...owner, eligibility: "human" }).reason, "eligibility");
+  assert.equal(routeWork({ ...owner, mappedChild: false, eligibility: null }).action, "prepare-ready");
+});

@@ -50,10 +50,14 @@ function mappingStop(input) {
   return null;
 }
 
+function ownerAuthorized(input) {
+  return input.ownerInstruction === true && input.ownerVerified === true;
+}
+
 // A recorded parent mapping approval replaces a new owner instruction only for a mapped child.
 function prepareAuthorized(input) {
   if (input.mappedChild === true && input.parentMappingApproved === true) return true;
-  return input.ownerInstruction === true && input.ownerVerified === true;
+  return ownerAuthorized(input);
 }
 
 function routePrepare(input) {
@@ -67,6 +71,8 @@ function routePrepare(input) {
   if (input.trackerSupported !== true) return stop("tracker");
   if (input.lifecycle !== null && input.lifecycle !== "triage" && input.lifecycle !== "planning") return stop("state");
   if (input.eligibility !== null && input.eligibility !== "agent") return stop("eligibility");
+  // The parent approval path must not set missing eligibility.
+  if (!ownerAuthorized(input) && input.eligibility !== "agent") return stop("eligibility");
   return go("prepare-ready");
 }
 
