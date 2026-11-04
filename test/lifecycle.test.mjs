@@ -80,10 +80,16 @@ test("an unlabeled external request is classified", () => {
   assert.equal(one.action, "classify");
   assert.equal(one.skill, "plan-work");
   assert.equal(one.stop, false);
-  const unread = routeWork({ phase: "triage", lifecycle: null, eligibility: null });
-  assert.equal(unread.action, "classify");
-  assert.equal(unread.skill, null);
-  assert.equal(unread.stop, false);
+});
+
+test("triage stops on scope when the pull request count is unknown or zero", () => {
+  const scope = { action: "stop", skill: null, stop: true, reason: "scope" };
+  const base = { phase: "triage", lifecycle: null, eligibility: null };
+  assert.deepEqual(routeWork(base), scope);
+  for (const pullRequestCount of [0, undefined, null, "1", "2", -1, 1.5, Number.NaN]) {
+    assert.deepEqual(routeWork({ ...base, pullRequestCount }), scope, `count ${String(pullRequestCount)}`);
+  }
+  assert.equal(routeWork({ ...base, pullRequestCount: 3 }).skill, "map-work");
 });
 
 test("missing implementation readiness stops implementation only", () => {
@@ -279,4 +285,73 @@ test("active-parent map amendments require every approval and safety fact", () =
 test("active-parent amendments do not change the initial mapping route", () => {
   assert.equal(routeWork({ phase: "map-amendment", lifecycle: "active" }).action, "stop");
   assert.equal(routeWork({ phase: "prepare", lifecycle: "active", ownerInstruction: true, ownerVerified: true }).action, "stop");
+});
+
+test("parent mapping approval prepares a mapped child without an owner instruction", () => {
+  const child = {
+    phase: "prepare", parentMappingApproved: true,
+    conflict: false, humanOnly: false, permission: "present",
+    prerequisiteComplete: true, acceptanceCriteria: true, trackerSupported: true,
+    lifecycle: "planning", eligibility: "agent", mappedChild: true,
+    mappingMerged: true, mappingReviewVerified: true,
+  };
+  assert.equal(routeWork(child).action, "prepare-ready");
+  for (const parentMappingApproved of [false, undefined, null, "true", 1]) {
+    assert.equal(routeWork({ ...child, parentMappingApproved }).reason, "owner-authorization");
+  }
+  assert.equal(routeWork({ ...child, mappedChild: false }).reason, "owner-authorization");
+  assert.equal(routeWork({ ...child, mappedChild: undefined }).reason, "owner-authorization");
+  assert.equal(routeWork({ ...child, mappingMerged: false }).reason, "mapping-handoff");
+  assert.equal(routeWork({ ...child, mappingReviewVerified: false }).reason, "mapping-review");
+  assert.equal(routeWork({ ...child, sessionMappedIssue: true }).reason, "same-session");
+  assert.equal(routeWork({ ...child, humanOnly: true }).reason, "conflict");
+  assert.equal(routeWork({ ...child, conflict: true }).reason, "conflict");
+  assert.equal(routeWork({ ...child, permission: "missing" }).reason, "permission");
+  assert.equal(routeWork({ ...child, prerequisiteComplete: false }).reason, "prerequisite");
+  assert.equal(routeWork({ ...child, acceptanceCriteria: false }).reason, "criteria");
+  assert.equal(routeWork({ ...child, trackerSupported: false }).reason, "tracker");
+  assert.equal(routeWork({ ...child, lifecycle: "active" }).reason, "state");
+  assert.equal(routeWork({ ...child, eligibility: "human" }).reason, "eligibility");
+});
+
+test("parent mapping approval never allows a merge", () => {
+  const merge = { ...readyMerge, mappedChild: true, parentMappingApproved: true };
+  assert.equal(routeWork(merge).action, "merge");
+  assert.equal(routeWork({ ...merge, reviewPassed: false }).reason, "unreviewed");
+  assert.equal(routeWork({ ...merge, checksGreen: false }).reason, "checks");
+  assert.equal(routeWork({ ...merge, reviewerIndependent: false }).reason, "independent");
+  assert.equal(routeWork({ ...merge, mergeActor: undefined }).reason, "merge-actor");
+  assert.equal(routeWork({ ...merge, mergeActor: "human-owner", ownerVerified: false }).reason, "owner-identity");
+  const agent = { ...merge, mergeActor: "agent", pullRequestAuthorIsOwner: false };
+  assert.equal(routeWork(agent).action, "merge");
+  for (const actor of [merge, agent]) {
+    assert.equal(routeWork({ ...actor, currentHead: "def" }).reason, "head");
+    assert.equal(routeWork({ ...actor, mergeMethod: "rebase" }).reason, "method");
+    assert.equal(routeWork({ ...actor, protectionAllowsMerge: false }).reason, "protection");
+  }
+});
+
+test("the lifecycle page names the parent mapping approval", async () => {
+  const page = await flat("workflow/lifecycle.md");
+  assert.match(page, /For a mapped child, callers set `parentMappingApproved` only when the \[human owner\]\(roles\.md#human-owner\) approval of the parent mapping is recorded on the parent issue\./);
+  assert.match(page, /With that approval, the router allows preparation and pull request creation for the child without a new owner instruction\. It never allows a merge\./);
+});
+
+test("parent mapping approval needs established agent eligibility", () => {
+  const child = {
+    phase: "prepare", parentMappingApproved: true,
+    conflict: false, humanOnly: false, permission: "present",
+    prerequisiteComplete: true, acceptanceCriteria: true, trackerSupported: true,
+    lifecycle: "planning", eligibility: "agent", mappedChild: true,
+    mappingMerged: true, mappingReviewVerified: true,
+  };
+  assert.equal(routeWork(child).action, "prepare-ready");
+  for (const eligibility of [null, undefined, "human", "Agent", ""]) {
+    assert.equal(routeWork({ ...child, eligibility }).reason, "eligibility", `eligibility ${String(eligibility)}`);
+  }
+  const owner = { ...child, parentMappingApproved: undefined, ownerInstruction: true, ownerVerified: true };
+  assert.equal(routeWork({ ...owner, eligibility: null }).action, "prepare-ready");
+  assert.equal(routeWork({ ...owner, eligibility: "agent" }).action, "prepare-ready");
+  assert.equal(routeWork({ ...owner, eligibility: "human" }).reason, "eligibility");
+  assert.equal(routeWork({ ...owner, mappedChild: false, eligibility: null }).action, "prepare-ready");
 });

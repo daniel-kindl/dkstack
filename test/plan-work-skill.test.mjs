@@ -53,3 +53,9 @@ test("the plan-work skill links the small steps principle", async () => {
   const text = await section("Steps");
   assert.match(text, /architecture\/small-steps\.md/);
 });
+
+test("plan-work step 6 changes the later items after a new fact", async () => {
+  const steps = (await section("Steps")).replace(/\s+/g, " ");
+  const step6 = steps.slice(steps.indexOf(" 6. "), steps.indexOf(" 7. "));
+  assert.match(step6, /After each commit, if its result shows a new fact, change the later items\./);
+});
