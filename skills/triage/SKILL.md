@@ -19,6 +19,19 @@ If a feature plan exists, follow [feature-plans.md](https://raw.githubuserconten
 4. Apply the rules. Prefer the smallest set that covers the task.
 5. If the task spans multiple areas, read each relevant item.
 
+## Subagents
+
+If you can start subagents, use them for step 3 when the task spans more than one area. Do steps 1 and 2 yourself. Then read the selected sections and skills at the same time, each in its own subagent. Give each subagent a brief that is complete without your context:
+
+- The task, and the type of work from step 1.
+- One section or skill from step 2 to read, with its link.
+- What to report: the rules that apply to the task, each with its link, and a word limit, for example 300 words.
+- This line: "Report to me only. Do not change files, commit, push, post, approve or merge."
+
+Then do steps 4 and 5 yourself. A report from a subagent is a claim. Check each rule that you apply at its source.
+
+If you cannot start subagents, do the steps one at a time in the order of this skill.
+
 ## Skills
 
 - New or non-compliant repository: [bootstrap](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/bootstrap/SKILL.md)
