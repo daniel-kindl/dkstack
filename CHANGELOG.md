@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `workflow/roles.md`: define the human owner under its own heading. A bot or an agent that acts
+  through the owner's account is always an agent. Add the relay rule: a relayed decision counts
+  as the owner's words only when it quotes the owner's exact words with the time and the place.
+  The agent records that quote in the issue or pull request before a later session relies on it.
+- `workflow/work.md`: an agent may move an active issue to planning after a new prerequisite link
+  to an issue that is not complete, or after a scope change that the owner recorded. The agent
+  moves the issue before it writes `RELEASE`. `workflow/feature-plans.md` says how an item leaves
+  `BLOCKED`.
+- `skills/release`: a "When a piece is missing" section for no changelog entry, no rights to
+  create a tag and no OK. Each one stops and reports.
+- `skills/triage`: a Subagents section with a fallback that does the steps in order.
+
+### Changed
+
+- Restore the reviewer merge rule. The independent reviewer merges only the reviewed head. The
+  author never merges. The human owner may merge a pull request after independent review and
+  after all merge checks pass. That includes a pull request that the owner authored.
+- `workflow/work.md`: restore the durable record of an owner instruction that a later session
+  relies on. List the routine, reversible workflow defects that an agent may repair, and the
+  actions that a repair never covers.
+- `workflow/work.md`: a closed prerequisite is complete or not complete. The completion evidence
+  is the source of the outcome. The tracker's close reason is a copy. If no source exists, fail
+  closed.
+- `skills/release`: apply the publish rule before the release steps.
+- The external request issue template sets the `status:triage` label.
+
+### Removed
+
+- `skills/plan-work`: the `PR` field in the plan format.
+
+### Fixed
+
+- The lifecycle router prepares a mapped child with the parent mapping approval only when the
+  child's eligibility is already agent. The approval never allows a merge.
+- The lifecycle router stops triage with the reason `scope` unless the pull request count is
+  a positive integer.
+
 ## [1.1.3] - 2026-11-01
 
 ### Changed
