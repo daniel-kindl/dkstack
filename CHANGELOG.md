@@ -24,23 +24,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Restore the reviewer merge rule. The independent reviewer merges only the reviewed head. The
-  author never merges. The human owner may merge, and may merge their own pull request.
+  author never merges. The human owner may merge a pull request after independent review and
+  after all merge checks pass. That includes a pull request that the owner authored.
 - `workflow/work.md`: restore the durable record of an owner instruction that a later session
   relies on. List the routine, reversible workflow defects that an agent may repair, and the
   actions that a repair never covers.
 - `workflow/work.md`: a closed prerequisite is complete or not complete. The completion evidence
   is the source of the outcome. The tracker's close reason is a copy. If no source exists, fail
   closed.
-- `skills/plan-work`: remove the `PR` field from the plan format.
 - `skills/release`: apply the publish rule before the release steps.
 - The external request issue template sets the `status:triage` label.
+
+### Removed
+
+- `skills/plan-work`: the `PR` field in the plan format.
 
 ### Fixed
 
 - The lifecycle router prepares a mapped child with the parent mapping approval only when the
   child's eligibility is already agent. The approval never allows a merge.
-- The lifecycle router stops triage with the reason `scope` when the pull request count is
-  unknown or zero.
+- The lifecycle router stops triage with the reason `scope` unless the pull request count is
+  a positive integer.
 
 ## [1.1.3] - 2026-11-01
 
