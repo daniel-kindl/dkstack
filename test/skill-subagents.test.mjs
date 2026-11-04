@@ -71,5 +71,7 @@ test("the triage Subagents section gives the exact brief line and fallback", asy
   const text = await subagents("triage");
   const lines = text.split(/\r?\n/);
   assert.ok(lines.includes('- This line: "Report to me only. Do not change files, commit, push, post, approve or merge."'));
+  assert.ok(lines.includes("Then do steps 4 and 5 yourself. A report from a subagent is a claim. " +
+    "Check each rule that you apply at its source."));
   assert.ok(lines.includes("If you cannot start subagents, do the steps one at a time in the order of this skill."));
 });
