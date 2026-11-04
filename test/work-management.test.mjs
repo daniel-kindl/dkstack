@@ -179,16 +179,19 @@ test("the source of a prerequisite outcome is the completion evidence", async ()
 
 test("an active issue with a new blocker goes back to planning", async () => {
   const transitions = sectionText(await pageText(), "## Transitions");
-  const items = transitions.split("\n").filter((l) => l.startsWith("- ") || l.startsWith("  "));
-  const flat = flatten(items.join("\n"));
-  assert.match(flat, /- active \+ a new prerequisite link to an issue that is not complete, or a scope change that the owner recorded on the issue -> planning -/);
+  const items = listAfter(transitions, "are not completion.");
+  const toPlanning = items.filter((item) => item.startsWith("active +") && item.endsWith("-> planning"));
+  assert.deepEqual(toPlanning, [
+    "active + a new prerequisite link to an issue that is not complete, or a scope change that the owner recorded on the issue -> planning",
+  ], "the state list must have exactly one active to planning item");
 });
 
 test("the agent sets planning before it releases the claim", async () => {
   const transitions = sectionText(await pageText(), "## Transitions");
   const items = listAfter(transitions, "An agent may make only these transitions:").map(flatten);
-  const rule = items.find((item) => item.startsWith("active -> planning,"));
-  assert.ok(rule, "the agent list must have an active -> planning rule");
+  const rules = items.filter((item) => item.startsWith("active -> planning"));
+  assert.equal(rules.length, 1, "the agent list must have exactly one active -> planning rule");
+  const rule = rules[0];
   assert.equal(
     rule,
     "active -> planning, when a new prerequisite link names an issue that is not complete, or the owner recorded a scope change on the issue. Record the reason on the issue. Move the issue to planning and read it again. Only then write `RELEASE` with the disposition planning. See [claims.md](claims.md).",
