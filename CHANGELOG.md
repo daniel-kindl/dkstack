@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `.maps/109.md`: the child map for the six open lows in issue 109. The children stay in planning until this mapping pull request is merged.
+
 ## [1.2.0] - 2026-11-04
 
 ### Added
