@@ -1,13 +1,18 @@
 name: Release
 
 # Daniel starts this workflow by hand on main. It does the full dkstack v1
-# release:
-# 1. It works out the next version from the commits since the latest v1.x.y
-#    tag. A breaking change stops the run: a major release needs Daniel.
-# 2. It prepares CHANGELOG.md and package.json on the branch release/vX.Y.Z.
-# 3. It opens a pull request to main and starts validate on that branch.
-# 4. It squash-merges the pull request when validate passes.
-# 5. It tags the merge commit, publishes the GitHub release and
+# release in two jobs:
+# - plan (read-only): it checks the last release and the release
+#   environment, and works out the next version from the commits since the
+#   latest v1.x.y tag. A breaking change stops the run: a major release needs
+#   Daniel. It writes the version and the commits to the run summary.
+# - release (environment "release"): it waits until Daniel approves the
+#   environment for the version in the summary. Then:
+# 1. It prepares CHANGELOG.md and package.json for the planned version on
+#    the branch release/vX.Y.Z. It stops if the version is different.
+# 2. It opens a pull request to main and starts validate on that branch.
+# 3. It squash-merges the pull request when validate passes.
+# 4. It tags the merge commit, publishes the GitHub release and
 #    fast-forwards v1 to the merge commit.
 # Nothing reaches main, no tag is made and v1 does not move unless validate
 # passes. The workflow never force-pushes. It uses only GITHUB_TOKEN.
@@ -30,18 +35,16 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  release:
-    name: release
+  plan:
+    name: plan
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     permissions:
-      actions: write # start validate on the release branch
-      contents: write # push the release branch, the tag and v1, and publish the release
-      pull-requests: write # open and merge the release pull request
+      contents: read
+    outputs:
+      version: ${{ steps.plan.outputs.version }}
     env:
-      GH_TOKEN: ${{ github.token }}
       BUMP: ${{ inputs.bump }}
-      START_SHA: ${{ github.sha }}
     steps:
       - name: Stop unless the run is on main
         run: |
@@ -54,8 +57,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-          # The job pushes the release branch, the tag and v1 with GITHUB_TOKEN.
-          persist-credentials: true
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -65,14 +67,65 @@ jobs:
       - name: Stop if the last release is not complete
         run: node scripts/release.mjs guard --v1 origin/v1
 
-      - name: Prepare CHANGELOG.md and package.json
+      - name: Work out the version and write it to the run summary
+        id: plan
+        run: node scripts/release.mjs plan --bump "$BUMP"
+
+      # The environment endpoints need only read access to the repository.
+      # A job that names an environment that does not exist gets a new one
+      # with no protection, so the release job must not start without this check.
+      - name: Read the release environment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/environments/release" > "$RUNNER_TEMP/environment.json"
+          gh api "repos/$GITHUB_REPOSITORY/environments/release/deployment-branch-policies" > "$RUNNER_TEMP/policies.json"
+
+      - name: Stop unless Daniel must approve the release environment
+        run: node scripts/release.mjs environment "$RUNNER_TEMP/environment.json" "$RUNNER_TEMP/policies.json" --reviewer daniel-kindl
+
+  release:
+    name: release
+    needs: plan
+    # Daniel approves this environment after he reads the planned version.
+    environment: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      actions: write # start validate on the release branch
+      contents: write # push the release branch, the tag and v1, and publish the release
+      pull-requests: write # open and merge the release pull request
+    env:
+      BUMP: ${{ inputs.bump }}
+      START_SHA: ${{ github.sha }}
+    steps:
+      - name: Check out main with all branches and tags
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          # No token stays in .git/config while repository code runs.
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Stop if the last release is not complete
+        run: node scripts/release.mjs guard --v1 origin/v1
+
+      - name: Prepare CHANGELOG.md and package.json for the planned version
         id: prepare
-        run: node scripts/release.mjs prepare --bump "$BUMP" --date "$(TZ=Europe/Prague date +%F)"
+        env:
+          VERSION: ${{ needs.plan.outputs.version }}
+        run: node scripts/release.mjs prepare --bump "$BUMP" --date "$(TZ=Europe/Prague date +%F)" --expect "$VERSION"
 
       - name: Run the repository checks on the prepared release
         run: npm run check
 
-      - name: Commit and push the release branch
+      # The last step that runs repository code. The steps after it get
+      # GH_TOKEN and run only git and gh.
+      - name: Commit the release and write the notes
         id: branch
         env:
           VERSION: ${{ steps.prepare.outputs.version }}
@@ -80,21 +133,31 @@ jobs:
           BRANCH="release/v$VERSION"
           TITLE="chore(release): prepare v$VERSION"
           node scripts/check-title.mjs "$TITLE"
+          node scripts/release.mjs notes "$VERSION" > "$RUNNER_TEMP/notes.md"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$BRANCH"
           git commit -q -m "$TITLE" -- CHANGELOG.md package.json
-          # A branch that exists already makes this push fail. It does not overwrite it.
-          git push origin "HEAD:refs/heads/$BRANCH"
           {
             echo "branch=$BRANCH"
             echo "title=$TITLE"
             echo "head_sha=$(git rev-parse HEAD)"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Push the release branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ steps.branch.outputs.branch }}
+        run: |
+          # git gets the token from gh at each push. The token is not written to disk.
+          gh auth setup-git
+          # A branch that exists already makes this push fail. It does not overwrite it.
+          git push origin "HEAD:refs/heads/$BRANCH"
+
       - name: Open the release pull request
         id: pr
         env:
+          GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.prepare.outputs.version }}
           BRANCH: ${{ steps.branch.outputs.branch }}
           TITLE: ${{ steps.branch.outputs.title }}
@@ -106,7 +169,7 @@ jobs:
             echo
             echo "Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
             echo
-            node scripts/release.mjs notes "$VERSION"
+            cat "$RUNNER_TEMP/notes.md"
           } > "$BODY"
           URL=$(gh pr create --base main --head "$BRANCH" --title "$TITLE" --body-file "$BODY")
           echo "Opened $URL"
@@ -118,6 +181,7 @@ jobs:
       # of the pull request, which is the check that protect-main requires.
       - name: Run validate on the release branch
         env:
+          GH_TOKEN: ${{ github.token }}
           BRANCH: ${{ steps.branch.outputs.branch }}
           HEAD_SHA: ${{ steps.branch.outputs.head_sha }}
         run: |
@@ -141,6 +205,7 @@ jobs:
 
       - name: Merge the release pull request
         env:
+          GH_TOKEN: ${{ github.token }}
           PR: ${{ steps.pr.outputs.pr }}
           TITLE: ${{ steps.branch.outputs.title }}
           HEAD_SHA: ${{ steps.branch.outputs.head_sha }}
@@ -167,6 +232,7 @@ jobs:
       - name: Check the merge commit
         id: merge
         env:
+          GH_TOKEN: ${{ github.token }}
           PR: ${{ steps.pr.outputs.pr }}
           HEAD_SHA: ${{ steps.branch.outputs.head_sha }}
         run: |
@@ -184,6 +250,7 @@ jobs:
 
       - name: Tag the merge commit
         env:
+          GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.prepare.outputs.version }}
           MERGE_SHA: ${{ steps.merge.outputs.merge_sha }}
         run: |
@@ -192,14 +259,15 @@ jobs:
 
       - name: Publish the GitHub release
         env:
+          GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.prepare.outputs.version }}
         run: |
-          # The checkout has the validated tree, which is the tree of the tag.
-          node scripts/release.mjs notes "$VERSION" > "$RUNNER_TEMP/notes.md"
+          # The notes come from the validated tree, which is the tree of the tag.
           gh release create "v$VERSION" --verify-tag --title "v$VERSION" --notes-file "$RUNNER_TEMP/notes.md"
 
       - name: Fast-forward v1 to the release
         env:
+          GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.prepare.outputs.version }}
           MERGE_SHA: ${{ steps.merge.outputs.merge_sha }}
         run: |
