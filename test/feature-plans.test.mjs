@@ -33,10 +33,10 @@ test("review does not require the plan or a cleanup commit", async () => {
   assert.doesNotMatch(skill, /check its statuses, actual commits and evidence/);
 });
 
-test("plan-work removes a completed plan before the pull request", async () => {
+test("plan-work does not manage a plan file", async () => {
   const skill = await flat("skills/plan-work/SKILL.md");
-  assert.match(skill, /remove the completed plan before you open the pull request/);
-  assert.match(skill, /Do not remove a plan that is incomplete or blocked/);
+  assert.doesNotMatch(skill, /remove the completed plan/);
+  assert.doesNotMatch(skill, /workflow\/feature-plans\.md/);
 });
 
 test("a blocked item has an exit and a blocked plan stays", async () => {

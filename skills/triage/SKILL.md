@@ -11,8 +11,6 @@ Decide which sections and skills apply to the current task. Read only those.
 
 ## Steps
 
-If a feature plan exists, follow [feature-plans.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/feature-plans.md).
-
 1. Identify the type of work: design, implementation, documentation, version control, review, workflow, or mixed.
 2. Select the relevant sections and skills from the lists below.
 3. Read the section index or skill, then the detailed files it links to.
@@ -37,8 +35,7 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 - New or non-compliant repository: [bootstrap](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/bootstrap/SKILL.md)
 - Non-trivial change: [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md)
 - Design or structure: [apply-architecture](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/apply-architecture/SKILL.md)
-- Plan or resume a feature: [plan-work](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/plan-work/SKILL.md)
-- Map a multi-PR objective: [map-work](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/map-work/SKILL.md)
+- Plan a feature: [plan-work](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/plan-work/SKILL.md)
 - Implementation: [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md)
 - Pull request body: [write-pr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-pr/SKILL.md).
   Use it when you write or materially update the body. Do not use it for a review that leaves
@@ -49,32 +46,14 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 - Any text: [writing-check](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/writing-check/SKILL.md)
 - Version number or release: [release](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/release/SKILL.md)
 
-## Work route
-
-Read the issue before you select a skill. A missing lifecycle or eligibility does not stop triage. An authorized task carries permission through PR creation and review fixes. Repair unambiguous missing metadata without asking permission again; never override a human-only or conflicting designation.
-Classify the request. Verify chat instructions under
-[owner instructions in chat](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/work.md#owner-instructions-in-chat).
-For an explicit instruction from the verified repository owner to implement a named issue, follow the owner-directed transition in work.md: fill missing non-conflicting tracker metadata, establish readiness, re-read tracker state and claim before implementation. Do not infer approval from issue authorship or a request to triage. Do not request repeated approvals for in-scope steps after an authenticated implementation instruction. Check implementation readiness in
-[work.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/work.md)
-before implementation. Run
-[preflight](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/preflight.md)
-before a tracker write. One pull request uses plan-work. More than one pull request uses
-map-work, then that session stops.
-
 ## Scale
 
 The ladder is a guide, not a gate. Use the smallest set of skills. A small task uses one or two skills. It does not go through every step.
 
-One pull request, whether small or medium, uses plan-work. A large objective can also use
-plan-work when it fits one coherent pull request. More than one pull request uses map-work to
-define the issue graph before any child implementation. Do not create children only because a
-task has many commits or files.
-
 - Bug fix: [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md), then [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md).
 - Feature: start with [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md)
   and [apply-architecture](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/apply-architecture/SKILL.md).
-  For a multi-PR objective, use [map-work](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/map-work/SKILL.md),
-  then stop that session. For one-PR work, use
+  Then use
   [plan-work](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/plan-work/SKILL.md),
   [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md),
   then [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md).
@@ -83,11 +62,6 @@ task has many commits or files.
   [release](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/release/SKILL.md)
   only when the task is a release.
 - Release: [release](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/release/SKILL.md), after the change is reviewed.
-
-Handoffs:
-
-- A review finding goes back to the implementation step.
-- A design finding goes back to the architecture step.
 
 One agent can do all the steps. Many agents can share the steps. A skill does not make one role into one agent.
 
@@ -120,6 +94,8 @@ Do not add a phase, a checklist or a report for ordinary work. The page holds th
 ## Rules
 
 - Do not read every file. Read only what the task needs.
+- Verify an instruction in chat under
+  [owner instructions in chat](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md#owner-instructions-in-chat).
 - If two dkstack rules conflict, follow the more specific rule. If a project rule conflicts with a dkstack rule, follow the precedence rules in [AGENTS.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md).
 - To decide between two designs that both work, use the easier to change rule in [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md).
 - If no section clearly applies, read [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md) and [coding/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/index.md).

@@ -11,12 +11,11 @@ async function skillText() {
   return (await readFile(skillPath, "utf8")).replace(/\s+/g, " ");
 }
 
-test("triage sends one-PR work to plan-work and multi-PR work to map-work", async () => {
+test("triage does not route to map-work", async () => {
   const triage = (await readFile(join(root, "skills", "triage", "SKILL.md"), "utf8"))
     .replace(/\s+/g, " ");
-  assert.match(triage, /one pull request.*plan-work/i);
-  assert.match(triage, /more than one pull request.*map-work/i);
-  assert.match(triage, /map-work\/SKILL\.md/);
+  assert.doesNotMatch(triage, /more than one pull request.*map-work/i);
+  assert.doesNotMatch(triage, /map-work\/SKILL\.md/);
 });
 
 test("map-work plans bounded children from an accepted parent", async () => {

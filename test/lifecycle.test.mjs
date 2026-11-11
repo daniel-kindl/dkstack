@@ -48,15 +48,14 @@ test("the external request template does not ask for a decomposition", async () 
   assert.doesNotMatch(text, /map-work/);
 });
 
-test("triage classifies before implementation readiness", async () => {
+test("triage does not route through the lifecycle", async () => {
   const text = await flat("skills/triage/SKILL.md");
-  assert.match(text, /workflow\/work\.md/);
-  assert.match(text, /workflow\/preflight\.md/);
-  assert.match(text, /missing lifecycle or eligibility does not stop triage/i);
-  assert.match(text, /implementation readiness.*before implementation/i);
+  assert.doesNotMatch(text, /workflow\/work\.md/);
+  assert.doesNotMatch(text, /workflow\/preflight\.md/);
+  assert.doesNotMatch(text, /missing lifecycle or eligibility does not stop triage/i);
+  assert.doesNotMatch(text, /implementation readiness/i);
   assert.doesNotMatch(text, /If a readiness check fails, stop/);
-  assert.match(text, /one pull request.*plan-work/i);
-  assert.match(text, /more than one pull request.*map-work/i);
+  assert.doesNotMatch(text, /more than one pull request.*map-work/i);
 });
 
 const readyImplement = {
@@ -167,16 +166,16 @@ test("ownerMergeApproved has no effect on an agent merge", () => {
   assert.equal(routeWork({ ...agent, ownerMergeApproved: true, reviewPassed: false }).reason, "unreviewed");
 });
 
-test("plan-work keeps the claim and tdd-loop drops it", async () => {
+test("plan-work and tdd-loop no longer keep the claim", async () => {
   const plan = await flat("skills/plan-work/SKILL.md");
   const tdd = await flat("skills/tdd-loop/SKILL.md");
-  assert.match(plan, /workflow\/claims\.md/);
-  assert.match(plan, /verified claim/i);
-  assert.match(plan, /fresh session/i);
-  assert.match(plan, /workflow\/work\.md/);
-  assert.match(plan, /issue scope/i);
+  assert.doesNotMatch(plan, /workflow\/claims\.md/);
+  assert.doesNotMatch(plan, /verified claim/i);
+  assert.doesNotMatch(plan, /workflow\/work\.md/);
   assert.doesNotMatch(tdd, /workflow\/claims\.md/);
-  assert.doesNotMatch(tdd, /mapped issue/i);
+  assert.doesNotMatch(tdd, /verified claim/i);
+  assert.doesNotMatch(tdd, /workflow\/work\.md/);
+  assert.match(plan, /issue scope/i);
 });
 
 test("review and release skills keep the merge and publish gates", async () => {
