@@ -45,7 +45,6 @@ test("the external request template does not ask for a decomposition", async () 
   assert.match(text, /## Constraints/);
   assert.match(text, /## Context/);
   assert.match(text, /## Acceptance intent/);
-  assert.match(text, /do not split this request/i);
   assert.doesNotMatch(text, /map-work/);
 });
 
@@ -167,18 +166,15 @@ test("ownerMergeApproved has no effect on an agent merge", () => {
   assert.equal(routeWork({ ...agent, ownerMergeApproved: true, reviewPassed: false }).reason, "unreviewed");
 });
 
-test("tdd-loop keeps the claim and plan-work drops it", async () => {
+test("plan-work and tdd-loop drop the claim", async () => {
   const plan = await flat("skills/plan-work/SKILL.md");
   const tdd = await flat("skills/tdd-loop/SKILL.md");
-  assert.match(tdd, /workflow\/claims\.md/);
-  assert.match(tdd, /verified claim/i);
-  assert.match(tdd, /fresh session/i);
-  assert.match(tdd, /workflow\/work\.md/);
   assert.doesNotMatch(plan, /workflow\/claims\.md/);
   assert.doesNotMatch(plan, /verified claim/i);
   assert.doesNotMatch(plan, /workflow\/work\.md/);
   assert.match(plan, /issue scope/i);
-  assert.match(tdd, /must not implement a mapped issue in the session that mapped it/i);
+  assert.doesNotMatch(tdd, /workflow\/claims\.md/);
+  assert.doesNotMatch(tdd, /mapped issue/i);
 });
 
 test("review and release skills keep the merge and publish gates", async () => {

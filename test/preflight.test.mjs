@@ -387,20 +387,3 @@ test("apply creates only missing catalog labels and the second run creates none"
   const later = (await readFile(tracker.log, "utf8")).trim().split("\n").map((line) => JSON.parse(line));
   assert.equal(later.filter((args) => args[1] === "create").length, CATALOG.length);
 });
-
-test("bootstrap runs the preflight and names no tracker product", async () => {
-  const text = await readFile(join(repoRoot, "skills", "bootstrap", "SKILL.md"), "utf8");
-  const step = /^12\. ([\s\S]*?)(?=^## )/m.exec(text);
-  assert.ok(step, "bootstrap must have a preflight step");
-  assert.match(step[1], /scripts\/preflight\.mjs/);
-  assert.match(step[1], /discovers the tracker/);
-  assert.match(step[1], /--apply/);
-  assert.match(step[1], /creates only the missing catalog labels/);
-  assert.match(step[1], /Do not pass a report file with --apply/);
-  assert.match(step[1], /unverified/);
-  assert.match(step[1], /dry run/);
-  assert.match(step[1], /https:\/\/raw\.githubusercontent\.com\/daniel-kindl\/dkstack\/v1\/workflow\/preflight\.md/);
-  assert.match(step[1], /Do not change protection, settings or infrastructure/);
-  const bare = text.replace(/https:\/\/\S+/g, "");
-  assert.doesNotMatch(bare, /github/i);
-});

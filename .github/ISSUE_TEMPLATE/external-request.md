@@ -1,13 +1,12 @@
 ---
 name: External request
-about: Ask for an outcome without splitting the work.
+about: Ask for an outcome.
 title: ""
-labels: ["status:triage"]
 ---
 
 # External request
 
-State the outcome you want. Do not split this request into child issues or pull requests.
+State the outcome you want.
 
 ## Outcome
 
