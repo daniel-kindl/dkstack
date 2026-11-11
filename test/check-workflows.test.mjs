@@ -98,6 +98,141 @@ test("a workflow that uses secrets fails", async () => {
   ]);
 });
 
+// Daniel decided on 2026-11-11 at 19:06 (Prague) that dkstack releases use
+// a GitHub App. Its two secrets are in the release environment. Only the
+// release job of release.yml may pass them, and only to the token action.
+const appJob = (environment, appId, key, action = "actions/create-github-app-token") => [
+  "permissions:",
+  "  contents: read",
+  "jobs:",
+  "  release:",
+  ...(environment ? [`    environment: ${environment}`] : []),
+  "    runs-on: ubuntu-latest",
+  "    steps:",
+  `      - uses: ${action}@${SHA} # v3.3.0`,
+  "        with:",
+  `          app-id: ${appId}`,
+  `          private-key: ${key}`,
+  "",
+].join("\n");
+const ID = "${{ secrets.RELEASE_APP_ID }}";
+const KEY = "${{ secrets.RELEASE_APP_PRIVATE_KEY }}";
+
+test("the release job may pass the two app secrets to the token action", async () => {
+  const result = await workflowsFor({ ".github/workflows/release.yml": appJob("release", ID, KEY) });
+  assert.deepEqual(result, { checked: 1, errors: [] });
+});
+
+test("the app secrets fail in another file, another job or another place", async () => {
+  const other = await workflowsFor({ ".github/workflows/other.yml": appJob("release", ID, KEY) });
+  assert.deepEqual(other.errors, [
+    ".github/workflows/other.yml:10: do not use secrets in a workflow",
+    ".github/workflows/other.yml:11: do not use secrets in a workflow",
+  ]);
+  const noEnv = await workflowsFor({ ".github/workflows/release.yml": appJob(null, ID, KEY) });
+  assert.deepEqual(noEnv.errors, [
+    ".github/workflows/release.yml:9: do not use secrets in a workflow",
+    ".github/workflows/release.yml:10: do not use secrets in a workflow",
+  ]);
+  const prod = await workflowsFor({ ".github/workflows/release.yml": appJob("production", ID, KEY) });
+  assert.equal(prod.errors.length, 2);
+  const otherAction = await workflowsFor({
+    ".github/workflows/release.yml": appJob("release", ID, KEY, "someone/token-action"),
+  });
+  assert.equal(otherAction.errors.length, 2);
+  const swapped = await workflowsFor({ ".github/workflows/release.yml": appJob("release", KEY, ID) });
+  assert.equal(swapped.errors.length, 2);
+  const otherName = await workflowsFor({
+    ".github/workflows/release.yml": appJob("release", "${{ secrets.NPM_TOKEN }}", KEY),
+  });
+  assert.deepEqual(otherName.errors, [".github/workflows/release.yml:10: do not use secrets in a workflow"]);
+  const inEnv = await workflowsFor({
+    ".github/workflows/release.yml": appJob("release", ID, KEY) + "        env:\n          K: " + KEY + "\n",
+  });
+  assert.deepEqual(inEnv.errors, [".github/workflows/release.yml:13: do not use secrets in a workflow"]);
+  const twoJobs = await workflowsFor({
+    ".github/workflows/release.yml": appJob("release", ID, KEY) + appJob(null, ID, KEY).split("\n").slice(3).join("\n"),
+  });
+  assert.deepEqual(twoJobs.errors, [
+    ".github/workflows/release.yml:17: do not use secrets in a workflow",
+    ".github/workflows/release.yml:18: do not use secrets in a workflow",
+  ]);
+});
+
+// Sentinel's M1 on #143: the exception is for the "with:" block of the app
+// token step only. A later step must not get the key in "env:".
+const header = ["permissions:", "  contents: read", "jobs:", "  release:", "    environment: release", "    runs-on: ubuntu-latest", "    steps:"];
+const appStep = [
+  `      - uses: actions/create-github-app-token@${SHA} # v3.3.0`,
+  "        id: app",
+  "        with:",
+  `          app-id: ${ID}`,
+  `          private-key: ${KEY}`,
+  "          repositories: dkstack",
+];
+// Return the line numbers with errors for a release.yml of these lines.
+const badLines = async (lines, file = "release.yml") => {
+  const result = await workflowsFor({ [`.github/workflows/${file}`]: [...lines, ""].join("\n") });
+  return result.errors.map((e) => Number(/:(\d+): do not use secrets in a workflow$/.exec(e)?.[1] ?? NaN));
+};
+
+test("the app secrets pass in the with block of the app step, with other inputs and steps", async () => {
+  assert.deepEqual(await badLines([...header, "      - run: npm ci", ...appStep, "          owner: x", "      - run: git push"]), []);
+});
+
+test("the app secrets fail in the env of a later run step", async () => {
+  const lines = [...header, ...appStep, "      - name: Later", "        env:", `          app-id: ${ID}`, `          private-key: ${KEY}`, "        run: echo hi"];
+  assert.deepEqual(await badLines(lines), [16, 17]);
+  const noName = [...header, ...appStep, "      - run: echo hi", "        env:", `          private-key: ${KEY}`];
+  assert.deepEqual(await badLines(noName), [16]);
+});
+
+test("the app secrets fail in the with block of a later step of another action", async () => {
+  const lines = [...header, ...appStep, `      - uses: actions/checkout@${SHA} # v7.0.1`, "        with:", `          private-key: ${KEY}`];
+  assert.deepEqual(await badLines(lines), [16]);
+  const run = [...header, ...appStep, "      - run: echo hi", "        with:", `          app-id: ${ID}`];
+  assert.deepEqual(await badLines(run), [16]);
+});
+
+test("the app secrets fail in the env of the app step", async () => {
+  const lines = [...header, ...appStep, "        env:", `          app-id: ${ID}`, `          private-key: ${KEY}`];
+  assert.deepEqual(await badLines(lines), [15, 16]);
+});
+
+test("the app secrets fail under another key or as each other", async () => {
+  const lines = [...header, ...appStep.slice(0, 3), `          client-id: ${ID}`, `          token: ${KEY}`, `          app-id: ${KEY}`];
+  assert.deepEqual(await badLines(lines), [11, 12, 13]);
+});
+
+test("the app secrets fail in a step before the app step", async () => {
+  const lines = [...header, "      - run: echo hi", "        env:", `          app-id: ${ID}`, ...appStep];
+  assert.deepEqual(await badLines(lines), [10]);
+});
+
+test("the app secrets fail in another job and in another file", async () => {
+  const plan = ["  plan:", "    runs-on: ubuntu-latest", "    steps:", ...appStep];
+  assert.deepEqual(await badLines([...header, ...appStep, ...plan]), [20, 21]);
+  assert.deepEqual(await badLines([...header, ...appStep], "other.yml"), [11, 12]);
+});
+
+test("the app secrets fail in a multi-line or a flow-style form", async () => {
+  const folded = [...header, ...appStep.slice(0, 3), "          private-key: >-", `            ${KEY}`];
+  assert.deepEqual(await badLines(folded), [12]);
+  const flow = [...header, appStep[0], `        with: { app-id: ${ID}, private-key: ${KEY} }`];
+  assert.deepEqual(await badLines(flow), [9]);
+  const sameLine = [...header, `      - uses: actions/create-github-app-token@${SHA} # v3.3.0`, `        with: {app-id: ${ID}}`];
+  assert.deepEqual(await badLines(sameLine), [9]);
+});
+
+test("the app secrets fail on a near match, in a nested map or in a later job", async () => {
+  const near = [...header, ...appStep.slice(0, 3), `          not-app-id: ${ID}`, `          app-id: ${ID} \${{ secrets.NPM_TOKEN }}`];
+  assert.deepEqual(await badLines(near), [11, 12]);
+  const nested = [...header, ...appStep.slice(0, 3), "          extra:", `            app-id: ${ID}`];
+  assert.deepEqual(await badLines(nested), [12]);
+  const laterJob = [...header, ...appStep, "  other:", "    environment: release", "    with:", `      app-id: ${ID}`];
+  assert.deepEqual(await badLines(laterJob), [17]);
+});
+
 test("only .yml and .yaml files in .github/workflows are checked", async () => {
   const result = await workflowsFor({
     ".github/workflows/notes.md": "uses: actions/checkout@v7\n",

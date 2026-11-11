@@ -91,7 +91,8 @@ test("the plan job runs the guard, works out the version and checks the release 
 test("the write job needs the plan, runs in the release environment and uses the planned version", () => {
   assert.match(write, /^ {4}needs: plan$/m);
   assert.match(write, /^ {4}environment: release$/m);
-  assert.deepEqual(scopes(write), ["actions: write", "checks: write", "contents: write", "pull-requests: write"]);
+  // GITHUB_TOKEN only reads. The release app token does all the writes.
+  assert.deepEqual(scopes(write), ["actions: read", "checks: read", "contents: read", "pull-requests: read"]);
   const prepare = steps(write).find((s) => s.commands.some((l) => /release\.mjs prepare/.test(l)));
   assert.ok(prepare, "the write job runs prepare");
   assert.match(prepare.env, /VERSION: \$\{\{ needs\.plan\.outputs\.version \}\}/);
@@ -132,10 +133,11 @@ test("release validates, merges, tags, publishes and moves v1 in this order", ()
   const order = [
     at(/node scripts\/release\.mjs guard --v1 origin\/v1/),
     at(/node scripts\/release\.mjs prepare --bump "\$BUMP"/),
+    at(/^npm run check$/),
     at(/^gh auth setup-git$/),
     at(/git push origin "HEAD:refs\/heads\/\$BRANCH"/),
     at(/gh pr create /),
-    at(/gh workflow run validate\.yml --ref "\$BRANCH"/),
+    at(/gh run list --workflow validate\.yml --branch "\$BRANCH" --event pull_request --commit "\$HEAD_SHA"/),
     at(/gh run watch "\$RUN_ID" --exit-status/),
     at(/gh pr merge "\$PR" --squash --match-head-commit "\$HEAD_SHA"/),
     at(/git tag -a "v\$VERSION" "\$MERGE_SHA"/),
@@ -158,34 +160,119 @@ test("release checks that main did not move before it merges and before it tags"
   assert.ok(writeLines.some((l) => /git merge-base --is-ancestor origin\/v1 "\$MERGE_SHA"/.test(l)), "check fast-forward");
 });
 
-// GitHub does not count a check run of a workflow_dispatch run for a pull
-// request: the run is not in the status check rollup, so protect-main keeps
-// "validate" as expected. See #135 and the failed run 43070086329.
-test("the job posts the validate check run only after a verified dispatched validate passes", () => {
-  const at = (pattern) => {
-    const i = writeLines.findIndex((l) => pattern.test(l));
-    assert.notEqual(i, -1, `missing ${pattern}`);
-    return i;
-  };
-  const watch = at(/gh run watch "\$RUN_ID" --exit-status/);
-  const view = at(/gh api "repos\/\$GITHUB_REPOSITORY\/actions\/runs\/\$RUN_ID" > "\$RUNNER_TEMP\/validate-run\.json"/);
-  const event = at(/"\$RUN_EVENT" != "workflow_dispatch"/);
-  const sha = at(/"\$RUN_SHA" != "\$HEAD_SHA"/);
-  const conclusion = at(/"\$RUN_CONCLUSION" != "success"/);
-  const path = at(/"\$RUN_PATH" != "\.github\/workflows\/validate\.yml"/);
-  const post = at(/gh api -X POST "repos\/\$GITHUB_REPOSITORY\/check-runs"/);
-  const merge = at(/gh pr merge "\$PR"/);
-  for (const check of [view, event, sha, conclusion, path]) {
-    assert.ok(watch < check && check < post, "verify the run after the watch and before the post");
+// Daniel decided on 2026-11-11 at 19:06 (Prague) that releases use a GitHub
+// App. Its token pushes the release branch and opens the pull request, so the
+// normal pull_request run of validate gives the check that protect-main
+// requires. See #135 and the failed runs 43070086329 and 43073954019.
+const APP_PIN = "actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0";
+const APP_TOKEN = "${{ steps.app.outputs.token }}";
+const writeSteps = steps(write);
+const appStep = writeSteps.find((s) => /uses: actions\/create-github-app-token@/.test(s.text));
+
+test("the write job gets an app token for dkstack only, with three write permissions", () => {
+  assert.ok(appStep, "a create-github-app-token step");
+  assert.match(appStep.text, /^ {8}id: app$/m);
+  assert.ok(appStep.text.includes(`uses: ${APP_PIN}`), "pinned to v3.3.0 by SHA");
+  const inputs = /\n {8}with:\n((?: {10}.*\n?)+)/.exec(appStep.text)[1].split("\n").filter(Boolean).map((l) => l.trim()).sort();
+  assert.deepEqual(inputs, [
+    "app-id: ${{ secrets.RELEASE_APP_ID }}",
+    "owner: ${{ github.repository_owner }}",
+    "permission-contents: write",
+    "permission-pull-requests: write",
+    "permission-workflows: write",
+    "private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}",
+    "repositories: dkstack",
+  ]);
+  assert.equal(release.match(/secrets\./g).length, 2, "the secrets go only to the token action");
+  assert.doesNotMatch(plan, /create-github-app-token|steps\.app\./);
+  const appAt = writeSteps.indexOf(appStep);
+  writeSteps.forEach((s, i) => {
+    if (s.commands.some((l) => /\b(node|npm|npx)\b/.test(l))) assert.ok(i < appAt, `repository code after the token: ${s.text.split("\n")[0]}`);
+  });
+});
+
+test("only the git and gh steps that write get the app token, and no step prints it", () => {
+  const withApp = writeSteps.filter((s) => s.env.includes(`GH_TOKEN: ${APP_TOKEN}`)).map((s) => /- name: (.*)/.exec(s.text)[1]);
+  assert.deepEqual(withApp, [
+    "Push the release branch",
+    "Open the release pull request",
+    "Merge the release pull request",
+    "Tag the merge commit",
+    "Publish the GitHub release",
+    "Fast-forward v1 to the release",
+    "Close the release pull request if it was not merged",
+  ]);
+  assert.equal(release.split(APP_TOKEN).length - 1, withApp.length, "the token is only in GH_TOKEN of these steps");
+  for (const s of writeSteps) {
+    for (const line of s.commands) assert.doesNotMatch(line, /GH_TOKEN|steps\.app|\btoken\b.*\$\{\{|set -x|gh auth token|gh auth status/, line);
+    const writes = s.commands.some((l) => /git push|gh pr (create|merge|close)|gh release create|gh api -X|gh auth setup-git/.test(l));
+    if (writes) assert.ok(s.env.includes(`GH_TOKEN: ${APP_TOKEN}`), `a write without the app token: ${s.text.split("\n")[0]}`);
+    else if (/GH_TOKEN:/.test(s.env)) assert.match(s.env, /GH_TOKEN: \$\{\{ github\.token \}\}/);
   }
-  assert.ok(post < merge, "post the check run before the merge");
-  const block = writeLines.slice(post, post + 8).join("\n");
-  assert.match(block, /-f name=validate\b/);
-  assert.match(block, /-f head_sha="\$HEAD_SHA"/);
-  assert.match(block, /-f status=completed/);
-  assert.match(block, /-f conclusion=success/);
-  assert.match(block, /-f details_url="\$RUN_URL"/);
-  assert.equal(writeLines.filter((l) => /\/check-runs"/.test(l)).length, 1, "one check run post");
+});
+
+const waitStep = writeSteps.find((s) => s.commands.some((l) => /gh run list --workflow validate\.yml/.test(l)));
+const APPROVE_TEXT = "Daniel: approve this workflow run yourself; no agent approves it";
+
+test("the job finds the pull_request run of validate and watches it with a time limit", () => {
+  assert.ok(waitStep, "a step that finds the validate run");
+  assert.match(waitStep.env, /GH_TOKEN: \$\{\{ github\.token \}\}/);
+  const lines = waitStep.commands;
+  const find = lines.findIndex((l) => /--event pull_request --commit "\$HEAD_SHA"/.test(l));
+  const watch = lines.findIndex((l) => /^if ! timeout \d+ gh run watch "\$RUN_ID" --exit-status/.test(l));
+  assert.ok(find !== -1 && find < watch, "find the run, then watch it");
+  assert.ok(Number(/timeout (\d+)/.exec(lines[watch])[1]) <= 900, "the watch has a time limit");
+  assert.doesNotMatch(release, /gh workflow run|check-runs|checks: write|actions: write/);
+});
+
+// Sentinel's M2 on #143: the first run of validate on the app's pull request
+// can wait for approval. Only Daniel approves it. The job waits for him.
+test("if validate waits for approval, the job tells Daniel, waits about 15 minutes, then stops", () => {
+  const lines = waitStep.commands;
+  const at = (p, from = 0) => { const i = lines.findIndex((l, n) => n >= from && p.test(l)); assert.notEqual(i, -1, `missing ${p}`); return i; };
+  const approval = at(/^if \[ "\$RUN_STATUS" = "action_required" \] \|\| \[ "\$RUN_CONCLUSION" = "action_required" \]; then$/);
+  const message = at(new RegExp(`MESSAGE="${APPROVE_TEXT}: \\$RUN_URL"`), approval);
+  const log = at(/^echo "::warning::.*\$MESSAGE"$/, message);
+  const summary = at(/^\} >> "\$GITHUB_STEP_SUMMARY"$/, log);
+  assert.ok(lines.slice(log, summary).some((l) => l === 'echo "$MESSAGE"'), "the message is in the summary");
+  const loop = at(/^for _ in \$\(seq 1 (\d+)\); do$/, summary);
+  const sleep = at(/^sleep (\d+)$/, loop);
+  const poll = at(/gh run list --workflow validate\.yml --branch "\$BRANCH" --event pull_request --commit "\$HEAD_SHA"/, sleep);
+  const read = at(/^read -r RUN_ID RUN_STATUS RUN_CONCLUSION <<< "\$RUN"$/, poll);
+  const ready = at(/^if \[ "\$RUN_STATUS" != "action_required" \] && \[ "\$RUN_CONCLUSION" != "action_required" \]; then break; fi$/, read);
+  const done = at(/^done$/, ready);
+  // The run can get a new ID when Daniel approves it. Use the new URL.
+  const url = at(/^RUN_URL="\$GITHUB_SERVER_URL\/\$GITHUB_REPOSITORY\/actions\/runs\/\$RUN_ID"$/, done);
+  const still = at(/^if \[ "\$RUN_STATUS" = "action_required" \] \|\| \[ "\$RUN_CONCLUSION" = "action_required" \]; then$/, url);
+  const stop = at(/^echo "::error::validate on pull request #\$PR was not approved in 15 minutes: \$RUN_URL\. Nothing was merged\."$/, still);
+  assert.equal(lines[stop + 1], "exit 1");
+  const watch = at(/^if ! timeout \d+ gh run watch "\$RUN_ID"/);
+  assert.ok(stop < watch, "stop before the watch");
+  const wait = Number(/seq 1 (\d+)/.exec(lines[loop])[1]) * Number(/sleep (\d+)/.exec(lines[sleep])[1]);
+  assert.ok(wait >= 840 && wait <= 960, `wait about 15 minutes, not ${wait} s`);
+  // No gh command approves a run, a review or a deployment.
+  for (const line of commands(release).filter((l) => /\bgh (api|run|pr|workflow)\b/.test(l))) {
+    assert.doesNotMatch(line, /approve|\breview\b|pending_deployments|rerun|-X POST|--method/, line);
+  }
+});
+
+test("the job time limit is longer than all the waits together", () => {
+  const minutes = Number(/^ {4}timeout-minutes: (\d+)$/m.exec(write)[1]);
+  const loops = [];
+  for (const s of writeSteps) {
+    const ls = s.commands;
+    ls.forEach((l, i) => {
+      const loop = /^for _ in \$\(seq 1 (\d+)\); do$/.exec(l);
+      if (!loop) return;
+      const sleep = ls.slice(i, ls.indexOf("done", i)).map((x) => /^sleep (\d+)$/.exec(x)).find(Boolean);
+      loops.push(Number(loop[1]) * Number(sleep[1]));
+    });
+  }
+  const watch = Number(/timeout (\d+) gh run watch/.exec(waitStep.commands.join("\n"))[1]);
+  assert.equal(loops.length, 3, "the find, approval and merge state loops");
+  const waits = loops.reduce((a, b) => a + b, 0) + watch;
+  // 5 minutes for checkout, npm run check and the git and gh steps.
+  assert.ok(minutes * 60 >= waits + 300, `timeout-minutes ${minutes} is less than ${waits + 300} s`);
 });
 
 test("the merge waits a short time and prints why GitHub blocks the pull request", () => {

@@ -12,19 +12,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `Release` workflow. Daniel starts it on `main`. A read-only `plan` job shows the version in
   the run summary. After Daniel approves the `release` environment, the `release` job prepares the
   release in a pull request, merges the pull request when `validate` passes, creates the tag and
-  the GitHub release, and fast-forwards `v1`. A breaking change stops it. It uses only
-  `GITHUB_TOKEN` and never force-pushes (#135).
+  the GitHub release, and fast-forwards `v1`. A breaking change stops it. It never force-pushes
+  (#135).
+- The `release` job does its writes with a token from the GitHub App of dkstack releases. The
+  token is for dkstack only, with Contents, Pull requests and Workflows (write). The app is in no
+  ruleset bypass list. `GITHUB_TOKEN` only reads. The secrets `RELEASE_APP_ID` and
+  `RELEASE_APP_PRIVATE_KEY` are in the `release` environment. `scripts/check-workflows.mjs`
+  lets only this job pass them to `actions/create-github-app-token` (#135).
 - `scripts/release.mjs`: works out the next version, writes the plan summary, checks the `release`
   environment, moves the `[Unreleased]` notes to the new section, sets the `package.json` version
   and prints the release notes.
 
 ### Changed
 
-- The `validate` workflow can also start by `workflow_dispatch`. The job name stays `validate`.
-  GitHub does not count the check runs of a `workflow_dispatch` run for a pull request. When
-  the dispatched run passes, the `Release` workflow creates the check run `validate` on the
-  release commit with the Checks API. A failure before the merge closes the release pull request
-  and deletes its branch.
+- The release pull request gets the normal `pull_request` run of `validate`. If the run waits for
+  approval, the `release` job writes the run link to the run summary and waits up to 15 minutes.
+  Only Daniel approves the run. No agent and no job approves it. A failure before the merge closes
+  the release pull request and deletes its branch.
 - `versioning/index.md`: the release steps are now the `Release` workflow, with a one-time setup
   and the steps to finish a release by hand. `CONTRIBUTING.md` links them. ADR 0001 has an
   amendment.
