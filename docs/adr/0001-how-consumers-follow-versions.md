@@ -140,6 +140,13 @@ that release. The OK names the exact version. It never covers a production deplo
 release workflow, for example tangopad `release.yml`. Only Daniel starts these. This amendment
 replaces the team rule "no bot pushes to `v1` or creates a release tag" in Consequences.
 
+### Amendment 2026-11-11
+
+Daniel decided on 2026-11-11 at 07:49 (Prague) that `v1.3.0` removes workflow pages, skills and
+scripts. His words are "Ship as v1.3.0 and move v1 so every repo switches at once". See #127.
+This is an exception for one release only. The rule "A breaking release starts `v2`" applies to
+every later release.
+
 ## Consequences
 
 The follow-up work is issue #5 (Forge) and issue #12 (Scribe).

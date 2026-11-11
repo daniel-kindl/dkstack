@@ -7,6 +7,80 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-11
+
+This minor release removes pages, skills and scripts by the owner's decision on 2026-11-11
+(#127), as an exception to ADR 0001. See the
+[amendment](docs/adr/0001-how-consumers-follow-versions.md#amendment-2026-11-11).
+
+### Removed
+
+- `workflow/work.md`: the work contract. The "Owner instructions in chat" section is now in
+  `workflow/safety.md`. The issue to merge flow is in `workflow/index.md` and
+  `workflow/review-and-merge.md`.
+- `workflow/lifecycle.md`: the route from a request to a merge. Use the flow in
+  `workflow/index.md` and the rules in `workflow/review-and-merge.md`.
+- `workflow/claims.md`: claims, handoff and recovery. No replacement. The author rule in
+  `workflow/roles.md` and the hard limits in `workflow/safety.md` still apply.
+- `workflow/preflight.md` and `scripts/preflight.mjs`: the tracker preflight and the label
+  catalog. No replacement. No label is deleted.
+- `workflow/feature-plans.md`: the plan file in `.plans/`. Use the plan-work skill.
+- `skills/map-work`: the multi pull request mapping skill. Use the plan-work skill. It plans the
+  work as small reviewable increments in one issue and one pull request.
+- `scripts/lifecycle.mjs`: the lifecycle router. No replacement. Only tests used it.
+- `.plans/agent-claims.md`, `codebase-stewardship.md`, `map-work.md`, `preflight.md`,
+  `release-skill.md`, `work-management.md` and `workflow-lifecycle.md`: stale plan files. No
+  replacement.
+- The tests for the removed pages, skills and scripts.
+
+### Changed
+
+- `skills/triage`: guidance only. Remove the Work route, the plan-work and map-work routing, the
+  handoffs and the feature plan line. The owner instructions link points at `workflow/safety.md`.
+- `skills/plan-work`: guidance only. Keep the goal, the acceptance criteria, small reviewable
+  increments, tests first and a map from each criterion to a test or a check. The plan goes where
+  the task asks: the issue, the pull request or the chat. Remove the `.plans/` file, the statuses,
+  the claims and the handoff. Add step 7: before you report, compare the plan with the issue, the
+  commits and the check results.
+- `workflow/safety.md`: add the section "Owner instructions in chat", moved from
+  `workflow/work.md`.
+- `workflow/roles.md`: remove the role map with team names. The section "Role definitions"
+  replaces it. It defines the implementer, the reviewer, the architect, the writer and the
+  coordinator with no team names.
+- `workflow/review-and-merge.md`: remove the escalation ladder. No replacement. Remove the
+  sentences that said dependent work stays blocked. If a fact is missing, unverifiable or
+  conflicting, do not treat the pull request as reviewed. Never backdate or fabricate review
+  evidence.
+- The external request issue template sets no label and does not forbid a split. The four
+  fields stay.
+- `skills/tdd-loop`, `skills/bootstrap`, `skills/apply-architecture`, `skills/clarify-intent` and
+  `skills/code-review`: remove the links to the plan, claim, work and preflight pages. Remove
+  bootstrap step 12, the tracker preflight. Remove the escalation sentence from code-review.
+- `architecture/stewardship.md`: remove the link to `workflow/work.md`. The page still links
+  `workflow/safety.md` and `workflow/roles.md`.
+- `workflow/index.md`, `AGENTS.md`, `README.md` and `CONTRIBUTING.md`: remove the links and the
+  wording for the removed pages.
+
+### Added
+
+- Tests that pin the moved owner instructions, the role definitions, the issue template fields
+  and the removed skill hooks.
+
+### Migration
+
+- map-work: use plan-work. Plan the work as small reviewable increments in one issue and one
+  pull request.
+- Lifecycle and claims: follow the flow in `workflow/index.md` and the rules in
+  `workflow/review-and-merge.md`, `workflow/roles.md` and `workflow/safety.md`. The docs no longer
+  tell agents to write a claim or to set `status:`, `agent:` or `needs:` labels.
+- Preflight: no replacement. Labels are kept. No label is deleted in any repository.
+- Feature plans: use plan-work. Put the plan where the task asks. dkstack no longer reads
+  `.plans/` files. Each project decides what to do with its own `.plans/` files.
+- Links: when the owner moves `v1`, a raw `v1` URL to a removed page or skill stops resolving.
+  Remove those links from your project. Change a link to
+  `workflow/work.md#owner-instructions-in-chat` to `workflow/safety.md#owner-instructions-in-chat`.
+  A pinned `AGENTS.md` that starts with the triage skill still resolves.
+
 ## [1.2.0] - 2026-11-04
 
 ### Added
@@ -231,7 +305,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `validate` workflow. It checks the PR or commit title, the skills, the links, the dashes,
   the workflows, the CHANGELOG entry for the version and the unit tests.
 
-[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/daniel-kindl/dkstack/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/daniel-kindl/dkstack/compare/v1.1.3...v1.2.0
 [1.1.3]: https://github.com/daniel-kindl/dkstack/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/daniel-kindl/dkstack/compare/v1.1.1...v1.1.2
