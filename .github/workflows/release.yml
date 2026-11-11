@@ -93,6 +93,7 @@ jobs:
     timeout-minutes: 30
     permissions:
       actions: write # start validate on the release branch
+      checks: write # report the validate result on the release pull request
       contents: write # push the release branch, the tag and v1, and publish the release
       pull-requests: write # open and merge the release pull request
     env:
@@ -175,11 +176,14 @@ jobs:
           echo "Opened $URL"
           echo "pr=${URL##*/}" >> "$GITHUB_OUTPUT"
 
-      # A pull request that GITHUB_TOKEN opens starts no workflow. A
-      # workflow_dispatch event is the exception, so the job starts validate
-      # on the release branch. Its "validate" check reports on the head commit
-      # of the pull request, which is the check that protect-main requires.
+      # The pull_request run of validate on a pull request that GITHUB_TOKEN
+      # opens waits for approval: github-actions[bot] is a first-time
+      # contributor. So the job starts validate by workflow_dispatch on the
+      # release branch. GitHub does not count the check runs of a
+      # workflow_dispatch run for a pull request, so the next step reports
+      # the result with the Checks API.
       - name: Run validate on the release branch
+        id: validate
         env:
           GH_TOKEN: ${{ github.token }}
           BRANCH: ${{ steps.branch.outputs.branch }}
@@ -199,9 +203,41 @@ jobs:
           fi
           echo "validate: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$RUN_ID"
           if ! gh run watch "$RUN_ID" --exit-status --interval 15; then
-            echo "::error::validate failed on $BRANCH. Nothing was merged. The pull request stays open."
+            echo "::error::validate failed on $BRANCH. Nothing was merged."
             exit 1
           fi
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+
+      # The check run "validate" that protect-main requires. GITHUB_TOKEN
+      # creates it, so it comes from the GitHub Actions app (15368). The job
+      # creates it only for a validate run that it started, on the release
+      # commit, that passed.
+      - name: Report the validate result on the release pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ steps.branch.outputs.head_sha }}
+          RUN_ID: ${{ steps.validate.outputs.run_id }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" > "$RUNNER_TEMP/validate-run.json"
+          RUN_EVENT=$(jq -r .event "$RUNNER_TEMP/validate-run.json")
+          RUN_SHA=$(jq -r .head_sha "$RUNNER_TEMP/validate-run.json")
+          RUN_CONCLUSION=$(jq -r .conclusion "$RUNNER_TEMP/validate-run.json")
+          RUN_PATH=$(jq -r .path "$RUNNER_TEMP/validate-run.json")
+          RUN_URL=$(jq -r .html_url "$RUNNER_TEMP/validate-run.json")
+          if [ "$RUN_EVENT" != "workflow_dispatch" ] || [ "$RUN_SHA" != "$HEAD_SHA" ] ||
+            [ "$RUN_CONCLUSION" != "success" ] || [ "$RUN_PATH" != ".github/workflows/validate.yml" ]; then
+            echo "::error::The validate run $RUN_ID is not a passed workflow_dispatch run of validate.yml on $HEAD_SHA. Nothing was merged."
+            exit 1
+          fi
+          gh api -X POST "repos/$GITHUB_REPOSITORY/check-runs" \
+            -f name=validate \
+            -f head_sha="$HEAD_SHA" \
+            -f status=completed \
+            -f conclusion=success \
+            -f details_url="$RUN_URL" \
+            -f "output[title]=validate passed" \
+            -f "output[summary]=The Release workflow started validate by workflow_dispatch on this commit. It passed: $RUN_URL" \
+            --jq '"Created the check run validate: " + .html_url'
 
       - name: Merge the release pull request
         env:
@@ -212,17 +248,19 @@ jobs:
         run: |
           MAIN_SHA=$(git ls-remote origin refs/heads/main | cut -f1)
           if [ "$MAIN_SHA" != "$START_SHA" ]; then
-            echo "::error::main moved from $START_SHA to $MAIN_SHA during the run. Nothing was merged or tagged. Pull request #$PR stays open."
+            echo "::error::main moved from $START_SHA to $MAIN_SHA during the run. Nothing was merged or tagged."
             exit 1
           fi
+          # GitHub needs some seconds to see the new check run.
           STATE=""
-          for _ in $(seq 1 24); do
+          for _ in $(seq 1 12); do
             STATE=$(gh pr view "$PR" --json mergeStateStatus --jq .mergeStateStatus)
             if [ "$STATE" = "CLEAN" ]; then break; fi
             sleep 5
           done
           if [ "$STATE" != "CLEAN" ]; then
-            echo "::error::Pull request #$PR is not ready to merge (state $STATE). Nothing was merged. It stays open."
+            echo "::error::Pull request #$PR is not ready to merge (state $STATE). Nothing was merged. The state follows."
+            gh pr view "$PR" --json mergeStateStatus,reviewDecision,statusCheckRollup
             exit 1
           fi
           # --match-head-commit: merge only the commit that validate checked.
@@ -286,6 +324,36 @@ jobs:
             echo
             echo "- Release: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/tag/v$VERSION"
             echo "- v1 is at $MERGE_SHA."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Close the release pull request if it was not merged
+        if: ${{ failure() && steps.pr.outputs.pr != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.pr }}
+          BRANCH: ${{ steps.branch.outputs.branch }}
+          HEAD_SHA: ${{ steps.branch.outputs.head_sha }}
+          VERSION: ${{ steps.prepare.outputs.version }}
+        run: |
+          STATE=$(gh pr view "$PR" --json state --jq .state)
+          if [ "$STATE" != "OPEN" ]; then
+            echo "Pull request #$PR is $STATE. Nothing to close."
+            exit 0
+          fi
+          gh pr close "$PR" --comment "The Release run $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID failed before the merge. Nothing was merged or tagged. Fix the cause, then start Release again."
+          # Delete the branch only if it is still at the release commit.
+          BRANCH_SHA=$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)
+          if [ "$BRANCH_SHA" = "$HEAD_SHA" ]; then
+            gh api -X DELETE "repos/$GITHUB_REPOSITORY/git/refs/heads/$BRANCH"
+          else
+            echo "::warning::$BRANCH is at ${BRANCH_SHA:-nothing}, not at $HEAD_SHA. It was not deleted."
+          fi
+          {
+            echo "Release v$VERSION was not merged. The run failed before the merge. See the error above."
+            echo
+            echo "- main, the tags and v1 did not change."
+            echo "- The job closed pull request #$PR and deleted the branch $BRANCH if it was unchanged."
+            echo "- Fix the cause, then start Release again."
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Tell how to finish a release after the merge

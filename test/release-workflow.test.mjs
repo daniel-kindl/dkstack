@@ -91,7 +91,7 @@ test("the plan job runs the guard, works out the version and checks the release 
 test("the write job needs the plan, runs in the release environment and uses the planned version", () => {
   assert.match(write, /^ {4}needs: plan$/m);
   assert.match(write, /^ {4}environment: release$/m);
-  assert.deepEqual(scopes(write), ["actions: write", "contents: write", "pull-requests: write"]);
+  assert.deepEqual(scopes(write), ["actions: write", "checks: write", "contents: write", "pull-requests: write"]);
   const prepare = steps(write).find((s) => s.commands.some((l) => /release\.mjs prepare/.test(l)));
   assert.ok(prepare, "the write job runs prepare");
   assert.match(prepare.env, /VERSION: \$\{\{ needs\.plan\.outputs\.version \}\}/);
@@ -156,4 +156,62 @@ test("release checks that main did not move before it merges and before it tags"
   assert.ok(parent > merge && parent < tag, "check the merge parent before the tag");
   assert.ok(tree > merge && tree < tag, "check the merged tree before the tag");
   assert.ok(writeLines.some((l) => /git merge-base --is-ancestor origin\/v1 "\$MERGE_SHA"/.test(l)), "check fast-forward");
+});
+
+// GitHub does not count a check run of a workflow_dispatch run for a pull
+// request: the run is not in the status check rollup, so protect-main keeps
+// "validate" as expected. See #135 and the failed run 43070086329.
+test("the job posts the validate check run only after a verified dispatched validate passes", () => {
+  const at = (pattern) => {
+    const i = writeLines.findIndex((l) => pattern.test(l));
+    assert.notEqual(i, -1, `missing ${pattern}`);
+    return i;
+  };
+  const watch = at(/gh run watch "\$RUN_ID" --exit-status/);
+  const view = at(/gh api "repos\/\$GITHUB_REPOSITORY\/actions\/runs\/\$RUN_ID" > "\$RUNNER_TEMP\/validate-run\.json"/);
+  const event = at(/"\$RUN_EVENT" != "workflow_dispatch"/);
+  const sha = at(/"\$RUN_SHA" != "\$HEAD_SHA"/);
+  const conclusion = at(/"\$RUN_CONCLUSION" != "success"/);
+  const path = at(/"\$RUN_PATH" != "\.github\/workflows\/validate\.yml"/);
+  const post = at(/gh api -X POST "repos\/\$GITHUB_REPOSITORY\/check-runs"/);
+  const merge = at(/gh pr merge "\$PR"/);
+  for (const check of [view, event, sha, conclusion, path]) {
+    assert.ok(watch < check && check < post, "verify the run after the watch and before the post");
+  }
+  assert.ok(post < merge, "post the check run before the merge");
+  const block = writeLines.slice(post, post + 8).join("\n");
+  assert.match(block, /-f name=validate\b/);
+  assert.match(block, /-f head_sha="\$HEAD_SHA"/);
+  assert.match(block, /-f status=completed/);
+  assert.match(block, /-f conclusion=success/);
+  assert.match(block, /-f details_url="\$RUN_URL"/);
+  assert.equal(writeLines.filter((l) => /\/check-runs"/.test(l)).length, 1, "one check run post");
+});
+
+test("the merge waits a short time and prints why GitHub blocks the pull request", () => {
+  const merge = writeLines.findIndex((l) => /gh pr merge "\$PR"/.test(l));
+  const why = writeLines.findIndex((l) => /gh pr view "\$PR" --json mergeStateStatus,reviewDecision,statusCheckRollup/.test(l));
+  assert.ok(why !== -1 && why < merge, "print the merge state before the merge");
+  const loop = writeLines.find((l) => /for _ in \$\(seq 1 (\d+)\); do/.test(l) && writeLines.indexOf(l) < merge && writeLines.indexOf(l) > why - 12);
+  assert.ok(loop, "a wait loop before the merge");
+  assert.ok(Number(/seq 1 (\d+)/.exec(loop)[1]) <= 12, "wait one minute or less");
+});
+
+test("a failure before the merge closes the release pull request and deletes only its unchanged branch", () => {
+  const cleanup = steps(write).find((s) => /gh pr close/.test(s.text));
+  assert.ok(cleanup, "a cleanup step");
+  assert.match(cleanup.text, /if: \$\{\{ failure\(\) && steps\.pr\.outputs\.pr != '' \}\}/);
+  assert.match(cleanup.env, /GH_TOKEN:/);
+  const lines = cleanup.commands;
+  const state = lines.findIndex((l) => /gh pr view "\$PR" --json state --jq \.state/.test(l));
+  const open = lines.findIndex((l) => /"\$STATE" != "OPEN"/.test(l));
+  const close = lines.findIndex((l) => /gh pr close "\$PR" --comment/.test(l));
+  const remote = lines.findIndex((l) => /git ls-remote origin "refs\/heads\/\$BRANCH"/.test(l));
+  const same = lines.findIndex((l) => /"\$BRANCH_SHA" = "\$HEAD_SHA"/.test(l));
+  const del = lines.findIndex((l) => /gh api -X DELETE "repos\/\$GITHUB_REPOSITORY\/git\/refs\/heads\/\$BRANCH"/.test(l));
+  assert.ok(state !== -1 && state < open && open < close, "close only an open pull request");
+  assert.ok(remote !== -1 && remote < same && same < del, "delete only the branch at the release commit");
+  assert.ok(lines.some((l) => />> "\$GITHUB_STEP_SUMMARY"/.test(l)), "write the recovery to the summary");
+  assert.ok(lines.some((l) => /start Release again/.test(l)), "tell Daniel to start Release again");
+  assert.doesNotMatch(cleanup.text, /refs\/heads\/(main|v1)\b/);
 });

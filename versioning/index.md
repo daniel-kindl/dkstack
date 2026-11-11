@@ -79,10 +79,16 @@ The `release` job starts only after Daniel approves the environment. Its steps:
    `version` in `package.json`. Then it runs `npm run check`.
 3. It pushes the branch `release/vX.Y.Z` with the commit `chore(release): prepare vX.Y.Z`. It opens
    a pull request to `main`.
-4. It starts `validate` on the branch and waits for the result. A pull request that
-   `GITHUB_TOKEN` opens starts no workflow, but a `workflow_dispatch` event does. The `validate`
-   check of that run reports on the head commit of the pull request. `protect-main` requires this
-   check.
+4. It starts `validate` on the branch by `workflow_dispatch` and waits for the result. When the
+   run passes, the job creates the check run `validate` on the head commit of the pull request
+   with the Checks API. `protect-main` requires this check. The check run comes from the GitHub
+   Actions app, because `GITHUB_TOKEN` creates it. The job creates it only for a passed
+   `workflow_dispatch` run of `validate.yml` on that commit. The reasons:
+   - The `pull_request` run of `validate` waits for approval, because `github-actions[bot]` is a
+     first-time contributor. The pull request shows "workflows awaiting approval". Do not approve
+     it. The release does not need it.
+   - GitHub does not count the check runs of a `workflow_dispatch` run for a pull request. They
+     are not in the status check rollup. Run 43070086329 stopped for this reason.
 5. It makes sure that `main` did not move. Then it squash-merges the pull request.
    `protect-main` applies in full.
 6. It makes sure that the merge commit follows the start commit and has the validated files.
@@ -96,9 +102,11 @@ Make sure that it lists every skill.
 ### If a run fails
 
 - A failure in `plan`, or a rejected approval, writes nothing.
-- A failure before the merge leaves `main`, the tags and `v1` as they were. The release pull
-  request and its branch can stay. Close the pull request and delete the branch
-  `release/vX.Y.Z`. Then start `Release` again.
+- A failure before the merge leaves `main`, the tags and `v1` as they were. The job closes the
+  release pull request. It deletes the branch `release/vX.Y.Z` if the branch is still at the
+  release commit. The run summary says this. If the merge was blocked, the log shows the merge
+  state and the checks. Fix the cause, then start `Release` again. If the branch still exists,
+  delete it first, or the push of the new release branch fails.
 - A failure after the merge leaves the release commit on `main`. The run summary says this.
   Finish the release by hand. Until you do, a new run stops at step 1.
 
