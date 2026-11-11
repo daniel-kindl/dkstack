@@ -154,9 +154,12 @@ His words are "I want the similiar automation release workflow for dkstack - I r
 job does everyting and merges main to v1 brach". At 18:10 he chose option B: the job opens a
 release pull request and merges it when `validate` passes. See #135.
 
-The `Release` workflow now does the release steps of option C2. Only Daniel starts it. When he
-starts it, he gives his OK for the release that the workflow works out from the commits. The
-workflow pushes the tag and fast-forwards `v1` with `GITHUB_TOKEN`. It never force-pushes, and
+The `Release` workflow now does the release steps of option C2. Only Daniel starts it. A
+read-only `plan` job works out the version and shows it in the run summary. The job that writes
+runs in the `release` environment, with Daniel as the required reviewer. Daniel's OK for the
+release is two actions: he starts `Release`, and he approves the `release` environment after he
+reads the planned version. This OK names the exact version, as the amendment of 2026-10-28
+requires. The workflow pushes the tag and fast-forwards `v1` with `GITHUB_TOKEN`. It never force-pushes, and
 `v1` still moves forward only. This amendment replaces "Only Daniel does this, by hand" in
 Consequences. The rule "A breaking release starts `v2`" stays: the workflow stops on a breaking
 change. See [Release dkstack](../../versioning/index.md#release-dkstack).

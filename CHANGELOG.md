@@ -9,12 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- The `Release` workflow. Daniel starts it on `main`. It prepares the release in a pull request,
-  merges the pull request when `validate` passes, creates the tag and the GitHub release, and
-  fast-forwards `v1`. A breaking change stops it. It uses only `GITHUB_TOKEN` and never
-  force-pushes (#135).
-- `scripts/release.mjs`: works out the next version, moves the `[Unreleased]` notes to the new
-  section, sets the `package.json` version and prints the release notes.
+- The `Release` workflow. Daniel starts it on `main`. A read-only `plan` job shows the version in
+  the run summary. After Daniel approves the `release` environment, the `release` job prepares the
+  release in a pull request, merges the pull request when `validate` passes, creates the tag and
+  the GitHub release, and fast-forwards `v1`. A breaking change stops it. It uses only
+  `GITHUB_TOKEN` and never force-pushes (#135).
+- `scripts/release.mjs`: works out the next version, writes the plan summary, checks the `release`
+  environment, moves the `[Unreleased]` notes to the new section, sets the `package.json` version
+  and prints the release notes.
 
 ### Changed
 
