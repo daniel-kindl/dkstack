@@ -2,7 +2,7 @@
 
 Every change goes from an issue to a reviewed pull request. No change reaches `main` without review.
 
-The review does not require a feature plan. See [feature plans](feature-plans.md).
+The review does not require a feature plan.
 
 The author writes the pull request body with [write-pr](../skills/write-pr/SKILL.md). This page
 keeps the review and merge rules.
