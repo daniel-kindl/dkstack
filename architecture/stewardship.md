@@ -43,8 +43,8 @@ An unrelated problem is not authorization to change it. Propose the problem. Do 
 in this task.
 
 Ask the owner before a consequential, uncertain or hard-to-reverse decision, and before work
-outside the scope. Do not copy those limits here. Read [safety.md](../workflow/safety.md),
-[work.md](../workflow/work.md) and [roles.md](../workflow/roles.md).
+outside the scope. Do not copy those limits here. Read [safety.md](../workflow/safety.md) and
+[roles.md](../workflow/roles.md).
 
 ## Trade-offs
 
