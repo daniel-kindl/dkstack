@@ -31,8 +31,6 @@ This minor release removes pages, skills and scripts by the owner's decision on 
 - `.plans/agent-claims.md`, `codebase-stewardship.md`, `map-work.md`, `preflight.md`,
   `release-skill.md`, `work-management.md` and `workflow-lifecycle.md`: stale plan files. No
   replacement.
-- `workflow/roles.md`: the role map with team names. The section "Role definitions" replaces it.
-- `workflow/review-and-merge.md`: the escalation ladder. No replacement.
 - The tests for the removed pages, skills and scripts.
 
 ### Changed
@@ -45,11 +43,13 @@ This minor release removes pages, skills and scripts by the owner's decision on 
   the claims and the handoff.
 - `workflow/safety.md`: add the section "Owner instructions in chat", moved from
   `workflow/work.md`.
-- `workflow/roles.md`: add the section "Role definitions". It defines the implementer, the
-  reviewer, the architect, the writer and the coordinator with no team names.
-- `workflow/review-and-merge.md`: missing review evidence no longer blocks dependent work. If a
-  fact is missing, unverifiable or conflicting, do not treat the pull request as reviewed. Never
-  backdate or fabricate review evidence.
+- `workflow/roles.md`: remove the role map with team names. The section "Role definitions"
+  replaces it. It defines the implementer, the reviewer, the architect, the writer and the
+  coordinator with no team names.
+- `workflow/review-and-merge.md`: remove the escalation ladder. No replacement. Remove the
+  sentences that said dependent work stays blocked. If a fact is missing, unverifiable or
+  conflicting, do not treat the pull request as reviewed. Never backdate or fabricate review
+  evidence.
 - The external request issue template sets no label and does not forbid a split. The four
   fields stay.
 - `skills/tdd-loop`, `skills/bootstrap`, `skills/apply-architecture`, `skills/clarify-intent` and
