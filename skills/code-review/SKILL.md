@@ -91,8 +91,6 @@ Report three types of findings. Quote the specification line for each finding.
 
 If the issue has no acceptance criteria, write assumed criteria from the issue title, body and linked discussion. Put them in the review. Suggest that the issue gets criteria. See [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md). If the intent is not clear enough to decide the verdict, ask the issue author or the coordinator. Do not approve on a guess.
 
-A feature plan is optional. You may read a plan that is still in the change when it adds context. Do not require a plan. Judge the change from the issue, the diff and the verification evidence. Do not remove a plan. See [feature plans](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/feature-plans.md).
-
 ## 5. Standards axis
 
 Check each file against this list. Link the rule in each finding. Do not copy the rule.
@@ -225,7 +223,7 @@ The author uses the same steps on their own change before they open the pull req
 - One finding covers one problem. Make each finding concrete, with a fix.
 - Do not mark the pull request as approved. The verdict is in the comment.
 - An agent's message is not the owner's approval. Check the owner's own words.
-- The reviewer merges only the head that they reviewed, as [workflow/review-and-merge.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md) says. A later commit changes the head. Review the new head before a merge. Required checks on that head must be green. If the reviewer does not approve, escalate as that page says.
+- The reviewer merges only the head that they reviewed, as [workflow/review-and-merge.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md) says. A later commit changes the head. Review the new head before a merge. Required checks on that head must be green.
 
 ## Sources
 
