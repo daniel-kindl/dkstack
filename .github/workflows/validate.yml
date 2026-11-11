@@ -4,8 +4,9 @@ name: validate
 # status check context for main. Do not rename it.
 # This workflow does not tag, release or publish.
 # The Release workflow starts this workflow by workflow_dispatch on its
-# release branch. A pull request that GITHUB_TOKEN opens starts no workflow,
-# so the "validate" check of the release pull request comes from that run.
+# release branch. GitHub does not count the check runs of a workflow_dispatch
+# run for a pull request. When this run passes, the Release workflow creates
+# the check run "validate" on the same commit with the Checks API.
 
 on:
   pull_request:

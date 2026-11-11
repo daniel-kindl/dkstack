@@ -20,8 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The `validate` workflow can also start by `workflow_dispatch`. The `Release` workflow uses this
-  to get the required `validate` check on its pull request. The job name stays `validate`.
+- The `validate` workflow can also start by `workflow_dispatch`. The job name stays `validate`.
+  GitHub does not count the check runs of a `workflow_dispatch` run for a pull request. When
+  the dispatched run passes, the `Release` workflow creates the check run `validate` on the
+  release commit with the Checks API. A failure before the merge closes the release pull request
+  and deletes its branch.
 - `versioning/index.md`: the release steps are now the `Release` workflow, with a one-time setup
   and the steps to finish a release by hand. `CONTRIBUTING.md` links them. ADR 0001 has an
   amendment.
