@@ -333,6 +333,9 @@ test("the release environment fails unless main is the only deployment branch", 
   const prot = { ...ENV, deployment_branch_policy: { protected_branches: true, custom_branch_policies: false } };
   assert.deepEqual(checkEnvironment(prot, POLICIES, "daniel-kindl"),
     ["the release environment must allow only the branch main (Deployment branches: Selected branches)"]);
+  const none = { ...ENV, deployment_branch_policy: { protected_branches: false, custom_branch_policies: false } };
+  assert.deepEqual(checkEnvironment(none, POLICIES, "daniel-kindl"),
+    ["the release environment must allow only the branch main (Deployment branches: Selected branches)"]);
   for (const policies of [
     { branch_policies: [] },
     { branch_policies: [{ name: "main", type: "branch" }, { name: "release/*", type: "branch" }] },
