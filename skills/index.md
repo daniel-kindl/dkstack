@@ -14,5 +14,4 @@ Skills are specific capabilities agents should apply when relevant.
 - [write-pr](write-pr/SKILL.md): Write or update a pull request body with evidence and merge risk.
 - [writing-check](writing-check/SKILL.md): Apply ASD-STE100 to text.
 - [plan-work](plan-work/SKILL.md): Plan a goal as small, reviewable increments with tests first.
-- [map-work](map-work/SKILL.md): Map an accepted multi-PR objective to child issues and stop before implementation.
 - [release](release/SKILL.md): Prepare a release. Link the versioning and safety rules. Do not publish.
