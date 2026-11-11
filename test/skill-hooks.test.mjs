@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -46,11 +46,11 @@ test("code-review has no plan paragraph and no escalation", async () => {
 });
 
 test("no skill or entry page names the removed map-work skill", async () => {
-  const { readdir } = await import("node:fs/promises");
   const skills = (await readdir(join(repoRoot, "skills"), { withFileTypes: true }))
     .filter((entry) => entry.isDirectory())
     .map((entry) => join("skills", entry.name, "SKILL.md"));
-  for (const file of ["skills/index.md", "AGENTS.md", "README.md", ...skills]) {
+  for (const file of ["skills/index.md", "AGENTS.md", "README.md", "CONTRIBUTING.md", "sample-AGENTS.md",
+    "workflow/index.md", ...skills]) {
     const text = await readFile(join(repoRoot, file), "utf8");
     assert.doesNotMatch(text, /map-work/, `${file} names map-work`);
   }
