@@ -20,6 +20,6 @@ Use when implementing behavior. Follow the authoritative [TDD guidelines](https:
 
 - Do not implement behavior before a relevant failing test.
 - Do not claim a red step, a passing test or a check without execution evidence.
-- Keep each cycle and refactor within the task scope.
+- In the refactor step, stay inside the task scope. Do not change unrelated code. Keep every existing test green. Do not limit the refactor to code that a test already executes. When no test checks a behavior that this refactor can change, write a test for that behavior first; that characterization test must pass before the refactor. See [stewardship](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/stewardship.md).
 - For non-behavior changes or an approved deviation, follow the boundaries in the [TDD guidelines](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md).
 - Do not restate the detailed testing standards here.
