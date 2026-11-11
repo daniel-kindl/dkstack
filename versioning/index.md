@@ -31,22 +31,37 @@ environment. No bot pushes to `v1` or creates a release tag in another way. See
 
 ### One-time setup
 
-The workflow uses only `GITHUB_TOKEN`. It uses no app, no personal token and no ruleset bypass.
-Daniel does these steps one time, in the repository settings:
+The `release` job does its writes with a token from the GitHub App of dkstack releases. The
+token is for dkstack only, with three permissions only. The job uses no personal token and no
+ruleset bypass. `GITHUB_TOKEN` only reads. Daniel set up the app on 2026-11-11 (#135). The
+setup, for a check or a new app:
 
-1. In Settings, Actions, General, Workflow permissions, select "Allow GitHub Actions to create and
-   approve pull requests". Keep "Read repository contents and packages permissions" as the
-   default. Without this setting, the workflow cannot open the release pull request. The workflow
-   asks for its write permissions in the job.
-2. In Settings, Environments, create the environment `release`:
+1. The GitHub App:
+   - Repository permissions: Contents "Read and write", Pull requests "Read and write" and
+     Workflows "Read and write". GitHub adds Metadata "Read-only". Give no other permission.
+   - Installed on dkstack only ("Only select repositories").
+   - The app is in no bypass list. Do not add it to the bypass list of a ruleset. Then
+     `protect-main` requires `validate` for the release pull request, as for all pull requests.
+2. In Settings, Environments, the environment `release`:
    - Required reviewers: `daniel-kindl`.
    - "Prevent self-review": off. Daniel starts the run, so he must be able to approve it.
    - Deployment branches and tags: "Selected branches and tags", with the one branch rule `main`.
-   - Add no secrets. The workflow needs none.
+   - Environment secrets: `RELEASE_APP_ID` (the App ID of the app) and `RELEASE_APP_PRIVATE_KEY`
+     (a private key of the app, the full `.pem` text). Add them to the environment, not to the
+     repository. Then only the `release` job gets them, after Daniel approves it.
 
-The `plan` job reads the environment and stops if it does not have this setup. A job that names
-an environment that does not exist gets a new environment with no protection. This check stops
-the run before that can occur.
+The `plan` job reads the environment and stops if it does not have the reviewer and the branch
+rule. A job that names an environment that does not exist gets a new environment with no
+protection. This check stops the run before that can occur. The `plan` job cannot read the
+secrets. If a secret is missing or wrong, the step "Get a token from the release app" fails and
+the job writes nothing.
+
+The workflow does not need "Allow GitHub Actions to create and approve pull requests", because
+`GITHUB_TOKEN` does not open the pull request.
+
+To change a key: generate a new private key in the app settings, replace
+`RELEASE_APP_PRIVATE_KEY` in the `release` environment, then delete the old key in the app
+settings.
 
 ### Start a release
 
@@ -76,25 +91,24 @@ The `release` job starts only after Daniel approves the environment. Its steps:
    version.
 2. It moves the `[Unreleased]` notes in `CHANGELOG.md` to `## [X.Y.Z] - YYYY-MM-DD`, with the date
    in Prague. If `[Unreleased]` is empty, it writes entries from the commit titles. It sets
-   `version` in `package.json`. Then it runs `npm run check`.
-3. It pushes the branch `release/vX.Y.Z` with the commit `chore(release): prepare vX.Y.Z`. It opens
-   a pull request to `main`.
-4. It starts `validate` on the branch by `workflow_dispatch` and waits for the result. When the
-   run passes, the job creates the check run `validate` on the head commit of the pull request
-   with the Checks API. `protect-main` requires this check. The check run comes from the GitHub
-   Actions app, because `GITHUB_TOKEN` creates it. The job creates it only for a passed
-   `workflow_dispatch` run of `validate.yml` on that commit. The reasons:
-   - The `pull_request` run of `validate` waits for approval, because `github-actions[bot]` is a
-     first-time contributor. The pull request shows "workflows awaiting approval". Do not approve
-     it. The release does not need it.
-   - GitHub does not count the check runs of a `workflow_dispatch` run for a pull request. They
-     are not in the status check rollup. Run 43070086329 stopped for this reason.
-5. It makes sure that `main` did not move. Then it squash-merges the pull request.
-   `protect-main` applies in full.
-6. It makes sure that the merge commit follows the start commit and has the validated files.
-7. It creates the annotated tag `vX.Y.Z` on the merge commit.
-8. It publishes the GitHub release, with the `CHANGELOG.md` section as the notes.
-9. It moves `v1` to the merge commit with a fast-forward push. It never force-pushes.
+   `version` in `package.json`. Then it runs `npm run check`. This is the last step that runs
+   repository code.
+3. It gets a token from the release app. The steps that write use this token. They run only
+   `git` and `gh`.
+4. It pushes the branch `release/vX.Y.Z` with the commit `chore(release): prepare vX.Y.Z`. It opens
+   a pull request to `main`. The app opens it, so the normal `pull_request` run of `validate`
+   starts.
+5. It waits for this run of `validate`. If the run waits for approval, the job stops. It does not
+   approve the run. See [If validate waits for approval](#if-validate-waits-for-approval).
+6. It makes sure that `main` did not move and that `protect-main` lets the pull request merge.
+   Then it squash-merges the pull request, only at the validated commit. `protect-main` applies
+   in full.
+7. It makes sure that the merge commit follows the start commit and has the validated files.
+8. It creates the annotated tag `vX.Y.Z` on the merge commit.
+9. It publishes the GitHub release, with the `CHANGELOG.md` section as the notes.
+10. It moves `v1` to the merge commit with a fast-forward push. It never force-pushes. The app
+    has Workflows "Read and write", so this push also works when the release changes a file in
+    `.github/workflows`.
 
 After the release, you can run `npx skills add https://github.com/daniel-kindl/dkstack/tree/v1 --list`.
 Make sure that it lists every skill.
@@ -110,6 +124,18 @@ Make sure that it lists every skill.
 - A failure after the merge leaves the release commit on `main`. The run summary says this.
   Finish the release by hand. Until you do, a new run stops at step 1.
 
+### If validate waits for approval
+
+The error is "validate on pull request #N waits for approval". The job closed the pull request.
+Nothing was merged or tagged. The job never approves a workflow run, and no agent does.
+
+The setting is in Settings, Actions, General, "Approval for running fork pull request workflows
+from contributors". The GitHub documentation puts this setting under "Controlling changes from
+forks to workflows in public repositories". The release pull request does not come from a fork,
+but GitHub also checks the user that created the pull request. Daniel decides what to do. Then he
+starts `Release` again. Do not approve the run of the closed pull request: the job does not merge
+it.
+
 ### Finish a release
 
 Do these steps in a checkout of dkstack with the latest `main`. Set `V` to the version, for
@@ -123,13 +149,6 @@ example `V=1.4.0`. Set `SHA` to the merge commit of the release pull request:
    `gh release create "v$V" --verify-tag --title "v$V" --notes-file notes.md`.
 3. If `v1` does not contain the tag, move `v1` with a fast-forward push:
    `git push origin "v$V^{commit}:refs/heads/v1"`. Do not force-push.
-
-`GITHUB_TOKEN` cannot change workflow files. GitHub refuses a push of `v1` with `GITHUB_TOKEN`
-when the release has a change to a file in `.github/workflows`. Then the tag and the GitHub
-release exist, but `v1` does not move. This is not a bug. Do step 3 by hand.
-
-The next release after the one-click release was added needs step 3 by hand. That change edited
-`.github/workflows`, and `v1` is still at `v1.3.0`.
 
 The rulesets stay as they are. `protect-release-tags` blocks deletion and update of `refs/tags/v*`.
 `protect-v1` blocks deletion and non-fast-forward pushes on `v1`.
