@@ -74,6 +74,7 @@ test("the plan goes where the task asks", async () => {
 test("the plan-work skill does not invent", async () => {
   const text = await section("Boundaries");
   assert.match(text, /Do not invent a commit identifier, a test result or a decision\./);
+  assert.ok(text.includes("- Obey the hard limits in [safety.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md)."));
 });
 
 test("the plan-work skill has no lifecycle terms", async () => {
@@ -94,6 +95,7 @@ test("the plan format has no pull request or status field", async () => {
   assert.doesNotMatch(fence[1], /^PR:/m);
   assert.doesNotMatch(fence[1], /^Status:/m);
   assert.match(fence[1], /^Issue: <reference or none>\n\n## Goal$/m);
+  assert.match(fence[1], /^Tests first:$/m);
   assert.match(fence[1], /^Criteria covered:$/m);
 });
 
