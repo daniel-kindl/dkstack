@@ -40,7 +40,8 @@ This minor release removes pages, skills and scripts by the owner's decision on 
 - `skills/plan-work`: guidance only. Keep the goal, the acceptance criteria, small reviewable
   increments, tests first and a map from each criterion to a test or a check. The plan goes where
   the task asks: the issue, the pull request or the chat. Remove the `.plans/` file, the statuses,
-  the claims and the handoff.
+  the claims and the handoff. Add step 7: before you report, compare the plan with the issue, the
+  commits and the check results.
 - `workflow/safety.md`: add the section "Owner instructions in chat", moved from
   `workflow/work.md`.
 - `workflow/roles.md`: remove the role map with team names. The section "Role definitions"
@@ -55,6 +56,8 @@ This minor release removes pages, skills and scripts by the owner's decision on 
 - `skills/tdd-loop`, `skills/bootstrap`, `skills/apply-architecture`, `skills/clarify-intent` and
   `skills/code-review`: remove the links to the plan, claim, work and preflight pages. Remove
   bootstrap step 12, the tracker preflight. Remove the escalation sentence from code-review.
+- `architecture/stewardship.md`: remove the link to `workflow/work.md`. The page still links
+  `workflow/safety.md` and `workflow/roles.md`.
 - `workflow/index.md`, `AGENTS.md`, `README.md` and `CONTRIBUTING.md`: remove the links and the
   wording for the removed pages.
 
