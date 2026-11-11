@@ -29,8 +29,7 @@ test("review does not require the plan or a cleanup commit", async () => {
   assert.match(review, /does not require a feature plan/);
   assert.doesNotMatch(review, /does not need a new review/);
   assert.doesNotMatch(review, /last commit/);
-  assert.match(skill, /A feature plan is optional/);
-  assert.match(skill, /Do not require a plan/);
+  assert.doesNotMatch(skill, /workflow\/feature-plans\.md/);
   assert.doesNotMatch(skill, /check its statuses, actual commits and evidence/);
 });
 
