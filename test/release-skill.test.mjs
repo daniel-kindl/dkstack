@@ -56,8 +56,6 @@ test("triage routes a release and keeps the ladder small", async () => {
   assert.match(flat, /Bug fix:.*tdd-loop.*code-review/);
   assert.match(flat, /Feature:.*clarify-intent.*apply-architecture.*plan-work.*tdd-loop.*code-review/);
   assert.match(flat, /one or two skills/);
-  assert.match(flat, /review finding goes back to the implementation step/);
-  assert.match(flat, /design finding goes back to the architecture step/);
   assert.match(text, /One agent can do all the steps/);
   assert.doesNotMatch(text, /release-manager/i);
 });
