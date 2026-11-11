@@ -1,6 +1,6 @@
 ---
 name: External request
-about: Ask for an outcome without splitting the work.
+about: Ask for an outcome.
 title: ""
 ---
 
