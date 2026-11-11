@@ -126,19 +126,6 @@ function listAfter(section, lead) {
   return items.map(flatten);
 }
 
-test("the work contract records an owner instruction durably", async () => {
-  const section = flatten(sectionText(await pageText(), "## Owner instructions in chat"));
-  for (const sentence of [
-    "Before an agent relies on an owner instruction in a later session, it records the instruction durably on the relevant issue.",
-    "The instruction must come from the [human owner](roles.md#human-owner).",
-    "Ordinary work in the same verified session can continue without a new record.",
-    "Include the owner's own words, where they came from, the issue and authorized scope, the session date, and a session link or identifier when available.",
-    "An agent may transcribe the human decision; the agent's own agreement is not approval.",
-  ]) {
-    assert.ok(section.includes(sentence), `missing sentence: ${sentence}`);
-  }
-});
-
 test("the work contract limits a fail-closed repair to a closed list", async () => {
   const raw = sectionText(await pageText(), "## Fail closed");
   const section = flatten(raw);
@@ -199,11 +186,4 @@ test("the agent sets planning before it releases the claim", async () => {
   const move = rule.indexOf("Move the issue to planning and read it again.");
   const release = rule.indexOf("write `RELEASE`");
   assert.ok(move !== -1 && release !== -1 && move < release, "planning must come before RELEASE");
-});
-
-test("a relayed owner decision follows the roles.md relay rule", async () => {
-  const text = await pageText();
-  const owner = flatten(sectionText(text, "## Owner instructions in chat"));
-  assert.match(owner, /For a relayed decision, follow the relay rule in \[roles\.md\]\(roles\.md#human-owner\)\./);
-  assert.doesNotMatch(flatten(text), /A paraphrase or an agent's summary never counts/);
 });

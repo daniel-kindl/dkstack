@@ -4,8 +4,6 @@ Give each task to one role, so that each agent has one responsibility.
 
 ## Rules
 
-- Each role has the responsibility in the role map below. Reason: one owner per task prevents gaps
-  and duplicate work.
 - One agent can hold more than one role, but the author must not review, approve or merge their
   own pull request. Reason: a second agent finds errors that the author does not see.
 - The author writes the pull request body and lists the tests. The writer edits the text. Reason:
@@ -26,18 +24,15 @@ the time and the place where the owner wrote them, and the agent records that qu
 issue or pull request before relying on it in a later session. A paraphrase or an agent's
 summary never counts.
 
-## Role map
+## Role definitions
 
-Use the generic role names in all rules. Each team maps them to its own agents.
+- The implementer writes the code and the tests for an issue.
+- The reviewer reviews pull requests and merges them.
+- The architect writes ADRs and reviews the design.
+- The writer writes the docs and edits the pull request text.
+- The coordinator plans the work.
 
-| Role | Responsibility | This team |
-| --- | --- | --- |
-| Implementer | Writes code and tests from an issue | Forge |
-| Reviewer | Reviews pull requests and merges them | Sentinel |
-| Architect | Writes ADRs and reviews design | Atlas |
-| Writer | Writes docs and edits pull request text | Scribe |
-| Coordinator | Plans the work and escalates to the owner | Pip |
-| Human owner | Decides, approves and publishes | Daniel Kindl |
+One person or agent can hold several roles. See [Rules](#rules).
 
 ## Good example
 
