@@ -98,8 +98,9 @@ The `release` job starts only after Daniel approves the environment. Its steps:
 4. It pushes the branch `release/vX.Y.Z` with the commit `chore(release): prepare vX.Y.Z`. It opens
    a pull request to `main`. The app opens it, so the normal `pull_request` run of `validate`
    starts.
-5. It waits for this run of `validate`. If the run waits for approval, the job stops. It does not
-   approve the run. See [If validate waits for approval](#if-validate-waits-for-approval).
+5. It waits for this run of `validate`. If the run waits for approval, the job waits up to 15
+   minutes for Daniel to approve it. Only Daniel approves it. No agent and no job approves it. See
+   [If validate waits for approval](#if-validate-waits-for-approval).
 6. It makes sure that `main` did not move and that `protect-main` lets the pull request merge.
    Then it squash-merges the pull request, only at the validated commit. `protect-main` applies
    in full.
@@ -126,15 +127,34 @@ Make sure that it lists every skill.
 
 ### If validate waits for approval
 
-The error is "validate on pull request #N waits for approval". The job closed the pull request.
-Nothing was merged or tagged. The job never approves a workflow run, and no agent does.
+The `pull_request` run of `validate` on the release pull request can wait for approval. The
+setting "Approval for running fork pull request workflows from contributors" is "Require approval
+for first-time contributors". GitHub checks the user that opened the pull request, and the bot
+user of the app has no merged pull request in dkstack yet. GitHub says that a user who "has had
+any commit or pull request merged into the repository will not require approval". So after the
+first release with the app, the next runs should not wait.
 
-The setting is in Settings, Actions, General, "Approval for running fork pull request workflows
-from contributors". The GitHub documentation puts this setting under "Controlling changes from
-forks to workflows in public repositories". The release pull request does not come from a fork,
-but GitHub also checks the user that created the pull request. Daniel decides what to do. Then he
-starts `Release` again. Do not approve the run of the closed pull request: the job does not merge
-it.
+When the run waits, the job writes this message with the link to the run, in the log and in the
+run summary: "Daniel: approve this workflow run yourself; no agent approves it".
+
+1. Open the link. Make sure that it is the `validate` run of the release pull request
+   `chore(release): prepare vX.Y.Z`, on the branch `release/vX.Y.Z`.
+2. Open the pull request. In "Files changed", make sure that it changes only `CHANGELOG.md` and
+   `package.json`.
+3. Click "Awaiting approval", then "Approve workflows to run". This is the step in the GitHub
+   documentation "Approving workflow runs from forks".
+
+Only Daniel approves this run. No agent and no job approves it. The job only reads the run state.
+It waits up to 15 minutes. If `validate` passes, the job merges and finishes the release. If
+nobody approves the run in 15 minutes, or `validate` fails, the job closes the pull request and
+nothing is merged or tagged. Then start `Release` again. Do not approve the run of a closed pull
+request: the job does not merge it.
+
+Optional, not done: a one-time setting change in Settings, Actions, General. The only less strict
+option is "Require approval for first-time contributors who are new to GitHub". GitHub says that
+it applies to "users who are both new on GitHub and who have never had a commit or pull request
+merged into this repository". The bot user of the app is new on GitHub, so this change probably
+does not stop the wait. The approval of the first run is the recommended way.
 
 ### Finish a release
 

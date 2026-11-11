@@ -26,8 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - The release pull request gets the normal `pull_request` run of `validate`. If the run waits for
-  approval, the `release` job stops. It does not approve it. A failure before the merge closes the
-  release pull request and deletes its branch.
+  approval, the `release` job writes the run link to the run summary and waits up to 15 minutes.
+  Only Daniel approves the run. No agent and no job approves it. A failure before the merge closes
+  the release pull request and deletes its branch.
 - `versioning/index.md`: the release steps are now the `Release` workflow, with a one-time setup
   and the steps to finish a release by hand. `CONTRIBUTING.md` links them. ADR 0001 has an
   amendment.
