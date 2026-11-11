@@ -28,6 +28,7 @@ test("owner and agent merge authority stays distinct", async () => {
   assert.match(flatRoles, /the author must not review, approve or merge their own pull request/i);
   assert.match(flatRoles, /human owner may merge a pull request after independent review and all merge checks pass/i);
   assert.match(flatRoles, /includes a pull request that the owner authored/i);
+  assert.match(flatRoles, /The reviewer reviews pull requests and merges them\./);
   assert.doesNotMatch(flatRoles, /any merge an agent performs/i);
   assert.doesNotMatch(flatRoles, /agent may merge only with the owner's explicit authorization/i);
   assert.match(flatReview, /reviewer merges only the head that they reviewed, and only when the review passes, all required checks are green/i);
@@ -83,4 +84,18 @@ test("roles.md defines the human owner under its own heading", async () => {
       "in the issue or pull request before relying on it in a later session. A paraphrase or an " +
       "agent's summary never counts.",
   );
+});
+
+test("roles.md defines the generic roles and names no team", async () => {
+  const text = await readFile(join(repoRoot, "workflow/roles.md"), "utf8");
+  const section = /^## Role definitions\r?\n([\s\S]*?)(?=^## )/m.exec(text);
+  assert.ok(section, "roles.md must have a Role definitions section");
+  for (const role of ["implementer", "reviewer", "architect", "writer", "coordinator"]) {
+    assert.match(section[1], new RegExp(`^- The ${role} `, "m"), `missing role ${role}`);
+  }
+  assert.match(section[1], /See \[Rules\]\(#rules\)\./);
+  for (const name of [/Forge/, /Sentinel/, /Atlas/, /Scribe/, /\bPip\b/, /Daniel/, /This team/i]) {
+    assert.doesNotMatch(text, name);
+  }
+  assert.doesNotMatch(text, /^## Role map$/m);
 });

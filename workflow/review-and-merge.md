@@ -43,7 +43,8 @@ linked issue. It must identify the pull request, the full reviewed head commit, 
 the verdict and the owner's explicit confirmation that this independent review occurred.
 Verify the owner's authorization under [owner instructions in chat](safety.md#owner-instructions-in-chat).
 Verify that the reviewer was independent of the author and the passing verdict covered the
-head that was merged.
+head that was merged. If a fact is missing, unverifiable or conflicting, do not treat the pull
+request as reviewed.
 
 If the owner cannot confirm that review occurred, obtain a genuine independent review of the
 merged change and record its verdict and reviewed head on the pull request.
