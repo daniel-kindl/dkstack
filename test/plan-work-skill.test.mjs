@@ -24,6 +24,8 @@ test("the plan-work skill uses subagents with a complete brief", async () => {
   assert.match(text, /word limit/);
   assert.match(text, /"Report to me only\. Do not change the plan, commit, push, post, approve or merge\."/);
   assert.match(text, /Check each difference that a report gives against its source/);
+  assert.match(text, /In step 7, compare the plan with the issue/);
+  assert.match(text, /The full text of steps 5 to 7\./);
 });
 
 test("the plan-work skill falls back to steps in order", async () => {
@@ -61,6 +63,7 @@ test("the plan-work steps keep the goal, small increments, tests first and the c
   assert.match(steps, /put the tests before the behavior changes/);
   assert.match(steps, /Map each acceptance criterion to a test or a check in the plan\./);
   assert.match(steps, /6\. After each commit, if its result shows a new fact, change the later items\./);
+  assert.match(steps, /7\. Before you report, compare the plan with the issue, the commits and the check results\./);
 });
 
 test("the plan goes where the task asks", async () => {

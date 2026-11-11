@@ -17,6 +17,7 @@ Put the plan where the task asks: in the issue, in the pull request or in the ch
 4. In each increment, put the tests before the behavior changes. See [tdd/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md).
 5. Map each acceptance criterion to a test or a check in the plan. Make sure that no item adds scope that nobody asked for.
 6. After each commit, if its result shows a new fact, change the later items.
+7. Before you report, compare the plan with the issue, the commits and the check results.
 
 ## Plan format
 
@@ -47,11 +48,11 @@ Each increment must describe a change that has a purpose and a result that you c
 
 ## Subagents
 
-If you can start subagents, use them for the checks that do not depend on each other. In step 6, compare the plan with the issue, with the commits and with the check results at the same time, each in its own subagent. Give each subagent a brief that is complete without your context:
+If you can start subagents, use them for the checks that do not depend on each other. In step 7, compare the plan with the issue, with the commits and with the check results at the same time, each in its own subagent. Give each subagent a brief that is complete without your context:
 
 - The plan text.
 - The source for its comparison: the issue text, the list of commits, or the check results.
-- The full text of steps 5 and 6.
+- The full text of steps 5 to 7.
 - What to report, and a word limit, for example 300 words.
 - This line: "Report to me only. Do not change the plan, commit, push, post, approve or merge."
 
