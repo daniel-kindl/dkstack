@@ -11,6 +11,8 @@ import {
   releaseChangelog,
   releaseNotes,
   setPackageVersion,
+  planSummary,
+  checkEnvironment,
 } from "../scripts/release.mjs";
 import { makeTree, removeTree } from "./helpers.mjs";
 
@@ -273,6 +275,119 @@ test("notes prints the CHANGELOG section of a version", async () => {
     const r = run(root, "notes", "1.3.0");
     assert.equal(r.status, 0, r.stderr);
     assert.equal(r.stdout, "### Removed\n\n- Old pages.\n");
+  } finally {
+    await removeTree(root);
+  }
+});
+
+test("the plan summary shows the version, the bump and each counted commit", () => {
+  const text = planSummary({
+    version: "1.4.0", previous: "1.3.0", bump: "auto",
+    commits: [c("feat: two (#136)"), c("fix: one (#135)"), c("chore(release): prepare v1.3.0 (#134)")],
+  });
+  assert.equal(text, [
+    "## Release v1.4.0",
+    "",
+    "- Previous release: v1.3.0",
+    "- Bump input: auto",
+    "- Approve the `release` environment only if v1.4.0 is the release you want.",
+    "",
+    "### Commits since v1.3.0",
+    "",
+    "- feat: two (#136)",
+    "- fix: one (#135)",
+    "",
+  ].join("\n"));
+});
+
+// The shape of GET /repos/{owner}/{repo}/environments/{name}, trimmed.
+const ENV = {
+  name: "release",
+  deployment_branch_policy: { protected_branches: false, custom_branch_policies: true },
+  protection_rules: [
+    { type: "required_reviewers", prevent_self_review: false,
+      reviewers: [{ type: "User", reviewer: { login: "daniel-kindl", id: 74905817 } }] },
+    { type: "branch_policy" },
+  ],
+};
+const POLICIES = { total_count: 1, branch_policies: [{ name: "main", type: "branch" }] };
+
+test("the release environment passes with Daniel as reviewer and main as the only branch", () => {
+  assert.deepEqual(checkEnvironment(ENV, POLICIES, "daniel-kindl"), []);
+});
+
+test("the release environment fails with no reviewer, another reviewer or self-review blocked", () => {
+  const rules = (r) => ({ ...ENV, protection_rules: r });
+  assert.deepEqual(checkEnvironment(rules([{ type: "branch_policy" }]), POLICIES, "daniel-kindl"),
+    ['the release environment must have "daniel-kindl" as a required reviewer']);
+  assert.deepEqual(checkEnvironment(rules([{ ...ENV.protection_rules[0], reviewers: [{ type: "User", reviewer: { login: "someone" } }] }]), POLICIES, "daniel-kindl"),
+    ['the release environment must have "daniel-kindl" as a required reviewer']);
+  assert.deepEqual(checkEnvironment(rules([{ ...ENV.protection_rules[0], prevent_self_review: true }]), POLICIES, "daniel-kindl"),
+    ['turn off "Prevent self-review" in the release environment, or daniel-kindl cannot approve a run that he started']);
+});
+
+test("the release environment fails unless main is the only deployment branch", () => {
+  const open = { ...ENV, deployment_branch_policy: null };
+  assert.deepEqual(checkEnvironment(open, POLICIES, "daniel-kindl"),
+    ["the release environment must allow only the branch main (Deployment branches: Selected branches)"]);
+  const prot = { ...ENV, deployment_branch_policy: { protected_branches: true, custom_branch_policies: false } };
+  assert.deepEqual(checkEnvironment(prot, POLICIES, "daniel-kindl"),
+    ["the release environment must allow only the branch main (Deployment branches: Selected branches)"]);
+  for (const policies of [
+    { branch_policies: [] },
+    { branch_policies: [{ name: "main", type: "branch" }, { name: "release/*", type: "branch" }] },
+    { branch_policies: [{ name: "*", type: "branch" }] },
+    { branch_policies: [{ name: "main", type: "tag" }] },
+  ]) {
+    assert.deepEqual(checkEnvironment(ENV, policies, "daniel-kindl"),
+      ["the release environment must allow only the branch main (Deployment branches: Selected branches)"],
+      JSON.stringify(policies));
+  }
+});
+
+test("plan prints the version, writes the summary and changes no file", async () => {
+  const root = await repo();
+  try {
+    await commit(root, "feat: two (#136)");
+    const summary = join(root, "..", `summary-${Math.random()}.md`);
+    const r = spawnSync(process.execPath, [script, "plan", "--bump", "auto"],
+      { cwd: root, encoding: "utf8", env: { ...process.env, GITHUB_OUTPUT: "", GITHUB_STEP_SUMMARY: summary } });
+    assert.equal(r.status, 0, r.stderr);
+    assert.equal(r.stdout, "version=1.4.0\nprevious=1.3.0\n");
+    assert.match(await readFile(summary, "utf8"), /^## Release v1\.4\.0\n[\s\S]*- feat: two \(#136\)\n/);
+    assert.equal(git(root, "status", "--porcelain"), "");
+  } finally {
+    await removeTree(root);
+  }
+});
+
+test("prepare fails and changes no file when the version is not the planned version", async () => {
+  const root = await repo();
+  try {
+    await commit(root, "feat: two (#136)");
+    let r = run(root, "prepare", "--bump", "auto", "--date", "2026-11-12", "--expect", "1.3.1");
+    assert.equal(r.status, 1);
+    assert.match(r.stderr, /the version is 1\.4\.0, but the plan approved 1\.3\.1/);
+    assert.equal(git(root, "status", "--porcelain"), "");
+    r = run(root, "prepare", "--bump", "auto", "--date", "2026-11-12", "--expect", "1.4.0");
+    assert.equal(r.status, 0, r.stderr);
+  } finally {
+    await removeTree(root);
+  }
+});
+
+test("the environment command reads the two API files and exits 1 with each error", async () => {
+  const root = await makeTree({
+    "env.json": JSON.stringify({ ...ENV, protection_rules: [] }),
+    "policies.json": JSON.stringify(POLICIES),
+    "good.json": JSON.stringify(ENV),
+  });
+  try {
+    let r = run(root, "environment", "env.json", "policies.json", "--reviewer", "daniel-kindl");
+    assert.equal(r.status, 1);
+    assert.match(r.stderr, /must have "daniel-kindl" as a required reviewer/);
+    r = run(root, "environment", "good.json", "policies.json", "--reviewer", "daniel-kindl");
+    assert.equal(r.status, 0, r.stderr);
   } finally {
     await removeTree(root);
   }

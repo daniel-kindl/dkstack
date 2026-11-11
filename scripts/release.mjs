@@ -1,10 +1,17 @@
 #!/usr/bin/env node
 // Prepare a dkstack v1 release. The Release workflow runs this script.
 // Usage, in the root of a git checkout:
-//   node scripts/release.mjs prepare --bump auto|patch|minor --date YYYY-MM-DD
+//   node scripts/release.mjs plan --bump auto|patch|minor
 //     Find the latest v1.x.y tag and the commits since it. Work out the next
-//     version, write it to package.json and move the [Unreleased] notes in
+//     version. Print "version=" and "previous=". Write the version and the
+//     commits to the run summary. Change no file.
+//   node scripts/release.mjs prepare --bump auto|patch|minor --date YYYY-MM-DD [--expect X.Y.Z]
+//     Work out the version as plan does. Stop if it is not the --expect
+//     version. Write it to package.json and move the [Unreleased] notes in
 //     CHANGELOG.md to a new version section. Print "version=" and "previous=".
+//   node scripts/release.mjs environment <environment.json> <policies.json> --reviewer <login>
+//     Check the API data of the release environment: <login> is a required
+//     reviewer, self-review is allowed and main is the only deployment branch.
 //   node scripts/release.mjs guard --v1 <ref>
 //     Fail if the last release is not complete: the package.json version has
 //     no tag, or <ref> does not contain the latest tag.
@@ -136,6 +143,44 @@ export function setPackageVersion(text, version) {
   return text.replace(pattern, `$1"${version}"`);
 }
 
+// Return the Markdown for the run summary of the plan job.
+export function planSummary({ version, previous, bump, commits }) {
+  return [
+    `## Release v${version}`,
+    "",
+    `- Previous release: v${previous}`,
+    `- Bump input: ${bump}`,
+    `- Approve the \`release\` environment only if v${version} is the release you want.`,
+    "",
+    `### Commits since v${previous}`,
+    "",
+    ...counted(commits).map((commit) => `- ${commit.subject}`),
+    "",
+  ].join("\n");
+}
+
+// Return a list of problems with the release environment, or an empty list.
+// environment: GET /repos/{owner}/{repo}/environments/release
+// policies: GET /repos/{owner}/{repo}/environments/release/deployment-branch-policies
+export function checkEnvironment(environment, policies, reviewer) {
+  const errors = [];
+  const rule = (environment.protection_rules ?? []).find((r) => r.type === "required_reviewers");
+  const named = (rule?.reviewers ?? []).some((r) => r.type === "User" && r.reviewer?.login === reviewer);
+  if (!named) {
+    errors.push(`the release environment must have "${reviewer}" as a required reviewer`);
+  } else if (rule.prevent_self_review === true) {
+    errors.push(`turn off "Prevent self-review" in the release environment, or ${reviewer} cannot approve a run that he started`);
+  }
+  const branch = environment.deployment_branch_policy;
+  const list = policies?.branch_policies ?? [];
+  const onlyMain = branch?.custom_branch_policies === true && branch?.protected_branches === false &&
+    list.length === 1 && list[0].name === "main" && (list[0].type ?? "branch") === "branch";
+  if (!onlyMain) {
+    errors.push("the release environment must allow only the branch main (Deployment branches: Selected branches)");
+  }
+  return errors;
+}
+
 function git(...args) {
   const r = spawnSync("git", args, { encoding: "utf8" });
   if (r.status !== 0) throw new Error(`git ${args.join(" ")} failed: ${r.stderr.trim()}`);
@@ -162,21 +207,48 @@ function findLatestTag() {
   return tag;
 }
 
-async function prepare(args) {
+function work(args) {
   const bump = option(args, "--bump");
-  const date = option(args, "--date");
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error(`the date must be YYYY-MM-DD, not "${date}"`);
   const tag = findLatestTag();
   const previous = tag.slice(1);
   const commits = commitsSince(tag);
-  const version = nextVersion(previous, commits, bump);
+  return { bump, previous, commits, version: nextVersion(previous, commits, bump) };
+}
+
+async function output(version, previous) {
+  const out = `version=${version}\nprevious=${previous}\n`;
+  process.stdout.write(out);
+  if (process.env.GITHUB_OUTPUT) await appendFile(process.env.GITHUB_OUTPUT, out);
+}
+
+async function plan(args) {
+  const result = work(args);
+  await output(result.version, result.previous);
+  if (process.env.GITHUB_STEP_SUMMARY) await appendFile(process.env.GITHUB_STEP_SUMMARY, planSummary(result));
+}
+
+async function prepare(args) {
+  const date = option(args, "--date");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error(`the date must be YYYY-MM-DD, not "${date}"`);
+  const { version, previous, commits } = work(args);
+  if (args.includes("--expect")) {
+    const expected = option(args, "--expect");
+    if (expected !== version) throw new Error(`the version is ${version}, but the plan approved ${expected}`);
+  }
   const changelog = releaseChangelog(await readFile("CHANGELOG.md", "utf8"), { version, previous, date, commits });
   const pkg = setPackageVersion(await readFile("package.json", "utf8"), version);
   await writeFile("CHANGELOG.md", changelog);
   await writeFile("package.json", pkg);
-  const out = `version=${version}\nprevious=${previous}\n`;
-  process.stdout.write(out);
-  if (process.env.GITHUB_OUTPUT) await appendFile(process.env.GITHUB_OUTPUT, out);
+  await output(version, previous);
+}
+
+async function environment(args) {
+  const [envFile, policiesFile] = args;
+  if (!envFile || !policiesFile) throw new Error("give the environment file and the policies file");
+  const errors = checkEnvironment(JSON.parse(await readFile(envFile, "utf8")),
+    JSON.parse(await readFile(policiesFile, "utf8")), option(args, "--reviewer"));
+  if (errors.length > 0) throw new Error(errors.join("; "));
+  console.log("The release environment has the required reviewer and allows only main.");
 }
 
 async function guard(args) {
@@ -196,14 +268,16 @@ async function guard(args) {
 
 async function main(argv) {
   const [command, ...args] = argv;
+  if (command === "plan") return plan(args);
   if (command === "prepare") return prepare(args);
+  if (command === "environment") return environment(args);
   if (command === "guard") return guard(args);
   if (command === "notes") {
     if (!args[0]) throw new Error("give the version, as in: notes 1.4.0");
     process.stdout.write(releaseNotes(await readFile("CHANGELOG.md", "utf8"), args[0]));
     return;
   }
-  throw new Error("use one of: prepare, guard, notes");
+  throw new Error("use one of: plan, prepare, guard, environment, notes");
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
