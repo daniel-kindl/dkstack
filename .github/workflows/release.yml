@@ -90,7 +90,10 @@ jobs:
     # Daniel approves this environment after he reads the planned version.
     environment: release
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # More than all the waits together: find validate (3 minutes), wait for
+    # approval (15 minutes), watch validate (15 minutes) and the merge state
+    # (1 minute), with time for the other steps.
+    timeout-minutes: 45
     # GITHUB_TOKEN only reads. The release app token does all the writes.
     permissions:
       actions: read # find and watch the validate run of the release pull request
@@ -199,8 +202,10 @@ jobs:
           echo "pr=${URL##*/}" >> "$GITHUB_OUTPUT"
 
       # protect-main requires the check "validate" of the pull_request run.
-      # The job does not approve a run that waits for approval. It stops and
-      # the cleanup step closes the pull request.
+      # The run can wait for approval, because the app is a first-time
+      # contributor. Only Daniel approves it. No agent and no job approves
+      # it. The job waits for him, reads the run state only, and stops after
+      # 15 minutes. Then the cleanup step closes the pull request.
       - name: Wait for validate on the release pull request
         env:
           GH_TOKEN: ${{ github.token }}
@@ -223,10 +228,30 @@ jobs:
           RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$RUN_ID"
           echo "validate: $RUN_URL"
           if [ "$RUN_STATUS" = "action_required" ] || [ "$RUN_CONCLUSION" = "action_required" ]; then
-            echo "::error::validate on pull request #$PR waits for approval: $RUN_URL. The job does not approve it. Nothing was merged. See \"If validate waits for approval\" in versioning/index.md."
-            exit 1
+            MESSAGE="Daniel: approve this workflow run yourself; no agent approves it: $RUN_URL"
+            echo "::warning::validate on pull request #$PR waits for approval. $MESSAGE"
+            {
+              echo "validate on pull request #$PR waits for approval."
+              echo
+              echo "$MESSAGE"
+              echo
+              echo "The job waits up to 15 minutes. It merges nothing before validate passes."
+            } >> "$GITHUB_STEP_SUMMARY"
+            for _ in $(seq 1 90); do
+              sleep 10
+              RUN=$(gh run list --workflow validate.yml --branch "$BRANCH" --event pull_request --commit "$HEAD_SHA" \
+                --limit 1 --json databaseId,status,conclusion --jq '.[0] // empty | "\(.databaseId) \(.status) \(.conclusion)"')
+              read -r RUN_ID RUN_STATUS RUN_CONCLUSION <<< "$RUN"
+              if [ "$RUN_STATUS" != "action_required" ] && [ "$RUN_CONCLUSION" != "action_required" ]; then break; fi
+            done
+            RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$RUN_ID"
+            if [ "$RUN_STATUS" = "action_required" ] || [ "$RUN_CONCLUSION" = "action_required" ]; then
+              echo "::error::validate on pull request #$PR was not approved in 15 minutes: $RUN_URL. Nothing was merged."
+              exit 1
+            fi
+            echo "validate was approved: $RUN_URL"
           fi
-          if ! timeout 1200 gh run watch "$RUN_ID" --exit-status --interval 15 > /dev/null; then
+          if ! timeout 900 gh run watch "$RUN_ID" --exit-status --interval 15 > /dev/null; then
             echo "::error::validate did not pass on pull request #$PR: $RUN_URL. Nothing was merged."
             exit 1
           fi

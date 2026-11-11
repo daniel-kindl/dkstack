@@ -211,19 +211,68 @@ test("only the git and gh steps that write get the app token, and no step prints
   }
 });
 
-test("the job waits for the pull_request run of validate and stops if it waits for approval", () => {
-  const wait = writeSteps.find((s) => s.commands.some((l) => /gh run list --workflow validate\.yml/.test(l)));
-  assert.ok(wait, "a step that finds the validate run");
-  assert.match(wait.env, /GH_TOKEN: \$\{\{ github\.token \}\}/);
-  const lines = wait.commands;
+const waitStep = writeSteps.find((s) => s.commands.some((l) => /gh run list --workflow validate\.yml/.test(l)));
+const APPROVE_TEXT = "Daniel: approve this workflow run yourself; no agent approves it";
+
+test("the job finds the pull_request run of validate and watches it with a time limit", () => {
+  assert.ok(waitStep, "a step that finds the validate run");
+  assert.match(waitStep.env, /GH_TOKEN: \$\{\{ github\.token \}\}/);
+  const lines = waitStep.commands;
   const find = lines.findIndex((l) => /--event pull_request --commit "\$HEAD_SHA"/.test(l));
-  const approval = lines.findIndex((l) => /"\$RUN_STATUS" = "action_required" \] \|\| \[ "\$RUN_CONCLUSION" = "action_required" \]/.test(l));
-  const stop = lines.findIndex((l, i) => i > approval && /::error::.*waits for approval.*The job does not approve it/.test(l));
   const watch = lines.findIndex((l) => /^if ! timeout \d+ gh run watch "\$RUN_ID" --exit-status/.test(l));
-  assert.ok(find !== -1 && find < approval, "find the run, then check for approval");
-  assert.ok(stop !== -1 && lines[stop + 1] === "exit 1" && stop < watch, "stop before the watch");
-  assert.ok(Number(/timeout (\d+)/.exec(lines[watch])[1]) <= 1200, "the watch has a time limit");
+  assert.ok(find !== -1 && find < watch, "find the run, then watch it");
+  assert.ok(Number(/timeout (\d+)/.exec(lines[watch])[1]) <= 900, "the watch has a time limit");
   assert.doesNotMatch(release, /gh workflow run|check-runs|checks: write|actions: write/);
+});
+
+// Sentinel's M2 on #143: the first run of validate on the app's pull request
+// can wait for approval. Only Daniel approves it. The job waits for him.
+test("if validate waits for approval, the job tells Daniel, waits about 15 minutes, then stops", () => {
+  const lines = waitStep.commands;
+  const at = (p, from = 0) => { const i = lines.findIndex((l, n) => n >= from && p.test(l)); assert.notEqual(i, -1, `missing ${p}`); return i; };
+  const approval = at(/^if \[ "\$RUN_STATUS" = "action_required" \] \|\| \[ "\$RUN_CONCLUSION" = "action_required" \]; then$/);
+  const message = at(new RegExp(`MESSAGE="${APPROVE_TEXT}: \\$RUN_URL"`), approval);
+  const log = at(/^echo "::warning::.*\$MESSAGE"$/, message);
+  const summary = at(/^\} >> "\$GITHUB_STEP_SUMMARY"$/, log);
+  assert.ok(lines.slice(log, summary).some((l) => l === 'echo "$MESSAGE"'), "the message is in the summary");
+  const loop = at(/^for _ in \$\(seq 1 (\d+)\); do$/, summary);
+  const sleep = at(/^sleep (\d+)$/, loop);
+  const poll = at(/gh run list --workflow validate\.yml --branch "\$BRANCH" --event pull_request --commit "\$HEAD_SHA"/, sleep);
+  const read = at(/^read -r RUN_ID RUN_STATUS RUN_CONCLUSION <<< "\$RUN"$/, poll);
+  const ready = at(/^if \[ "\$RUN_STATUS" != "action_required" \] && \[ "\$RUN_CONCLUSION" != "action_required" \]; then break; fi$/, read);
+  const done = at(/^done$/, ready);
+  // The run can get a new ID when Daniel approves it. Use the new URL.
+  const url = at(/^RUN_URL="\$GITHUB_SERVER_URL\/\$GITHUB_REPOSITORY\/actions\/runs\/\$RUN_ID"$/, done);
+  const still = at(/^if \[ "\$RUN_STATUS" = "action_required" \] \|\| \[ "\$RUN_CONCLUSION" = "action_required" \]; then$/, url);
+  const stop = at(/^echo "::error::validate on pull request #\$PR was not approved in 15 minutes: \$RUN_URL\. Nothing was merged\."$/, still);
+  assert.equal(lines[stop + 1], "exit 1");
+  const watch = at(/^if ! timeout \d+ gh run watch "\$RUN_ID"/);
+  assert.ok(stop < watch, "stop before the watch");
+  const wait = Number(/seq 1 (\d+)/.exec(lines[loop])[1]) * Number(/sleep (\d+)/.exec(lines[sleep])[1]);
+  assert.ok(wait >= 840 && wait <= 960, `wait about 15 minutes, not ${wait} s`);
+  // No gh command approves a run, a review or a deployment.
+  for (const line of commands(release).filter((l) => /\bgh (api|run|pr|workflow)\b/.test(l))) {
+    assert.doesNotMatch(line, /approve|\breview\b|pending_deployments|rerun|-X POST|--method/, line);
+  }
+});
+
+test("the job time limit is longer than all the waits together", () => {
+  const minutes = Number(/^ {4}timeout-minutes: (\d+)$/m.exec(write)[1]);
+  const loops = [];
+  for (const s of writeSteps) {
+    const ls = s.commands;
+    ls.forEach((l, i) => {
+      const loop = /^for _ in \$\(seq 1 (\d+)\); do$/.exec(l);
+      if (!loop) return;
+      const sleep = ls.slice(i, ls.indexOf("done", i)).map((x) => /^sleep (\d+)$/.exec(x)).find(Boolean);
+      loops.push(Number(loop[1]) * Number(sleep[1]));
+    });
+  }
+  const watch = Number(/timeout (\d+) gh run watch/.exec(waitStep.commands.join("\n"))[1]);
+  assert.equal(loops.length, 3, "the find, approval and merge state loops");
+  const waits = loops.reduce((a, b) => a + b, 0) + watch;
+  // 5 minutes for checkout, npm run check and the git and gh steps.
+  assert.ok(minutes * 60 >= waits + 300, `timeout-minutes ${minutes} is less than ${waits + 300} s`);
 });
 
 test("the merge waits a short time and prints why GitHub blocks the pull request", () => {
