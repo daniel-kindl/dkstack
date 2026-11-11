@@ -6,14 +6,8 @@ These rules prevent real damage in a shared repository. Read them before you cha
 
 ## Sections
 
-- [work.md](work.md): The work contract. Lifecycle, readiness, sources and session isolation.
-- [lifecycle.md](lifecycle.md): The route from an external request to a reviewed merge.
-- [claims.md](claims.md): Agent claims, handoff and owner recovery.
-- [preflight.md](preflight.md): Tracker capabilities, the label catalog and the dry-run preflight.
-- [roles.md](roles.md): Who does what. Generic role names, mapped to one team.
-- [review-and-merge.md](review-and-merge.md): The issue to merge flow, review, merge and
-  escalation.
-- [feature-plans.md](feature-plans.md): The plan for a feature, and how agents hand it over.
+- [roles.md](roles.md): The generic roles and the human owner.
+- [review-and-merge.md](review-and-merge.md): The issue to merge flow, review and merge.
 - [safety.md](safety.md): Actions that no agent does, and what counts as approval.
 
 ## Flow

@@ -19,11 +19,9 @@ test("the Blocking row matches the release rule", async () => {
 test("owner and agent merge authority stays distinct", async () => {
   const roles = await readFile(join(repoRoot, "workflow/roles.md"), "utf8");
   const review = await readFile(join(repoRoot, "workflow/review-and-merge.md"), "utf8");
-  const work = await readFile(join(repoRoot, "workflow/work.md"), "utf8");
   const skill = await readFile(join(repoRoot, "skills/code-review/SKILL.md"), "utf8");
   const flatReview = review.replace(/\s+/g, " ");
   const flatRoles = roles.replace(/\s+/g, " ");
-  const flatWork = work.replace(/\s+/g, " ");
   const flatSkill = skill.replace(/\s+/g, " ");
   assert.match(flatRoles, /the author must not review, approve or merge their own pull request/i);
   assert.match(flatRoles, /human owner may merge a pull request after independent review and all merge checks pass/i);
@@ -35,9 +33,6 @@ test("owner and agent merge authority stays distinct", async () => {
   assert.match(flatReview, /The author never merges\./);
   assert.match(flatReview, /human owner\]\(roles\.md#human-owner\) may also merge, including a pull request that they authored, after the same checks pass/i);
   assert.doesNotMatch(flatReview, /agent may merge only with the owner's explicit authorization/i);
-  assert.match(flatWork, /author does not review, approve or merge their own change\. The independent reviewer merges\./);
-  assert.match(flatWork, /The author does not merge that pull request/);
-  assert.doesNotMatch(flatWork, /agent may merge only with the owner's explicit authorization/i);
   assert.match(flatSkill, /author never gives the verdict on, approves or merges their own pull request/i);
   assert.doesNotMatch(flatSkill, /agent may merge only with the owner's explicit authorization/i);
 });
@@ -98,4 +93,28 @@ test("roles.md defines the generic roles and names no team", async () => {
     assert.doesNotMatch(text, name);
   }
   assert.doesNotMatch(text, /^## Role map$/m);
+});
+
+test("missing review evidence never counts as a review", async () => {
+  const review = (await readFile(join(repoRoot, "workflow/review-and-merge.md"), "utf8")).replace(/\s+/g, " ");
+  assert.match(review, /If a fact is missing, unverifiable or conflicting, do not treat the pull request as reviewed\./);
+  assert.match(review, /Never backdate or fabricate review evidence\./);
+});
+
+test("review and release skills keep the merge and publish gates", async () => {
+  const review = (await readFile(join(repoRoot, "skills/code-review/SKILL.md"), "utf8")).replace(/\s+/g, " ");
+  const release = (await readFile(join(repoRoot, "skills/release/SKILL.md"), "utf8")).replace(/\s+/g, " ");
+  assert.match(review, /author never gives the verdict on, approves or merges their own pull request/i);
+  assert.match(review, /human owner\]\([^)]*roles\.md#human-owner\) may merge a pull request that they authored/i);
+  assert.match(review, /reviewer merges only the head that they reviewed/i);
+  assert.doesNotMatch(review, /agent may merge only with the owner's explicit authorization/i);
+  assert.match(review, /required checks on that head must be green/i);
+  assert.match(release, /OK names the exact version/);
+  assert.match(release, /never covers a production deploy/);
+});
+
+test("review does not require a feature plan", async () => {
+  const review = (await readFile(join(repoRoot, "workflow/review-and-merge.md"), "utf8")).replace(/\s+/g, " ");
+  assert.match(review, /The review does not require a feature plan\./);
+  assert.doesNotMatch(review, /feature-plans\.md/);
 });

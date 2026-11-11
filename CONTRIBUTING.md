@@ -14,5 +14,5 @@ Many repositories read these rules. One unreviewed change reaches all of them.
 
 ## Change flow
 
-Follow the flow in [workflow/review-and-merge.md](workflow/review-and-merge.md). For dkstack, wait
-until the owner accepts the issue before you start the work.
+Follow the flow in [workflow/review-and-merge.md](workflow/review-and-merge.md). For dkstack,
+start the work only after the owner approves the change.
