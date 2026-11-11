@@ -4,6 +4,23 @@ Use test-driven development (TDD) for changes to observable behavior. A test sta
 
 This page is the authoritative testing standard. [TDD loop](../skills/tdd-loop/SKILL.md) tells agents how to execute it. [Testing](../coding/testing.md) points here rather than defining another set of rules. Follow [quality gates](../coding/quality-gates.md) when a check fails.
 
+## Guidelines
+
+Read only the pages relevant to the task. P0 is foundational; P1 covers specialized techniques. These priorities describe reading order, not an exemption from relevant rules.
+
+| Priority | Guide | Use |
+| --- | --- | --- |
+| P0 | [Red, green, refactor](red-green-refactor.md) | Test-first cycle and evidence |
+| P0 | [Test design](test-design.md) | Cases, assertions, naming and AAA |
+| P0 | [Test isolation](test-isolation.md) | Doubles, controlled dependencies and fixtures |
+| P0 | [Test levels](test-levels.md) | Unit, integration, contract and end-to-end |
+| P0 | [Regression testing](regression-testing.md) | Reproducing and preventing bugs |
+| P0 | [Deterministic tests](deterministic-tests.md) | Time, randomness, concurrency and flakes |
+| P1 | [Coverage](coverage.md) | Line, branch and mutation coverage |
+| P1 | [Property testing](property-testing.md) | Parameterized, generated and fuzz inputs |
+| P1 | [Performance testing](performance-testing.md) | Benchmarks and regression measurements |
+| P1 | [Legacy code](legacy-code.md) | Characterization and safe introduction of TDD |
+
 ## Core principles
 
 - Specify behavior with an executable test before adding or changing that behavior.
