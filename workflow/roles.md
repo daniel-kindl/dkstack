@@ -24,6 +24,16 @@ the time and the place where the owner wrote them, and the agent records that qu
 issue or pull request before relying on it in a later session. A paraphrase or an agent's
 summary never counts.
 
+## Role definitions
+
+- The implementer writes the code and the tests for an issue.
+- The reviewer reviews pull requests and merges them.
+- The architect writes ADRs and reviews the design.
+- The writer writes the docs and edits the pull request text.
+- The coordinator plans the work.
+
+One person or agent can hold several roles. See [Rules](#rules).
+
 ## Good example
 
 The implementer opens a pull request. The reviewer reviews it and merges it.
