@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- The `Release` workflow. Daniel starts it on `main`. It prepares the release in a pull request,
+  merges the pull request when `validate` passes, creates the tag and the GitHub release, and
+  fast-forwards `v1`. A breaking change stops it. It uses only `GITHUB_TOKEN` and never
+  force-pushes (#135).
+- `scripts/release.mjs`: works out the next version, moves the `[Unreleased]` notes to the new
+  section, sets the `package.json` version and prints the release notes.
+
+### Changed
+
+- The `validate` workflow can also start by `workflow_dispatch`. The `Release` workflow uses this
+  to get the required `validate` check on its pull request. The job name stays `validate`.
+- `versioning/index.md`: the release steps are now the `Release` workflow, with a one-time setup
+  and the steps to finish a release by hand. `CONTRIBUTING.md` links them. ADR 0001 has an
+  amendment.
+
 ## [1.3.0] - 2026-11-11
 
 This minor release removes pages, skills and scripts by the owner's decision on 2026-11-11
