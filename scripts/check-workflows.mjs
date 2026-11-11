@@ -8,7 +8,8 @@
 // - The workflow does not use secrets. There is one exception: the job with
 //   "environment: release" in release.yml may pass secrets.RELEASE_APP_ID as
 //   "app-id" and secrets.RELEASE_APP_PRIVATE_KEY as "private-key" to
-//   actions/create-github-app-token. Daniel decided this on 2026-11-11 (#135).
+//   actions/create-github-app-token, in the "with:" block of that step only,
+//   one key per line. Daniel decided this on 2026-11-11 (#135).
 // The check reads lines. It does not parse YAML.
 
 import { readdir, readFile } from "node:fs/promises";
@@ -47,16 +48,24 @@ export async function checkWorkflows(root) {
     }
     let inTopPermissions = false;
     let releaseJob = false;
-    let lastUses = "";
+    // The state of the current step: its action and its "with:" block.
+    let stepUses = "";
+    let withIndent = -1;
     text.split(/\r?\n/).forEach((line, i) => {
       const where = `${rel}:${i + 1}`;
       if (/^\S/.test(line) && !line.startsWith("#")) {
         inTopPermissions = /^permissions\s*:/.test(line);
       }
+      const indent = line.search(/\S/);
       if (/^  \S/.test(line)) {
         releaseJob = false;
-        lastUses = "";
+        stepUses = "";
       }
+      // A step starts at "- ". A line at the indent of "with:" or less ends
+      // the "with:" block.
+      if (/^\s+- /.test(line)) stepUses = "";
+      if (withIndent !== -1 && indent !== -1 && indent <= withIndent) withIndent = -1;
+      if (/^\s+with:\s*$/.test(line)) withIndent = indent;
       if (/^    environment:\s*release\s*$/.test(line)) releaseJob = true;
       if (WRITE_ALL.test(line)) {
         errors.push(`${where}: do not use "permissions: write-all"`);
@@ -64,7 +73,7 @@ export async function checkWorkflows(root) {
         errors.push(`${where}: do not give "write" at the top level; give it to one job`);
       }
       const uses = USES.exec(line);
-      if (uses) lastUses = uses[2];
+      if (uses) stepUses = uses[2];
       if (uses && !uses[2].startsWith("./")) {
         if (!PINNED.test(uses[2])) {
           errors.push(`${where}: pin "${uses[2]}" to a full 40-character commit SHA`);
@@ -75,7 +84,9 @@ export async function checkWorkflows(root) {
       const appSecret =
         name === "release.yml" &&
         releaseJob &&
-        lastUses.startsWith(APP_TOKEN_ACTION) &&
+        stepUses.startsWith(APP_TOKEN_ACTION) &&
+        withIndent !== -1 &&
+        indent === withIndent + 2 &&
         APP_SECRET.some((re) => re.test(line));
       if (SECRETS.test(line) && !appSecret) errors.push(`${where}: do not use secrets in a workflow`);
     });
