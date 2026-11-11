@@ -16,3 +16,9 @@ Many repositories read these rules. One unreviewed change reaches all of them.
 
 Follow the flow in [workflow/review-and-merge.md](workflow/review-and-merge.md). For dkstack,
 start the work only after the owner approves the change.
+
+## Release
+
+Only the owner releases dkstack. He starts the `Release` workflow on `main`. The workflow does
+the rest: the release pull request, `validate`, the merge, the tag, the GitHub release and the
+fast-forward of `v1`. See [Release dkstack](versioning/index.md#release-dkstack).
