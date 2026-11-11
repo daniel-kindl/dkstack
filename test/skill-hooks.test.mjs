@@ -44,3 +44,14 @@ test("code-review has no plan paragraph and no escalation", async () => {
   assert.doesNotMatch(text, /A feature plan is optional/);
   assert.doesNotMatch(text, /escalate as that page says/);
 });
+
+test("no skill or entry page names the removed map-work skill", async () => {
+  const { readdir } = await import("node:fs/promises");
+  const skills = (await readdir(join(repoRoot, "skills"), { withFileTypes: true }))
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => join("skills", entry.name, "SKILL.md"));
+  for (const file of ["skills/index.md", "AGENTS.md", "README.md", ...skills]) {
+    const text = await readFile(join(repoRoot, file), "utf8");
+    assert.doesNotMatch(text, /map-work/, `${file} names map-work`);
+  }
+});
