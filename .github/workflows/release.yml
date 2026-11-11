@@ -1,0 +1,232 @@
+name: Release
+
+# Daniel starts this workflow by hand on main. It does the full dkstack v1
+# release:
+# 1. It works out the next version from the commits since the latest v1.x.y
+#    tag. A breaking change stops the run: a major release needs Daniel.
+# 2. It prepares CHANGELOG.md and package.json on the branch release/vX.Y.Z.
+# 3. It opens a pull request to main and starts validate on that branch.
+# 4. It squash-merges the pull request when validate passes.
+# 5. It tags the merge commit, publishes the GitHub release and
+#    fast-forwards v1 to the merge commit.
+# Nothing reaches main, no tag is made and v1 does not move unless validate
+# passes. The workflow never force-pushes. It uses only GITHUB_TOKEN.
+# For recovery after a failed run, see versioning/index.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump: auto (from the commits), patch or minor"
+        type: choice
+        default: auto
+        options: [auto, patch, minor]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      actions: write # start validate on the release branch
+      contents: write # push the release branch, the tag and v1, and publish the release
+      pull-requests: write # open and merge the release pull request
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BUMP: ${{ inputs.bump }}
+      START_SHA: ${{ github.sha }}
+    steps:
+      - name: Stop unless the run is on main
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "::error::Start Release on main, not on $GITHUB_REF."
+            exit 1
+          fi
+
+      - name: Check out main with all branches and tags
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          # The job pushes the release branch, the tag and v1 with GITHUB_TOKEN.
+          persist-credentials: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Stop if the last release is not complete
+        run: node scripts/release.mjs guard --v1 origin/v1
+
+      - name: Prepare CHANGELOG.md and package.json
+        id: prepare
+        run: node scripts/release.mjs prepare --bump "$BUMP" --date "$(TZ=Europe/Prague date +%F)"
+
+      - name: Run the repository checks on the prepared release
+        run: npm run check
+
+      - name: Commit and push the release branch
+        id: branch
+        env:
+          VERSION: ${{ steps.prepare.outputs.version }}
+        run: |
+          BRANCH="release/v$VERSION"
+          TITLE="chore(release): prepare v$VERSION"
+          node scripts/check-title.mjs "$TITLE"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git commit -q -m "$TITLE" -- CHANGELOG.md package.json
+          # A branch that exists already makes this push fail. It does not overwrite it.
+          git push origin "HEAD:refs/heads/$BRANCH"
+          {
+            echo "branch=$BRANCH"
+            echo "title=$TITLE"
+            echo "head_sha=$(git rev-parse HEAD)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Open the release pull request
+        id: pr
+        env:
+          VERSION: ${{ steps.prepare.outputs.version }}
+          BRANCH: ${{ steps.branch.outputs.branch }}
+          TITLE: ${{ steps.branch.outputs.title }}
+        run: |
+          BODY="$RUNNER_TEMP/body.md"
+          {
+            echo "The Release workflow opened this pull request for v$VERSION."
+            echo "It merges the pull request when validate passes."
+            echo
+            echo "Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo
+            node scripts/release.mjs notes "$VERSION"
+          } > "$BODY"
+          URL=$(gh pr create --base main --head "$BRANCH" --title "$TITLE" --body-file "$BODY")
+          echo "Opened $URL"
+          echo "pr=${URL##*/}" >> "$GITHUB_OUTPUT"
+
+      # A pull request that GITHUB_TOKEN opens starts no workflow. A
+      # workflow_dispatch event is the exception, so the job starts validate
+      # on the release branch. Its "validate" check reports on the head commit
+      # of the pull request, which is the check that protect-main requires.
+      - name: Run validate on the release branch
+        env:
+          BRANCH: ${{ steps.branch.outputs.branch }}
+          HEAD_SHA: ${{ steps.branch.outputs.head_sha }}
+        run: |
+          gh workflow run validate.yml --ref "$BRANCH"
+          RUN_ID=""
+          for _ in $(seq 1 36); do
+            RUN_ID=$(gh run list --workflow validate.yml --branch "$BRANCH" --event workflow_dispatch \
+              --commit "$HEAD_SHA" --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+            if [ -n "$RUN_ID" ]; then break; fi
+            sleep 5
+          done
+          if [ -z "$RUN_ID" ]; then
+            echo "::error::validate did not start on $BRANCH. The pull request stays open."
+            exit 1
+          fi
+          echo "validate: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$RUN_ID"
+          if ! gh run watch "$RUN_ID" --exit-status --interval 15; then
+            echo "::error::validate failed on $BRANCH. Nothing was merged. The pull request stays open."
+            exit 1
+          fi
+
+      - name: Merge the release pull request
+        env:
+          PR: ${{ steps.pr.outputs.pr }}
+          TITLE: ${{ steps.branch.outputs.title }}
+          HEAD_SHA: ${{ steps.branch.outputs.head_sha }}
+        run: |
+          MAIN_SHA=$(git ls-remote origin refs/heads/main | cut -f1)
+          if [ "$MAIN_SHA" != "$START_SHA" ]; then
+            echo "::error::main moved from $START_SHA to $MAIN_SHA during the run. Nothing was merged or tagged. Pull request #$PR stays open."
+            exit 1
+          fi
+          STATE=""
+          for _ in $(seq 1 24); do
+            STATE=$(gh pr view "$PR" --json mergeStateStatus --jq .mergeStateStatus)
+            if [ "$STATE" = "CLEAN" ]; then break; fi
+            sleep 5
+          done
+          if [ "$STATE" != "CLEAN" ]; then
+            echo "::error::Pull request #$PR is not ready to merge (state $STATE). Nothing was merged. It stays open."
+            exit 1
+          fi
+          # --match-head-commit: merge only the commit that validate checked.
+          # protect-main also rejects the merge if main moved (strict checks).
+          gh pr merge "$PR" --squash --match-head-commit "$HEAD_SHA" --subject "$TITLE (#$PR)"
+
+      - name: Check the merge commit
+        id: merge
+        env:
+          PR: ${{ steps.pr.outputs.pr }}
+          HEAD_SHA: ${{ steps.branch.outputs.head_sha }}
+        run: |
+          MERGE_SHA=$(gh pr view "$PR" --json mergeCommit --jq .mergeCommit.oid)
+          echo "merge_sha=$MERGE_SHA" >> "$GITHUB_OUTPUT"
+          git fetch -q origin main
+          if [ "$(git rev-parse "$MERGE_SHA^")" != "$START_SHA" ]; then
+            echo "::error::The merge commit $MERGE_SHA does not follow $START_SHA. main moved. No tag was made."
+            exit 1
+          fi
+          if [ "$(git rev-parse "$MERGE_SHA^{tree}")" != "$(git rev-parse "$HEAD_SHA^{tree}")" ]; then
+            echo "::error::The merge commit $MERGE_SHA has other files than the validated commit $HEAD_SHA. No tag was made."
+            exit 1
+          fi
+
+      - name: Tag the merge commit
+        env:
+          VERSION: ${{ steps.prepare.outputs.version }}
+          MERGE_SHA: ${{ steps.merge.outputs.merge_sha }}
+        run: |
+          git tag -a "v$VERSION" "$MERGE_SHA" -m "v$VERSION"
+          git push origin "refs/tags/v$VERSION"
+
+      - name: Publish the GitHub release
+        env:
+          VERSION: ${{ steps.prepare.outputs.version }}
+        run: |
+          # The checkout has the validated tree, which is the tree of the tag.
+          node scripts/release.mjs notes "$VERSION" > "$RUNNER_TEMP/notes.md"
+          gh release create "v$VERSION" --verify-tag --title "v$VERSION" --notes-file "$RUNNER_TEMP/notes.md"
+
+      - name: Fast-forward v1 to the release
+        env:
+          VERSION: ${{ steps.prepare.outputs.version }}
+          MERGE_SHA: ${{ steps.merge.outputs.merge_sha }}
+        run: |
+          git fetch -q origin refs/heads/v1:refs/remotes/origin/v1
+          if ! git merge-base --is-ancestor origin/v1 "$MERGE_SHA"; then
+            echo "::error::v1 is not an ancestor of $MERGE_SHA. A fast-forward is not possible. v1 did not move."
+            exit 1
+          fi
+          # A normal push. protect-v1 rejects a push that is not a fast-forward.
+          if ! git push origin "$MERGE_SHA:refs/heads/v1"; then
+            echo "::error::The push to v1 failed. v1 did not move. Finish the release as versioning/index.md says."
+            exit 1
+          fi
+          {
+            echo "Released v$VERSION at $MERGE_SHA."
+            echo
+            echo "- Release: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/tag/v$VERSION"
+            echo "- v1 is at $MERGE_SHA."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Tell how to finish a release after the merge
+        if: ${{ failure() && steps.merge.outputs.merge_sha != '' }}
+        env:
+          VERSION: ${{ steps.prepare.outputs.version }}
+          MERGE_SHA: ${{ steps.merge.outputs.merge_sha }}
+        run: |
+          {
+            echo "The release commit $MERGE_SHA is on main, but a later step failed."
+            echo "Finish v$VERSION by hand. See \"Finish a release\" in versioning/index.md."
+          } >> "$GITHUB_STEP_SUMMARY"
