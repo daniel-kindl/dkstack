@@ -126,8 +126,9 @@ function listAfter(section, lead) {
   return items.map(flatten);
 }
 
-test("the work contract records an owner instruction durably", async () => {
-  const section = flatten(sectionText(await pageText(), "## Owner instructions in chat"));
+test("the safety page records an owner instruction durably", async () => {
+  const safety = await readFile(join(repoRoot, "workflow", "safety.md"), "utf8");
+  const section = flatten(sectionText(safety, "## Owner instructions in chat"));
   for (const sentence of [
     "Before an agent relies on an owner instruction in a later session, it records the instruction durably on the relevant issue.",
     "The instruction must come from the [human owner](roles.md#human-owner).",
@@ -202,7 +203,7 @@ test("the agent sets planning before it releases the claim", async () => {
 });
 
 test("a relayed owner decision follows the roles.md relay rule", async () => {
-  const text = await pageText();
+  const text = await readFile(join(repoRoot, "workflow", "safety.md"), "utf8");
   const owner = flatten(sectionText(text, "## Owner instructions in chat"));
   assert.match(owner, /For a relayed decision, follow the relay rule in \[roles\.md\]\(roles\.md#human-owner\)\./);
   assert.doesNotMatch(flatten(text), /A paraphrase or an agent's summary never counts/);

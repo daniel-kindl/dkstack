@@ -34,11 +34,11 @@ test("the stewardship page states the levels, the signals and the scenarios", as
     "### DRY and coupling",
     "no fixed rank",
     "workflow/safety.md",
-    "workflow/work.md",
     "workflow/roles.md",
   ]) {
     assert.ok(page.includes(part), `missing ${part}`);
   }
+  assert.ok(!page.includes("workflow/work.md"), "the page must not link workflow/work.md");
   assert.match(page, /keep the current design/i);
   assert.match(page, /does not give permission/i);
   assert.match(page, /do not (?:add|write) (?:a|an) (?:phase|checklist|report)/i);

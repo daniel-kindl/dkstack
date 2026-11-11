@@ -28,7 +28,6 @@ test("owner and agent merge authority stays distinct", async () => {
   assert.match(flatRoles, /the author must not review, approve or merge their own pull request/i);
   assert.match(flatRoles, /human owner may merge a pull request after independent review and all merge checks pass/i);
   assert.match(flatRoles, /includes a pull request that the owner authored/i);
-  assert.match(flatRoles, /\| Reviewer \| Reviews pull requests and merges them \|/);
   assert.doesNotMatch(flatRoles, /any merge an agent performs/i);
   assert.doesNotMatch(flatRoles, /agent may merge only with the owner's explicit authorization/i);
   assert.match(flatReview, /reviewer merges only the head that they reviewed, and only when the review passes, all required checks are green/i);
