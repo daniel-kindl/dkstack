@@ -5,7 +5,10 @@
 // - The workflow sets top-level permissions, so the token has least privilege.
 //   "write-all" is not permitted. A top-level permission cannot be "write".
 //   Give a write permission to the one job that needs it.
-// - The workflow does not use secrets.
+// - The workflow does not use secrets. There is one exception: the job with
+//   "environment: release" in release.yml may pass secrets.RELEASE_APP_ID as
+//   "app-id" and secrets.RELEASE_APP_PRIVATE_KEY as "private-key" to
+//   actions/create-github-app-token. Daniel decided this on 2026-11-11 (#135).
 // The check reads lines. It does not parse YAML.
 
 import { readdir, readFile } from "node:fs/promises";
@@ -20,6 +23,11 @@ const PERMISSIONS = /^permissions\s*:/m;
 const WRITE_ALL = /^\s*permissions\s*:\s*(["']?)write-all\1\s*(#.*)?$/;
 const WRITE = /:\s*(["']?)write\1\s*(?:[,}#]|$)/;
 const SECRETS = /\bsecrets\s*[.[]/;
+const APP_SECRET = [
+  /^\s+app-id: \$\{\{ secrets\.RELEASE_APP_ID \}\}$/,
+  /^\s+private-key: \$\{\{ secrets\.RELEASE_APP_PRIVATE_KEY \}\}$/,
+];
+const APP_TOKEN_ACTION = "actions/create-github-app-token@";
 
 // Return { checked, errors }, or null when the folder does not exist.
 export async function checkWorkflows(root) {
@@ -38,17 +46,25 @@ export async function checkWorkflows(root) {
       errors.push(`${rel}: set top-level permissions, as in "permissions: contents: read"`);
     }
     let inTopPermissions = false;
+    let releaseJob = false;
+    let lastUses = "";
     text.split(/\r?\n/).forEach((line, i) => {
       const where = `${rel}:${i + 1}`;
       if (/^\S/.test(line) && !line.startsWith("#")) {
         inTopPermissions = /^permissions\s*:/.test(line);
       }
+      if (/^  \S/.test(line)) {
+        releaseJob = false;
+        lastUses = "";
+      }
+      if (/^    environment:\s*release\s*$/.test(line)) releaseJob = true;
       if (WRITE_ALL.test(line)) {
         errors.push(`${where}: do not use "permissions: write-all"`);
       } else if (inTopPermissions && WRITE.test(line)) {
         errors.push(`${where}: do not give "write" at the top level; give it to one job`);
       }
       const uses = USES.exec(line);
+      if (uses) lastUses = uses[2];
       if (uses && !uses[2].startsWith("./")) {
         if (!PINNED.test(uses[2])) {
           errors.push(`${where}: pin "${uses[2]}" to a full 40-character commit SHA`);
@@ -56,7 +72,12 @@ export async function checkWorkflows(root) {
           errors.push(`${where}: add the version after the SHA, as in "# v1.2.3"`);
         }
       }
-      if (SECRETS.test(line)) errors.push(`${where}: do not use secrets in a workflow`);
+      const appSecret =
+        name === "release.yml" &&
+        releaseJob &&
+        lastUses.startsWith(APP_TOKEN_ACTION) &&
+        APP_SECRET.some((re) => re.test(line));
+      if (SECRETS.test(line) && !appSecret) errors.push(`${where}: do not use secrets in a workflow`);
     });
   }
   return { checked: files.length, errors };

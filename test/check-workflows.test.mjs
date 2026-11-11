@@ -98,6 +98,67 @@ test("a workflow that uses secrets fails", async () => {
   ]);
 });
 
+// Daniel decided on 2026-11-11 at 19:06 (Prague) that dkstack releases use
+// a GitHub App. Its two secrets are in the release environment. Only the
+// release job of release.yml may pass them, and only to the token action.
+const appJob = (environment, appId, key, action = "actions/create-github-app-token") => [
+  "permissions:",
+  "  contents: read",
+  "jobs:",
+  "  release:",
+  ...(environment ? [`    environment: ${environment}`] : []),
+  "    runs-on: ubuntu-latest",
+  "    steps:",
+  `      - uses: ${action}@${SHA} # v3.3.0`,
+  "        with:",
+  `          app-id: ${appId}`,
+  `          private-key: ${key}`,
+  "",
+].join("\n");
+const ID = "${{ secrets.RELEASE_APP_ID }}";
+const KEY = "${{ secrets.RELEASE_APP_PRIVATE_KEY }}";
+
+test("the release job may pass the two app secrets to the token action", async () => {
+  const result = await workflowsFor({ ".github/workflows/release.yml": appJob("release", ID, KEY) });
+  assert.deepEqual(result, { checked: 1, errors: [] });
+});
+
+test("the app secrets fail in another file, another job or another place", async () => {
+  const other = await workflowsFor({ ".github/workflows/other.yml": appJob("release", ID, KEY) });
+  assert.deepEqual(other.errors, [
+    ".github/workflows/other.yml:10: do not use secrets in a workflow",
+    ".github/workflows/other.yml:11: do not use secrets in a workflow",
+  ]);
+  const noEnv = await workflowsFor({ ".github/workflows/release.yml": appJob(null, ID, KEY) });
+  assert.deepEqual(noEnv.errors, [
+    ".github/workflows/release.yml:9: do not use secrets in a workflow",
+    ".github/workflows/release.yml:10: do not use secrets in a workflow",
+  ]);
+  const prod = await workflowsFor({ ".github/workflows/release.yml": appJob("production", ID, KEY) });
+  assert.equal(prod.errors.length, 2);
+  const otherAction = await workflowsFor({
+    ".github/workflows/release.yml": appJob("release", ID, KEY, "someone/token-action"),
+  });
+  assert.equal(otherAction.errors.length, 2);
+  const swapped = await workflowsFor({ ".github/workflows/release.yml": appJob("release", KEY, ID) });
+  assert.equal(swapped.errors.length, 2);
+  const otherName = await workflowsFor({
+    ".github/workflows/release.yml": appJob("release", "${{ secrets.NPM_TOKEN }}", KEY),
+  });
+  assert.deepEqual(otherName.errors, [".github/workflows/release.yml:10: do not use secrets in a workflow"]);
+  const inEnv = await workflowsFor({
+    ".github/workflows/release.yml": appJob("release", ID, KEY) + "        env:\n          K: " + KEY + "\n",
+  });
+  assert.deepEqual(inEnv.errors, [".github/workflows/release.yml:13: do not use secrets in a workflow"]);
+  const twoJobs = await workflowsFor({
+    ".github/workflows/release.yml": appJob("release", ID, KEY) + appJob(null, ID, KEY).split("\n").slice(3).join("\n"),
+  });
+  assert.deepEqual(twoJobs.errors, [
+    ".github/workflows/release.yml:17: do not use secrets in a workflow",
+    ".github/workflows/release.yml:18: do not use secrets in a workflow",
+  ]);
+});
+
 test("only .yml and .yaml files in .github/workflows are checked", async () => {
   const result = await workflowsFor({
     ".github/workflows/notes.md": "uses: actions/checkout@v7\n",
