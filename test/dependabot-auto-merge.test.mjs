@@ -93,3 +93,10 @@ test("the dependencies page tells a new repository to copy this workflow", async
   assert.match(section, /\(\.\.\/\.github\/workflows\/dependabot-auto-merge\.yml\)/);
   assert.match(section, /Allow auto-merge/);
 });
+
+test("the dependencies page says to allow fetch-metadata when only selected actions run", async () => {
+  const page = await readFile(join(repoRoot, "coding", "dependencies.md"), "utf8");
+  const section = page.slice(page.indexOf("## Dependabot auto-merge")).replace(/\s+/g, " ");
+  assert.match(section, /allows only selected actions/);
+  assert.match(section, /`dependabot\/fetch-metadata@\*`/);
+});
