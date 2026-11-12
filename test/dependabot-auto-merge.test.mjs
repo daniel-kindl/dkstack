@@ -57,7 +57,7 @@ test("the job runs only when Dependabot opened the pull request and sent the eve
 
 test("the metadata comes from dependabot/fetch-metadata pinned to a SHA", () => {
   assert.match(step("Read the Dependabot metadata"),
-    /\n {8}id: metadata\n {8}uses: dependabot\/fetch-metadata@[0-9a-f]{40} # v\d+\.\d+\.\d+$/);
+    /\n {8}id: metadata\n {8}uses: dependabot\/fetch-metadata@[0-9a-f]{40} # v\d+\.\d+\.\d+$/m);
 });
 
 test("only a patch or a minor update gets auto-merge, so a major update waits", () => {
