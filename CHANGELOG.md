@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `workflow/safety.md` and `workflow/review-and-merge.md`: owner-configured Dependabot auto-merge
+  is allowed. A Dependabot pull request with a patch or a minor update can merge with no issue and
+  no reviewer when the required checks pass and no rule is bypassed. The workflow is the dkstack
+  template that uses `dependabot/fetch-metadata`. A major update waits for the owner. No agent
+  turns on auto-merge for another pull request.
+
 ## [1.3.1] - 2026-11-11
 
 ### Added
