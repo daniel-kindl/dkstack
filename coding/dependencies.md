@@ -25,8 +25,10 @@ Apply these rules to every repository that uses GitHub Actions or a package mana
 The owner decided on 2026-11-12 that his repositories merge a Dependabot patch or minor update
 automatically. A major update waits for the owner. Set up each new repository as follows:
 
-1. Ask the owner to turn on "Allow auto-merge" in the repository settings. Only the owner changes
-   a setting. See [workflow/safety.md](../workflow/safety.md).
+1. Ask the owner to turn on "Allow auto-merge" in the repository settings. If the repository
+   allows only selected actions, also ask the owner to add `dependabot/fetch-metadata@*` to the
+   allowed actions. Without it, the workflow fails at startup on each pull request. Only the owner
+   changes a setting. See [workflow/safety.md](../workflow/safety.md).
 2. Protect the branch that Dependabot targets with a ruleset or a branch protection rule. Require
    the CI checks. Keep the required approvals at 0, or each Dependabot pull request waits for an
    approval that no person gives.
