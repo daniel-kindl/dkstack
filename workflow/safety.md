@@ -17,6 +17,14 @@ action with the owner's OK. Only then can an agent do it.
 - Only the independent reviewer or the [human owner](roles.md#human-owner) merges a pull request.
   The author agent never merges. See [review-and-merge.md](review-and-merge.md). Reason: every
   merge needs an independent review.
+- The owner can configure Dependabot auto-merge in a repository. Then a pull request merges with
+  no reviewer only when `dependabot[bot]` opened it, the update is a patch or a minor update, the
+  required checks pass and no rule is bypassed. The owner turns on the setting "Allow auto-merge",
+  and the workflow is the dkstack template that uses `dependabot/fetch-metadata`. This merge counts
+  as the owner's merge. An agent never turns on auto-merge for another pull request. An agent does
+  not change the workflow to merge more updates without the owner's OK. See
+  [Dependabot auto-merge](review-and-merge.md#dependabot-auto-merge). Reason: the owner decided
+  that the required checks are enough for these updates, and a major update can change behavior.
 - Do not publish or release without the owner's explicit OK for that release. This includes a
   push to a release branch, a release tag and a package publish. The OK names the exact version.
   It never covers a production deploy or a project's release workflow. Only the owner starts

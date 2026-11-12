@@ -1,6 +1,7 @@
 # Review and merge
 
-Every change goes from an issue to a reviewed pull request. No change reaches `main` without review.
+Every change goes from an issue to a reviewed pull request. No change reaches `main` without
+review, except a [Dependabot auto-merge](#dependabot-auto-merge).
 
 The review does not require a feature plan.
 
@@ -31,6 +32,21 @@ keeps the review and merge rules.
   pushed branch needs a force-push.
 
 The author and reviewer limits are in [roles.md](roles.md).
+
+## Dependabot auto-merge
+
+The owner decided on 2026-11-12 that his repositories can merge some Dependabot pull requests
+with no reviewer. This is owner-configured. A Dependabot pull request needs no issue and no review
+only when all of these are true:
+
+- `dependabot[bot]` opened the pull request.
+- The update is a patch or a minor update. A major update waits for the owner.
+- The owner turned on "Allow auto-merge", and the workflow is the dkstack template that reads the
+  update type with `dependabot/fetch-metadata`.
+- The required checks of the base branch pass, and no rule is bypassed.
+
+For each other Dependabot pull request, the normal rules on this page apply. The setup is in
+[coding/dependencies.md](../coding/dependencies.md).
 
 ## Missing review evidence after merge
 
