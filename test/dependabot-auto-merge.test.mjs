@@ -223,6 +223,8 @@ test("the disable job passes and does nothing when auto-merge is off", async () 
   assert.equal(r.status, 0, r.stderr);
   assert.deepEqual(r.calls.filter((c) => c.startsWith("pr merge")), []);
   assert.deepEqual(envNames(step("disable-auto-merge", "Turn off auto-merge")).sort(), ["GH_TOKEN", "PR_URL"]);
+  // The step has no condition of its own, so the job condition alone decides.
+  assert.doesNotMatch(step("disable-auto-merge", "Turn off auto-merge"), /\n {8}if:/);
 });
 
 test("the dependencies page tells a new repository to copy this workflow", async () => {
