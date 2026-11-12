@@ -16,3 +16,12 @@ test("the repository Dependabot file updates the pinned actions weekly", async (
   assert.match(file, /^ {4}directory: "\/"$/m);
   assert.match(file, /^ {4}schedule:\n {6}interval: "weekly"$/m);
 });
+
+// validate checks that a pull request title is a conventional commit of 50
+// characters or fewer. Dependabot starts its default title with "Bump", so
+// the prefix "ci" makes it conventional. Without a scope the title stays short.
+test("the repository Dependabot file gives a conventional commit prefix", async () => {
+  const file = await readFile(join(repoRoot, ".github", "dependabot.yml"), "utf8");
+  assert.match(file, /^ {4}commit-message:\n {6}prefix: "ci"$/m);
+  assert.doesNotMatch(file, /include: "?scope"?/);
+});

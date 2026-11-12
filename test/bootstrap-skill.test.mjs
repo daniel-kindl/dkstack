@@ -38,6 +38,15 @@ test("the bootstrap steps cover each supply chain rule", async () => {
   assert.match(await step(11), /pinned CI actions/);
 });
 
+test("the bootstrap step for update proposals merges only patch and minor updates", async () => {
+  const text = (await step(11)).replace(/\s+/g, " ");
+  assert.match(text, /automatic merge/);
+  assert.match(text, /only for a patch or a minor update/);
+  assert.match(text, /major update/);
+  assert.match(text, /required checks/);
+  assert.match(text, /Do not bypass/);
+});
+
 test("the bootstrap CI step runs on every pull request", async () => {
   assert.match(await step(3), /every pull request/);
 });
