@@ -10,10 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `.github/workflows/dependabot-auto-merge.yml`: turns on auto-merge (squash) for a Dependabot
-  pull request with a patch or a minor update. A major update waits for the owner. The
-  `validate` check and the `protect-main` ruleset still gate the merge. The job stops when no
-  rule of the base branch blocks the merge. It uses `GITHUB_TOKEN` with `contents: write` and
-  `pull-requests: write` only, and no secret. Other repositories copy this file.
+  pull request when each update is a patch or a minor update. A major update waits for the owner.
+  The `validate` check and the `protect-main` ruleset still gate the merge. The job stops when no
+  ruleset of the base branch requires a status check, and it merges only the head commit that it
+  read. A second job turns auto-merge off when another actor pushes to or reopens the pull
+  request. Both jobs use `GITHUB_TOKEN` with `contents: write` and `pull-requests: write` only,
+  and no secret. Other repositories copy this file.
 - `coding/dependencies.md`: the section "Dependabot auto-merge" tells each new repository to turn
   on "Allow auto-merge", allow `dependabot/fetch-metadata` when only selected actions run, require
   the CI checks, copy the workflow and set a commit prefix. The bootstrap skill step 11 points to
