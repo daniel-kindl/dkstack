@@ -77,6 +77,9 @@ Apply the rules from version-control, versioning, and coding sections. Steps 7 t
     - Cover the dependencies of the package manager.
     - Cover the pinned CI actions from step 7, because pinned versions do not update themselves.
     - Check for updates at least weekly.
+    - Turn on automatic merge only for a patch or a minor update proposal. The required checks
+      must pass before the merge. Do not bypass a rule of the branch. Leave each major update to
+      the owner. See [coding/dependencies.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md).
 
 ## Rules
 
