@@ -5,3 +5,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    # validate checks that the pull request title is a conventional commit of
+    # 50 characters or fewer. No scope keeps the title short.
+    commit-message:
+      prefix: "ci"
