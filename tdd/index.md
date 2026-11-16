@@ -20,6 +20,10 @@ Read only the pages that apply to the task. Read the P0 pages first. The P1 page
 | P1 | [Property testing](property-testing.md) | Parameterized, generated and fuzz inputs |
 | P1 | [Performance testing](performance-testing.md) | Benchmarks and performance regressions |
 | P1 | [Legacy code](legacy-code.md) | Characterization tests and TDD in code without tests |
+| P1 | [Data and migration testing](data-migration-testing.md) | Stored formats, schema versions, backups and database migrations |
+| P1 | [UI and accessibility testing](ui-testing.md) | Presentation logic, UI tests, accessibility and rendered output |
+| P1 | [Security testing](security-testing.md) | Negative cases, secrets, audits and security fixes |
+| P1 | [Test suite health](test-suite-health.md) | Test location, speed, random order and the CI command |
 
 ## Core principles
 

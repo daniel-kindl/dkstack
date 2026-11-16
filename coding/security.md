@@ -13,6 +13,8 @@ Protect data and limit damage.
 - Prefer safe defaults.
 - Fail securely. Do not fall back to a more permissive mode on error.
 
+Test these rules as [security testing](../tdd/security-testing.md) describes.
+
 ## Good example
 
 Input is checked before use. Secrets stay in a protected store. An error returns a generic message.
