@@ -16,6 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New testing rules. When you change or delete an assertion, state which requirement changed. Do
   not update a snapshot or golden file to make a test pass. Do not commit a focus marker. Do not
   commit a new skip without a linked issue. Do not mock a third-party API directly (#136).
+- Four P1 testing pages in `tdd/`: `data-migration-testing.md`, `ui-testing.md`,
+  `security-testing.md` and `test-suite-health.md`. `tdd/index.md` lists them.
+  `coding/security.md` links to `tdd/security-testing.md` (#147).
+- Keep the record of a security defect private. The rule is in `tdd/security-testing.md`.
+  `tdd/regression-testing.md` links to it (#147).
+- The linked issue for a new skip or quarantine must have an owner (#147).
+- `coding/security.md`: where the project has static analysis or secret scanning, run them in CI
+  as gates (#147).
 
 ### Changed
 

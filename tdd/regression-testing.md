@@ -4,7 +4,7 @@ A bug fix starts with a test that shows the wrong behavior. Keep that test after
 
 ## Bug-fix cycle
 
-1. Record the symptom, the input, the environment and the expected result.
+1. Record the symptom, the input, the environment and the expected result. For a security defect, keep the record private as [security fixes](security-testing.md#security-fixes) describes.
 2. Reproduce the failure through the smallest relevant [public interface](index.md#core-principles).
 3. Add a test that fails because of the same defect. Make sure that it does not fail because of an unrelated setup problem.
 4. Make the smallest correct fix.
