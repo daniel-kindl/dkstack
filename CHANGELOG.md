@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Ten testing pages in `tdd/`. They are `red-green-refactor.md`, `test-design.md`, `test-isolation.md`,
+  `test-levels.md`, `regression-testing.md`, `deterministic-tests.md`, `coverage.md`,
+  `property-testing.md`, `performance-testing.md` and `legacy-code.md`. `tdd/index.md` lists them
+  (#136).
+- New testing rules. When you change or delete an assertion, state which requirement changed. Do
+  not update a snapshot or golden file to make a test pass. Do not commit a focus marker. Do not
+  commit a new skip without a linked issue. Do not mock a third-party API directly (#136).
+
+### Changed
+
+- `tdd/index.md` keeps the purpose, the page list, the core principles and the boundaries. All
+  other rules are on the topic pages, and each rule is on one page (#136).
+- `coding/testing.md` is now a pointer to `tdd/`. Its rules moved to the `tdd/` pages. `tdd/test-design.md` now has
+  the rule "Break the code on purpose once and make sure that a test fails". The rule does not
+  change (#136).
+- `skills/tdd-loop`: the steps and boundaries now match the `tdd/` pages. The refactor scope rule
+  does not change (#136).
+- Deviation rule: sometimes you cannot do a test-first red step. Then state the constraint and
+  the verification that ran in the pull request. Do not call that work TDD. There is no owner approval
+  step. Before this change, `tdd/index.md` and `skills/tdd-loop` said "Do not skip the failing
+  step" with no exception (#136).
+- Mechanical change: `tdd/index.md` defines it as a rename or a move by a tool, with no
+  change in behavior. It does not need a failing test (#136).
+
 ## [1.3.1] - 2026-11-11
 
 ### Added
