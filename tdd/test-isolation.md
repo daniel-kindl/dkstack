@@ -1,40 +1,49 @@
 # Test isolation
 
-Isolate tests from each other and from uncontrolled effects. Isolation means predictable dependencies, not mocking every collaborator.
+Isolate each test from other tests and from effects that you do not control. Isolation means predictable dependencies. It does not mean a mock for each collaborator.
 
 ## Test boundaries
 
-- Prefer real domain objects and pure computations when they are cheap and deterministic.
-- Control boundaries such as clocks, remote APIs, randomness, file systems and message brokers when they would make a unit test slow or unreliable.
-- Use real infrastructure in integration tests when it is provisioned, disposable and part of the behavior being verified.
-- Keep each test self-contained. Do not rely on global ordering or state left by earlier tests.
-- Restore configuration, environment variables, files, processes and databases after a test.
+- Use real domain objects and pure functions when they are fast and deterministic.
+- Use test doubles only for dependencies that you cannot control in a unit test. Examples are a clock, a remote API, randomness, a file system and a message broker.
+- Do not use the public network in unit tests.
+- Use real infrastructure in integration tests when the project provides it, it is disposable and it is part of the behavior under test.
+- Keep each test self-contained. Do not depend on test order or on state from earlier tests.
+- After each test, restore the configuration, environment variables, files, processes and database records that it changed.
 
 ## Test doubles
 
-- **Stub:** returns controlled answers, without recording behavior.
-- **Fake:** implements a simplified working version of a dependency, such as an in-memory repository.
-- **Mock/spy:** records interactions that the test may verify.
+- **Dummy:** fills a parameter. The test never uses it.
+- **Stub:** returns set answers.
+- **Spy:** a stub that records calls. The test asserts the calls after the act.
+- **Mock:** has the expected calls set before the act. It fails on a wrong call.
+- **Fake:** a simple working version of a dependency, such as an in-memory repository.
 
-Use the least complex double that proves the behavior. Verify calls only when the interaction is part of the contract, such as sending exactly one notification. Otherwise assert results and effects.
+Use the simplest test double that proves the behavior. Verify calls, call counts or call order only when the interaction is part of the contract. An example is a requirement to send exactly one notification. In all other cases, assert results and effects.
 
-Test doubles may diverge from real implementations. When a fake represents a persistent boundary, verify its relevant contract against the real implementation or cover the boundary with integration tests.
+A test double can differ from the real implementation. When a fake replaces a persistent boundary, test its contract against the real implementation or cover the boundary with integration tests.
+
+Do not mock a third-party API directly. Wrap it in an adapter. Test the adapter with an integration test. Mock the adapter in unit tests.
 
 ## Fixtures
 
-- Create fixtures with the smallest explicit state needed for a test.
-- Avoid shared mutable fixtures and setup routines that hide important inputs.
-- Reuse builders or factories when they reduce duplication without turning tests into puzzles.
-- If tests run concurrently, use unique resources and avoid shared mutable singletons.
+- Give each fixture the smallest explicit state that the test needs.
+- Do not share mutable fixtures. Do not hide important inputs in setup code.
+- Use builders or factories when they remove duplication and keep the test easy to read.
+- If tests run at the same time, give each test its own resources. Do not share mutable singletons.
 
 ## Example
 
-Good: inject a controllable clock into expiration logic and assert it expires at the specified instant.
+Good: inject a clock that the test controls into the expiry logic. Assert that the item expires at the specified time.
 
-Bad: wait for the wall clock to advance, assert within an arbitrary range and retry until green.
+Bad: wait for the real clock to move, assert a time range and retry until the test passes.
 
 ## Warning signs
 
-Tests pass individually but fail together; results depend on order; cleanup is incomplete; assertions only inspect mock internals; mocks mirror the complete implementation.
+- Tests pass alone but fail together.
+- Results depend on test order.
+- Cleanup is incomplete.
+- Assertions check only the internals of a mock.
+- Mocks copy the full implementation.
 
 Related: [deterministic tests](deterministic-tests.md), [test levels](test-levels.md).
