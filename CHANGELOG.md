@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   commit a new skip without a linked issue. Do not mock a third-party API directly (#136).
 - Four P1 testing pages in `tdd/`: `data-migration-testing.md`, `ui-testing.md`,
   `security-testing.md` and `test-suite-health.md`. `tdd/index.md` lists them.
-  `coding/security.md` links to `tdd/security-testing.md`.
+  `coding/security.md` links to `tdd/security-testing.md` (#147).
 
 ### Changed
 
