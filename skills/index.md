@@ -15,3 +15,4 @@ Skills are specific capabilities agents should apply when relevant.
 - [writing-check](writing-check/SKILL.md): Apply ASD-STE100 to text.
 - [plan-work](plan-work/SKILL.md): Plan a goal as small, reviewable increments with tests first.
 - [release](release/SKILL.md): Prepare a release. Link the versioning and safety rules. Do not publish.
+- [learn](learn/SKILL.md): Teach, practice, assess and review any topic with an adaptive curriculum.
