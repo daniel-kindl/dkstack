@@ -5,12 +5,12 @@ Keep the test suite fast, reliable and current. People stop running a suite that
 ## Location
 
 - Put tests where the project convention says.
-- Mirror the source structure, so that a reader can find the tests for each source file.
+- Mirror the source structure, so that a reader can find the tests for each module.
 
 ## Speed
 
-- State the expected run time of the unit suite in the project docs.
-- Treat a slow unit test as a defect. Make it faster, or move it to a higher [test level](test-levels.md).
+- State the expected run time of the unit suite in the project docs. This run time is the budget.
+- A unit test is slow when it makes the unit suite go over the budget. Treat a slow unit test as a defect. Make it faster, or move it to a higher [test level](test-levels.md).
 
 ## Order and parallel runs
 

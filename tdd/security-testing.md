@@ -4,6 +4,7 @@ Test that the code refuses what it must refuse. The security rules are in [secur
 
 ## Negative cases
 
+- Use the [OWASP ASVS](https://owasp.org/www-project-application-security-verification-standard/) to select the negative cases for each trust boundary.
 - At each trust boundary, test that the code refuses invalid, malformed and too large input. A trust boundary is a place where data from outside the system enters.
 - Test that the code refuses a request with missing, expired or wrong credentials.
 - Test that the code refuses an action when the user does not have the permission.
@@ -14,9 +15,10 @@ Test that the code refuses what it must refuse. The security rules are in [secur
 - Test that a secret does not appear in logs or error messages. Put an invented marker value in the secret field. Search the output for that value.
 - For secrets in fixtures, follow [incidents and regressions](regression-testing.md#incidents-and-regressions).
 
-## Dependencies and parsers
+## Gates and parsers
 
 - The dependency audit is a gate. Follow the [supply chain rules](../coding/dependencies.md#supply-chain-rules) and [quality gates](../coding/quality-gates.md).
+- Where the project has static analysis (SAST) or secret scanning, run them in CI as gates. Follow [quality gates](../coding/quality-gates.md).
 - Fuzz each parser that reads untrusted input. Follow [fuzz testing](property-testing.md#fuzz-testing).
 
 ## Security fixes

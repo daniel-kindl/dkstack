@@ -23,7 +23,7 @@ For duration and other performance claims, use [performance testing](performance
 3. Fix the cause in the test or in the product.
 4. Run the affected tests and the tests near them again.
 
-A pass on retry does not prove that the defect is gone. Do not weaken the assertions of a flaky test. Do not commit a focus marker, such as `.only` or `fit`. Do not commit a new skip or quarantine without a linked issue. Follow [quality gates](../coding/quality-gates.md) for failures and suppressions.
+A pass on retry does not prove that the defect is gone. Do not weaken the assertions of a flaky test. Do not commit a focus marker, such as `.only` or `fit`. Do not commit a new skip or quarantine without a linked issue that has an owner. Follow [quality gates](../coding/quality-gates.md) for failures and suppressions.
 
 ## Example
 

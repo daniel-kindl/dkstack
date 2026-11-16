@@ -10,22 +10,28 @@ Test most user interface (UI) behavior below the UI. Use a few UI tests for the 
 ## UI tests
 
 - Keep a few headless UI tests for critical flows. A headless test runs the UI with no visible screen.
+- Wait for an element state. Follow [asynchronous behavior](deterministic-tests.md#asynchronous-behavior).
 - Find elements by accessible name or role. Do not find elements by position, index or style. Reason: a layout change that keeps the behavior must not break a test.
 - Add a visual snapshot or golden test only when the visual output is a requirement. State that reason beside the test.
+- Make and compare visual snapshots in one fixed environment, such as a pinned CI image. Reason: fonts, operating systems and graphics hardware change the pixels.
 - To update a snapshot or golden file, follow [test design](test-design.md#naming-and-assertions).
 
 ## Accessibility checks
 
-Test these where the platform supports them:
+Use [WCAG 2.2](https://www.w3.org/TR/WCAG22/) level AA as the baseline. Test these where the platform supports them:
 
 - Each control has a text label that a screen reader reads.
 - A screen reader announces changes of state and errors.
+- A keyboard can reach and use each control. The focus is visible.
 - Focus moves through the controls in a logical order.
+- Text contrast is at least 4.5:1. Large text contrast is at least 3:1.
+- The parts that identify a control and its state have a contrast of at least 3:1.
+- Each touch target is at least 24 by 24 CSS pixels on the web (WCAG 2.5.8).
 - Each touch target is at least 48 dp on Android or 44 pt on iOS.
 - Color is not the only cue. Each color cue also has a text, a shape or an icon.
 - The layout stays usable with large text.
 
-An automated accessibility check does not find all problems. Record each check that you did manually.
+Run the automated accessibility checker of the platform in the UI tests. Examples are axe-core on the web and the Accessibility Test Framework on Android. Then do the manual checks. An automated checker does not find all problems. Record each check that you did manually.
 
 ## Rendered video and animation
 

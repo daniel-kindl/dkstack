@@ -20,8 +20,14 @@ Test that the code reads each stored format and schema version that a release wr
 ## Database migrations
 
 - Run each up migration on a copy of a database with real-shaped data. Real-shaped data has the structure, types and sizes of production data, with invented values.
+- Use the same database engine and major version as production, for example in a container. Reason: the SQL dialect, the types and the locks are different in another engine.
+- Do not use an in-memory substitute for another engine in migration tests. An example is SQLite or H2 in place of PostgreSQL.
 - Test that the migration keeps the data. Compare the record counts and the important values before and after the migration.
+- Stop a migration before it ends. Make sure that the database stays usable and that the migration can run again.
+- Run each migration two times. Make sure that the second run changes nothing, or that it fails cleanly with no change.
 - Test the down migration only if the project supports down migrations.
+- When old code and new code run at the same time, use expand and contract. First add the new schema parts. Then move the code. Then remove the old parts.
+- For expand and contract, test that the old code and the new code both work on the intermediate schema.
 
 Run these tests at the [integration level](test-levels.md#integration-tests). For personal data and secrets in fixtures, follow [incidents and regressions](regression-testing.md#incidents-and-regressions).
 
