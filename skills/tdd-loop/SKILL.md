@@ -13,7 +13,7 @@ Use when you implement behavior. Follow the [TDD guidelines](https://raw.githubu
 2. Write a focused test for the expected behavior and run it. Make sure that it fails for the expected reason. If the setup is wrong, fix it before you continue.
 3. Write only the production code that makes the test pass.
 4. Run the focused test and the relevant existing tests. Do not weaken assertions to make a test pass.
-5. Refactor while the tests are green. If no test checks a behavior at risk, add a characterization test. It must pass before you refactor.
+5. Refactor while the tests are green.
 6. Repeat for the next behavior. Run the required checks of the repository before you report. Mark each check that did not run as NOT RUN.
 
 ## Boundaries

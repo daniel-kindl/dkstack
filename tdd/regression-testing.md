@@ -11,7 +11,7 @@ A bug fix starts with a test that shows the wrong behavior. Keep that test after
 5. Make sure that the new test passes and that the existing tests stay green.
 6. Keep the regression test after the fix.
 
-If no automated test reproduces the defect, state the constraint and the manual verification that ran in the pull request. Do not call that work TDD. See [boundaries and evidence](index.md#boundaries-and-evidence).
+If no automated test reproduces the defect, follow [boundaries and evidence](index.md#boundaries-and-evidence). In the pull request, state the manual verification that ran.
 
 ## Scope and risk
 

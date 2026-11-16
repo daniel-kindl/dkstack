@@ -21,7 +21,7 @@ A test with only mocks does not prove that a physical device works. For hardware
 
 ## Limited testability
 
-When you cannot do a test-first red step, state the constraint and the verification that ran in the pull request. Also state the remaining risk. Do not call that work TDD. Do not leave out tests without a record. See [boundaries and evidence](index.md#boundaries-and-evidence).
+When you cannot do a test-first red step, follow [boundaries and evidence](index.md#boundaries-and-evidence). Also state the remaining risk in the pull request.
 
 ## Example
 

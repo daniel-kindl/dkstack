@@ -53,7 +53,7 @@ Select the level with [test levels](test-levels.md), and use [regression testing
 
 TDD applies to new behavior, changed behavior and bug fixes. A refactor keeps behavior the same and needs green tests before and after.
 
-Formatting, documentation and mechanical changes that do not change behavior do not need a failing test. Run the checks that apply to them. You can write a spike to explore a solution. Do not merge spike code without tests. Test generated code through its consumer or test the generator.
+Formatting, documentation and mechanical changes do not need a failing test. A mechanical change is a rename or a move that a tool does, with no change in behavior. Run the checks that apply to them. You can write a spike to explore a solution. Do not merge spike code without tests. Test generated code through its consumer or test the generator.
 
 When you cannot do a test-first red step, state the constraint and the verification that ran in the pull request. Do not call that work TDD. Do not claim that a check passed unless it ran. Existing code without tests does not permit new behavior without tests.
 

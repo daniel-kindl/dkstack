@@ -7,10 +7,8 @@ Use this cycle for each new or changed observable behavior. A cycle ends with wo
 1. Select one acceptance criterion, boundary case or reported defect.
 2. Write the smallest test that shows the expected result through a [public interface](index.md#core-principles). Test one behavior in each test.
 3. Run the smallest set of tests that includes the new test. Make sure that it fails because the behavior is missing or wrong.
-4. A compile error, a wrong setup, a service that is not available or a timeout is not a red step. Fix that problem in a separate change.
+4. A wrong setup, a service that is not available or a timeout is not a red step. Fix that problem in a separate change. A compile error is a red step only for a public API that does not exist yet. You must also be able to separate that error from other build errors. Prefer a failing assertion.
 5. If the test passes before you change the code, improve the test or select a requirement that no test covers. Do not claim a red step that you did not see.
-
-A compile error for a public API that does not exist yet can be a red step. This is true only when you can separate that error from other build errors. Prefer a failing assertion.
 
 ## Green: make one test pass
 
