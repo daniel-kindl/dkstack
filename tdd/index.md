@@ -49,10 +49,6 @@ Control dependencies with [test isolation](test-isolation.md) and remove nondete
 
 Select the level with [test levels](test-levels.md), and use [regression testing](regression-testing.md), [coverage](coverage.md) and [performance testing](performance-testing.md) as the change needs.
 
-## Examples
-
-Each topic page has a good example and a bad example.
-
 ## Boundaries and evidence
 
 TDD applies to new behavior, changed behavior and bug fixes. A refactor keeps behavior the same and needs green tests before and after.
