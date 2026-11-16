@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Keep the record of a security defect private. The rule is in `tdd/security-testing.md`.
   `tdd/regression-testing.md` links to it (#147).
 - The linked issue for a new skip or quarantine must have an owner (#147).
+- `coding/security.md`: where the project has static analysis or secret scanning, run them in CI
+  as gates (#147).
 
 ### Changed
 

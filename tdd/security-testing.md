@@ -18,7 +18,7 @@ Test that the code refuses what it must refuse. The security rules are in [secur
 ## Gates and parsers
 
 - The dependency audit is a gate. Follow the [supply chain rules](../coding/dependencies.md#supply-chain-rules) and [quality gates](../coding/quality-gates.md).
-- Where the project has static analysis (SAST) or secret scanning, run them in CI as gates. Follow [quality gates](../coding/quality-gates.md).
+- For static analysis (SAST) and secret scanning in CI, follow the [security rules](../coding/security.md#rules).
 - Fuzz each parser that reads untrusted input. Follow [fuzz testing](property-testing.md#fuzz-testing).
 
 ## Security fixes
