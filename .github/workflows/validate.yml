@@ -3,10 +3,6 @@ name: validate
 # Runs every repository check. The job name "validate" is the required
 # status check context for main. Do not rename it.
 # This workflow does not tag, release or publish.
-# The Release workflow starts this workflow by workflow_dispatch on its
-# release branch. GitHub does not count the check runs of a workflow_dispatch
-# run for a pull request. When this run passes, the Release workflow creates
-# the check run "validate" on the same commit with the Checks API.
 
 on:
   pull_request:
@@ -14,7 +10,6 @@ on:
     types: [opened, synchronize, reopened, edited]
   push:
     branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -44,7 +39,7 @@ jobs:
         run: node scripts/check-title.mjs "$TITLE"
 
       - name: Check that the commit title is a conventional commit
-        if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name != 'pull_request' }}
+        if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'push' }}
         run: node scripts/check-title.mjs "$(git log -1 --format=%s)"
 
       - name: Check the skill folders and frontmatter

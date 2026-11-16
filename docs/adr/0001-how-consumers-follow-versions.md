@@ -159,10 +159,16 @@ read-only `plan` job works out the version and shows it in the run summary. The 
 runs in the `release` environment, with Daniel as the required reviewer. Daniel's OK for the
 release is two actions: he starts `Release`, and he approves the `release` environment after he
 reads the planned version. This OK names the exact version, as the amendment of 2026-10-28
-requires. The workflow pushes the tag and fast-forwards `v1` with `GITHUB_TOKEN`. It never force-pushes, and
+requires. The workflow pushes the tag and fast-forwards `v1`. It never force-pushes, and
 `v1` still moves forward only. This amendment replaces "Only Daniel does this, by hand" in
 Consequences. The rule "A breaking release starts `v2`" stays: the workflow stops on a breaking
 change. See [Release dkstack](../../versioning/index.md#release-dkstack).
+
+On 2026-11-11 at 19:06 (Prague), Daniel decided: "Set up a GitHub App for dkstack releases". The
+job that writes uses a token from this app, for dkstack only, with Contents, Pull requests and
+Workflows (write). The app is in no ruleset bypass list, so `protect-main` still requires
+`validate`. With `GITHUB_TOKEN` only, the release pull request did not get a `validate` check
+that `protect-main` counts (runs 43070086329 and 43073954019).
 
 ## Consequences
 

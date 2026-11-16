@@ -26,7 +26,8 @@ action with the owner's OK. Only then can an agent do it.
 - For a dkstack release, the owner's OK is two actions. He starts the `Release` workflow on
   `main`. Then he approves the `release` environment after he reads the planned version in the
   run summary of the `plan` job. This OK names the exact version. No agent starts the `Release`
-  workflow or approves the `release` environment. See
+  workflow or approves the `release` environment. If the `validate` run of the release pull
+  request waits for approval, only the owner approves it. No agent and no job approves it. See
   [Release dkstack](../versioning/index.md#release-dkstack). Reason: the owner must see the
   version before anything is written.
 - Do not delete a repository or a branch with unmerged work. Archive it. Reason: deleted work can

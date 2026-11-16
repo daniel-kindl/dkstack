@@ -9,22 +9,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Ten testing pages in `tdd/`. They are `red-green-refactor.md`, `test-design.md`, `test-isolation.md`,
+  `test-levels.md`, `regression-testing.md`, `deterministic-tests.md`, `coverage.md`,
+  `property-testing.md`, `performance-testing.md` and `legacy-code.md`. `tdd/index.md` lists them
+  (#136).
+- New testing rules. When you change or delete an assertion, state which requirement changed. Do
+  not update a snapshot or golden file to make a test pass. Do not commit a focus marker. Do not
+  commit a new skip without a linked issue. Do not mock a third-party API directly (#136).
+- Four P1 testing pages in `tdd/`: `data-migration-testing.md`, `ui-testing.md`,
+  `security-testing.md` and `test-suite-health.md`. `tdd/index.md` lists them.
+  `coding/security.md` links to `tdd/security-testing.md` (#147).
+- Keep the record of a security defect private. The rule is in `tdd/security-testing.md`.
+  `tdd/regression-testing.md` links to it (#147).
+- The linked issue for a new skip or quarantine must have an owner (#147).
+- `coding/security.md`: where the project has static analysis or secret scanning, run them in CI
+  as gates (#147).
+
+### Changed
+
+- `tdd/index.md` keeps the purpose, the page list, the core principles and the boundaries. All
+  other rules are on the topic pages, and each rule is on one page (#136).
+- `coding/testing.md` is now a pointer to `tdd/`. Its rules moved to the `tdd/` pages. `tdd/test-design.md` now has
+  the rule "Break the code on purpose once and make sure that a test fails". The rule does not
+  change (#136).
+- `skills/tdd-loop`: the steps and boundaries now match the `tdd/` pages. The refactor scope rule
+  does not change (#136).
+- Deviation rule: sometimes you cannot do a test-first red step. Then state the constraint and
+  the verification that ran in the pull request. Do not call that work TDD. There is no owner approval
+  step. Before this change, `tdd/index.md` and `skills/tdd-loop` said "Do not skip the failing
+  step" with no exception (#136).
+- Mechanical change: `tdd/index.md` defines it as a rename or a move by a tool, with no
+  change in behavior. It does not need a failing test (#136).
+
+## [1.3.1] - 2026-11-11
+
+### Added
+
 - The `Release` workflow. Daniel starts it on `main`. A read-only `plan` job shows the version in
   the run summary. After Daniel approves the `release` environment, the `release` job prepares the
   release in a pull request, merges the pull request when `validate` passes, creates the tag and
-  the GitHub release, and fast-forwards `v1`. A breaking change stops it. It uses only
-  `GITHUB_TOKEN` and never force-pushes (#135).
+  the GitHub release, and fast-forwards `v1`. A breaking change stops it. It never force-pushes
+  (#135).
+- The `release` job does its writes with a token from the GitHub App of dkstack releases. The
+  token is for dkstack only, with Contents, Pull requests and Workflows (write). The app is in no
+  ruleset bypass list. `GITHUB_TOKEN` only reads. The secrets `RELEASE_APP_ID` and
+  `RELEASE_APP_PRIVATE_KEY` are in the `release` environment. `scripts/check-workflows.mjs`
+  lets only this job pass them to `actions/create-github-app-token` (#135).
 - `scripts/release.mjs`: works out the next version, writes the plan summary, checks the `release`
   environment, moves the `[Unreleased]` notes to the new section, sets the `package.json` version
   and prints the release notes.
 
 ### Changed
 
-- The `validate` workflow can also start by `workflow_dispatch`. The job name stays `validate`.
-  GitHub does not count the check runs of a `workflow_dispatch` run for a pull request. When
-  the dispatched run passes, the `Release` workflow creates the check run `validate` on the
-  release commit with the Checks API. A failure before the merge closes the release pull request
-  and deletes its branch.
+- The release pull request gets the normal `pull_request` run of `validate`. If the run waits for
+  approval, the `release` job writes the run link to the run summary and waits up to 15 minutes.
+  Only Daniel approves the run. No agent and no job approves it. A failure before the merge closes
+  the release pull request and deletes its branch.
 - `versioning/index.md`: the release steps are now the `Release` workflow, with a one-time setup
   and the steps to finish a release by hand. `CONTRIBUTING.md` links them. ADR 0001 has an
   amendment.
@@ -327,7 +367,8 @@ This minor release removes pages, skills and scripts by the owner's decision on 
 - The `validate` workflow. It checks the PR or commit title, the skills, the links, the dashes,
   the workflows, the CHANGELOG entry for the version and the unit tests.
 
-[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/daniel-kindl/dkstack/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/daniel-kindl/dkstack/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/daniel-kindl/dkstack/compare/v1.1.3...v1.2.0
 [1.1.3]: https://github.com/daniel-kindl/dkstack/compare/v1.1.2...v1.1.3

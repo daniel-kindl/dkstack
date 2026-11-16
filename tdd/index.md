@@ -1,43 +1,64 @@
 # Test-driven development
 
-Write a failing test first. Then write the code that makes the test pass.
+Use test-driven development (TDD) for changes to observable behavior. Write a test that states what the system must do before you change production code. Keep each cycle small, so that you can find the cause of a failure and review the result.
 
-The test defines the expected behavior. The code exists to satisfy the test.
+This page lists the testing pages and the core principles. Each rule is on one topic page. [TDD loop](../skills/tdd-loop/SKILL.md) tells agents how to do the cycle. [Testing](../coding/testing.md) points to this page. Follow [quality gates](../coding/quality-gates.md) when a check fails.
 
-## Rules
+## Guidelines
 
-- Write a test that fails for the right reason before you write production code.
-- Write only enough code to make the current test pass.
-- Refactor only when tests are green.
-- Tests must prove behavior, not implementation details.
-- Keep tests small and focused. One behavior per test.
-- Do not skip the failing step.
+Read only the pages that apply to the task. Read the P0 pages first. The P1 pages cover special techniques. The priority gives the reading order. It does not make a rule optional.
 
-For bug fixes, edge cases and error paths, see [coding/testing.md](../coding/testing.md).
+| Priority | Guide | Use |
+| --- | --- | --- |
+| P0 | [Red, green, refactor](red-green-refactor.md) | Test-first cycle and evidence |
+| P0 | [Test design](test-design.md) | Cases, assertions, naming and AAA |
+| P0 | [Test isolation](test-isolation.md) | Test doubles, controlled dependencies and fixtures |
+| P0 | [Test levels](test-levels.md) | Unit, integration, contract and end-to-end |
+| P0 | [Regression testing](regression-testing.md) | Reproducing bugs and keeping them fixed |
+| P0 | [Deterministic tests](deterministic-tests.md) | Time, randomness, concurrency and flaky tests |
+| P1 | [Coverage](coverage.md) | Line, branch and mutation coverage |
+| P1 | [Property testing](property-testing.md) | Parameterized, generated and fuzz inputs |
+| P1 | [Performance testing](performance-testing.md) | Benchmarks and performance regressions |
+| P1 | [Legacy code](legacy-code.md) | Characterization tests and TDD in code without tests |
+| P1 | [Data and migration testing](data-migration-testing.md) | Stored formats, schema versions, backups and database migrations |
+| P1 | [UI and accessibility testing](ui-testing.md) | Presentation logic, UI tests, accessibility and rendered output |
+| P1 | [Security testing](security-testing.md) | Negative cases, secrets, audits and security fixes |
+| P1 | [Test suite health](test-suite-health.md) | Test location, speed, random order and the CI command |
 
-## Good example
+## Core principles
 
-You need a function that adds two numbers.
+- Write an executable test for a behavior before you add or change that behavior.
+- Make sure that the test fails for the expected reason.
+- Make the smallest production change that makes the test pass.
+- Refactor only when the tests pass. Keep the observable behavior the same.
+- Test through a public interface. Assert results, state changes, errors and side effects, not private details.
+- Keep each test independent, deterministic and focused on one behavior.
+- Treat tests as maintained code.
 
-1. Write a test that calls `add(2, 3)` and expects `5`. The test fails.
-2. Write the smallest `add` implementation that returns `5`.
-3. The test passes.
-4. Add another failing test for a new case. Repeat.
+A public interface is the part of the code that callers use. Examples are a public API, a command, an HTTP endpoint and a user interface.
 
-The behavior is specified before the implementation.
+## Red, green, refactor
 
-## Bad example
+Follow the cycle and record the evidence as [red, green, refactor](red-green-refactor.md) describes.
 
-Write the full `add` function first. Then write tests that match what the function already does.
+## Test design
 
-The tests confirm the current code. They do not drive the design. A wrong implementation can pass if the tests were written after the fact.
+Choose cases, assertions and names with [test design](test-design.md).
 
-## Another good example
+## Isolation and determinism
 
-A new requirement arrives. You write a failing test that describes the new behavior. Then you change the code until the test passes. Existing tests stay green.
+Control dependencies with [test isolation](test-isolation.md) and remove nondeterminism with [deterministic tests](deterministic-tests.md).
 
-## Another bad example
+## Verification and kinds of tests
 
-You change the code to meet a new requirement. Then you update or add tests so they pass.
+Select the level with [test levels](test-levels.md), and use [regression testing](regression-testing.md), [coverage](coverage.md) and [performance testing](performance-testing.md) as the change needs.
 
-The tests no longer protect against regressions. They only document what the code currently does.
+## Boundaries and evidence
+
+TDD applies to new behavior, changed behavior and bug fixes. A refactor keeps behavior the same and needs green tests before and after.
+
+Formatting, documentation and mechanical changes do not need a failing test. A mechanical change is a rename or a move that a tool does, with no change in behavior. Run the checks that apply to them. You can write a spike to explore a solution. Do not merge spike code without tests. Test generated code through its consumer or test the generator.
+
+When you cannot do a test-first red step, state the constraint and the verification that ran in the pull request. Do not call that work TDD. Do not claim that a check passed unless it ran. Existing code without tests does not permit new behavior without tests.
+
+See also [small steps](../architecture/small-steps.md), [TDD loop](../skills/tdd-loop/SKILL.md) and [quality gates](../coding/quality-gates.md).

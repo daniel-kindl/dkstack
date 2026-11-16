@@ -90,12 +90,16 @@ jobs:
     # Daniel approves this environment after he reads the planned version.
     environment: release
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # More than all the waits together: find validate (3 minutes), wait for
+    # approval (15 minutes), watch validate (15 minutes) and the merge state
+    # (1 minute), with time for the other steps.
+    timeout-minutes: 45
+    # GITHUB_TOKEN only reads. The release app token does all the writes.
     permissions:
-      actions: write # start validate on the release branch
-      checks: write # report the validate result on the release pull request
-      contents: write # push the release branch, the tag and v1, and publish the release
-      pull-requests: write # open and merge the release pull request
+      actions: read # find and watch the validate run of the release pull request
+      checks: read # read the checks of the release pull request
+      contents: read # check out main
+      pull-requests: read # read the merge state of the release pull request
     env:
       BUMP: ${{ inputs.bump }}
       START_SHA: ${{ github.sha }}
@@ -124,8 +128,8 @@ jobs:
       - name: Run the repository checks on the prepared release
         run: npm run check
 
-      # The last step that runs repository code. The steps after it get
-      # GH_TOKEN and run only git and gh.
+      # The last step that runs repository code. The steps after it run only
+      # git and gh.
       - name: Commit the release and write the notes
         id: branch
         env:
@@ -145,9 +149,30 @@ jobs:
             echo "head_sha=$(git rev-parse HEAD)"
           } >> "$GITHUB_OUTPUT"
 
+      # The release app token. Daniel set up the app on 2026-11-11 (#135): it
+      # has Contents, Pull requests and Workflows (read and write) and is
+      # installed on dkstack only. It is in no ruleset bypass list, so
+      # protect-main still requires validate. The token is for dkstack only,
+      # with these three permissions only. The action masks it and revokes it
+      # at the end of the job. Only the git and gh steps that write get it.
+      # The token, not GITHUB_TOKEN, opens the pull request, so the normal
+      # pull_request run of validate starts. Workflows (write) lets the token
+      # move v1 when the release changes files in .github/workflows.
+      - name: Get a token from the release app
+        id: app
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ secrets.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: dkstack
+          permission-contents: write
+          permission-pull-requests: write
+          permission-workflows: write
+
       - name: Push the release branch
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.app.outputs.token }}
           BRANCH: ${{ steps.branch.outputs.branch }}
         run: |
           # git gets the token from gh at each push. The token is not written to disk.
@@ -158,7 +183,7 @@ jobs:
       - name: Open the release pull request
         id: pr
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.app.outputs.token }}
           VERSION: ${{ steps.prepare.outputs.version }}
           BRANCH: ${{ steps.branch.outputs.branch }}
           TITLE: ${{ steps.branch.outputs.title }}
@@ -176,82 +201,72 @@ jobs:
           echo "Opened $URL"
           echo "pr=${URL##*/}" >> "$GITHUB_OUTPUT"
 
-      # The pull_request run of validate on a pull request that GITHUB_TOKEN
-      # opens waits for approval: github-actions[bot] is a first-time
-      # contributor. So the job starts validate by workflow_dispatch on the
-      # release branch. GitHub does not count the check runs of a
-      # workflow_dispatch run for a pull request, so the next step reports
-      # the result with the Checks API.
-      - name: Run validate on the release branch
-        id: validate
-        env:
-          GH_TOKEN: ${{ github.token }}
-          BRANCH: ${{ steps.branch.outputs.branch }}
-          HEAD_SHA: ${{ steps.branch.outputs.head_sha }}
-        run: |
-          gh workflow run validate.yml --ref "$BRANCH"
-          RUN_ID=""
-          for _ in $(seq 1 36); do
-            RUN_ID=$(gh run list --workflow validate.yml --branch "$BRANCH" --event workflow_dispatch \
-              --commit "$HEAD_SHA" --limit 1 --json databaseId --jq '.[0].databaseId // empty')
-            if [ -n "$RUN_ID" ]; then break; fi
-            sleep 5
-          done
-          if [ -z "$RUN_ID" ]; then
-            echo "::error::validate did not start on $BRANCH. The pull request stays open."
-            exit 1
-          fi
-          echo "validate: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$RUN_ID"
-          if ! gh run watch "$RUN_ID" --exit-status --interval 15; then
-            echo "::error::validate failed on $BRANCH. Nothing was merged."
-            exit 1
-          fi
-          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
-
-      # The check run "validate" that protect-main requires. GITHUB_TOKEN
-      # creates it, so it comes from the GitHub Actions app (15368). The job
-      # creates it only for a validate run that it started, on the release
-      # commit, that passed.
-      - name: Report the validate result on the release pull request
-        env:
-          GH_TOKEN: ${{ github.token }}
-          HEAD_SHA: ${{ steps.branch.outputs.head_sha }}
-          RUN_ID: ${{ steps.validate.outputs.run_id }}
-        run: |
-          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" > "$RUNNER_TEMP/validate-run.json"
-          RUN_EVENT=$(jq -r .event "$RUNNER_TEMP/validate-run.json")
-          RUN_SHA=$(jq -r .head_sha "$RUNNER_TEMP/validate-run.json")
-          RUN_CONCLUSION=$(jq -r .conclusion "$RUNNER_TEMP/validate-run.json")
-          RUN_PATH=$(jq -r .path "$RUNNER_TEMP/validate-run.json")
-          RUN_URL=$(jq -r .html_url "$RUNNER_TEMP/validate-run.json")
-          if [ "$RUN_EVENT" != "workflow_dispatch" ] || [ "$RUN_SHA" != "$HEAD_SHA" ] ||
-            [ "$RUN_CONCLUSION" != "success" ] || [ "$RUN_PATH" != ".github/workflows/validate.yml" ]; then
-            echo "::error::The validate run $RUN_ID is not a passed workflow_dispatch run of validate.yml on $HEAD_SHA. Nothing was merged."
-            exit 1
-          fi
-          gh api -X POST "repos/$GITHUB_REPOSITORY/check-runs" \
-            -f name=validate \
-            -f head_sha="$HEAD_SHA" \
-            -f status=completed \
-            -f conclusion=success \
-            -f details_url="$RUN_URL" \
-            -f "output[title]=validate passed" \
-            -f "output[summary]=The Release workflow started validate by workflow_dispatch on this commit. It passed: $RUN_URL" \
-            --jq '"Created the check run validate: " + .html_url'
-
-      - name: Merge the release pull request
+      # protect-main requires the check "validate" of the pull_request run.
+      # The run can wait for approval, because the app is a first-time
+      # contributor. Only Daniel approves it. No agent and no job approves
+      # it. The job waits for him, reads the run state only, and stops after
+      # 15 minutes. Then the cleanup step closes the pull request.
+      - name: Wait for validate on the release pull request
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ steps.pr.outputs.pr }}
-          TITLE: ${{ steps.branch.outputs.title }}
+          BRANCH: ${{ steps.branch.outputs.branch }}
           HEAD_SHA: ${{ steps.branch.outputs.head_sha }}
+        run: |
+          RUN=""
+          for _ in $(seq 1 36); do
+            RUN=$(gh run list --workflow validate.yml --branch "$BRANCH" --event pull_request --commit "$HEAD_SHA" \
+              --limit 1 --json databaseId,status,conclusion --jq '.[0] // empty | "\(.databaseId) \(.status) \(.conclusion)"')
+            if [ -n "$RUN" ]; then break; fi
+            sleep 5
+          done
+          if [ -z "$RUN" ]; then
+            echo "::error::validate did not start on pull request #$PR. Nothing was merged."
+            exit 1
+          fi
+          read -r RUN_ID RUN_STATUS RUN_CONCLUSION <<< "$RUN"
+          RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$RUN_ID"
+          echo "validate: $RUN_URL"
+          if [ "$RUN_STATUS" = "action_required" ] || [ "$RUN_CONCLUSION" = "action_required" ]; then
+            MESSAGE="Daniel: approve this workflow run yourself; no agent approves it: $RUN_URL"
+            echo "::warning::validate on pull request #$PR waits for approval. $MESSAGE"
+            {
+              echo "validate on pull request #$PR waits for approval."
+              echo
+              echo "$MESSAGE"
+              echo
+              echo "The job waits up to 15 minutes. It merges nothing before validate passes."
+            } >> "$GITHUB_STEP_SUMMARY"
+            for _ in $(seq 1 90); do
+              sleep 10
+              RUN=$(gh run list --workflow validate.yml --branch "$BRANCH" --event pull_request --commit "$HEAD_SHA" \
+                --limit 1 --json databaseId,status,conclusion --jq '.[0] // empty | "\(.databaseId) \(.status) \(.conclusion)"')
+              read -r RUN_ID RUN_STATUS RUN_CONCLUSION <<< "$RUN"
+              if [ "$RUN_STATUS" != "action_required" ] && [ "$RUN_CONCLUSION" != "action_required" ]; then break; fi
+            done
+            RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$RUN_ID"
+            if [ "$RUN_STATUS" = "action_required" ] || [ "$RUN_CONCLUSION" = "action_required" ]; then
+              echo "::error::validate on pull request #$PR was not approved in 15 minutes: $RUN_URL. Nothing was merged."
+              exit 1
+            fi
+            echo "validate was approved: $RUN_URL"
+          fi
+          if ! timeout 900 gh run watch "$RUN_ID" --exit-status --interval 15 > /dev/null; then
+            echo "::error::validate did not pass on pull request #$PR: $RUN_URL. Nothing was merged."
+            exit 1
+          fi
+
+      - name: Wait until protect-main lets the pull request merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.pr }}
         run: |
           MAIN_SHA=$(git ls-remote origin refs/heads/main | cut -f1)
           if [ "$MAIN_SHA" != "$START_SHA" ]; then
             echo "::error::main moved from $START_SHA to $MAIN_SHA during the run. Nothing was merged or tagged."
             exit 1
           fi
-          # GitHub needs some seconds to see the new check run.
+          # GitHub needs some seconds to update the merge state.
           STATE=""
           for _ in $(seq 1 12); do
             STATE=$(gh pr view "$PR" --json mergeStateStatus --jq .mergeStateStatus)
@@ -261,6 +276,19 @@ jobs:
           if [ "$STATE" != "CLEAN" ]; then
             echo "::error::Pull request #$PR is not ready to merge (state $STATE). Nothing was merged. The state follows."
             gh pr view "$PR" --json mergeStateStatus,reviewDecision,statusCheckRollup
+            exit 1
+          fi
+
+      - name: Merge the release pull request
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          PR: ${{ steps.pr.outputs.pr }}
+          TITLE: ${{ steps.branch.outputs.title }}
+          HEAD_SHA: ${{ steps.branch.outputs.head_sha }}
+        run: |
+          MAIN_SHA=$(git ls-remote origin refs/heads/main | cut -f1)
+          if [ "$MAIN_SHA" != "$START_SHA" ]; then
+            echo "::error::main moved from $START_SHA to $MAIN_SHA during the run. Nothing was merged or tagged."
             exit 1
           fi
           # --match-head-commit: merge only the commit that validate checked.
@@ -288,7 +316,7 @@ jobs:
 
       - name: Tag the merge commit
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.app.outputs.token }}
           VERSION: ${{ steps.prepare.outputs.version }}
           MERGE_SHA: ${{ steps.merge.outputs.merge_sha }}
         run: |
@@ -297,7 +325,7 @@ jobs:
 
       - name: Publish the GitHub release
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.app.outputs.token }}
           VERSION: ${{ steps.prepare.outputs.version }}
         run: |
           # The notes come from the validated tree, which is the tree of the tag.
@@ -305,7 +333,7 @@ jobs:
 
       - name: Fast-forward v1 to the release
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.app.outputs.token }}
           VERSION: ${{ steps.prepare.outputs.version }}
           MERGE_SHA: ${{ steps.merge.outputs.merge_sha }}
         run: |
@@ -316,7 +344,7 @@ jobs:
           fi
           # A normal push. protect-v1 rejects a push that is not a fast-forward.
           if ! git push origin "$MERGE_SHA:refs/heads/v1"; then
-            echo "::error::The push to v1 failed. v1 did not move. Finish the release as versioning/index.md says."
+            echo "::error::The push to v1 failed. v1 did not move. See \"Finish a release\" in versioning/index.md."
             exit 1
           fi
           {
@@ -329,7 +357,7 @@ jobs:
       - name: Close the release pull request if it was not merged
         if: ${{ failure() && steps.pr.outputs.pr != '' }}
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.app.outputs.token }}
           PR: ${{ steps.pr.outputs.pr }}
           BRANCH: ${{ steps.branch.outputs.branch }}
           HEAD_SHA: ${{ steps.branch.outputs.head_sha }}

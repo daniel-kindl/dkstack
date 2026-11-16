@@ -6,12 +6,15 @@ Protect data and limit damage.
 
 - Validate all input at the boundary.
 - Do not put a secret in code, commits, logs, errors, issues, PR text or chat. A secret is a credential, a token, a key or a password.
+- Where the project has static analysis (SAST) or secret scanning, run them in CI as gates. Follow [quality gates](quality-gates.md).
 - Do not put personal data in code, logs or errors.
 - If a secret leaks, tell the owner and rotate it. Deleting the text does not make it safe.
 - Use the least privilege that works.
 - Do not trust data from outside the system.
 - Prefer safe defaults.
 - Fail securely. Do not fall back to a more permissive mode on error.
+
+Test these rules as [security testing](../tdd/security-testing.md) describes.
 
 ## Good example
 
