@@ -9,9 +9,9 @@ A bug fix starts with a test that shows the wrong behavior. Keep that test after
 3. Add a test that fails because of the same defect. Make sure that it does not fail because of an unrelated setup problem.
 4. Make the smallest correct fix.
 5. Make sure that the new test passes and that the existing tests stay green.
-6. Keep the regression test after the fix. Do not delete it when the defect is closed.
+6. Keep the regression test after the fix.
 
-If you cannot reproduce the defect in an automated test, state the constraint and the manual verification that ran in the pull request. Do not call that work TDD. See [boundaries and evidence](index.md#boundaries-and-evidence).
+If no automated test reproduces the defect, state the constraint and the manual verification that ran in the pull request. Do not call that work TDD. See [boundaries and evidence](index.md#boundaries-and-evidence).
 
 ## Scope and risk
 

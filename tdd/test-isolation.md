@@ -7,7 +7,7 @@ Isolate each test from other tests and from effects that you do not control. Iso
 - Use real domain objects and pure functions when they are fast and deterministic.
 - Use test doubles only for dependencies that you cannot control in a unit test. Examples are a clock, a remote API, randomness, a file system and a message broker.
 - Do not use the public network in unit tests.
-- Use real infrastructure in integration tests when the project provides it, it is disposable and it is part of the behavior under test.
+- Use real infrastructure in integration tests when the project provides it and it is disposable. The infrastructure must be part of the behavior under test.
 - Keep each test self-contained. Do not depend on test order or on state from earlier tests.
 - After each test, restore the configuration, environment variables, files, processes and database records that it changed.
 
@@ -21,7 +21,7 @@ Isolate each test from other tests and from effects that you do not control. Iso
 
 Use the simplest test double that proves the behavior. Verify calls, call counts or call order only when the interaction is part of the contract. An example is a requirement to send exactly one notification. In all other cases, assert results and effects.
 
-A test double can differ from the real implementation. When a fake replaces a persistent boundary, test its contract against the real implementation or cover the boundary with integration tests.
+A test double can differ from the real implementation. When a fake replaces a persistent boundary, test its contract against the real implementation. Or cover the boundary with integration tests.
 
 Do not mock a third-party API directly. Wrap it in an adapter. Test the adapter with an integration test. Mock the adapter in unit tests.
 

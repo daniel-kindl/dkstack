@@ -14,7 +14,7 @@ High coverage does not prove strong assertions. A test can run a line and not fi
 
 ## Mutation testing
 
-A mutation tool makes small changes to production code, such as changing `>=` to `>`, or replacing a return value with a default. Each changed version is a mutant. A test kills a mutant when the test fails.
+A mutation tool makes small changes to production code. Examples are changing `>=` to `>` and replacing a return value with a default. Each changed version is a mutant. A test kills a mutant when the test fails.
 
 1. Run mutation testing on risky code when the project has a mutation tool.
 2. Read each surviving mutant. Find the missing assertion or case.
@@ -28,6 +28,6 @@ A function checks `quantity >= 0`. A test with only `quantity = 1` cannot kill t
 
 ## Reporting
 
-When the results affect a change, record the tools, the scope, the important paths that no test runs and the important surviving mutants. Mark each metric that you did not measure as NOT RUN. Do not claim coverage or mutation results without measured evidence.
+When the results affect a change, record the tools and the scope. Also record the important paths that no test runs and the important surviving mutants. Mark each metric that you did not measure as NOT RUN. Do not claim coverage or mutation results without measured evidence.
 
 Related: [test design](test-design.md), [quality gates](../coding/quality-gates.md).

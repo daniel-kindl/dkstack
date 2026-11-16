@@ -31,7 +31,7 @@ Set limits for resources and duration. Keep the minimized failure cases and make
 
 ## Example
 
-An encoder and a decoder promise lossless round trips. Test `decode(encode(value)) == value` over generated supported values. When a Unicode edge case fails, keep that value as a regression test.
+An encoder and a decoder promise lossless round trips. Test `decode(encode(value)) == value` over generated valid values. When a Unicode edge case fails, keep that value as a regression test.
 
 Bad: generate random bytes and assert only that a function returns something. Ignore exceptions and do not check the documented error contract.
 

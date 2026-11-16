@@ -25,5 +25,5 @@ Use when you implement behavior. Follow the [TDD guidelines](https://raw.githubu
   test checks a behavior that this refactor can change, write a test for that behavior first.
   That test must pass before you change the code. See
   [stewardship](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/stewardship.md).
-- For a change with no behavior change, or when you cannot do a test-first red step, follow the boundaries in the [TDD guidelines](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md).
+- For a change that does not change behavior, follow the boundaries in the [TDD guidelines](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md). Do the same when you cannot do a test-first red step.
 - Do not restate the detailed testing standards here.

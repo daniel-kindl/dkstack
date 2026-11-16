@@ -6,7 +6,7 @@ A test specifies observable behavior. Design each test so that a realistic wrong
 
 - **Arrange:** set the inputs and the controlled dependencies.
 - **Act:** act on one behavior. A sequence is one act only when the requirement is the sequence.
-- **Assert:** check the outcome: a returned value, a state, an error, stored data, an emitted event or a side effect.
+- **Assert:** check the outcome. Examples are a returned value, a state, an error, stored data, an event and a side effect.
 
 Given-When-Then is the same sequence. Use the naming and structure of the project and its test framework.
 

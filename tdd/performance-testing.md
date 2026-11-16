@@ -24,6 +24,6 @@ Keep functional tests for the same behavior. A benchmark that does not check the
 
 Good: benchmark UTF-8 parsing over documented input sizes. Compare the median latency and the allocations on the same runner. Test the parse results and errors in separate tests.
 
-Bad: time one call on a developer laptop and assert that it takes less than a limit that no requirement sets. Then call that a regression test.
+Bad: time one call on a developer laptop. Assert that it takes less than a limit that no requirement sets. Then call that a regression test.
 
 Related: [test levels](test-levels.md), [deterministic tests](deterministic-tests.md).
