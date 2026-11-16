@@ -1,35 +1,35 @@
 # Regression testing
 
-A bug fix must demonstrate the incorrect behavior before correcting it, then keep that scenario protected.
+A bug fix starts with a test that shows the wrong behavior. Keep that test after the fix.
 
 ## Bug-fix cycle
 
-1. Capture the observed symptom, input, environment and expected result.
-2. Reproduce the failure using the smallest relevant public or supported boundary.
-3. Add a test that fails for the same defect. Confirm the test is not failing for an unrelated setup problem.
-4. Apply the smallest correct fix.
-5. Verify that the new test passes, existing tests remain green and adjacent cases are covered.
-6. Preserve the regression test after the fix. Do not delete it once the defect is resolved.
+1. Record the symptom, the input, the environment and the expected result.
+2. Reproduce the failure through the smallest relevant [public interface](index.md#core-principles).
+3. Add a test that fails because of the same defect. Make sure that it does not fail because of an unrelated setup problem.
+4. Make the smallest correct fix.
+5. Make sure that the new test passes and that the existing tests stay green.
+6. Keep the regression test after the fix. Do not delete it when the defect is closed.
 
-If the defect cannot be reproduced in an automated test, document the blocker and the actual manual verification. Do not claim TDD was followed. Seek an owner-approved deviation under [the TDD policy](index.md#boundaries).
+If you cannot reproduce the defect in an automated test, state the constraint and the manual verification that ran in the pull request. Do not call that work TDD. See [boundaries and evidence](index.md#boundaries-and-evidence).
 
 ## Scope and risk
 
-- Test the visible contract that failed, not the particular internal line that happened to contain the bug.
-- Cover neighboring boundaries only when the same defect mechanism makes them relevant.
-- Avoid turning a focused fix into unrelated refactoring.
-- Make the new case stable and repeatable, even if the original production symptom was intermittent.
+- Test the public contract that failed, not the internal line that had the bug.
+- Test neighboring boundaries only when the same defect can affect them.
+- Do not turn a focused fix into unrelated refactoring.
+- Make the new test stable and repeatable, also when the original symptom was intermittent.
 
 ## Example
 
-Reported: searching for an unknown book ID returns the first book.
+Reported: a search for an unknown book ID returns the first book.
 
-Bad sequence: change the lookup and then add a test expecting the corrected result.
+Bad: change the lookup. Then add a test that expects the corrected result.
 
-Good sequence: add a test asserting not-found for an unknown ID; confirm it fails on the existing code; fix the lookup; verify both known and unknown ID behavior.
+Good: add a test that expects not found for an unknown ID. Make sure that it fails on the current code. Fix the lookup. Make sure that the tests for a known ID and an unknown ID pass.
 
 ## Incidents and regressions
 
-When production data or a migration caused the failure, sanitize and minimize a representative fixture. Do not store personal information or secrets in tests.
+When production data or a migration caused the failure, make a small fixture that represents that data. Do not store personal data or secrets in tests.
 
 Related: [red-green-refactor](red-green-refactor.md), [deterministic tests](deterministic-tests.md).

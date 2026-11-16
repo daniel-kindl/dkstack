@@ -1,34 +1,40 @@
 # TDD with legacy code
 
-Legacy code often has weak seams, global state or missing tests. Improve protection incrementally without inventing evidence of test-first work.
+Legacy code often has weak seams, global state or no tests. Add test protection in small steps. Do not invent evidence of test-first work.
 
 ## Before changing behavior
 
-1. Identify the public or supported behavior and affected callers.
-2. Run existing checks and capture the baseline, including known failures.
-3. Add characterization tests for current behavior at the nearest stable boundary. These tests start green because they document existing behavior.
-4. When practical, introduce a narrow seam for time, I/O or state without changing observable behavior. Keep characterization tests green.
-5. Add a failing test for the new requirement or reported defect.
-6. Implement the smallest change, verify green and refactor cautiously.
+1. Identify the [public interface](index.md#core-principles) and the affected callers.
+2. Run the existing checks and record the baseline, including known failures.
+3. Add characterization tests for the current behavior at the nearest stable boundary. These tests pass from the start, because they record the current behavior.
+4. Where possible, add a narrow seam for time, I/O or state. Do not change observable behavior. Keep the characterization tests green.
+5. Add a failing test for the new requirement or the reported defect.
+6. Make the smallest change. Make sure that the tests pass. Then refactor in small steps.
 
-Characterization tests describe what code does today. They do not automatically endorse incorrect behavior. For a known bug, the regression test must state the intended corrected behavior and fail before the fix.
+Characterization tests record what the code does now. They do not make wrong behavior correct. For a known bug, the regression test states the correct behavior and fails before the fix.
 
 ## Difficult dependencies
 
-For hardware, old frameworks, user interfaces or unavailable services, select the closest useful boundary. Use component tests, protocol fixtures or carefully controlled fakes, backed by integration or manual validation where possible.
+For hardware, old frameworks, user interfaces or services that are not available, select the nearest useful boundary. Use component tests, protocol fixtures or controlled fakes. Add integration or manual verification where possible.
 
-Do not claim that a mock-only test proves a physical device. Record the platform and equipment used for any hardware verification, plus unverified paths.
+A test with only mocks does not prove that a physical device works. For hardware verification, record the platform, the equipment and the paths that no test verified.
 
 ## Limited testability
 
-If a meaningful automated red step is genuinely impossible, document why, what verification was run and the residual risk. Obtain owner approval for a deviation before relying on it. Do not silently omit tests or classify tests written afterward as TDD.
+When you cannot do a test-first red step, state the constraint and the verification that ran in the pull request. Also state the remaining risk. Do not call that work TDD. Do not leave out tests without a record. See [boundaries and evidence](index.md#boundaries-and-evidence).
 
 ## Example
 
-A legacy device adapter has no tests and directly reads hardware.
+A legacy device adapter has no tests and reads the hardware directly.
 
-Good: capture existing protocol framing in characterization tests; introduce an injectable transport seam; add a failing test for the new command's expected payload; implement it; verify on actual hardware when available.
+Good:
 
-Bad: rewrite the adapter and create mocks that reproduce the new implementation, with no baseline or device-path validation.
+1. Record the current protocol framing in characterization tests.
+2. Add a transport seam that tests can replace.
+3. Add a failing test for the payload of the new command.
+4. Implement the command.
+5. Verify on real hardware when it is available.
+
+Bad: rewrite the adapter and make mocks that copy the new implementation. Record no baseline and do not verify the device path.
 
 Related: [regression testing](regression-testing.md), [test isolation](test-isolation.md), [red-green-refactor](red-green-refactor.md).
