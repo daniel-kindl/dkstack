@@ -20,7 +20,7 @@ Keep the test suite fast, reliable and current. People stop running a suite that
 ## Maintenance
 
 - Delete or rewrite a test that no longer proves a requirement. State the requirement that changed, as [green](red-green-refactor.md#green-make-one-test-pass) describes.
-- Track each skipped test with an issue. For skip and focus markers, follow [flaky tests](deterministic-tests.md#flaky-tests).
+- For skipped tests and focus markers, follow [flaky tests](deterministic-tests.md#flaky-tests).
 
 ## CI
 
