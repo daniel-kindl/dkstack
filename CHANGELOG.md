@@ -24,6 +24,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The linked issue for a new skip or quarantine must have an owner (#147).
 - `coding/security.md`: where the project has static analysis or secret scanning, run them in CI
   as gates (#147).
+- The `learn` skill: an adaptive tutor with five modes in one skill. The modes are Explore, Learn,
+  Practice, Assess and Review (#142).
+- Learning standards in `learning/`: principles, teaching, assessment, retention, progress and
+  behavior scenarios. `README.md` and `skills/index.md` link to them (#142).
+- A portable progress block for the `learn` skill. It is one YAML block with `schema_version: 1`
+  and an `updated` date. The tutor returns it in the chat and never commits it to a repository (#142).
 
 ### Changed
 
