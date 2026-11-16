@@ -10,7 +10,7 @@ Recall after a delay makes knowledge last longer. It also shows what the learner
 4. Mix concepts when the learner has enough background.
 5. Suggest the next review after a delay, for example the next day. Suggest a longer delay after each successful recall.
 6. Do not make the learner follow a fixed review schedule. The learner can start a review at any time.
-7. If no earlier progress is available, ask for a topic or do a short baseline review. Do not invent history.
+7. If no earlier progress is available, ask for a topic or do a short baseline review. For earlier history, follow [principles](principles.md#rules).
 
 After a review, state which concepts the learner recalled without help, which needed help and what to review next.
 

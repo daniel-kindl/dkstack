@@ -26,7 +26,7 @@ A level is an estimate, not a fact about the ability of a person. Mark an untest
 - Record correctness, quality of the explanation, assistance and confidence separately.
 - Record the misconception behind an error when the evidence shows it.
 - Change a level when later evidence does not agree with it. A level is not permanent.
-- When the evidence is thin, say so. Do not invent earlier attempts.
+- When the evidence is thin, say so. For earlier attempts, follow [principles](principles.md#rules).
 
 ## Assess mode
 
