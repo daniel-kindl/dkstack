@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Four P1 testing pages in `tdd/`: `data-migration-testing.md`, `ui-testing.md`,
   `security-testing.md` and `test-suite-health.md`. `tdd/index.md` lists them.
   `coding/security.md` links to `tdd/security-testing.md` (#147).
+- Keep the record of a security defect private. The rule is in `tdd/security-testing.md`.
+  `tdd/regression-testing.md` links to it (#147).
+- The linked issue for a new skip or quarantine must have an owner (#147).
 
 ### Changed
 
