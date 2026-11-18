@@ -8,7 +8,7 @@ Record the result in the `Observability:` line of the plan and of the pull reque
 
 ## Assess event placement
 
-For each changed behavior, look at external calls, important state changes, decisions that change the flow, retries, designed fallbacks and terminal failures. For each candidate event, answer these questions:
+For each changed behavior, look at these places: external calls, important state changes, decisions that change the flow, retries, designed fallbacks and terminal failures. For each candidate event, answer these questions:
 
 1. Which operational or diagnostic question does the event answer?
 2. Which boundary owns the event and has the context?
