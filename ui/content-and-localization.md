@@ -5,7 +5,7 @@
 - Do not put essential instructions only in placeholders, tooltips or images.
 - When localization is in scope, support longer translated strings, wrapping and the reading direction of the locale.
 - When the product supports localization, format dates, numbers and units for the user's locale.
-- Check empty and partial content. Do not show invented data. Never invent values to make the screen look complete.
+- Check empty and partial content. Never invent values to make the screen look complete.
 
 ## Microcopy defaults
 

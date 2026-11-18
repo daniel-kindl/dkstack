@@ -151,7 +151,7 @@ test("the web pointer target size and its spacing exception follow 2.5.8", async
 
 test("the UI shows no invented data", async () => {
   const content = await document("ui/content-and-localization.md");
-  assert.ok(content.includes("Do not show invented data. Never invent values to make the screen look complete."));
+  assert.ok(content.includes("- Check empty and partial content. Never invent values to make the screen look complete."));
   const interactions = await document("ui/interactions.md");
   assert.ok(interactions.includes("For invented data, see [content](content-and-localization.md)."));
 });
