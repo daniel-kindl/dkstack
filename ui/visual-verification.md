@@ -46,7 +46,8 @@ These tools are examples. Another tool is allowed when it gives the same evidenc
 - Text spacing: inject the 1.4.12 values.
 - Keyboard: press Tab through the surface. Record each `document.activeElement` and take a screenshot of each focus.
 - Automated scan: `@axe-core/playwright` with the tags `wcag2a`, `wcag2aa`, `wcag21aa` and `wcag22aa`.
-- axe finds only part of the WCAG issues. Deque gives about 57% of issues by volume.
+- axe finds only part of the WCAG issues. In a 2021 Deque study of first-time audits, axe-core found about 57% of the issues by volume.
+- By WCAG criteria it covered only 16 of the 50 WCAG 2.1 AA criteria. See [Deque](https://www.deque.com/automated-accessibility-coverage-report/).
 - axe cannot check contrast on gradients, images or pseudo-elements. Check those by eye or with a color picker.
 - States: default, hover, focus, loading, empty, error and long content.
 
@@ -62,12 +63,19 @@ Report a table with each check, its result and the path to its evidence.
 
 ## Results
 
-Give one result for the change. Give each finding a severity from the [code-review table](../skills/code-review/SKILL.md#severity).
+Each check is PASS, FAIL, NOT RUN or NOT APPLICABLE. The change result is PASS, FAIL or NOT RUN. Give each finding a severity from the [code-review table](../skills/code-review/SKILL.md#severity).
+
+Change result:
 
 - PASS: each check in the minimum set ran or is NOT APPLICABLE. No check found a Blocking, High or Medium finding on a changed surface.
 - FAIL: a check found one or more Blocking, High or Medium findings on a changed surface.
 - NOT RUN: a required check did not run. Give the reason and the surfaces and states that you did not check. NOT RUN is never PASS.
+
+Per check:
+
 - NOT APPLICABLE: a check does not apply to the change, for example reduced motion for a change with no motion. Give the reason.
+
+When the check results combine, FAIL wins over NOT RUN.
 
 If you can build and run the UI, do the visual verification. If you cannot, write NOT RUN and the reason. Do not invent screenshots.
 
