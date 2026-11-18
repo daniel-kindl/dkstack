@@ -64,7 +64,7 @@ Use the levels of the project. The table gives the .NET name and the OpenTelemet
 - Do not format an expensive message when its level is off. Use the templates or the level checks of the library.
 - Do not let the event volume grow without a limit. Use filtering, sampling or rate limits when the project supports them.
 - Do not block a latency-sensitive path with a logging call.
-- An ID in a log field is allowed. The limit on high-cardinality values applies to metric labels and indexed attributes, not to log fields.
+- A resource ID in a log field is allowed. The limit on high-cardinality values applies to metric labels and indexed attributes, not to log fields.
 - A logging call must not change the result of an operation or hide its failure.
 
 ## Verification
