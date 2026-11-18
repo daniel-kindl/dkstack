@@ -9,7 +9,7 @@ Handle errors explicitly. Do not hide them.
 - Do not catch an error and continue with a default that hides the problem.
 - Do not use error codes or special values that callers can ignore.
 - Propagate errors that the current level cannot handle.
-- Log the error with enough context to diagnose it.
+- Ensure the failure is diagnosable at the boundary that owns or reports it. Log there with useful safe context, or propagate it to that boundary without duplicate error events. Do not log and rethrow the same terminal failure at every layer. See [logging](logging.md).
 
 ## Good example
 
