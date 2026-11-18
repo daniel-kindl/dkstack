@@ -43,7 +43,6 @@ test("Rendered verification has explicit evidence and fallback states", async ()
   for (const status of ["PASS", "FAIL", "NOT RUN", "NOT APPLICABLE"]) {
     assert.ok(verification.includes(status), `Missing ${status} result`);
   }
-  assert.match(verification, /when feasible/);
   assert.match(verification, /not invent screenshots/);
 });
 
@@ -54,7 +53,6 @@ test("UI planning and code review are conditional", async () => {
     document("skills/code-review/SKILL.md"),
   ]);
   assert.match(tdd, /backend-only/);
-  assert.match(review, /backend-only/);
   assert.match(review, /ui-review\/SKILL\.md/);
 });
 

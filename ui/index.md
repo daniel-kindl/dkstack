@@ -2,13 +2,9 @@
 
 Apply these standards when a task changes a rendered interface, its interaction, or its visual design. They apply to web, mobile, and desktop applications. Read only the topic pages relevant to the change.
 
-## Priorities
+## Severity
 
-- P0: applicable functional, accessibility, and usability defects block acceptance.
-- P1: consistency, clarity, and performance issues need a fix or an explicit review decision.
-- P2: optional refinements do not block acceptance unless required by the task.
-
-Priority is based on impact, not taste. A P2 visual preference becomes a requirement only when the specification requires it.
+UI findings use the [code-review severities](../skills/code-review/SKILL.md#severity). The UI line in the [standards axis](../skills/code-review/SKILL.md#5-standards-axis) maps UI findings to them. A visual preference is a requirement only when the specification asks for it.
 
 ## Topics
 

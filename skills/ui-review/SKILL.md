@@ -13,7 +13,7 @@ Apply the relevant [UI guidelines](https://raw.githubusercontent.com/daniel-kind
 2. Assess specification compliance: flows, interactions, states, responsive targets, and expected content.
 3. Assess UI standards: accessibility, layout, hierarchy, consistency, performance, and platform conventions.
 4. Follow [visual verification](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/visual-verification.md). Inspect the rendered UI where feasible. If unavailable, record NOT RUN; do not substitute source inspection for rendered evidence.
-5. Write findings with severity (P0, P1, P2), location and state, observation, requirement or reasoning, evidence level, impact, and smallest effective correction.
+5. Give each finding a severity from the [code-review severity table](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#severity). The UI line in the code-review standards axis maps UI findings to it.
 6. Separate demonstrated defects from usability hypotheses and aesthetic suggestions. Report both review axes, unavailable checks, and a reasoned verdict through `code-review` when reviewing a PR.
 
 ## Boundaries

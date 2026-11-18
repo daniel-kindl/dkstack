@@ -15,18 +15,14 @@ Use a risk-based matrix, not a full cross-product of every device and state. Do 
 
 ## Results
 
-- PASS: run, applicable coverage documented, no blocking defect found.
-- FAIL: run, with a reproducible blocking defect.
-- NOT RUN: unavailable or not executed; explain why and the unverified scope. Never call it a pass.
-- NOT APPLICABLE: no affected rendered surface or no relevant scenario; explain when unclear.
+Give one result for the change. Give each finding a severity from the [code-review table](../skills/code-review/SKILL.md#severity).
 
-Mandatory means perform verification when feasible and report limitations honestly. When tools are unavailable, report NOT RUN, provide the best alternative checks, and do not invent screenshots.
+- PASS: each check in the minimum set ran or is NOT APPLICABLE. No check found a Blocking, High or Medium finding on a changed surface.
+- FAIL: a check found one or more Blocking, High or Medium findings on a changed surface.
+- NOT RUN: a required check did not run. Give the reason and the surfaces and states that you did not check. NOT RUN is never PASS.
+- NOT APPLICABLE: a check does not apply to the change, for example reduced motion for a change with no motion. Give the reason.
 
-## Severity
-
-- P0: demonstrated critical accessibility, functional, or responsive failure.
-- P1: significant consistency, clarity, or performance issue requiring remediation or review decision.
-- P2: optional polish unless explicitly specified.
+If you can build and run the UI, do the visual verification. If you cannot, write NOT RUN and the reason. Do not invent screenshots.
 
 Automation can check deterministic defects. Aesthetic judgments require rationale, not unexplained CI pass/fail scores.
 
