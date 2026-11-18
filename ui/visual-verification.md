@@ -6,7 +6,7 @@ For every change affecting a rendered interface, attempt to inspect real rendere
 
 1. Identify changed screens and meaningful components. Select representative supported viewport sizes, display scales, themes, input methods, content lengths, and states.
 2. Build or launch the product with available supported tools. Capture screenshots or inspect the rendered surface.
-3. Check layout, text, visual hierarchy, contrast, clipping, focus, loading and error states, and relevant interactions.
+3. Check layout, text, visual hierarchy, contrast, clipping, focus, loading and error states, and relevant interactions. When content loading is in scope, confirm that skeletons match the expected content structure, do not shift layout unexpectedly, and yield to the real content or an error state.
 4. Compare against the approved specification, existing design system, and available baselines. Do not update a snapshot only to hide a failure.
 5. Fix in-scope defects; inspect the changed surface again after meaningful fixes.
 6. Report the actual evidence and any missing checks.
