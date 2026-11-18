@@ -10,10 +10,10 @@ Use when you implement behavior. Follow the [TDD guidelines](https://raw.githubu
 ## Steps
 
 1. Select one observable behavior or regression from the task.
-2. Write a focused test for the expected behavior and run it. Make sure that it fails for the expected reason. If the setup is wrong, fix it before you continue.
+2. Write a focused test for the expected behavior and run it. Make sure that it fails for the expected reason. If the setup is wrong, fix it before you continue. If the behavior has a [logging contract](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/test-design.md#logging-contracts), the test checks that event.
 3. Write only the production code that makes the test pass.
 4. Run the focused test and the relevant existing tests. Do not weaken assertions to make a test pass.
-5. Refactor while the tests are green.
+5. Refactor while the tests are green. Review the logging of the behavior against [logging](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/logging.md).
 6. Repeat for the next behavior. Run the required checks of the repository before you report. Mark each check that did not run as NOT RUN.
 
 For behavior that affects a rendered UI, use [UI guidelines](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/index.md) and [visual verification](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/visual-verification.md) in addition to tests. A passing test does not establish visual correctness. Skip these steps for backend-only behavior.

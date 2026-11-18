@@ -5,9 +5,13 @@ Protect data and limit damage.
 ## Rules
 
 - Validate all input at the boundary.
-- Do not put a secret in code, commits, logs, errors, issues, PR text or chat. A secret is a credential, a token, a key or a password.
+- Do not put a secret in code, commits, logs, errors, issues, PR text or chat. A secret is a credential, a session ID, a token, a key or a password.
 - Where the project has static analysis (SAST) or secret scanning, run them in CI as gates. Follow [quality gates](quality-gates.md).
-- Do not put personal data in code, logs or errors.
+- Do not put personal data in code, logs or errors. Personal data includes direct identifiers. Examples are a name, an email address, a phone number, a postal address and an IP address. Free text from a user is also personal data.
+- Logs have one exception. You can put an opaque internal ID, such as a user ID or an order ID, in a log field. A user ID is still personal data, so log it only when the event needs it.
+- Log each failed sign-in and each denied access at Warning. Include the opaque user ID and the outcome. Do not log the credential, the token or other personal data.
+- If no account matches, do not log the submitted name. Log `outcome=unknown_account` with no user ID. Return the same response for an unknown account and a wrong credential.
+- Do not alert on one event. Alert on a pattern, such as repeated failures for one account or from one source.
 - If a secret leaks, tell the owner and rotate it. Deleting the text does not make it safe.
 - Use the least privilege that works.
 - Do not trust data from outside the system.

@@ -8,12 +8,13 @@ Closes #
 
 ## Evidence
 
-<!-- Verified, unverified, and known risk. Name each required check that did not run as NOT RUN. For a documentation-only change, say why it has no test. -->
+<!-- Verified, unverified, and known risk. Name each required check that did not run as NOT RUN. For a documentation-only change, say why it has no test. A documentation-only change writes "Observability: none, docs only". -->
 
 - Verified:
 - Unverified:
 - Known risk:
 - NOT RUN:
+- Observability: <events added or changed>, or none, <reason>
 
 ## Risk and rollback
 

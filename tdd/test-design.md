@@ -27,6 +27,10 @@ Assert exact values or specific conditions. Do not use a weak check such as `not
 
 Do not update a snapshot or golden file to make a test pass. Read the diff and state why the new output is correct.
 
+## Logging contracts
+
+Treat a log event as behavior only when a consumer depends on it. Examples are an audit trail, an alert and a monitoring rule. For such an event, write a failing test first. Assert the event name, the level and the required safe fields. Assert that no secret or personal data is in the event. Use the [marker value test](security-testing.md#secrets). Do not assert the exact wording of other log messages. Do not add a logging assertion to each behavior test. For the event rules, see [logging](../coding/logging.md).
+
 ## What not to test
 
 - Do not test private methods directly. Test them through a [public interface](index.md#core-principles).

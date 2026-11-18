@@ -53,6 +53,11 @@ result says that it passed.
 
 A documentation-only change can have no test. Say why no test is needed.
 
+Add one observability line to Evidence. Write `Observability: <events added or changed>` or
+`Observability: none, <reason>`. A documentation-only change writes `Observability: none, docs only`.
+For the logging rules, see
+[logging](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/logging.md).
+
 When tests prove the behavior, list those tests in Evidence.
 [Review and merge](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md)
 requires that list.
@@ -81,6 +86,7 @@ Summary: The install page names the current release branch. A reader can follow 
 without a second document.
 
 Evidence: No test. The change is documentation. The project check is NOT RUN.
+Observability: none, docs only.
 
 Risk and rollback: Low risk. Revert this pull request.
 
@@ -94,6 +100,7 @@ limit. Callers receive the error after the third run.
 Evidence: Verified: a test failed because the call retried past the third attempt. The same test
 passed after the limit. The project check passed. Unverified: this change was not run on a
 production host.
+Observability: each run logs at Debug. The third failed run logs one Error.
 
 Risk and rollback: Low risk. Revert this pull request. The old retry behavior returns.
 
@@ -107,6 +114,7 @@ until they pass the argument.
 Evidence: Verified: the unit tests passed after the callers in this repository were updated. The
 migration check failed on one external example, and the failure is recorded. Unverified: the
 project check is NOT RUN. Known risk: callers outside this repository still use the old method.
+Observability: none, the change adds no logged behavior.
 
 Risk and rollback: The blast radius is every external caller of the method. Migration: each
 caller adds the argument. Rollback: revert this pull request before other projects release a

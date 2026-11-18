@@ -9,7 +9,7 @@ Handle errors explicitly. Do not hide them.
 - Do not catch an error and continue with a default that hides the problem.
 - Do not use error codes or special values that callers can ignore.
 - Propagate errors that the current level cannot handle.
-- Log the error with enough context to diagnose it.
+- Report each failure once, at the boundary that owns it. See [failure ownership](logging.md#failure-ownership-and-duplicates).
 
 ## Good example
 

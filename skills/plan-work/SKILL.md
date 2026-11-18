@@ -13,7 +13,7 @@ Put the plan where the task asks: in the issue, in the pull request or in the ch
 
 1. Find the goal, the acceptance criteria, the non-goals, the constraints and the known facts. If a requirement that changes the plan is not clear, use `clarify-intent`.
 2. Read the work that exists. Do not plan work again that is done.
-3. Divide the work into the smallest increments that are complete and that a reviewer can review alone. Plan each increment as a logical conventional commit. Do not plan a fixed number of commits. For each increment, write its dependencies, its risks and how to verify it. Write full details only for the items that the known facts support. For the later items, write only the outcome. See [small steps](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/small-steps.md).
+3. Divide the work into the smallest increments that are complete and that a reviewer can review alone. Plan each increment as a logical conventional commit. Do not plan a fixed number of commits. For each increment, write its dependencies, its risks and how to verify it. Write full details only for the items that the known facts support. For the later items, write only the outcome. See [small steps](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/small-steps.md). For each increment, assess logging against [logging](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/logging.md). Write the result in the `Observability:` entry.
 4. In each increment, put the tests before the behavior changes. See [tdd/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md).
 5. For work affecting a rendered UI, plan applicable accessibility, interaction states, responsive behavior, project design-system adherence, and real rendered verification. Follow [UI guidelines](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/index.md); do not add UI checks to backend-only work.
 6. Map each acceptance criterion to a test or a check in the plan. Make sure that no item adds scope that nobody asked for.
@@ -42,8 +42,11 @@ Proposed commit: feat(scope): summary
 Tests first:
 Work:
 Verification:
+Observability: <events added or changed, or none>
 Criteria covered:
 ```
+
+Write `none` when the increment needs no event.
 
 Each increment must describe a change that has a purpose and a result that you can verify. When you learn more, change the increment boundaries.
 
