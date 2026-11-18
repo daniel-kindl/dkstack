@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   It has a level table with .NET and OpenTelemetry names, and rules for retries, fallbacks,
   expected rejections, log injection, correlation and failure ownership. Metrics and traces are
   out of scope (#149).
+- `coding/security.md` defines personal data and the one exception for opaque IDs in logs. It says to log each
+  failed sign-in and each denied access at Warning (#149).
 - `plan-work` step 3 records the assessment in an `Observability:` entry for each increment.
   `write-pr` and the pull request template require an `Observability:` line in Evidence (#149).
 - `code-review` gives a severity to each logging finding. `tdd-loop`, `tdd/test-design.md`,
