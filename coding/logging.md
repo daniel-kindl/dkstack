@@ -53,7 +53,7 @@ Use the levels of the project. The table gives the .NET name and the OpenTelemet
 - Use structured event templates with named fields when the logging library supports them. Keep the event names, the field names and the field types stable.
 - Put only the context that the event question needs in fields. Examples are the operation, the resource identifier, the attempt count, the outcome, the elapsed time and the correlation ID.
 - For secrets, personal data and the IDs that a log can contain, follow the [security rules](security.md#rules). Test them with the [marker value test](../tdd/security-testing.md#secrets).
-- Do not log a full request, response or protocol payload by default. This default applies only to payloads. Personal data is never allowed.
+- Do not log a full request, response or protocol payload by default. This default applies only to payloads. Personal data is never allowed, except the opaque ID that the security rules allow.
 - Do not log free text from a user. See the [security rules](security.md#rules). Put other untrusted values in structured fields. Do not join them into the message text.
 - In plain text logs, remove or encode CR, LF and other control characters in untrusted values. This prevents log injection (CWE-117).
 - Give the exception to the exception argument of the logger. Do not build a stack trace by hand.
