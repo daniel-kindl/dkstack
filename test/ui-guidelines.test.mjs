@@ -125,3 +125,33 @@ test("sign-in and access errors follow the security rules", async () => {
   assert.ok(errors.includes("Sign-in and access errors follow [security](../coding/security.md#rules)."));
   assert.ok(errors.includes("For client logs, follow [logging](../coding/logging.md)."));
 });
+
+test("the minimum evidence list keeps each required item", async () => {
+  const evidence = section(await document("ui/visual-verification.md"), "## Minimum evidence");
+  const items = [
+    "- Screenshots at 320 CSS px wide and at one wide width.",
+    "- Screenshots in each supported theme.",
+    "- Screenshots of each changed state,",
+    "- A keyboard walk-through: focus order, visible focus, focus not hidden and no keyboard trap.",
+    "- Text at 200% and the text spacing values.",
+    "- Reduced motion, when the change has motion.",
+    "- The automated checker output: the tool, its version, the number of violations and its limits.",
+    "- The measured contrast ratio of each new or changed color pair.",
+  ];
+  for (const item of items) {
+    assert.ok(evidence.includes(item), `missing evidence item ${item}`);
+  }
+});
+
+test("the web pointer target size and its spacing exception follow 2.5.8", async () => {
+  const targets = section(await document("ui/accessibility.md"), "## Targets");
+  assert.ok(targets.includes("On the web, each pointer target is at least 24 by 24 CSS px (2.5.8)."));
+  assert.ok(targets.includes("A 24 CSS px circle centered on the target does not overlap another target or the circle of another target."));
+});
+
+test("the UI shows no invented data", async () => {
+  const content = await document("ui/content-and-localization.md");
+  assert.ok(content.includes("Do not show invented data. Never invent values to make the screen look complete."));
+  const interactions = await document("ui/interactions.md");
+  assert.ok(interactions.includes("For invented data, see [content](content-and-localization.md)."));
+});
