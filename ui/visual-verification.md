@@ -1,17 +1,64 @@
 # Visual verification
 
-For every change affecting a rendered interface, attempt to inspect real rendered output when the available environment can build and display it. Source inspection, compilation, and passing unit tests alone do not prove visual quality.
+Do visual verification for each change to a rendered UI. Tests, compilation and source inspection do not prove the rendered result. Screenshots do not replace behavior tests. Follow [UI testing](../tdd/ui-testing.md) for the tests.
 
 ## Protocol
 
-1. Identify changed screens and meaningful components. Select representative supported viewport sizes, display scales, themes, input methods, content lengths, and states.
-2. Build or launch the product with available supported tools. Capture screenshots or inspect the rendered surface.
-3. Check layout, text, visual hierarchy, contrast, clipping, focus, loading and error states, and relevant interactions. When content loading is in scope, confirm that skeletons match the expected content structure, do not shift layout unexpectedly, and yield to the real content or an error state.
-4. Compare against the approved specification, existing design system, and available baselines. Do not update a snapshot only to hide a failure.
-5. Fix in-scope defects; inspect the changed surface again after meaningful fixes.
-6. Report the actual evidence and any missing checks.
+1. Identify the changed screens and components. Select the widths, themes, states and input methods from the minimum set.
+2. Build and run the UI with a headless renderer or the running application. Capture screenshots of each changed surface.
+3. Check layout, text, hierarchy, contrast, clipping, focus and each changed state. For content loading, check the [loading rules](interactions.md).
+4. Compare the result with the specification, the design system and the baselines. To update a snapshot, follow [test design](../tdd/test-design.md#naming-and-assertions).
+5. Fix the defects in scope. Check the changed surface again after each fix.
+6. Report the result, the evidence and the checks that did not run.
 
-Use a risk-based matrix, not a full cross-product of every device and state. Do not mandate screenshot commits or a specific browser, emulator, UI framework, or service.
+Do not require screenshot commits or a specific browser, emulator, UI framework or service.
+
+## Minimum evidence
+
+Each changed surface needs this evidence. Mark an item NOT RUN or NOT APPLICABLE with a reason.
+
+- Screenshots at 320 CSS px wide and at one wide width. On native UI, use the narrowest supported window or screen.
+- Screenshots in each supported theme.
+- Screenshots of each changed state, for example empty, loading, error, disabled and focus.
+- A keyboard walk-through: focus order, visible focus, focus not hidden and no keyboard trap.
+- Text at 200% and the text spacing values. On native UI, use the largest system text size.
+- Reduced motion, when the change has motion.
+- The automated checker output: the tool, its version, the number of violations and its limits.
+- The measured contrast ratio of each new or changed color pair.
+
+The thresholds are in [accessibility](accessibility.md). One screenshot is never PASS.
+
+## Examples
+
+These tools are examples. Another tool is allowed when it gives the same evidence.
+
+- Web: Playwright screenshots and `@axe-core/playwright` with the WCAG 2.2 tags.
+- Avalonia: Avalonia.Headless with Skia frame capture.
+- Android and iOS: an emulator or simulator screenshot.
+- Native: the accessibility inspector of the platform, for example Accessibility Inspector, Accessibility Scanner or Accessibility Insights.
+
+### Web default
+
+- Tool: Playwright with Chromium, headless. Capture full-page screenshots of each changed surface.
+- Viewports: 320x640 (reflow), 390x844, 768x1024 and 1440x900.
+- Themes: light and dark with `colorScheme`. Reduced motion with `reducedMotion: "reduce"`.
+- Text resize: inject `html { font-size: 200% }` at 1280 px wide. This works only for rem-based sizes. Record that limit.
+- Text spacing: inject the 1.4.12 values.
+- Keyboard: press Tab through the surface. Record each `document.activeElement` and take a screenshot of each focus.
+- Automated scan: `@axe-core/playwright` with the tags `wcag2a`, `wcag2aa`, `wcag21aa` and `wcag22aa`.
+- axe finds only part of the WCAG issues. Deque gives about 57% of issues by volume.
+- axe cannot check contrast on gradients, images or pseudo-elements. Check those by eye or with a color picker.
+- States: default, hover, focus, loading, empty, error and long content.
+
+On the web, a PASS also needs all of these:
+
+- No serious or critical axe violation on the changed surface.
+- No horizontal scroll at 320 px, except the 1.4.10 exceptions.
+- Each tab stop is reachable, in a logical order and visibly focused. No tab stop is hidden.
+- No clipped or overlapping text at 200% and with text spacing.
+- Each changed state has a screenshot in each theme.
+
+Report a table with each check, its result and the path to its evidence.
 
 ## Results
 
@@ -24,6 +71,6 @@ Give one result for the change. Give each finding a severity from the [code-revi
 
 If you can build and run the UI, do the visual verification. If you cannot, write NOT RUN and the reason. Do not invent screenshots.
 
-Automation can check deterministic defects. Aesthetic judgments require rationale, not unexplained CI pass/fail scores.
+Write the result in the PR body as [write-pr](../skills/write-pr/SKILL.md#evidence) says.
 
-Also follow [UI testing](../tdd/ui-testing.md) for tests and [code review](../skills/code-review/SKILL.md) for findings.
+Automation can check defects that have a fixed rule. Give a reason for each aesthetic finding. Do not use a numeric score for taste.

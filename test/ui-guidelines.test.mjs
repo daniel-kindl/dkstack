@@ -64,5 +64,4 @@ test("loading guidance prefers truthful skeletons for content and keeps local pr
   assert.match(interactions, /Prefer skeleton placeholders/);
   assert.match(interactions, /spinner or compact progress indicator/);
   assert.match(interactions, /assistive technology/);
-  assert.match(verification, /skeletons match the expected content structure/);
 });

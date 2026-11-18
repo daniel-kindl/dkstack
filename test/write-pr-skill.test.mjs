@@ -45,6 +45,16 @@ test("the pull request body records the logging assessment", async () => {
   assert.match(template, /- Observability:/);
 });
 
+test("the pull request body records visual verification for a rendered UI change", async () => {
+  const skill = await flat("skills/write-pr/SKILL.md");
+  const template = await flat(".github/pull_request_template.md");
+  assert.ok(skill.includes("For a rendered UI change, add one visual verification line to Evidence."));
+  assert.ok(skill.includes("`Visual verification: <PASS, FAIL or NOT RUN>, <evidence>`"));
+  assert.ok(skill.includes("A change with no rendered UI has no visual verification line."));
+  assert.match(skill, /ui\/visual-verification\.md/);
+  assert.match(template, /- Visual verification: <PASS, FAIL or NOT RUN>, <evidence>\. Only for a rendered UI change\./);
+});
+
 test("the examples cover a docs change, a tested fix and a high-risk change", async () => {
   const skill = await readFile(join(root, "skills/write-pr/SKILL.md"), "utf8");
   const docs = example(skill, "Small documentation change");

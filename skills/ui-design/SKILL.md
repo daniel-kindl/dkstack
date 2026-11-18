@@ -14,7 +14,7 @@ Use the relevant [UI guidelines](https://raw.githubusercontent.com/daniel-kindl/
 3. Define applicable behavior, accessibility, responsiveness, themes, interaction states, content, and visual acceptance criteria. Include these in `plan-work` for planned changes.
 4. Implement in small increments. Reuse existing components and tokens; use `tdd-loop` for behavior. Do not invent frameworks or dependencies.
 5. Follow [visual verification](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/visual-verification.md). Inspect rendered output and relevant interactions when tools allow. Fix defects and verify again.
-6. Report evidence, affected surfaces, outcomes and limitations. Record unavailable visual checks as NOT RUN.
+6. Write the `Visual verification:` line and the `Observability:` line as `write-pr` says.
 
 ## Boundaries
 

@@ -24,7 +24,12 @@ Accessibility is a requirement. This page owns the accessibility rules and thres
 
 ## Targets
 
-- On the web, each pointer target is at least 24 by 24 CSS px (2.5.8). A smaller target passes when it has 24 px spacing, when an equivalent control meets the size, when it is inline in text, when the user agent sets its size, or when its size is essential.
+- On the web, each pointer target is at least 24 by 24 CSS px (2.5.8). A smaller target passes in these cases:
+  - It has 24 px spacing.
+  - An equivalent control meets the size.
+  - It is inline in text.
+  - The user agent sets its size.
+  - Its size is essential.
 - On the web, use at least 44 by 44 CSS px for primary touch controls.
 - Each touch target is at least 48 dp on Android or 44 pt on iOS.
 - Each drag action has a single-pointer alternative (2.5.7).

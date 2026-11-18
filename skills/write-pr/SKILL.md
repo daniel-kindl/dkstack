@@ -58,6 +58,11 @@ Add one observability line to Evidence. Write `Observability: <events added or c
 For the logging rules, see
 [logging](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/logging.md).
 
+For a rendered UI change, add one visual verification line to Evidence. Write
+`Visual verification: <PASS, FAIL or NOT RUN>, <evidence>`. Name the surfaces, the checks and the
+evidence paths. A change with no rendered UI has no visual verification line. For the results, see
+[visual verification](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/visual-verification.md).
+
 When tests prove the behavior, list those tests in Evidence.
 [Review and merge](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md)
 requires that list.
