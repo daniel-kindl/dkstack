@@ -8,6 +8,6 @@
 - Sign-in allows paste and password managers. It has no cognitive test (3.3.8).
 - Ask for confirmation or give an undo for legal, financial and data-deletion submits (3.3.4).
 - Do not disable the submit button to show that the form is not valid (dkstack rule). Keep it enabled and show the errors on submit.
-- Validate on blur or on submit, not on each keystroke (dkstack rule).
-- Mark required fields in text, not with color or an asterisk alone (dkstack rule).
+- Do not show an error while the user types in a field for the first time. Validate a field when it loses focus, and only if the user changed it. After an error shows, check the field again on each input and remove the error when the value is valid. Validate all fields on submit (dkstack rule).
+- Do not mark required fields with color alone (1.4.1). Write "required" in the label, not only an asterisk (dkstack rule).
 - Sign-in and access errors follow [security](../coding/security.md#rules).
