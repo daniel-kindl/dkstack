@@ -66,6 +66,14 @@ test("the plan-work steps keep the goal, small increments, tests first and the c
   assert.match(steps, /7\. Before you report, compare the plan with the issue, the commits and the check results\./);
 });
 
+test("the plan-work skill records the logging assessment in each increment", async () => {
+  const steps = (await section("Steps")).replace(/\s+/g, " ");
+  assert.match(steps, /For each increment, assess logging against \[logging\]\(https:\/\/raw\.githubusercontent\.com\/daniel-kindl\/dkstack\/v1\/coding\/logging\.md\)\./);
+  const format = (await readFile(skillFile, "utf8")).replace(/\s+/g, " ");
+  assert.match(format, /Observability: <events added or changed, or none>/);
+  assert.match(format, /Write `none` when the increment needs no event\./);
+});
+
 test("the plan goes where the task asks", async () => {
   const text = (await readFile(skillFile, "utf8")).replace(/\s+/g, " ");
   assert.match(text, /Put the plan where the task asks: in the issue, in the pull request or in the chat\./);

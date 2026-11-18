@@ -10,7 +10,7 @@ Coding standards and practices.
 - [naming.md](naming.md): Identifier forms, meaning and enforcement.
 - [quality-gates.md](quality-gates.md): Never weaken a quality gate.
 - [error-handling.md](error-handling.md): Handle errors explicitly.
-- [logging.md](logging.md): Logging and observability.
+- [logging.md](logging.md): Logging events and the observability assessment.
 - [security.md](security.md): Security basics.
 - [testing.md](testing.md): Testing rules.
 - [dependencies.md](dependencies.md): No unjustified dependencies.

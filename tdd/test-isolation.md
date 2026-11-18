@@ -25,6 +25,10 @@ A test double can differ from the real implementation. When a fake replaces a pe
 
 Do not mock a third-party API directly. Wrap it in an adapter. Test the adapter with an integration test. Mock the adapter in unit tests.
 
+## Logger dependencies
+
+When a test checks a [logging contract](test-design.md#logging-contracts), use a recording logger or another controlled test double. Capture the structured events and their levels. Do not assert call counts, formatting or private helpers. Do not use a shared global log sink. Restore each logger setting that the test changes.
+
 ## Fixtures
 
 - Give each fixture the smallest explicit state that the test needs.

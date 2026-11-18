@@ -35,6 +35,16 @@ test("the write-pr skill describes the body and stays out of review", async () =
   assert.match(skill, /review-and-merge\.md/);
 });
 
+test("the pull request body records the logging assessment", async () => {
+  const skill = await flat("skills/write-pr/SKILL.md");
+  const template = await flat(".github/pull_request_template.md");
+  assert.ok(skill.includes("`Observability: <events added or changed>`"));
+  assert.ok(skill.includes("`Observability: none, <reason>`"));
+  assert.ok(skill.includes("`Observability: none, docs only`"));
+  assert.match(skill, /coding\/logging\.md/);
+  assert.match(template, /- Observability:/);
+});
+
 test("the examples cover a docs change, a tested fix and a high-risk change", async () => {
   const skill = await readFile(join(root, "skills/write-pr/SKILL.md"), "utf8");
   const docs = example(skill, "Small documentation change");
@@ -42,6 +52,7 @@ test("the examples cover a docs change, a tested fix and a high-risk change", as
   const risk = example(skill, "High-risk change");
   assert.match(docs, /NOT RUN|no test/i);
   assert.match(docs, /[Ll]ow risk/);
+  assert.match(docs, /Observability: none, docs only/);
   assert.match(fix, /fail/i);
   assert.match(fix, /pass/i);
   assert.match(fix, /[Ll]ow risk|[Rr]ollback/);
