@@ -13,12 +13,11 @@ Put the plan where the task asks: in the issue, in the pull request or in the ch
 
 1. Find the goal, the acceptance criteria, the non-goals, the constraints and the known facts. If a requirement that changes the plan is not clear, use `clarify-intent`.
 2. Read the work that exists. Do not plan work again that is done.
-3. Divide the work into the smallest increments that are complete and that a reviewer can review alone. Plan each increment as a logical conventional commit. Do not plan a fixed number of commits. For each increment, write its dependencies, its risks and how to verify it. Write full details only for the items that the known facts support. For the later items, write only the outcome. See [small steps](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/small-steps.md).
+3. Divide the work into the smallest increments that are complete and that a reviewer can review alone. Plan each increment as a logical conventional commit. Do not plan a fixed number of commits. For each increment, write its dependencies, its risks and how to verify it. Write full details only for the items that the known facts support. For the later items, write only the outcome. See [small steps](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/small-steps.md). For each increment, assess logging against [logging](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/logging.md). Write the result in the `Observability:` entry.
 4. In each increment, put the tests before the behavior changes. See [tdd/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md).
-5. Assess observability for each affected behavior against [logging](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/logging.md). Identify useful diagnostic boundaries and events where justified. In an increment, use an optional `Observability:` entry for event placement and verification, or briefly state `No additional events needed` for a non-obvious omission. Do not require events or a report for routine changes.
-6. Map each acceptance criterion to a test or a check in the plan. Make sure that no item adds scope that nobody asked for.
-7. After each commit, if its result shows a new fact, change the later items.
-8. Before you report, compare the plan with the issue, the commits and the check results.
+5. Map each acceptance criterion to a test or a check in the plan. Make sure that no item adds scope that nobody asked for.
+6. After each commit, if its result shows a new fact, change the later items.
+7. Before you report, compare the plan with the issue, the commits and the check results.
 
 ## Plan format
 
@@ -42,19 +41,21 @@ Proposed commit: feat(scope): summary
 Tests first:
 Work:
 Verification:
-Observability: <events and verification, or none when useful>
+Observability: <events added or changed, or none>
 Criteria covered:
 ```
+
+An empty `Observability:` entry or `none` means that you assessed the increment and it needs no event.
 
 Each increment must describe a change that has a purpose and a result that you can verify. When you learn more, change the increment boundaries.
 
 ## Subagents
 
-If you can start subagents, use them for the checks that do not depend on each other. In step 8, compare the plan with the issue, with the commits and with the check results at the same time, each in its own subagent. Give each subagent a brief that is complete without your context:
+If you can start subagents, use them for the checks that do not depend on each other. In step 7, compare the plan with the issue, with the commits and with the check results at the same time, each in its own subagent. Give each subagent a brief that is complete without your context:
 
 - The plan text.
 - The source for its comparison: the issue text, the list of commits, or the check results.
-- The full text of steps 6 to 8.
+- The full text of steps 5 to 7.
 - What to report, and a word limit, for example 300 words.
 - This line: "Report to me only. Do not change the plan, commit, push, post, approve or merge."
 
