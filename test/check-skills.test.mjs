@@ -34,6 +34,8 @@ test("the repository skills use the folder layout and valid frontmatter", async 
     "release",
     "tdd-loop",
     "triage",
+    "ui-design",
+    "ui-review",
     "write-adr",
     "write-pr",
     "writing-check",

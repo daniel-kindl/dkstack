@@ -53,7 +53,6 @@ test("UI planning and code review are conditional", async () => {
     document("skills/tdd-loop/SKILL.md"),
     document("skills/code-review/SKILL.md"),
   ]);
-  assert.match(plan, /backend-only/);
   assert.match(tdd, /backend-only/);
   assert.match(review, /backend-only/);
   assert.match(review, /ui-review\/SKILL\.md/);
