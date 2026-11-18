@@ -11,9 +11,9 @@ Use when you implement behavior. Follow the [TDD guidelines](https://raw.githubu
 
 1. Select one observable behavior or regression from the task.
 2. Write a focused test for the expected behavior and run it. Make sure that it fails for the expected reason. If the setup is wrong, fix it before you continue.
-3. Write only the production code that makes the test pass.
+3. Write only the production code that makes the test pass. Assess logging for this behavior with [logging guidelines](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/logging.md); add justified events at meaningful boundaries, not a blanket set of statements.
 4. Run the focused test and the relevant existing tests. Do not weaken assertions to make a test pass.
-5. Refactor while the tests are green.
+5. Refactor while the tests are green. Review event necessity, severity, context, sensitive fields, duplication and cost. Test event details only when logging is part of an observable contract.
 6. Repeat for the next behavior. Run the required checks of the repository before you report. Mark each check that did not run as NOT RUN.
 
 ## Boundaries
