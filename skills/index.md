@@ -16,5 +16,5 @@ Skills are specific capabilities agents should apply when relevant.
 - [plan-work](plan-work/SKILL.md): Plan a goal as small, reviewable increments with tests first.
 - [release](release/SKILL.md): Prepare a release. Link the versioning and safety rules. Do not publish.
 - [learn](learn/SKILL.md): Teach, practice, assess and review any topic with an adaptive curriculum.
-- [ui-design](ui-design/SKILL.md): Design and implement accessible, responsive, visually verified interfaces.
-- [ui-review](ui-review/SKILL.md): Review usability, visual quality, accessibility and rendered evidence.
+- [ui-design](ui-design/SKILL.md): Make or change a rendered UI and check the rendered result.
+- [ui-review](ui-review/SKILL.md): Review a rendered UI and report through code-review.

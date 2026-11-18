@@ -1,6 +1,6 @@
 # User interface and experience
 
-Apply these standards when a task changes a rendered interface, its interaction, or its visual design. They apply to web, mobile, and desktop applications. Read only the topic pages relevant to the change.
+Use these pages when a task changes a rendered UI, its interaction or its visual design. They apply to web, mobile and desktop applications. Read only the pages that the change needs.
 
 ## Severity
 
@@ -8,27 +8,29 @@ UI findings use the [code-review severities](../skills/code-review/SKILL.md#seve
 
 ## Topics
 
-- [Principles](principles.md): Human tasks, scope, and platform conventions.
-- [Visual design](visual-design.md): Hierarchy and intentional visual direction.
-- [Typography](typography.md): Readable type and text hierarchy.
-- [Colors and themes](colors-and-themes.md): Tokens, contrast, and themes.
-- [Layout and spacing](layout-and-spacing.md): Structure, alignment, and sizing.
-- [Responsive design](responsive-design.md): Width, scaling, and input adaptation.
-- [Components](components.md): Reuse and state completeness.
-- [Interactions](interactions.md): Controls, navigation, and feedback.
+- [Principles](principles.md): User tasks, scope, platform conventions and deceptive patterns.
+- [Visual design](visual-design.md): Hierarchy, visual direction and generic patterns.
+- [Typography](typography.md): Readable type and a type scale.
+- [Colors and themes](colors-and-themes.md): Tokens, contrast and themes.
+- [Layout and spacing](layout-and-spacing.md): Structure, alignment and spacing.
+- [Responsive design](responsive-design.md): Widths, scaling and input methods.
+- [Components](components.md): Reuse, states and icons.
+- [Interactions](interactions.md): States, loading, errors and actions.
 - [Forms](forms.md): Labels, errors and validation.
-- [Motion](motion.md): Purposeful animation and motion preferences.
-- [Accessibility](accessibility.md): Inclusive interaction and testing.
-- [Content and localization](content-and-localization.md): Clear language and flexible content.
-- [Performance](performance.md): Responsive and efficient UI.
-- [Design systems](design-systems.md): Project ownership and visual direction.
-- [Visual verification](visual-verification.md): Required evidence and reporting.
-- [Scenarios](scenarios.md): Examples of conditional application.
+- [Motion](motion.md): Motion with a purpose and reduced motion.
+- [Accessibility](accessibility.md): WCAG 2.2 AA rules and thresholds.
+- [Content and localization](content-and-localization.md): UI copy and translated content.
+- [Performance](performance.md): Responsive UI and web targets.
+- [Design systems](design-systems.md): Project ownership, visual direction and defaults.
+- [Visual verification](visual-verification.md): Required evidence and results.
+- [Scenarios](scenarios.md): Examples of when the pages apply.
 
 ## Boundaries
 
-- The project owns branding, platform choice, design tokens, and component libraries.
-- Follow an existing design system unless the task explicitly authorizes a redesign. A project design choice cannot waive a DKSTACK hard rule without the documented exception process in [AGENTS.md](../AGENTS.md).
-- Do not demand a CSS library, design tool, image generator, or particular framework.
-- Follow [TDD](../tdd/index.md) for behavior tests. Visual inspection complements tests; it does not replace them.
-- Backend-only changes do not trigger UI workflows.
+- The project owns its brand, platform choice, design tokens and component libraries.
+- Follow the project's design system unless the task asks for a redesign.
+- A project can differ from a dkstack rule only through a documented [exception](../AGENTS.md#precedence). Safety rules have no exceptions.
+- Do not require a CSS library, design tool, image generator or framework.
+- The accessibility rules and thresholds are in [accessibility](accessibility.md).
+- Follow [TDD](../tdd/index.md) for behavior tests. Do [visual verification](visual-verification.md) for the rendered result.
+- Backend-only changes do not use the UI pages or the UI skills.

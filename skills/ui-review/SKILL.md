@@ -1,24 +1,22 @@
 ---
 name: ui-review
-description: "Use when reviewing a rendered UI change or assessing an existing web, desktop, or mobile interface. Examine usability, accessibility, responsiveness, visual coherence, and rendered evidence without modifying files."
+description: "Use when you review a rendered UI change or an existing web, desktop or mobile UI. Checks the rendered result against the UI guidelines and reports through code-review."
 ---
 
 # UI review
 
-Apply the relevant [UI guidelines](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/index.md). When reviewing a PR, use this alongside `code-review`; preserve its separate standards and specification axes.
+Use the [UI guidelines](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/index.md). For a pull request, use this skill with `code-review`. Report through `code-review`.
 
 ## Steps
 
-1. Identify the specification, changed surface, supported platform, project design system, and available evidence.
-2. Assess specification compliance: flows, interactions, states, responsive targets, and expected content.
-3. Assess UI standards: accessibility, layout, hierarchy, consistency, performance, and platform conventions.
-4. Follow [visual verification](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/visual-verification.md). Inspect the rendered UI where feasible. If unavailable, record NOT RUN; do not substitute source inspection for rendered evidence.
-5. Give each finding a severity from the [code-review severity table](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#severity). The UI line in the code-review standards axis maps UI findings to it.
-6. Separate demonstrated defects from usability hypotheses and aesthetic suggestions. Report both review axes, unavailable checks, and a reasoned verdict through `code-review` when reviewing a PR.
+1. Identify the specification, the changed surfaces, the platform, the project's design system and the evidence.
+2. Follow [visual verification](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/visual-verification.md). Check the author's evidence, or run the checks yourself when you can.
+3. Check each changed surface against the UI pages that apply to it.
+4. Report through [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#output). Use its two axes, its [evidence levels](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#8-verify), its [severity table](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#severity) and its verdict. The UI line in its standards axis maps UI findings to severities.
 
 ## Boundaries
 
-- Read-only by default. Do not change files, post approvals, or merge unless explicitly authorized under the existing review workflow.
-- Do not enforce a preferred aesthetic over a coherent project design system.
-- Do not score subjective design with fabricated numeric thresholds.
-- A reviewer must not independently approve its own implementation.
+- Read-only by default. Do not change files, post approvals or merge unless the existing review workflow allows it.
+- Do not enforce a preferred aesthetic over the project's design system.
+- Do not give a numeric score for taste.
+- Follow the [self-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#self-review) rule in code-review.

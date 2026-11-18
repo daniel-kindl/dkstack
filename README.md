@@ -77,8 +77,8 @@ The workflow does not tag, release or publish.
 - [architecture/](architecture/index.md): Architecture principles and design rules.
 - [coding/](coding/index.md): Coding standards and practices.
 - [tdd/](tdd/index.md): Test-driven development.
-- [ui/](ui/index.md): Universal UI/UX, accessibility, and visual verification standards.
 - [learning/](learning/index.md): Adaptive learning principles and standards.
+- [ui/](ui/index.md): User interface rules, accessibility and visual verification.
 - [version-control/](version-control/index.md): Conventional commits and short-lived feature
   branches.
 - [versioning/](versioning/index.md): Semantic versioning.

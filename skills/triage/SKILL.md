@@ -40,8 +40,8 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 - Pull request body: [write-pr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-pr/SKILL.md).
   Use it when you write or materially update the body. Do not use it for a review that leaves
   the body unchanged.
-- New or changed rendered UI: [ui-design](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/ui-design/SKILL.md)
-- Review of a rendered UI: [ui-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/ui-review/SKILL.md), alongside code-review for PRs.
+- New or changed rendered UI: [ui-design](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/ui-design/SKILL.md).
+- Review of a rendered UI: [ui-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/ui-review/SKILL.md). Use it with `code-review` for a pull request.
 - Review: [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md)
 - Bug or unexpected behavior: [coding/debugging.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/debugging.md)
 - Durable decision: [write-adr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-adr/SKILL.md)
@@ -70,7 +70,7 @@ One agent can do all the steps. Many agents can share the steps. A skill does no
 ## Section map
 
 - Design or structure changes: [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md)
-- Rendered UI work: [ui/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/index.md). Skip for backend-only changes.
+- Rendered UI work: [ui/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/index.md). Backend-only changes do not use the UI pages or the UI skills.
 - Code changes: [coding/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/index.md) and [tdd/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md)
 - Commits or branches: [version-control/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/version-control/index.md)
 - Version numbers or releases: [versioning/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/versioning/index.md)

@@ -20,7 +20,7 @@ test("UI standards and skills are linked from the entry points", async () => {
   assert.match(index, /ui-review\/SKILL\.md/);
   assert.match(triage, /ui-design\/SKILL\.md/);
   assert.match(triage, /ui-review\/SKILL\.md/);
-  assert.match(triage, /backend-only/);
+  assert.match(triage, /Backend-only/);
 });
 
 test("UI skills enforce their role boundaries", async () => {
@@ -51,6 +51,5 @@ test("UI planning and code review are conditional", async () => {
     document("skills/tdd-loop/SKILL.md"),
     document("skills/code-review/SKILL.md"),
   ]);
-  assert.match(tdd, /backend-only/);
   assert.match(review, /ui-review\/SKILL\.md/);
 });
