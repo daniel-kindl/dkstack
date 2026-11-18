@@ -58,3 +58,14 @@ test("UI planning and code review are conditional", async () => {
   assert.match(review, /backend-only/);
   assert.match(review, /ui-review\/SKILL\.md/);
 });
+
+test("loading guidance prefers truthful skeletons for content and keeps local progress indicators", async () => {
+  const [interactions, verification] = await Promise.all([
+    document("ui/interactions.md"),
+    document("ui/visual-verification.md"),
+  ]);
+  assert.match(interactions, /Prefer skeleton placeholders/);
+  assert.match(interactions, /spinner or compact progress indicator/);
+  assert.match(interactions, /assistive technology/);
+  assert.match(verification, /skeletons match the expected content structure/);
+});
