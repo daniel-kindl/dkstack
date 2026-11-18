@@ -27,6 +27,10 @@ Assert exact values or specific conditions. Do not use a weak check such as `not
 
 Do not update a snapshot or golden file to make a test pass. Read the diff and state why the new output is correct.
 
+## Logging contracts
+
+Treat logs as behavior only when a consumer relies on them, such as an audit trail, alert or monitoring contract. Test required event identity, severity and safe fields; test non-disclosure of prohibited data when relevant. Do not assert exact wording of incidental diagnostic messages or add logging-call assertions for every behavior. See [logging](../coding/logging.md).
+
 ## What not to test
 
 - Do not test private methods directly. Test them through a [public interface](index.md#core-principles).
