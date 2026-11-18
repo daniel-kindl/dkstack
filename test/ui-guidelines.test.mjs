@@ -155,3 +155,35 @@ test("the UI shows no invented data", async () => {
   const interactions = await document("ui/interactions.md");
   assert.ok(interactions.includes("For invented data, see [content](content-and-localization.md)."));
 });
+
+test("code-review rates a missed dkstack accessibility rule as Medium", async () => {
+  const review = await document("skills/code-review/SKILL.md");
+  const uiLine = line(section(review, "## 5. Standards axis"), "- Rendered UI:");
+  assert.ok(uiLine.includes("A missed dkstack accessibility rule that is not a WCAG criterion is Medium."));
+});
+
+test("accessibility rules that WCAG 2.2 AA does not require carry the dkstack marker", async () => {
+  const owner = await document("ui/accessibility.md");
+  const forms = await document("ui/forms.md");
+  assert.ok(owner.includes("\"(dkstack rule)\" marks a rule that WCAG 2.2 AA does not require."));
+  const marked = [
+    [owner, "an outline of at least 2 px and an offset (dkstack rule)."],
+    [owner, "at least 44 by 44 CSS px for primary touch controls (dkstack rule)."],
+    [owner, "at least 48 by 48 dp (Material Design and Android accessibility guidance) (dkstack rule)."],
+    [owner, "at least 44 by 44 pt (Apple Human Interface Guidelines) (dkstack rule)."],
+    [owner, "the largest system text size (dkstack rule)."],
+    [owner, "Use one h1 (dkstack rule). Use headings in order (dkstack rule). Use landmarks (dkstack rule)."],
+    [owner, "use a skip link as the first focusable element (dkstack rule)."],
+    [forms, "to show that the form is not valid (dkstack rule)."],
+    [forms, "Validate all fields on submit (dkstack rule)."],
+    [forms, "not only an asterisk (dkstack rule)."],
+  ];
+  for (const [text, rule] of marked) {
+    assert.ok(text.includes(rule), `missing marker: ${rule}`);
+  }
+});
+
+test("FAIL wins over NOT RUN when check results combine", async () => {
+  const results = section(await document("ui/visual-verification.md"), "## Results");
+  assert.ok(results.includes("When the check results combine, FAIL wins over NOT RUN."));
+});
