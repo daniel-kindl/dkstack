@@ -10,4 +10,4 @@
 - Do not disable the submit button to show that the form is not valid. Keep it enabled and show the errors on submit.
 - Validate on blur or on submit, not on each keystroke.
 - Mark required fields in text, not with color or an asterisk alone.
-- Sign-in and access errors follow [security](../coding/security.md#rules). An unknown account and a wrong credential get the same response.
+- Sign-in and access errors follow [security](../coding/security.md#rules).

@@ -20,7 +20,7 @@ Test most user interface (UI) behavior below the UI. Use a few UI tests for the 
 
 [UI accessibility](../ui/accessibility.md) owns the requirements and the thresholds. This section says how to test them.
 
-- Test labels, state changes and enabled or disabled actions in presentation logic with unit tests.
+- For labels and state in presentation logic, follow [presentation logic](#presentation-logic).
 - In the UI tests, find controls by role and accessible name. Check that a screen reader announces each error.
 - Run the automated accessibility checker of the platform in the UI tests. Examples are axe-core on the web and the Accessibility Test Framework on Android.
 - An automated checker does not find all problems. Then do the manual checks: a keyboard walk-through, a screen reader pass, the largest text size and a contrast measurement.
@@ -33,7 +33,7 @@ Test most user interface (UI) behavior below the UI. Use a few UI tests for the 
 
 ## Example
 
-Good: test the sign-in view model. An empty password disables the submit action and shows an error. One headless UI test finds the button by its role and its name. It checks that the screen reader announces the error.
+Good: test the sign-in view model. A submit with an empty password shows an error next to the password field and moves focus to it. One headless UI test finds the button by its role and its name. It checks that the screen reader announces the error.
 
 Bad: find the third button in the layout and tap it. Assert the pixel color of the error text. Update the golden image each time that the test fails.
 
