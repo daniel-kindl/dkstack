@@ -99,7 +99,8 @@ limit. Callers receive the error after the third run.
 
 Evidence: Verified: a test failed because the call retried past the third attempt. The same test
 passed after the limit. The project check passed. Unverified: this change was not run on a
-production host. Observability: each run logs at Debug. The third failed run logs one Error.
+production host.
+Observability: each run logs at Debug. The third failed run logs one Error.
 
 Risk and rollback: Low risk. Revert this pull request. The old retry behavior returns.
 
