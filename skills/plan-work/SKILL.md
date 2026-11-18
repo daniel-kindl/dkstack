@@ -15,9 +15,10 @@ Put the plan where the task asks: in the issue, in the pull request or in the ch
 2. Read the work that exists. Do not plan work again that is done.
 3. Divide the work into the smallest increments that are complete and that a reviewer can review alone. Plan each increment as a logical conventional commit. Do not plan a fixed number of commits. For each increment, write its dependencies, its risks and how to verify it. Write full details only for the items that the known facts support. For the later items, write only the outcome. See [small steps](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/small-steps.md).
 4. In each increment, put the tests before the behavior changes. See [tdd/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md).
-5. Map each acceptance criterion to a test or a check in the plan. Make sure that no item adds scope that nobody asked for.
-6. After each commit, if its result shows a new fact, change the later items.
-7. Before you report, compare the plan with the issue, the commits and the check results.
+5. For work affecting a rendered UI, plan applicable accessibility, interaction states, responsive behavior, project design-system adherence, and real rendered verification. Follow [UI guidelines](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/index.md); do not add UI checks to backend-only work.
+6. Map each acceptance criterion to a test or a check in the plan. Make sure that no item adds scope that nobody asked for.
+7. After each commit, if its result shows a new fact, change the later items.
+8. Before you report, compare the plan with the issue, the commits and the check results.
 
 ## Plan format
 
@@ -48,11 +49,11 @@ Each increment must describe a change that has a purpose and a result that you c
 
 ## Subagents
 
-If you can start subagents, use them for the checks that do not depend on each other. In step 7, compare the plan with the issue, with the commits and with the check results at the same time, each in its own subagent. Give each subagent a brief that is complete without your context:
+If you can start subagents, use them for the checks that do not depend on each other. In step 8, compare the plan with the issue, with the commits and with the check results at the same time, each in its own subagent. Give each subagent a brief that is complete without your context:
 
 - The plan text.
 - The source for its comparison: the issue text, the list of commits, or the check results.
-- The full text of steps 5 to 7.
+- The full text of steps 6 to 8.
 - What to report, and a word limit, for example 300 words.
 - This line: "Report to me only. Do not change the plan, commit, push, post, approve or merge."
 
