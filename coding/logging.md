@@ -8,7 +8,16 @@ When you write a plan, record the result in its `Observability:` entry. Always r
 
 ## Assess event placement
 
-For each changed behavior, look at these places: external calls, important state changes, decisions that change the flow, retries, designed fallbacks and terminal failures. For each candidate event, answer these questions:
+For each changed behavior, look at these places:
+
+- External calls.
+- Important state changes.
+- Decisions that change the flow.
+- Retries.
+- Designed fallbacks.
+- Terminal failures.
+
+For each candidate event, answer these questions:
 
 1. Which operational or diagnostic question does the event answer?
 2. Which boundary owns the event and has the context?
@@ -73,7 +82,7 @@ Review each changed event against this page. To decide if a test must check an e
 
 ## Examples
 
-Good: the template `Device {DeviceId} connected` with the field `DeviceId=123`, at Information, after a device connects.
+Good: the template `Device {device_id} connected` with the field `device_id=123`, at Information, after a device connects.
 
 Good: one Error event at the boundary that owns the order operation, after all attempts fail. The event is `event=order.store_failed order_id=123 reason=storage_unavailable attempt=3`. Each earlier attempt logs at Debug.
 
