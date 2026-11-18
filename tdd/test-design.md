@@ -29,7 +29,7 @@ Do not update a snapshot or golden file to make a test pass. Read the diff and s
 
 ## Logging contracts
 
-Treat logs as behavior only when a consumer relies on them, such as an audit trail, alert or monitoring contract. Test required event identity, severity and safe fields; test non-disclosure of prohibited data when relevant. Do not assert exact wording of incidental diagnostic messages or add logging-call assertions for every behavior. See [logging](../coding/logging.md).
+Treat a log event as behavior only when a consumer depends on it. Examples are an audit trail, an alert and a monitoring rule. For such an event, write a failing test first. Assert the event name, the level and the required safe fields. Assert that no secret or personal data is in the event. Use the [marker value test](security-testing.md#secrets). Do not assert the exact wording of other log messages. Do not add a logging assertion to each behavior test. For the event rules, see [logging](../coding/logging.md).
 
 ## What not to test
 
