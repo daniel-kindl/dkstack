@@ -1,61 +1,85 @@
-# Logging and observability
+# Logging
 
-Assess observability for every added or changed behavior. Add logging events only when they provide useful diagnostic or operational information. An assessment is mandatory; adding an event is conditional. Do not require a minimum number of events or use of every log level. Pure functions and routine internal operations often need no logging.
+This page covers log events. Metrics and traces are out of scope.
+
+Assess logging for each change that adds or changes behavior. You must always do the assessment. Add an event only when it answers a diagnostic or operational question. Do not require a minimum number of events. Do not require each level. Pure functions and routine internal operations usually need no event.
+
+Record the result in the `Observability:` line of the plan and of the pull request body. See [plan-work](../skills/plan-work/SKILL.md) and [write-pr](../skills/write-pr/SKILL.md).
 
 ## Assess event placement
 
-For each affected behavior, consider external interactions, significant state transitions, decisions that change execution, retries, recoverable degradation, and terminal failures. For each candidate event, ask:
+For each changed behavior, look at external calls, important state changes, decisions that change the flow, retries, designed fallbacks and terminal failures. For each candidate event, answer these questions:
 
-1. What operational or diagnostic question will it answer?
-2. Which boundary owns the event and has enough context?
-3. What severity reflects the impact at that boundary?
-4. Which safe, stable fields make the event useful?
-5. Can its frequency, formatting cost, or content cause harm?
+1. Which operational or diagnostic question does the event answer?
+2. Which boundary owns the event and has the context?
+3. Which level matches the impact at that boundary? See [levels](#levels).
+4. Which safe and stable fields does the event need?
+5. Can its frequency, its formatting cost or its content cause harm?
 
-Omit events that duplicate information, add noise, lack a useful diagnostic purpose, or are disproportionate to the operation. Limit the assessment to affected behavior. Do not add unrelated instrumentation. No separate report or documentation is required for routine omissions; explain a non-obvious omission when useful for review.
+If you cannot answer question 1, do not add the event. Do not add an event that repeats the data of another event. Assess only the changed behavior. Do not add events to other code.
 
 ## Levels
 
-Use the project's supported levels and map their meaning to these guidelines:
+Use the levels of the project. The table gives the .NET name and the OpenTelemetry severity name of each level.
 
-| Level | Use |
-| --- | --- |
-| Trace | Fine-grained execution or protocol details when specifically useful and safe. |
-| Debug | Internal decisions and diagnostic information, such as retry scheduling. |
-| Information | Important successful operations, lifecycle events and state changes. |
-| Warning | Unexpected but recoverable degradation that warrants attention. |
-| Error | A failed operation requiring investigation, at the boundary that owns its failure. |
-| Critical or Fatal | A failure that prevents the system or a major subsystem from operating safely. |
+| .NET | OpenTelemetry | Use |
+| --- | --- | --- |
+| Trace | TRACE | Detailed execution or protocol steps. Do not log payloads. See [event design](#event-design). |
+| Debug | DEBUG | Internal decisions and each retry attempt. |
+| Information | INFO | Important successful operations, lifecycle events, state changes and expected rejections. |
+| Warning | WARN | A designed fallback ran, and the result is degraded. |
+| Error | ERROR | An operation failed and a person must investigate it. |
+| Critical | FATAL | The system or a major subsystem cannot operate safely. |
 
-An exception type alone does not determine severity. Do not log ordinary successful operations at Warning or failures at Critical without sufficient impact. A feature need not produce an event at every level.
+- The exception type alone does not set the level. Use the impact at the boundary.
+- Log each retry attempt at Debug. If all attempts fail, log one Error at the boundary that owns the operation.
+- Use Warning only when a designed fallback runs. Do not use a fallback to hide a failure. See [fail-fast](../architecture/fail-fast.md).
+- An expected rejection is not an Error. Examples are a validation failure, a not found result, a denied access and other client errors. Log it at Information at the boundary that returns it.
+- Do not log a successful operation at Warning.
+- A feature does not need an event at each level.
 
 ## Event design
 
-- Prefer structured event templates and named fields when supported. Keep event identity, field names, and field types stable.
-- Include only relevant safe context: operation, entity identifier, attempt count, outcome, elapsed time, or propagated correlation context when appropriate.
-- Preserve exception details through the logger's exception mechanism. Do not construct stack traces manually.
-- Do not log secrets, credentials, tokens, personal data, or full request, response, or protocol payloads by default. Follow the project's stricter security policy.
-- Use existing logging facilities, event naming, levels, scopes and configuration. Do not introduce a logging dependency or telemetry infrastructure without justification.
-- Preserve existing correlation or trace context across boundaries when available. Do not invent a new correlation ID for each method.
+- Use structured event templates with named fields when the logging library supports them. Keep the event names, the field names and the field types stable.
+- Put only the context that the event question needs in fields. Examples are the operation, the resource identifier, the attempt count, the outcome, the elapsed time and the correlation ID.
+- A resource identifier, such as an order ID, is allowed. An email address, a session ID or a token is not allowed.
+- For secrets and personal data, follow the [security rules](security.md#rules). Test them with the [marker value test](../tdd/security-testing.md#secrets).
+- Do not log a full request, response or protocol payload by default. This default applies only to payloads. Personal data is never allowed.
+- Put untrusted input in structured fields. Do not join it into the message text.
+- In plain text logs, remove or encode CR, LF and other control characters in untrusted values. This prevents log injection (CWE-117).
+- Give the exception to the exception argument of the logger. Do not build a stack trace by hand.
+- Use the existing logging library, event names, levels, scopes and configuration. Do not add a logging dependency or telemetry infrastructure unless the task asks for it.
+- Keep the correlation or trace context across boundaries. At an inbound boundary without context, create the correlation ID once and pass it on. Do not create a new correlation ID in each method.
 
 ## Failure ownership and duplicates
 
-Log a terminal failure once at the boundary responsible for handling or reporting that failure. Lower layers may propagate exceptions without logging them. Do not log an exception as an error and immediately rethrow it when the caller will log the same terminal failure. Individual attempts or retries may have Debug or Warning events when useful; a final exhausted retry operation may warrant Error. Distinguish expected validation outcomes from operational degradation. Logging never replaces explicit error handling; see [error handling](error-handling.md).
+- Log a terminal failure once, at the boundary that handles or reports it.
+- A lower layer does not log the failure. It propagates the failure.
+- To add context in a lower layer, wrap the error with that context and rethrow it. Do not log it there.
+- Do not log an error and then rethrow it when a caller logs the same failure.
+- Logging does not replace error handling. See [error handling](error-handling.md).
 
 ## Cost and signal
 
-Avoid per-item or per-iteration events in hot paths without a demonstrated need. Avoid eager expensive message formatting when a level is disabled, unbounded event volume, blocking logging operations on latency-sensitive paths, and unnecessary high-cardinality fields. Use filtering, sampling or rate limiting where the project supports it and the diagnostic need justifies it. Logging must not alter the operation's outcome or obscure its failure.
+- In a hot path, do not log each item or each iteration. Log a summary event instead.
+- Do not format an expensive message when its level is off. Use the templates or the level checks of the library.
+- Do not let the event volume grow without a limit. Use filtering, sampling or rate limits when the project supports them.
+- Do not block a latency-sensitive path with a logging call.
+- An ID in a log field is allowed. The limit on high-cardinality values applies to metric labels and indexed attributes, not to log fields.
+- A logging call must not change the result of an operation or hide its failure.
 
 ## Verification
 
-Review event necessity, placement, severity, context, privacy, duplicates and overhead. Test logs as contracts only when downstream behavior depends on them, such as security audit trails, alerts or monitoring. Verify event identity, severity, required safe fields and absence of prohibited data where relevant. Do not assert incidental message wording or introduce test doubles solely to test routine diagnostics. See [test design](../tdd/test-design.md) and [test isolation](../tdd/test-isolation.md).
+Review each changed event against this page. To decide if a test must check an event, follow [logging contracts](../tdd/test-design.md#logging-contracts). To fake the logger in a test, follow [logger dependencies](../tdd/test-isolation.md#logger-dependencies).
 
 ## Examples
 
-Good: `Device connection established. device_id=123` at Information after an important transition.
+Good: the template `Device {DeviceId} connected` with the field `DeviceId=123`, at Information, after a device connects.
 
-Good: a retry is scheduled at Debug, followed by one Error if all attempts fail and the owning boundary cannot complete the operation.
+Good: one Error event at the boundary that owns the order operation, after all attempts fail. The event is `event=order.store_failed order_id=123 reason=storage_unavailable attempt=3`. Each earlier attempt logs at Debug.
 
-Bad: log the same exception as Error in a repository, service and controller while rethrowing between them.
+Bad: the repository, the service and the controller each log the same exception as Error and rethrow it.
 
-Bad: log all authentication tokens or each intermediate variable in a tight loop.
+Bad: log any authentication token.
+
+Bad: log each intermediate variable in a tight loop.
