@@ -16,6 +16,8 @@ Use when you implement behavior. Follow the [TDD guidelines](https://raw.githubu
 5. Refactor while the tests are green.
 6. Repeat for the next behavior. Run the required checks of the repository before you report. Mark each check that did not run as NOT RUN.
 
+For behavior that affects a rendered UI, use [UI guidelines](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/index.md) and [visual verification](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/visual-verification.md) in addition to tests. A passing test does not establish visual correctness. Skip these steps for backend-only behavior.
+
 ## Boundaries
 
 - Do not implement behavior before a relevant failing test exists.
