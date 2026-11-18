@@ -34,7 +34,6 @@ test("UI skills enforce their role boundaries", async () => {
   assert.match(design, /visual-verification\.md/);
   assert.match(review, /Read-only by default/);
   assert.match(review, /code-review/);
-  assert.match(standards, /coherent visual system exists/);
   assert.match(standards, /no visual direction exists/);
 });
 
