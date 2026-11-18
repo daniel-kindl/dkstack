@@ -4,7 +4,7 @@ This page covers log events. Metrics and traces are out of scope.
 
 Assess logging for each change that adds or changes behavior. You must always do the assessment. Add an event only when it answers a diagnostic or operational question. Do not require a minimum number of events. Do not require each level. Pure functions and routine internal operations usually need no event.
 
-Record the result in the `Observability:` line of the plan and of the pull request body. See [plan-work](../skills/plan-work/SKILL.md) and [write-pr](../skills/write-pr/SKILL.md).
+When you write a plan, record the result in its `Observability:` entry. Always record it in the pull request body. See [plan-work](../skills/plan-work/SKILL.md) and [write-pr](../skills/write-pr/SKILL.md).
 
 ## Assess event placement
 
