@@ -4,7 +4,7 @@
 - Use the project's semantic color tokens for text, surfaces, borders, focus and status.
 - Use semantic tokens, not repeated raw colors. Keep the contrast in overlays and layered surfaces.
 - Test each theme that the project supports. Include the focus, selected, disabled, error and hover states.
-- Add a theme only when the specification asks for it. When the product has more than one theme, follow the system setting by default.
+- Add a theme only when the specification asks for it.
 
 ## Defaults
 

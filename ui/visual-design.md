@@ -14,9 +14,9 @@ These patterns make a UI look generic. Use the fix unless the specification asks
 - Glass or blur panels as the default surface. Use solid surfaces and borders.
 - A grid of the same card for content that is not a set of the same things ("card soup"). Use lists, tables or sections. A card is for an item that the user can act on.
 - Everything centered. Left-align body text and forms. Center only short display text.
-- Emoji as UI icons. Use one icon set with one stroke width and size. See [components](components.md#icons).
+- Emoji as UI icons. For the fix, see the icon rules in [components](components.md#icons).
 - One typeface at one weight with no scale. Use the type scale in [typography](typography.md).
 - Large shadows and large radii on each element. Use one radius and one or two elevation levels.
-- Invented placeholder data, fake logos and fake testimonials.
+- Fake logos and fake testimonials. Use real content. For invented data, see [content](content-and-localization.md).
 
 Before you report, compare the screen with this list. Name each pattern that you kept and why.

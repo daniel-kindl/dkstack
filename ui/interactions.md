@@ -4,7 +4,7 @@
 
 - Each action gives feedback that the user can see. Show loading, success, error and disabled in different ways.
 - Each interactive element has a different hover, `:focus-visible`, active and disabled state. Add a selected state when the element can be selected. Focus is not the same as hover.
-- Do not require hover for essential information or actions. See [responsive design](responsive-design.md).
+- For hover, follow the input rules in [responsive design](responsive-design.md).
 
 ## Loading
 
@@ -13,7 +13,7 @@
 - Show a spinner only after about 300 ms, so that it does not flash.
 - Set `aria-busy="true"` on the region that loads. Follow the reduced motion rules in [motion](motion.md).
 - A skeleton changes to the real content or to an error state. It does not stay.
-- Do not show invented data. Do not show progress that you cannot measure. Do not hide usable content.
+- Do not show progress that you cannot measure. Do not hide usable content. For invented data, see [content](content-and-localization.md).
 
 ## Empty, error and success
 

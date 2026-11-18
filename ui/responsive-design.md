@@ -11,6 +11,6 @@
 Use these only when the project has no responsive rules. See [design systems](design-systems.md).
 
 - Design mobile first. Set breakpoints where the content breaks, not at device widths.
-- Use container queries (baseline since 2023) for components that appear at more than one width.
+- Use size container queries (`container-type: inline-size`) for components that appear at more than one width. They are Baseline Widely available since August 2025.
 - On mobile, use `dvh` and `env(safe-area-inset-*)`.
 - Show hover-only controls only inside `@media (hover: hover) and (pointer: fine)`.
