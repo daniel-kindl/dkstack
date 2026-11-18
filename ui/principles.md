@@ -11,6 +11,6 @@
 ## No deceptive patterns
 
 - Do not use deceptive patterns. Examples are confirmshaming, preselected opt-ins, hidden costs and fake urgency or scarcity.
-- Other examples are ads that look like content, and a cancel flow that is harder than sign-up.
-- Other examples are a reject option that is less visible than accept, and trick questions.
+- Other examples are ads that look like content and a cancel flow that is harder than sign-up.
+- Other examples are trick questions and a reject option that is less visible than accept.
 - A user can cancel, unsubscribe or reject in the same number of steps as the opposite action.

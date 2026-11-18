@@ -10,7 +10,7 @@ Accessibility is a requirement. This page owns the accessibility rules and thres
 
 ## Contrast and color
 
-- Text contrast is at least 4.5:1. Large text contrast is at least 3:1 (1.4.3). Large text is 24 px, or 18.66 px bold.
+- Text contrast is at least 4.5:1. Large text contrast is at least 3:1 (1.4.3). Large text is 24 px or 18.66 px bold.
 - Focus indicators, control borders and state cues have a contrast of at least 3:1 against adjacent colors (1.4.11).
 - Color is not the only cue (1.4.1). Each color cue also has a text, a shape or an icon.
 - Use the WCAG 2.x contrast ratio to measure contrast. APCA is not part of any normative WCAG. Use it only as an extra signal, never in place of the 2.x ratios.

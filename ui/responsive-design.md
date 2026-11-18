@@ -4,7 +4,7 @@
 - Check the widths in the [minimum evidence](visual-verification.md#minimum-evidence). Do not test each combination of device and state.
 - Keep critical tasks available with no horizontal clipping and no hidden controls.
 - Do not require hover for essential information or actions. Keep the reading and focus order when the layout changes.
-- Test touch targets when touch is supported, the keyboard when it is supported, and the pointer when it is supported. The target sizes are in [accessibility](accessibility.md#targets).
+- Test each supported input method: touch, keyboard and pointer. The target sizes are in [accessibility](accessibility.md#targets).
 
 ## Web defaults
 
