@@ -52,7 +52,7 @@ test("triage and the UI index skip the UI work for backend-only changes", async 
 test("plan-work step 3 plans the UI checks with no new step or plan field", async () => {
   const plan = await document("skills/plan-work/SKILL.md");
   const step3 = line(section(plan, "## Steps"), "3. ");
-  assert.ok(step3.includes(`For an increment that changes a rendered UI, plan the checks in the [UI guidelines](${raw}/ui/index.md). Write them in Verification.`));
+  assert.ok(step3.includes(`For an increment that changes a rendered UI, plan the checks in the [minimum evidence](${raw}/ui/visual-verification.md#minimum-evidence). Write them in Verification.`));
   assert.doesNotMatch(plan, /^UI:|\sUI: /m);
 });
 
