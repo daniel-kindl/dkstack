@@ -26,7 +26,7 @@ Use the levels of the project. The table gives the .NET name and the OpenTelemet
 | --- | --- | --- |
 | Trace | TRACE | Detailed execution or protocol steps. Do not log payloads. See [event design](#event-design). |
 | Debug | DEBUG | Internal decisions and each retry attempt. |
-| Information | INFO | Important successful operations, lifecycle events, state changes and expected rejections. |
+| Information | INFO | Important successful operations, lifecycle events, and state changes. |
 | Warning | WARN | A designed fallback ran, and the result is degraded. |
 | Error | ERROR | An operation failed and a person must investigate it. |
 | Critical | FATAL | The system or a major subsystem cannot operate safely. |
@@ -34,7 +34,7 @@ Use the levels of the project. The table gives the .NET name and the OpenTelemet
 - The exception type alone does not set the level. Use the impact at the boundary.
 - Log each retry attempt at Debug. If all attempts fail, log one Error at the boundary that owns the operation.
 - Use Warning only when a designed fallback runs. Do not use a fallback to hide a failure. See [fail-fast](../architecture/fail-fast.md).
-- An expected rejection is not an Error. Examples are a validation failure, a not found result, a denied access and other client errors. Log it at Information at the boundary that returns it.
+- An expected rejection is not an Error. Log it at Debug, or do not log it when the response already reports it. Log it at Information only when an operator uses the event, for example a business rule rejection. A repeated denied access or a failed sign-in is a security event. Follow the [security rules](security.md#rules).
 - Do not log a successful operation at Warning.
 - A feature does not need an event at each level.
 
