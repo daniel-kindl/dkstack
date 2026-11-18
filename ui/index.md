@@ -16,6 +16,7 @@ UI findings use the [code-review severities](../skills/code-review/SKILL.md#seve
 - [Responsive design](responsive-design.md): Width, scaling, and input adaptation.
 - [Components](components.md): Reuse and state completeness.
 - [Interactions](interactions.md): Controls, navigation, and feedback.
+- [Forms](forms.md): Labels, errors and validation.
 - [Motion](motion.md): Purposeful animation and motion preferences.
 - [Accessibility](accessibility.md): Inclusive interaction and testing.
 - [Content and localization](content-and-localization.md): Clear language and flexible content.

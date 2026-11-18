@@ -46,7 +46,7 @@ Accessibility is a requirement. This page owns the accessibility rules and thres
 - Each control has a text label that a screen reader reads.
 - Content that shows on hover or focus can be dismissed and hovered. It stays until the user dismisses it (1.4.13).
 - Status messages use `role="status"` or `aria-live` (4.1.3). A screen reader announces changes of state and errors.
-- Errors are identified in text (3.3.1). The error text says how to fix the error (3.3.3).
+- Errors are identified in text (3.3.1). The error text says how to fix the error (3.3.3). See [forms](forms.md).
 - Auto-moving content that plays for more than 5 s has a pause control (2.2.2).
 - Nothing flashes more than 3 times a second (2.3.1).
 

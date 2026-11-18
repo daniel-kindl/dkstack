@@ -6,7 +6,7 @@ Do visual verification for each change to a rendered UI. Tests, compilation and 
 
 1. Identify the changed screens and components. Select the widths, themes, states and input methods from the minimum set.
 2. Build and run the UI with a headless renderer or the running application. Capture screenshots of each changed surface.
-3. Check layout, text, hierarchy, contrast, clipping, focus and each changed state. For content loading, check the [loading rules](interactions.md).
+3. Check layout, text, hierarchy, contrast, clipping, focus and each changed state. For content loading, check the [loading rules](interactions.md#loading).
 4. Compare the result with the specification, the design system and the baselines. To update a snapshot, follow [test design](../tdd/test-design.md#naming-and-assertions).
 5. Fix the defects in scope. Check the changed surface again after each fix.
 6. Report the result, the evidence and the checks that did not run.
