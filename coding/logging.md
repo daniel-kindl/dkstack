@@ -35,7 +35,7 @@ Use the levels of the project. The table gives the .NET name and the OpenTelemet
 | --- | --- | --- |
 | Trace | TRACE | Detailed execution or protocol steps. Do not log payloads. See [event design](#event-design). |
 | Debug | DEBUG | Internal decisions and each retry attempt. |
-| Information | INFO | Important successful operations, lifecycle events, and state changes. |
+| Information | INFO | Important successful operations, lifecycle events and state changes. |
 | Warning | WARN | A degraded result from a designed fallback, a resource close to its limit or a [security event](security.md#rules). |
 | Error | ERROR | An operation failed and a person must investigate it. |
 | Critical | FATAL | The system or a major subsystem cannot operate safely. |
@@ -53,7 +53,7 @@ Use the levels of the project. The table gives the .NET name and the OpenTelemet
 - Put only the context that the event question needs in fields. Examples are the operation, the resource identifier, the attempt count, the outcome, the elapsed time and the correlation ID.
 - For secrets, personal data and the IDs that a log can contain, follow the [security rules](security.md#rules). Test them with the [marker value test](../tdd/security-testing.md#secrets).
 - Do not log a full request, response or protocol payload by default. This default applies only to payloads. Personal data is never allowed.
-- Put untrusted input in structured fields. Do not join it into the message text.
+- If you log an untrusted value, put it in a structured field. Do not join it into the message text.
 - In plain text logs, remove or encode CR, LF and other control characters in untrusted values. This prevents log injection (CWE-117).
 - Give the exception to the exception argument of the logger. Do not build a stack trace by hand.
 - Use the existing logging library, event names, levels, scopes and configuration. Do not add a logging dependency or telemetry infrastructure unless the task asks for it.
