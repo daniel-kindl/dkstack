@@ -18,20 +18,13 @@ Test most user interface (UI) behavior below the UI. Use a few UI tests for the 
 
 ## Accessibility checks
 
-Use [WCAG 2.2](https://www.w3.org/TR/WCAG22/) level AA as the baseline. Test these where the platform supports them:
+[UI accessibility](../ui/accessibility.md) owns the requirements and the thresholds. This section says how to test them.
 
-- Each control has a text label that a screen reader reads.
-- A screen reader announces changes of state and errors.
-- A keyboard can reach and use each control. The focus is visible.
-- Focus moves through the controls in a logical order.
-- Text contrast is at least 4.5:1. Large text contrast is at least 3:1.
-- The parts that identify a control and its state have a contrast of at least 3:1.
-- Each touch target is at least 24 by 24 CSS pixels on the web (WCAG 2.5.8).
-- Each touch target is at least 48 dp on Android or 44 pt on iOS.
-- Color is not the only cue. Each color cue also has a text, a shape or an icon.
-- The layout stays usable with large text.
-
-Run the automated accessibility checker of the platform in the UI tests. Examples are axe-core on the web and the Accessibility Test Framework on Android. Then do the manual checks. An automated checker does not find all problems. Record each check that you did manually.
+- Test labels, state changes and enabled or disabled actions in presentation logic with unit tests.
+- In the UI tests, find controls by role and accessible name. Check that a screen reader announces each error.
+- Run the automated accessibility checker of the platform in the UI tests. Examples are axe-core on the web and the Accessibility Test Framework on Android.
+- An automated checker does not find all problems. Then do the manual checks: a keyboard walk-through, a screen reader pass, the largest text size and a contrast measurement.
+- Record each check that you did manually.
 
 ## Rendered video and animation
 
