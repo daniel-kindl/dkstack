@@ -71,7 +71,7 @@ test("the plan-work skill records the logging assessment in each increment", asy
   assert.match(steps, /For each increment, assess logging against \[logging\]\(https:\/\/raw\.githubusercontent\.com\/daniel-kindl\/dkstack\/v1\/coding\/logging\.md\)\./);
   const format = (await readFile(skillFile, "utf8")).replace(/\s+/g, " ");
   assert.match(format, /Observability: <events added or changed, or none>/);
-  assert.match(format, /An empty `Observability:` entry or `none` means that you assessed the increment and it needs no event\./);
+  assert.match(format, /Write `none` when the increment needs no event\./);
 });
 
 test("the plan goes where the task asks", async () => {

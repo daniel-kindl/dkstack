@@ -45,7 +45,7 @@ Observability: <events added or changed, or none>
 Criteria covered:
 ```
 
-An empty `Observability:` entry or `none` means that you assessed the increment and it needs no event.
+Write `none` when the increment needs no event.
 
 Each increment must describe a change that has a purpose and a result that you can verify. When you learn more, change the increment boundaries.
 
