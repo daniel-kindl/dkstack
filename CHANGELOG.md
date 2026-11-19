@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-11-19
+
 ### Added
 
 - `ui/` guidelines (17 pages) and the `ui-design` and `ui-review` skills. `ui/accessibility.md` owns
@@ -400,7 +402,8 @@ This minor release removes pages, skills and scripts by the owner's decision on 
 - The `validate` workflow. It checks the PR or commit title, the skills, the links, the dashes,
   the workflows, the CHANGELOG entry for the version and the unit tests.
 
-[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/daniel-kindl/dkstack/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/daniel-kindl/dkstack/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/daniel-kindl/dkstack/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/daniel-kindl/dkstack/compare/v1.2.0...v1.3.0
