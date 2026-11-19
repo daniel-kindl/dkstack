@@ -78,6 +78,7 @@ The workflow does not tag, release or publish.
 - [coding/](coding/index.md): Coding standards and practices.
 - [tdd/](tdd/index.md): Test-driven development.
 - [learning/](learning/index.md): Adaptive learning principles and standards.
+- [ui/](ui/index.md): User interface rules, accessibility and visual verification.
 - [version-control/](version-control/index.md): Conventional commits and short-lived feature
   branches.
 - [versioning/](versioning/index.md): Semantic versioning.

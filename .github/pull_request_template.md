@@ -15,6 +15,7 @@ Closes #
 - Known risk:
 - NOT RUN:
 - Observability: <events added or changed>, or none, <reason>
+- Visual verification: <PASS, FAIL or NOT RUN>, <evidence>. Only for a rendered UI change.
 
 ## Risk and rollback
 

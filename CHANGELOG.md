@@ -7,8 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `ui/` guidelines (17 pages) and the `ui-design` and `ui-review` skills. `ui/accessibility.md` owns
+  the WCAG 2.2 AA rules and thresholds. `ui/visual-verification.md` defines the minimum evidence
+  and the PASS, FAIL and NOT RUN results. The defaults apply only when a project has no design
+  system (#151).
+
 ### Changed
 
+- `triage`, `plan-work`, `tdd-loop` and `code-review` link to the UI guidelines for rendered UI
+  work. `code-review` maps UI findings to its severities. `write-pr` and the pull request template
+  add a `Visual verification:` line for a rendered UI change. `tdd/ui-testing.md` links to
+  `ui/accessibility.md` for the thresholds (#151).
 - `coding/logging.md` requires a logging assessment for each change that adds or changes behavior.
   It has a level table with .NET and OpenTelemetry names, and rules for retries, fallbacks,
   expected rejections, log injection, correlation and failure ownership. Metrics and traces are
