@@ -20,6 +20,36 @@ Protect data and limit damage.
 
 Test these rules as [security testing](../tdd/security-testing.md) describes.
 
+## CI workflows
+
+These rules apply to each CI workflow. The examples use GitHub Actions.
+[Dependencies](dependencies.md) owns the SHA pins and the update bot.
+
+- Do not run untrusted code with secrets or a write token. Do not use `pull_request_target` or
+  `workflow_run` to check out, build or run code from a pull request.
+- Do not put an expression value directly in a script. Pass the value through `env:` and use the
+  variable in the script. A value such as `${{ github.event.pull_request.title }}` or
+  `${{ inputs.name }}` in `run:` can inject shell code.
+- Do not pass all secrets to a job. Do not use `secrets: inherit` or `toJSON(secrets)`. Pass only
+  the secret that the job needs.
+- Do not keep the token in the checkout. Set `persist-credentials: false` on `actions/checkout`.
+- Set the least `permissions:` at the top level. Give a write permission only to the job that
+  needs it.
+- Set `timeout-minutes` on each job.
+- Require approval before a workflow runs for a pull request from a fork. Read the change before
+  you approve the run.
+
+### Release and deploy workflows
+
+A release or deploy workflow is safe only when all of these are true:
+
+- The owner starts it with `workflow_dispatch`. No tag push and no merge push starts it.
+- It runs in an environment with a required reviewer. No bot identity can act as that reviewer.
+- It checks that the ref is `main` and stops on a different ref.
+- It sets `concurrency`, so that two runs do not overlap.
+- It uses a short-lived token with the least scope, such as a GitHub App token for one
+  repository.
+
 ## Good example
 
 Input is checked before use. Secrets stay in a protected store. An error returns a generic message.
