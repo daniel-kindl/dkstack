@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `coding/dependencies.md` owns all supply chain rules in tool-neutral words, with four new rules: a
+  lockfile install that fails on a mismatch, an audit on each pull request, an update check at least
+  weekly and update titles that pass the title check. `bootstrap` step 7 links them, and step 1 adds
+  `.gitattributes` with LF line endings (#154).
+
 ## [1.5.0] - 2026-11-19
 
 ### Added

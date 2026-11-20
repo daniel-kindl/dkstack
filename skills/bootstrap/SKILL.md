@@ -7,7 +7,7 @@ description: "Use when you create a new repository or a repository has no commit
 
 Use when you set up a new repository or bring an existing one up to standard.
 
-Apply the rules from version-control, versioning, and coding sections. Steps 7 to 11 apply the supply chain rules in [coding/dependencies.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md).
+Apply the rules from version-control, versioning, and coding sections. Step 7 applies the supply chain rules in [coding/dependencies.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md#supply-chain-rules).
 
 ## Steps
 
@@ -27,6 +27,8 @@ Apply the rules from version-control, versioning, and coding sections. Steps 7 t
      formatter and enforce it in CI. Keep Go on `gofmt` and use the documented exceptions.
      EditorConfig has no standard brace-placement property. If the tool has no supported
      setting, record the preference as documentation only. Keep existing quality gates.
+   - Also add `.gitattributes` with `* text=auto eol=lf`, so that each checkout has LF line
+     endings. `end_of_line` in `.editorconfig` does not change the files that Git checks out.
 
 2. Configure the build so warnings are errors and the build produces zero warnings and zero hints.
    - Set the compiler or build option that treats warnings as errors.
@@ -55,28 +57,8 @@ Apply the rules from version-control, versioning, and coding sections. Steps 7 t
      ESLint or Ruff rules. Run those checks in CI as errors. An `.editorconfig` file alone does
      not enforce naming in every language. Leave unsupported or semantic rules to review.
 
-7. Pin each third-party CI action or reusable CI step to a full commit SHA.
-   - Put the version in a comment on the same line.
-   - Get the SHA from the release tag on the code host. Do not use the tag itself, because a tag can move to other code.
-   - Do not refer to an action by a branch name or a version tag.
-
-8. Give each CI job the least privilege that it needs.
-   - Set the default token permission to read-only for the repository contents.
-   - Do not give all permissions. Give a write permission only to the one job that needs it.
+7. Apply the [supply chain rules](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md#supply-chain-rules).
    - Do not keep credentials in the checked-out code when a later step does not need them.
-
-9. Commit the lockfile of the package manager.
-   - Install the dependencies once with the package manager. Then commit the lockfile that it writes.
-   - In CI, install from the lockfile only. Use the package manager mode that fails when the lockfile does not agree with the dependency list.
-
-10. Run a vulnerability audit of the dependencies in CI on every pull request.
-    - Use the audit command of the package manager, or a dependency audit tool for the ecosystem.
-    - Make the job fail on high or critical findings.
-
-11. Turn on automated dependency update proposals and vulnerability alerts.
-    - Cover the dependencies of the package manager.
-    - Cover the pinned CI actions from step 7, because pinned versions do not update themselves.
-    - Check for updates at least weekly.
 
 ## Rules
 
