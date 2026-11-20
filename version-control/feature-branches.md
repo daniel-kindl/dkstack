@@ -8,7 +8,7 @@ Keep branches short so integration stays easy and feedback stays fast.
 
 - One branch per logical change or feature.
 - Keep the branch lifetime short (hours or a few days, not weeks).
-- Rebase or merge main frequently so the branch does not drift.
+- Merge `main` into the branch often. See [review and merge](../workflow/review-and-merge.md).
 - Open a pull request early. Get feedback before the branch grows.
 - Merge as soon as the change is ready and reviewed.
 - Delete the branch after merge.

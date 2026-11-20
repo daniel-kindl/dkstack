@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `version-control/feature-branches.md` says to merge `main` into a branch and links review and
+  merge. It no longer says to rebase, which conflicted with the rule that forbids a rebase of a pushed
+  branch (#154).
+
 ## [1.5.0] - 2026-11-19
 
 ### Added
