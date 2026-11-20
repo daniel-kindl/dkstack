@@ -20,8 +20,8 @@ Tell an agent:
 
 > Read and follow https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md
 
-The relative links in `AGENTS.md` resolve against this URL, so the agent reads all files on the
-same ref.
+To read all files on the same version, follow the version rule in
+[AGENTS.md](AGENTS.md#version).
 
 To set up a project, copy [sample-AGENTS.md](sample-AGENTS.md) into it as `AGENTS.md`.
 
@@ -45,8 +45,10 @@ Replace `<name>` with a skill name from [skills/index.md](skills/index.md), for 
 
 - Compatible releases (MINOR and PATCH) move `v1` forward. You do not change anything.
 - A breaking release starts `v2`. Read `CHANGELOG.md`, then change `v1` to `v2` in your URL.
-- If a release breaks your project, pin the last good `vX.Y.Z` tag in place of `v1`. Go back to
-  `v1` after the fix.
+- If a release breaks your project, pin the last good `vX.Y.Z` tag in place of `v1`. Follow the
+  version rule in [AGENTS.md](AGENTS.md#version). Go back to `v1` after the fix.
+- If you installed skills, run `npx skills update` after a release. Installed skills do not
+  update by themselves.
 
 The current version is in `package.json`. See [versioning/index.md](versioning/index.md) for
 semantic versioning.
