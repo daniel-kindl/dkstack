@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `ui/accessibility.md` says that each WCAG 2.2 A and AA criterion applies and links the quick
+  reference. It adds 1.3.4, 2.5.1, 2.5.2 and 2.5.4, and defines a primary touch control. `ui/forms.md`
+  states the AA rules of 3.3.8 and 3.3.4 and marks the stricter sign-in rule as a dkstack rule (#154).
+
 ## [1.5.0] - 2026-11-19
 
 ### Added

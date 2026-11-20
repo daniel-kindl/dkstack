@@ -169,6 +169,7 @@ test("accessibility rules that WCAG 2.2 AA does not require carry the dkstack ma
   const marked = [
     [owner, "an outline of at least 2 px and an offset (dkstack rule)."],
     [owner, "at least 44 by 44 CSS px for primary touch controls (dkstack rule)."],
+    [forms, "Do not use a cognitive test in sign-in, also not object recognition or personal content (dkstack rule)."],
     [owner, "at least 48 by 48 dp (Material Design and Android accessibility guidance) (dkstack rule)."],
     [owner, "at least 44 by 44 pt (Apple Human Interface Guidelines) (dkstack rule)."],
     [owner, "the largest system text size (dkstack rule)."],
@@ -186,4 +187,25 @@ test("accessibility rules that WCAG 2.2 AA does not require carry the dkstack ma
 test("FAIL wins over NOT RUN when check results combine", async () => {
   const results = section(await document("ui/visual-verification.md"), "## Results");
   assert.ok(results.includes("When the check results combine, FAIL wins over NOT RUN."));
+});
+
+// IRIS-2, IRIS-9, IRIS-13 and IRIS-16 (#154). Key phrases pin each rule (D7).
+test("the accessibility page covers each WCAG 2.2 A and AA criterion", async () => {
+  const owner = await document("ui/accessibility.md");
+  const scope = section(owner, "## Scope");
+  assert.ok(scope.includes("This page does not list each WCAG 2.2 A and AA criterion. Each one applies"));
+  assert.ok(scope.includes("(https://www.w3.org/WAI/WCAG22/quickref/)"));
+  for (const criterion of ["(1.3.4)", "(2.5.1)", "(2.5.2)", "(2.5.4)"]) {
+    assert.ok(owner.includes(criterion), `missing ${criterion}`);
+  }
+  assert.ok(owner.includes("A primary touch control is the main action of a screen or an item of the main navigation."));
+});
+
+test("forms state the AA rules of 3.3.8 and 3.3.4", async () => {
+  const forms = await document("ui/forms.md");
+  assert.ok(forms.includes("must also give a help or an alternative. Paste and password managers are a help (3.3.8)."));
+  const submit = line(forms, "- For a submit that makes a legal commitment");
+  for (const phrase of ["a financial transaction", "changes or deletes user data", "sends test responses", "(3.3.4)"]) {
+    assert.ok(submit.includes(phrase), `missing: ${phrase}`);
+  }
 });
