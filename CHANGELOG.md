@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `ui/visual-verification.md` requires a screen reader or inspector pass of each changed control,
+  uses all six WCAG A and AA axe tags, fails a web PASS on any WCAG A or AA axe violation, links the
+  component states and says that a local path is not evidence (#154).
+
 ## [1.5.0] - 2026-11-19
 
 ### Added
