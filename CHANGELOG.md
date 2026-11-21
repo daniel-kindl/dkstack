@@ -106,6 +106,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The writing rules have limits that a check can test (#243). A step has at most 20 words. A
+  sentence in a description has at most 25 words. Do not use a semicolon. A new "AI prose patterns"
+  section gives six examples. The scope includes the text that an agent writes to a person, such as
+  the learn tutor. `writing-check` step 2 checks each rule in `writing/index.md` and lists no subset.
 - README.md says what dkstack is and who it is for (#235). The top says that dkstack is guidance
   only and is for any team that uses AI coding agents, and a short "Start" list follows. README.md,
   `package.json` and AGENTS.md use one tagline: "Rules and skills for AI coding agents, in one

@@ -29,3 +29,23 @@ test("writing-check and the UI content page link the scope and do not exclude UI
   assert.ok(content.includes("(../writing/index.md#scope)"));
   assert.doesNotMatch(content, /not to UI copy/);
 });
+
+// REED-11, SCR-9 and REED-MISS-4 in #154, after the D3 sub-choices: the
+// rules have limits that a check can test, and examples of AI prose patterns.
+test("the writing rules set the sentence limits, ban semicolons and give AI prose examples", async () => {
+  const page = await read("writing/index.md");
+  const rules = page.slice(page.indexOf("## Rules"), page.indexOf("## Code comments"));
+  for (const phrase of ["20 words", "25 words", "Do not use a semicolon."]) assert.ok(rules.includes(phrase), phrase);
+  const patterns = page.slice(page.indexOf("## AI prose patterns"), page.indexOf("## Code comments"));
+  assert.ok(page.includes("## AI prose patterns"));
+  const examples = patterns.split(" - ").length - 1;
+  assert.ok(examples >= 5 && examples <= 6, `5 or 6 examples, not ${examples}`);
+  assert.ok(page.slice(page.indexOf("## Scope"), page.indexOf("## Rules")).includes("the learn tutor"));
+});
+
+test("writing-check checks each rule in writing/index.md and lists no subset", async () => {
+  const check = await read("skills/writing-check/SKILL.md");
+  const steps = check.slice(check.indexOf("## Steps"), check.indexOf("## Subagents"));
+  assert.ok(steps.includes("Check the text against each rule in"));
+  assert.doesNotMatch(steps, /short sentences, active voice/);
+});
