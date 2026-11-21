@@ -179,8 +179,8 @@ The rulesets stay as they are. `protect-release-tags` blocks deletion and update
 2. Release a PATCH. Move `v1` forward again with the release steps.
 3. Do not move `v1` back.
 
-As an emergency step, a consumer can pin the last good `vX.Y.Z` tag. It goes back to `v1` after
-the fix.
+As an emergency step, a consumer can pin the last good `vX.Y.Z` tag. The consumer follows the
+version rule in [AGENTS.md](../AGENTS.md#version). It goes back to `v1` after the fix.
 
 ## Good example
 
