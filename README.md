@@ -102,7 +102,7 @@ The workflow does not tag, release or publish.
 - [versioning/](versioning/index.md): Semantic versioning.
 - [writing/](writing/index.md): Writing style (ASD-STE100).
 - [skills/](skills/index.md): Skills for agents.
-- [workflow/](workflow/index.md): Roles, review and merge, and safety.
+- [workflow/](workflow/index.md): Issues, review and merge, and safety.
 - [ADR 0001](docs/adr/0001-how-consumers-follow-versions.md): How consumers follow versions. The ADRs
   are in `docs/adr/`.
 

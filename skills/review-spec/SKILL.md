@@ -25,7 +25,7 @@ Report three types of findings. Quote the specification line for each finding.
 - Not asked for: the change does something that the specification does not ask for.
 - Wrong: the change does it, but the result looks wrong.
 
-If the issue has no acceptance criteria, write assumed criteria from the issue title, body and linked discussion. Put them in the review. Suggest that the issue gets criteria. See [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md). If the intent is not clear enough to decide the verdict, ask the issue author or the coordinator. Do not approve on a guess.
+If the issue has no acceptance criteria, write assumed criteria from the issue title, body and linked discussion. Put them in the review. Suggest that the issue gets criteria. See [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md). If the intent is not clear enough to decide the verdict, ask the issue author or the owner. Do not approve on a guess.
 
 ## Credit
 

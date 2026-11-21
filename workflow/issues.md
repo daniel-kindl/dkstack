@@ -25,7 +25,7 @@ The [start-issue](../skills/start-issue/SKILL.md) skill applies these rules.
   only open, triage or review it. Reason: an assignment tells other people and agents that the
   work on the issue has started.
 - An assignment is a marker only. It is not an approval, a claim or a review. Reason: agents that
-  share the owner's account show as the owner. See [roles.md](roles.md#human-owner).
+  share the owner's account show as the owner. See [human owner](safety.md#human-owner).
 - If a different account is assigned, do not start the work. Ask the owner. Reason: someone
   else can already do the work.
 - If you stop before you open a pull request, remove your assignment and write a comment that
@@ -72,5 +72,4 @@ The owner asks for a CSV export and a fix for a crash on start. The agent opens 
 `export and crash fix` with no labels. It assigns the issue while it only triages the request. Later it
 does both tasks on one branch.
 
-Related: [review-and-merge.md](review-and-merge.md), [roles.md](roles.md),
-[safety.md](safety.md).
+Related: [review-and-merge.md](review-and-merge.md), [safety.md](safety.md).
