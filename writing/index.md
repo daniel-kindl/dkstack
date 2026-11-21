@@ -45,6 +45,10 @@ Do not write these patterns. Each one adds words and no facts.
 
 - [comments.md](comments.md): When and how to write code comments.
 
+## User-facing copy
+
+- [user-facing-copy.md](user-facing-copy.md): Product READMEs, landing pages, release notes, announcements, emails, CLI messages and app store text.
+
 ## Good example
 
 ```
