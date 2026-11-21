@@ -11,8 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `workflow/issues.md`: one task, one issue. Search for an open issue before you open one. Set
   exactly one `type:` label and an optional `priority:` label. Do not create a label without the
-  owner's OK. Assign the issue to the logged-in account only when the implementation starts, not
-  when you open, plan or triage it. An assignment is a
+  owner's OK. Assign the issue to the logged-in account only when you start to work on it, not
+  when you only open, triage or review it. An assignment is a
   marker only. A project with no issue tracker keeps one file for each task in `docs/issues/`.
   The `start-issue` skill applies the rules. `workflow/index.md`, `workflow/review-and-merge.md`,
   `skills/index.md` and `triage` link them. The removed `status:`, `agent:` and `needs:` labels and

@@ -14,7 +14,7 @@ These rules prevent real damage in a shared repository. Read them before you cha
 ## Flow
 
 1. The owner, the coordinator or the agent opens one issue for each task, with acceptance criteria
-   and labels. The agent assigns the issue to itself only when it starts to implement it. See
+   and labels. The agent assigns the issue to itself only when it starts to work on it. See
    [issues.md](issues.md).
 2. The implementer, architect or writer does the work on one branch and opens one pull request.
 3. The reviewer reviews the pull request.
