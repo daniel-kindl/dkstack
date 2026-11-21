@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A "Native equivalents" table in `ui/accessibility.md` (#187). It gives examples for a live
+  announcement, an accessible name, a heading, the language and the theme on Avalonia, .NET MAUI,
+  Android and iOS. The rows are examples, not requirements. `ui/responsive-design.md` says not to
+  copy web breakpoint values into native apps, and to use the platform's adaptive layout tools and
+  window size classes.
 - A leak runbook in `coding/security.md` (#185). If a token, a key or a password leaks: tell the
   owner, revoke the secret, rotate it, read the audit log, read the secret scanning alerts and
   record the event in an issue. The step for the dkstack release app key links
