@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   lists each skill. Triage reaches each skill, directly or through a skill that it links. Each
   section index lists each page of its section. AGENTS.md "Sections" lists each section index,
   except `tips/` while it has no tip.
+- `test/hard-limits.test.mjs` pins each hard limit by a short key phrase (#186): no force-push, no
+  bypass, no push to `main`, no production deploy, no release without the owner's OK, the author
+  never merges, an agent message is not approval, no secrets in chat, the shared account line, a
+  failing test first in `tdd-loop` and SHA pins in `review-standards`. A deleted limit fails the
+  test. A wording change that keeps the key phrase does not.
 - A "Native equivalents" table in `ui/accessibility.md` (#187). It gives examples for a live
   announcement, an accessible name, a heading, the language and the theme on Avalonia, .NET MAUI,
   Android and iOS. The rows are examples, not requirements. `ui/responsive-design.md` says not to
@@ -82,6 +87,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The release rule has one owner, `workflow/safety.md` (#205). No agent publishes or releases. No
+  agent creates a release tag, pushes to a release branch or to `v1`, publishes a package, or
+  starts a release or deploy workflow. A tag or branch push that starts such a workflow counts as
+  starting it. Before, an agent could do these with the owner's OK for the version. The `release`
+  skill stops after it proposes the version and the changelog entry. AGENTS.md, CONTRIBUTING.md
+  and `versioning/index.md` link the rule. `safety.md` and `versioning/index.md` say that the rule
+  is an honor rule while dkstack agents use the owner's account. "Finish a release" is for Daniel
+  only.
+- Triage links the stewardship signals in `architecture/stewardship.md#analysis` and no longer
+  copies the list (#207). The stewardship test checks the link and bans the copy in triage too.
+- A project has one place for its exceptions to dkstack rules (#210). `sample-AGENTS.md` says
+  that dkstack owns all other rules, and has an Exceptions section with the fields dkstack rule,
+  project rule and reason, and a Project facts section. AGENTS.md "Precedence" has an example
+  record. `coding/quality-gates.md` says that a diagnostic exception is not a rule exception and
+  links Precedence. Bootstrap step 1 copies `sample-AGENTS.md` as `AGENTS.md`. The other steps
+  move down by one.
+- Pages link a rule's owner page and do not copy the rule (#211). `code-review` links the title
+  rules. `coding/practices.md` links the quality gates. `coding/quality.md` links error handling.
+  `coding/index.md` says that `testing.md` points to `tdd/`. `architecture/reversibility.md` links
+  the easier to change rule. `tdd/security-testing.md` sends a report to the project's
+  `SECURITY.md` and names the dkstack file as an example.
+- Each accessibility rule on the forms, interactions, components, motion, typography and layout
+  pages has a WCAG criterion number or "(dkstack rule)" (#212). A test reads each bullet that names
+  an accessibility topic. `components.md` owns the list of states, and "pressed" is the one word
+  for that state. `typography.md` owns the reading width. `forms.md` owns where an error goes.
+  The other pages link them.
 - The UI test rules in `tdd/ui-testing.md` can be tested (#188). A UI test asserts what makes a
   screen reader announce an error: a live region, an automation property or the announcement API of
   the platform. The manual screen reader pass confirms each announcement and is recorded as the
@@ -130,6 +161,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The Release workflow fails early and cleans up on cancel (#180). `check-changelog` fails when
+  CHANGELOG.md has no exact `## [Unreleased]` line or no `[Unreleased]:` compare link. A cancelled
+  run closes the release pull request or tells how to finish the release, as a failed run does.
+  The plan summary shows each commit title as code, so Markdown in a title has no effect. The
+  approval message to Daniel has no semicolon.
+- README.md and SECURITY.md describe the releases that exist (#209). README "Release status" links
+  the latest release. README "Checks" lists each check of `validate`, says that only the release
+  job uses the release app secrets, and names Node 24 or later. The ADR line names ADR 0001.
+  SECURITY.md says that the latest release on `v1` is supported and that a fix ships as a PATCH
+  release on `v1`. A test fails if the text from before the first release comes back.
 - `check-links` checks anchors. A link to a Markdown file with `#anchor`, a pure `#anchor` and a
   repository URL with an anchor must match a heading or an HTML id in the target file. It also checks
   reference definitions, as in `[d]: file.md` (#154).

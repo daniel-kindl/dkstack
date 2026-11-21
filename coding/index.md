@@ -12,7 +12,7 @@ Coding standards and practices.
 - [error-handling.md](error-handling.md): Handle errors explicitly.
 - [logging.md](logging.md): Logging events and the observability assessment.
 - [security.md](security.md): Security basics.
-- [testing.md](testing.md): Testing rules.
+- [testing.md](testing.md): A pointer to [tdd/](../tdd/index.md), which has the testing rules.
 - [dependencies.md](dependencies.md): No unjustified dependencies.
 - [debugging.md](debugging.md): Reproduce the problem and fix the cause.
 

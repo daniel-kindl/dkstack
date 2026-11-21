@@ -26,8 +26,14 @@ It works out the version and shows it in the run summary. The `release` job does
 It runs in the `release` environment, so it waits until Daniel approves it. Daniel's OK for a
 release is two actions: he starts `Release`, and he approves the `release` environment after he
 reads the planned version in the run summary. No bot starts the workflow or approves the
-environment. No bot pushes to `v1` or creates a release tag in another way. See
-[workflow/safety.md](../workflow/safety.md).
+environment. [Safety](../workflow/safety.md) owns the release rule.
+
+dkstack agents use Daniel's account today (D1 in
+[#154](https://github.com/daniel-kindl/dkstack/issues/154)). The rulesets and the `release`
+environment do not stop an agent that uses Daniel's account. The release rule is an honor rule
+until the agents get their own identity. For the same reason, dkstack does not meet the rule "No
+bot identity can act as that reviewer" in
+[CI workflows](../coding/security.md#release-and-deploy-workflows) yet.
 
 ### One-time setup
 
@@ -116,6 +122,8 @@ Make sure that it lists every skill.
 
 ### If a run fails
 
+A cancelled run counts as a failure here.
+
 - A failure in `plan`, or a rejected approval, writes nothing.
 - A failure before the merge leaves `main`, the tags and `v1` as they were. The job closes the
   release pull request. It deletes the branch `release/vX.Y.Z` if the branch is still at the
@@ -135,7 +143,7 @@ any commit or pull request merged into the repository will not require approval"
 first release with the app, the next runs should not wait.
 
 When the run waits, the job writes this message with the link to the run, in the log and in the
-run summary: "Daniel: approve this workflow run yourself; no agent approves it".
+run summary: "Daniel: approve this workflow run yourself. No agent approves it."
 
 1. Open the link. Make sure that it is the `validate` run of the release pull request
    `chore(release): prepare vX.Y.Z`, on the branch `release/vX.Y.Z`.
@@ -157,6 +165,8 @@ merged into this repository". The bot user of the app is new on GitHub, so this 
 does not stop the wait. The approval of the first run is the recommended way.
 
 ### Finish a release
+
+Daniel only. No agent does these steps.
 
 Do these steps in a checkout of dkstack with the latest `main`. Set `V` to the version, for
 example `V=1.4.0`. Set `SHA` to the merge commit of the release pull request:

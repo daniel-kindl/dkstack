@@ -19,6 +19,5 @@ start the work only after the owner approves the change.
 
 ## Release
 
-Only the owner releases dkstack. He starts the `Release` workflow on `main`. The workflow does
-the rest: the release pull request, `validate`, the merge, the tag, the GitHub release and the
-fast-forward of `v1`. See [Release dkstack](versioning/index.md#release-dkstack).
+Only the owner releases dkstack. The rule is in [safety](workflow/safety.md). The steps are in
+[Release dkstack](versioning/index.md#release-dkstack).
