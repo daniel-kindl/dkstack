@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Skill building blocks (#167). `code-review` runs `review-spec`, `review-standards`,
+  `review-blast-radius` and `verify-claim`. `bootstrap` runs `setup-editorconfig`,
+  `setup-quality-gates`, `setup-versioning` and `setup-supply-chain`. The text moved from the two
+  skills to the blocks. No skill is removed or renamed, and the `code-review` anchors stay.
+  `tdd-loop` and `write-pr` link `verify-claim`.
+- Invocation classes (#167). A skill is user, agent or both. `scripts/check-skills.mjs` accepts
+  `disable-model-invocation` and `user-invocable` with the value `true` or `false`. A user-only
+  skill also needs `agents/openai.yaml` with `allow_implicit_invocation: false`, and the check
+  makes sure that the two agree. `release` is user-only. `triage` and the building blocks are
+  agent-only. `skills/index.md` lists the class of each skill. A description can end with
+  `Triggers:` and the words that a person uses to ask for the skill.
 - `coding/security.md` has a "CI workflows" section. It owns the rules for untrusted triggers,
   expression values in scripts, secrets, checkout tokens, permissions, timeouts and fork approval, and
   it says what a safe release or deploy workflow is. `code-review` links it (#154).

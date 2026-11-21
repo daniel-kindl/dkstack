@@ -4,8 +4,9 @@
 // a name equal to the folder name and a double-quoted description.
 //
 // The frontmatter parser accepts a strict subset of YAML on purpose: one
-// "key: value" per line, only the keys name and description, and a
-// double-quoted description. This subset is always valid YAML, so a file
+// "key: value" per line, only the keys name, description and the two
+// optional invocation keys, a double-quoted description, and true or false
+// for an invocation key. This subset is always valid YAML, so a file
 // that passes this check also parses in the skills CLI. It needs no
 // dependency.
 
@@ -13,7 +14,10 @@ import { readdir, readFile, stat } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
-const KEYS = new Set(["name", "description"]);
+const INVOCATION_KEYS = new Set(["disable-model-invocation", "user-invocable"]);
+const KEYS = new Set(["name", "description", ...INVOCATION_KEYS]);
+// Codex reads agents/openai.yaml. This line turns off implicit invocation.
+const CODEX_POLICY_OFF = /^\s+allow_implicit_invocation:\s*false\s*$/m;
 const NAME_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const MAX_NAME = 64;
 // Plain YAML scalars that YAML 1.1 or 1.2 reads as null, a boolean, a number
@@ -55,12 +59,20 @@ export function parseFrontmatter(text) {
     if (!match) throw new Error(`line ${lineNo}: expected "key: value".`);
     const [, key, raw] = match;
     if (!KEYS.has(key)) {
-      throw new Error(`line ${lineNo}: unknown key "${key}". Use only name and description.`);
+      throw new Error(
+        `line ${lineNo}: unknown key "${key}". Use only name, description, disable-model-invocation and user-invocable.`,
+      );
     }
     if (Object.hasOwn(fields, key)) {
       throw new Error(`line ${lineNo}: duplicate key "${key}".`);
     }
-    if (key === "description") {
+    if (INVOCATION_KEYS.has(key)) {
+      const value = raw.trim();
+      if (value !== "true" && value !== "false") {
+        throw new Error(`line ${lineNo}: ${key} must be true or false.`);
+      }
+      fields[key] = value === "true";
+    } else if (key === "description") {
       const value = parseQuoted(raw.trim());
       if (value === undefined) {
         throw new Error(`line ${lineNo}: description must be a double-quoted string.`);
@@ -98,7 +110,31 @@ function checkFields(fields, folder) {
   } else if (fields.description.length > MAX_DESCRIPTION) {
     errors.push(`description must have ${MAX_DESCRIPTION} characters or fewer.`);
   }
+  if (fields["disable-model-invocation"] === true && fields["user-invocable"] === false) {
+    errors.push(
+      "disable-model-invocation: true and user-invocable: false together leave no way to invoke the skill.",
+    );
+  }
   return errors;
+}
+
+// A user-only skill must also be user-only in Codex, and the reverse.
+async function checkCodexPolicy(fields, skillDir) {
+  let policy = "";
+  try {
+    policy = await readFile(join(skillDir, "agents", "openai.yaml"), "utf8");
+  } catch {
+    policy = "";
+  }
+  const codexOff = CODEX_POLICY_OFF.test(policy);
+  const userOnly = fields["disable-model-invocation"] === true;
+  if (userOnly && !codexOff) {
+    return ["a user-only skill needs agents/openai.yaml with allow_implicit_invocation: false."];
+  }
+  if (!userOnly && codexOff) {
+    return ["agents/openai.yaml turns off implicit use, so set disable-model-invocation: true."];
+  }
+  return [];
 }
 
 async function isDirectory(path) {
@@ -151,6 +187,9 @@ export async function checkSkills(root) {
       continue;
     }
     const fieldErrors = checkFields(fields, entry.name);
+    if (fieldErrors.length === 0) {
+      fieldErrors.push(...(await checkCodexPolicy(fields, join(skillsDir, entry.name))));
+    }
     if (fieldErrors.length === 0) {
       skills.push(entry.name);
     } else {

@@ -1,0 +1,5 @@
+interface:
+  display_name: "Release"
+  short_description: "Prepare a release. Only the owner starts it."
+policy:
+  allow_implicit_invocation: false

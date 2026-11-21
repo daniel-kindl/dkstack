@@ -32,10 +32,18 @@ test("the repository skills use the folder layout and valid frontmatter", async 
     "learn",
     "plan-work",
     "release",
+    "review-blast-radius",
+    "review-spec",
+    "review-standards",
+    "setup-editorconfig",
+    "setup-quality-gates",
+    "setup-supply-chain",
+    "setup-versioning",
     "tdd-loop",
     "triage",
     "ui-design",
     "ui-review",
+    "verify-claim",
     "write-adr",
     "write-pr",
     "writing-check",
@@ -134,7 +142,7 @@ test("parseFrontmatter rejects an invalid escape, a duplicate key and an unknown
   );
   assert.throws(
     () => parseFrontmatter('---\nname: a\ndescription: "x"\nversion: 1\n---\n'),
-    { message: 'line 4: unknown key "version". Use only name and description.' },
+    { message: 'line 4: unknown key "version". Use only name, description, disable-model-invocation and user-invocable.' },
   );
   assert.throws(
     () => parseFrontmatter('---\nname: a\n  continued\ndescription: "x"\n---\n'),
@@ -217,4 +225,65 @@ test("a name that YAML reads as null, a boolean, a number or a date is rejected"
       .sort()
       .map((name) => `skills/${name}/SKILL.md: name "${name}" is not a string in YAML. Use a word that YAML does not read as null, a boolean, a number or a date.`),
   );
+});
+
+// Issue #167: a skill can be user-only, agent-only or both.
+test("parseFrontmatter reads the two invocation keys as booleans", () => {
+  const text = '---\nname: a\ndescription: "x"\ndisable-model-invocation: true\nuser-invocable: false\n---\n';
+  assert.deepEqual(parseFrontmatter(text), {
+    name: "a",
+    description: "x",
+    "disable-model-invocation": true,
+    "user-invocable": false,
+  });
+});
+
+test("parseFrontmatter rejects an invocation value that is not true or false", () => {
+  for (const value of ["yes", "\"true\"", "1", ""]) {
+    assert.throws(
+      () => parseFrontmatter(`---\nname: a\ndescription: "x"\nuser-invocable: ${value}\n---\n`),
+      { message: 'line 4: user-invocable must be true or false.' },
+      value,
+    );
+  }
+});
+
+const OPENAI_OFF = "policy:\n  allow_implicit_invocation: false\n";
+const userOnly = (name) =>
+  `---\nname: ${name}\ndescription: "Use when x."\ndisable-model-invocation: true\n---\n`;
+
+test("a user-only skill with the Codex policy file passes", async () => {
+  const result = await errorsFor({
+    "skills/solo/SKILL.md": userOnly("solo"),
+    "skills/solo/agents/openai.yaml": OPENAI_OFF,
+  });
+  assert.deepEqual(result.errors, []);
+});
+
+test("a user-only skill without the Codex policy file is rejected", async () => {
+  const result = await errorsFor({ "skills/solo/SKILL.md": userOnly("solo") });
+  assert.deepEqual(result.errors, [
+    "skills/solo/SKILL.md: a user-only skill needs agents/openai.yaml with allow_implicit_invocation: false.",
+  ]);
+});
+
+test("a Codex policy file that turns off implicit use needs disable-model-invocation", async () => {
+  const result = await errorsFor({
+    "skills/both/SKILL.md": skill("both", '"Use when x."'),
+    "skills/both/agents/openai.yaml": OPENAI_OFF,
+  });
+  assert.deepEqual(result.errors, [
+    "skills/both/SKILL.md: agents/openai.yaml turns off implicit use, so set disable-model-invocation: true.",
+  ]);
+});
+
+test("a skill that neither a user nor an agent can invoke is rejected", async () => {
+  const result = await errorsFor({
+    "skills/none/SKILL.md":
+      '---\nname: none\ndescription: "Use when x."\ndisable-model-invocation: true\nuser-invocable: false\n---\n',
+    "skills/none/agents/openai.yaml": OPENAI_OFF,
+  });
+  assert.deepEqual(result.errors, [
+    "skills/none/SKILL.md: disable-model-invocation: true and user-invocable: false together leave no way to invoke the skill.",
+  ]);
 });

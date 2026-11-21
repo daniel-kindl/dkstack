@@ -42,7 +42,7 @@ trivial change. A trivial change can omit the visual.
 
 ## Evidence
 
-Separate three kinds of statement.
+Separate three kinds of statement. Use [verify-claim](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/verify-claim/SKILL.md) to decide if a claim is verified.
 
 - Verified: you ran the check, or you read a result for this change. Give the result.
 - Unverified: you did not run the check. Say so.

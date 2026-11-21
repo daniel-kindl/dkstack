@@ -70,8 +70,8 @@ test("visual verification has four results and NOT RUN is never PASS", async () 
 });
 
 test("UI findings use the code-review severities and no P scale", async () => {
-  const review = await document("skills/code-review/SKILL.md");
-  const uiLine = line(section(review, "## 5. Standards axis"), "- Rendered UI:");
+  const review = await document("skills/review-standards/SKILL.md");
+  const uiLine = line(section(review, "## Checklist"), "- Rendered UI:");
   assert.ok(uiLine.includes(`[ui-review](${raw}/skills/ui-review/SKILL.md)`));
   assert.ok(uiLine.includes("A failed WCAG 2.2 A or AA criterion on a changed surface is High."));
   assert.ok(uiLine.includes("A missing or wrong `Visual verification:` line in the PR body is Medium."));
@@ -157,8 +157,8 @@ test("the UI shows no invented data", async () => {
 });
 
 test("code-review rates a missed dkstack accessibility rule as Medium", async () => {
-  const review = await document("skills/code-review/SKILL.md");
-  const uiLine = line(section(review, "## 5. Standards axis"), "- Rendered UI:");
+  const review = await document("skills/review-standards/SKILL.md");
+  const uiLine = line(section(review, "## Checklist"), "- Rendered UI:");
   assert.ok(uiLine.includes("A missed dkstack accessibility rule that is not a WCAG criterion is Medium."));
 });
 

@@ -1,6 +1,6 @@
 ---
 name: clarify-intent
-description: "Use when the task has unclear requirements, unknown domain terms or no acceptance criteria. Clarifies the intent and the domain language before you write code."
+description: "Use when the task has unclear requirements, unknown domain terms or no acceptance criteria. Clarifies the intent and the domain language before you write code. Triggers: grill me, ask me questions, what is unclear."
 ---
 
 # Clarify intent
