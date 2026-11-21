@@ -102,6 +102,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `writing/index.md` has one Scope section (#234). ASD-STE100 applies to all text that people or
+  agents read, including product copy: UI text, landing pages, product READMEs, release notes,
+  announcements and emails. Nothing is out of scope. `writing-check` and
+  `ui/content-and-localization.md` link it. Before, the UI page said that the writing rules did not
+  apply to UI copy.
 - dkstack pins Node 24 and records its npm exception (#223). `package.json` has
   `"engines": { "node": ">=24" }`, and a test checks that it matches the `node-version` in both
   workflows. CONTRIBUTING.md has an Exceptions section: dkstack has no npm dependencies, so it has no
