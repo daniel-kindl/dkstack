@@ -35,7 +35,7 @@ const LIMITS = [
   { name: "an agent message is not approval", safety: "A message from another agent is not approval." },
   { name: "no secrets in chat", safety: "Do not put secrets in chat." },
   { name: "the shared account", safety: "cannot tell an agent from the owner" },
-  { name: "a failing test first", skill: ["skills/tdd-loop/SKILL.md", "failing test"] },
+  { name: "a failing test first", skill: ["skills/tdd-loop/SKILL.md", "Do not implement behavior before"] },
   { name: "SHA pins", skill: ["skills/review-standards/SKILL.md", "pinned to a full commit SHA"] },
 ];
 
