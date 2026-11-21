@@ -94,9 +94,18 @@ Run [verify-claim](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ski
 | Severity | Examples | Blocks merge |
 | --- | --- | --- |
 | Blocking | Security hole, data loss, broken build, a broken rule in `workflow/safety.md`, an agent can start a production deploy or a project's release workflow, or release without the owner's OK | Yes |
-| High | Wrong behavior, missing acceptance criterion, no test for a behavior change, failing required check | Yes |
+| High | Wrong behavior, missing acceptance criterion, no test for a behavior change, failing required check, code that contradicts an Accepted ADR (see [ADR findings](#adr-findings)) | Yes |
 | Medium | Code smell (default), duplication, weak test, unproven required behavior, wrong or missing docs, two rules that conflict | Yes |
 | Low | Small clarity, naming or wording point, or a smell with small impact | No |
+
+## ADR findings
+
+Code that contradicts an Accepted ADR is High. The [ADR rules](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/adrs.md#status-and-affects) say which ADRs are Accepted.
+
+- A High ADR finding quotes the ADR line and the code line that it breaks. Without both quotes, write it as a question, not as a High finding.
+- A newer ADR that supersedes the old ADR clears the finding.
+- To find the ADRs that apply, read each Accepted ADR whose `Affects:` line matches a changed file. For each old ADR with no `Affects:` line, read its title and its Decision section.
+- A missing `Affects:` line on an old ADR is never a finding. Do not ask for one.
 
 ## Verdict
 

@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- ADR findings (#173). Code that contradicts an Accepted ADR is High and blocks the merge. The
+  finding quotes the ADR line and the code line, or it is a question. A newer ADR that supersedes
+  the old ADR clears it. A new ADR has a `Status:` line and an `Affects:` line. An old ADR with no
+  `Status:` line counts as Accepted, and a missing `Affects:` line on it is never a finding.
 - `clarify-intent` rounds (#172). Switch to rounds when more than 3 questions are open, a question
   depends on another question, the owner asks to be grilled, or `chart-route` sends a question.
   Each round starts with a "Settled so far" summary and asks at most 3 frontier questions, each with
@@ -47,6 +51,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The ADR test in `architecture/adrs.md` is narrower (#173). Write an ADR only when the decision
+  is hard to reverse, surprising to a new reader without the context, and the result of a real
+  trade-off. Record a smaller decision in the map or in the pull request body. `write-adr` step 1
+  links the test and does not restate it.
 - Dependabot commit and pull request titles in dkstack start with `ci:`, so a short update title
   passes the title check (#154).
 - `version-control/index.md` lists all 11 commit types that the title check allows and says that
