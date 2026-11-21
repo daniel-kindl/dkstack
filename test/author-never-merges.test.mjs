@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "./helpers.mjs";
+import { flatten, readFile, sectionText } from "./helpers.mjs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -8,26 +8,6 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 async function page(path) {
   return readFile(join(repoRoot, path), "utf8");
-}
-
-function sectionText(text, heading) {
-  const lines = text.split("\n");
-  const level = heading.match(/^#+/)[0].length;
-  const start = lines.findIndex((line) => line === heading);
-  assert.notEqual(start, -1, `missing heading: ${heading}`);
-  let end = lines.length;
-  for (let i = start + 1; i < lines.length; i += 1) {
-    const match = lines[i].match(/^(#+) /);
-    if (match && match[1].length <= level) {
-      end = i;
-      break;
-    }
-  }
-  return lines.slice(start + 1, end).join("\n");
-}
-
-function flatten(text) {
-  return text.replace(/\s+/g, " ").trim();
 }
 
 function items(section, marker) {

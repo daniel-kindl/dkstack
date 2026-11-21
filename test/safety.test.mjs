@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "./helpers.mjs";
+import { flatten, readFile, sectionText } from "./helpers.mjs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -9,27 +9,6 @@ const pagePath = join(repoRoot, "workflow", "safety.md");
 
 async function pageText() {
   return readFile(pagePath, "utf8");
-}
-
-// Return the lines of one section, with its heading, up to the next heading of the same or a higher level.
-function sectionText(text, heading) {
-  const lines = text.split("\n");
-  const level = heading.match(/^#+/)[0].length;
-  const start = lines.findIndex((line) => line === heading);
-  assert.notEqual(start, -1, `missing heading: ${heading}`);
-  let end = lines.length;
-  for (let i = start + 1; i < lines.length; i += 1) {
-    const match = lines[i].match(/^(#+) /);
-    if (match && match[1].length <= level) {
-      end = i;
-      break;
-    }
-  }
-  return lines.slice(start, end).join("\n");
-}
-
-function flatten(text) {
-  return text.replace(/\s+/g, " ").trim();
 }
 
 // SEN-12, SCR-6 and SCR-18 in #154: roles.md owns the owner record. The
