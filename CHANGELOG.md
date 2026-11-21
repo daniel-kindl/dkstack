@@ -237,6 +237,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Fixed
 
+- The push title step in the validate workflow fails when `git log` fails. Before, the process
+  substitution hid the error, and the step passed with no title checked (the Low on #190).
 - The .NET MAUI theme example in `ui/accessibility.md` names `Application.RequestedTheme` to read
   the theme. `AppThemeBinding` only sets a value for each theme (#224).
 - `check-links` closes five parser gaps (#232). It checks an HTML `<a href>`. It accepts `[self](./)`
