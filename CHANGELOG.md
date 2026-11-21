@@ -301,7 +301,7 @@ change that a consumer must act on has a "Consumer action:" line.
   links the release OK in `workflow/safety.md` and does not copy it. `code-review` links the
   unproven rule in `verify-claim` and does not copy it. `architecture/small-steps.md` no longer
   says that AGENTS.md asks for small commits. The Release workflow comment says that the app token
-  does the writes. `triage`, `writing-check` and `stewardship.md` say "person", not "human".
+  does the writes. `triage`, `writing-check` and `stewardship.md` say "person" or "people", not "human".
 - The coverage glob in `npm test` has no quotes. In `cmd.exe` the quotes stayed in the value, so
   no file matched and the coverage gate passed with no check (the Low on #242).
 - `check-links` checks an HTML `href` in single quotes or with no quotes, not only one in double

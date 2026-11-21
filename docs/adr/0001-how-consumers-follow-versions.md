@@ -190,16 +190,16 @@ decide, fix and merge". The agent chose option A of D6: an ADR gets dated amendm
 
 ### Amendment 2026-11-21, 1.6.0 on v1
 
-Daniel decided on 2026-11-21, in a Claude Code chat session, that the next release is `1.6.0` on
-`v1`. His words are "I will release is as v1 1.6.0. Fix all other findings." The release has
-three changes. It removes the agent roles page in `workflow/` (#191). It renames the anchor
+Daniel decided on 2026-11-21 that the next release is `1.6.0` on `v1`. He decided it in a Claude
+Code chat session. His words are "I will release is as v1 1.6.0. Fix all other findings." See #288. The
+release has three breaking changes. It removes the agent roles page in `workflow/` (#191). It renames the anchor
 `coding/quality-gates.md#exceptions` to `#suppressions` (#285). It adds a hard limit: no agent
 releases (#205). Under
 [breaking changes in dkstack](../../versioning/index.md#breaking-changes-in-dkstack), each of
-these is MAJOR. This is an exception for one release only. It replaces, for `1.6.0` only, one
-sentence in the amendment of 2026-11-11. That sentence says that the rule "A breaking release
-starts `v2`" applies to every later release. The rule applies again to every release after
-`1.6.0`. The CHANGELOG entry has a
+these is MAJOR. This is an exception for one release only. For `1.6.0` only, it replaces this
+text in the first amendment of 2026-11-11: "This is an exception for one release only. The rule
+"A breaking release starts `v2`" applies to every later release." The rule applies again to every
+release after `1.6.0`. The CHANGELOG entry has a
 "Consumer action:" line for each removed or renamed link.
 
 ## Consequences
