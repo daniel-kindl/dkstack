@@ -174,7 +174,7 @@ that `protect-main` counts (runs 43070086329 and 43073954019).
 
 Daniel decided on 2026-11-20 at 09:34 (Prague), as D2 in #154: "D2: only the Release run I start;
 no agent tags, moves v1 or starts a release". This amendment replaces the amendment of 2026-10-28.
-No bot pushes to `v1` or creates a release tag, even with an OK. Only the `Release` run that
+No agent pushes to `v1` or creates a release tag, even with an OK. Only the `Release` run that
 Daniel starts does these steps. See [workflow/safety.md](../../workflow/safety.md).
 
 ### Amendment 2026-11-21, tag pins

@@ -84,7 +84,9 @@ test("adrs.md owns the ADR place and the amendment rule", async () => {
   assert.ok(text.includes("Store each ADR in `docs/adr/` as `NNNN-short-title.md`."));
   assert.ok(text.includes("Do not change the text of an Accepted ADR."));
   assert.ok(text.includes("`### Amendment YYYY-MM-DD`"));
-  assert.ok(text.includes("quotes the owner's words"));
+  for (const fact of ["quotes the owner's words", "gives the date", "says which earlier text it replaces"]) {
+    assert.ok(text.includes(fact), fact);
+  }
   assert.ok(text.includes("An agent writes an amendment only after the owner decided."));
   assert.ok(text.includes("write a new ADR"));
   const step = await read("skills/write-adr/SKILL.md");
@@ -94,9 +96,13 @@ test("adrs.md owns the ADR place and the amendment rule", async () => {
 
 test("ADR 0001 records D2 and replaces the 2026-10-28 amendment", async () => {
   const text = await read("docs/adr/0001-how-consumers-follow-versions.md");
-  const d2 = text.slice(text.indexOf("### Amendment 2026-11-21, no agent releases"), text.indexOf("## Consequences"));
-  assert.ok(d2.includes("no agent tags, moves v1 or starts a release"));
+  const d2 = text.slice(text.indexOf("### Amendment 2026-11-21, no agent releases"), text.indexOf("### Amendment 2026-11-21, tag pins"));
+  assert.ok(d2.includes("2026-11-20 at 09:34 (Prague)"));
+  assert.ok(d2.includes('"D2: only the Release run I start; no agent tags, moves v1 or starts a release"'));
   assert.ok(d2.includes("replaces the amendment of 2026-10-28"));
-  assert.ok(d2.includes("No bot pushes to `v1` or creates a release tag, even with an OK."));
-  assert.ok(d2.includes("That is true only for relative links."));
+  assert.ok(d2.includes("No agent pushes to `v1` or creates a release tag, even with an OK."));
+  const pins = text.slice(text.indexOf("### Amendment 2026-11-21, tag pins"), text.indexOf("## Consequences"));
+  assert.ok(pins.includes("That is true only for relative links."));
+  assert.ok(pins.includes('"you decide, fix and merge"'));
+  assert.ok(pins.includes("option A of D6"));
 });
