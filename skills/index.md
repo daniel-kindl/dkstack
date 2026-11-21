@@ -25,7 +25,7 @@ A building block does one job. A larger skill, such as `code-review` or `bootstr
 ## Current skills
 
 - [triage](triage/SKILL.md) (agent): Decide which guidelines and skills apply to the current task. Read this first.
-- [bootstrap](bootstrap/SKILL.md) (both): Set up conventional commits, short-lived branches, semver, strict editorconfig, warnings as errors, deterministic checks and supply chain rules.
+- [bootstrap](bootstrap/SKILL.md) (both): Set up conventional commits, short-lived branches, semver, strict editorconfig, warnings as errors, deterministic checks, supply chain rules, repository protection and a README check.
   - [setup-editorconfig](setup-editorconfig/SKILL.md) (agent): Strict editor settings and LF line endings.
   - [setup-quality-gates](setup-quality-gates/SKILL.md) (agent): Warnings as errors, CI and deterministic checks.
   - [setup-versioning](setup-versioning/SKILL.md) (agent): Commit and branch rules, semantic versioning and a changelog.
