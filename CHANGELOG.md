@@ -106,6 +106,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `code-review` and `versioning/index.md` have no sentence over 25 words and no semicolon (#245).
+  Six sentences are split. The meaning does not change. A test checks both pages.
 - README.md says what dkstack is and who it is for (#235). The top says that dkstack is guidance
   only and is for any team that uses AI coding agents, and a short "Start" list follows. README.md,
   `package.json` and AGENTS.md use one tagline: "Rules and skills for AI coding agents, in one

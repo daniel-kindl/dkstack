@@ -18,7 +18,7 @@ A change can pass one axis and fail the other. Code can follow every rule and do
 
 ## Subagents
 
-If you can start subagents, use them for the independent checks. Do steps 1 to 3 first. Then run the specification axis (step 4), the standards axis (step 5) and the blast radius (step 6) at the same time, each in its own subagent. Give each subagent a brief that is complete without your context:
+If you can start subagents, use them for the independent checks. Do steps 1 to 3 first. Then run steps 4, 5 and 6 at the same time, each in its own subagent. They are the specification axis, the standards axis and the blast radius. Give each subagent a brief that is complete without your context:
 
 - The diff command and the commit list from step 1, or the patch.
 - The sources from step 2 that its check needs.
@@ -38,11 +38,11 @@ The steps expect a pull request on a code host, a base ref, a specification, aut
 - No pull request or no code host: give the review in the chat, or to the person who asked for it. If there is no chat, write the review to a file and say where it is.
 - You cannot post a comment, for example because you have no access or no permission: do the same, and say why you could not post.
 - No base ref, for example a working tree or a patch: review the uncommitted changes or the given patch. State exactly what you reviewed, for example "uncommitted changes on branch `x` at commit `abc1234`" or the patch name.
-- No pull request text yet, for example when you review your own change before you open a pull request: in step 3, check the planned title and body and the commit messages. If none of them exists, write NOT RUN for step 3.
+- No pull request text yet, for example in a review of your own change before you open it. In step 3, check the planned title, the body and the commit messages. If none of them exists, write NOT RUN for step 3.
 - No automated checks on the code host: say so in step 8. Run the project's own checks locally if you can. A local run is level 4, Run, only for the operating system that you ran it on. Name that system.
 - No specification or issue: say so in step 4 and use the search order in step 2. If the intent decides the verdict, ask the requester before you give the verdict. If you cannot ask, or get no answer, give BLOCKED and state the question.
 - You cannot build or run the artifact: say so in step 8. Each claim then reaches level 3, Reasoned, at most.
-- You cannot read a dkstack page or a project rule, for example because there is no network: say which source you could not read, and do not guess its rules. Use a local copy if one exists, and state its version.
+- You cannot read a dkstack page or a project rule, for example with no network: name the source that you could not read. Do not guess its rules. Use a local copy if one exists, and state its version.
 
 ## 1. Fixed point
 
@@ -111,7 +111,7 @@ Code that contradicts an Accepted ADR is High. The [ADR rules](https://raw.githu
 
 Give one verdict, as [workflow/review-and-merge.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md) requires. Use the most severe finding from either axis:
 
-- BLOCKED: one or more Blocking findings, or the change must not continue in this form, for example wrong scope or a decision that only the owner can make.
+- BLOCKED: one or more Blocking findings, or the change must not continue in this form. Examples are the wrong scope or a decision that only the owner can make.
 - CHANGES-REQUESTED: one or more High or Medium findings.
 - APPROVE-RECOMMENDED: only Low findings or none, and each required check is green on the reviewed head.
 
