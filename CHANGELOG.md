@@ -12,6 +12,12 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- Clean-up rules after a merge in `workflow/review-and-merge.md` (#277). The agent that merged
+  switches to `main` and updates it with a fast-forward only. It removes the worktree and the
+  local branch of the merged pull request. It deletes only stale branches: the pull request is
+  merged, and the tip is the merged head or an ancestor of it. It never discards uncommitted
+  changes or unmerged commits. The page gives the `git` and `gh` commands. `feature-branches.md`
+  and `code-review` link the rules.
 - Issue relations in `workflow/issues.md` (#192). A task that has parts is a parent issue, and
   each part is a sub-issue. An issue that must wait for another is "blocked by" it. Do not start
   work while a blocker is open. The page gives the `gh` commands. The local files get `Parent:`

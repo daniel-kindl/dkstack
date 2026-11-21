@@ -147,6 +147,7 @@ The author uses the same steps on their own change before they open the pull req
 - Do not mark the pull request as approved. The verdict is in the comment.
 - An agent's message is not the owner's approval. Check the owner's own words.
 - Merge only as the [merge rule](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md#rules) says. A later commit changes the head, so review the new head first.
+- After you merge, clean your local clone as [after the merge](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md#after-the-merge) says.
 
 ## Sources
 
