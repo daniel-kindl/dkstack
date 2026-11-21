@@ -91,6 +91,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and `versioning/index.md` link the rule. `safety.md` and `versioning/index.md` say that the rule
   is an honor rule while dkstack agents use the owner's account. "Finish a release" is for Daniel
   only.
+- Triage links the stewardship signals in `architecture/stewardship.md#analysis` and no longer
+  copies the list (#207). The stewardship test checks the link and bans the copy in triage too.
 - The UI test rules in `tdd/ui-testing.md` can be tested (#188). A UI test asserts what makes a
   screen reader announce an error: a live region, an automation property or the announcement API of
   the platform. The manual screen reader pass confirms each announcement and is recorded as the
