@@ -1,13 +1,13 @@
 ---
 name: bootstrap
-description: "Use when you create a new repository or a repository has no commit, branch or version rules yet. Sets up conventional commits, short-lived branches, semver, strict editorconfig, warnings as errors, deterministic checks and supply chain rules."
+description: "Use when you create a new repository or a repository has no commit, branch or version rules yet. Sets up conventional commits, short-lived branches, semver, strict editorconfig, warnings as errors, deterministic checks, supply chain rules, repository protection and a README check."
 ---
 
 # Bootstrap
 
 Use when you set up a new repository or bring an existing one up to standard.
 
-Apply the rules from version-control, versioning, and coding sections. Step 5 applies the supply chain rules in [coding/dependencies.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md#supply-chain-rules).
+Apply the rules from version-control, versioning, and coding sections. Then protect the repository and check the README. Step 5 applies the supply chain rules in [coding/dependencies.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md#supply-chain-rules).
 
 ## Steps
 
@@ -19,7 +19,7 @@ Do step 1 first. Do steps 2 to 6 each with its building block. Each block links 
 4. Document the commit and branch rules and set up semantic versioning with [setup-versioning](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-versioning/SKILL.md).
 5. Apply the [supply chain rules](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md#supply-chain-rules) with [setup-supply-chain](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-supply-chain/SKILL.md).
 6. Protect the repository with [setup-repo-protection](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-repo-protection/SKILL.md).
-7. Check that the README says what the project is, who it is for, how to install it, how to run it and how to contribute. Add each part that is missing.
+7. Check the README. It says what the project is and who it is for. It says how to install it and how to run it. It says how to contribute. Add each part that is missing.
 
 ## Rules
 
