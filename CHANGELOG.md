@@ -93,6 +93,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   only.
 - Triage links the stewardship signals in `architecture/stewardship.md#analysis` and no longer
   copies the list (#207). The stewardship test checks the link and bans the copy in triage too.
+- A project has one place for its exceptions to dkstack rules (#210). `sample-AGENTS.md` says
+  that dkstack owns all other rules, and has an Exceptions section with the fields dkstack rule,
+  project rule and reason, and a Project facts section. AGENTS.md "Precedence" has an example
+  record. `coding/quality-gates.md` says that a diagnostic exception is not a rule exception and
+  links Precedence. Bootstrap step 1 copies `sample-AGENTS.md` as `AGENTS.md`. The other steps
+  move down by one.
 - The UI test rules in `tdd/ui-testing.md` can be tested (#188). A UI test asserts what makes a
   screen reader announce an error: a live region, an automation property or the announcement API of
   the platform. The manual screen reader pass confirms each announcement and is recorded as the
