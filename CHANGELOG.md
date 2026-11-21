@@ -123,6 +123,10 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Changed
 
+- One word for each meaning (#247). The rule text in `versioning/index.md` and `workflow/safety.md`
+  says "the owner", not "Daniel" or "he". AGENTS.md names Daniel once, in "Owner". The quoted
+  message of the Release workflow does not change. Prose says "pull request", not "PR". `plan-work`
+  writes NOT RUN, the result value that the other pages use.
 - `code-review` and `versioning/index.md` have no sentence over 25 words and no semicolon (#245).
   Six sentences are split. The meaning does not change. A test checks both pages.
 - The writing rules have limits that a check can test (#243). A step has at most 20 words. A

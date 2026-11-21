@@ -102,9 +102,9 @@ test("safety.md owns the release rule, and a tag or branch push that starts a re
   }
   const versioning = (await read("versioning/index.md")).replace(/\s+/g, " ");
   assert.ok(versioning.includes("honor rule"));
-  assert.ok(versioning.includes("do not stop an agent that uses Daniel's account"));
+  assert.ok(versioning.includes("do not stop an agent that uses the owner's account"));
   const finish = versioning.slice(versioning.indexOf("### Finish a release"), versioning.indexOf("## Roll back"));
-  assert.ok(finish.includes("Daniel only."));
+  assert.ok(finish.includes("The owner only."));
   const contributing = (await read("CONTRIBUTING.md")).replace(/\s+/g, " ");
   assert.ok(contributing.includes("(workflow/safety.md)"));
   assert.doesNotMatch(contributing, /the release pull request, `validate`, the merge, the tag/);

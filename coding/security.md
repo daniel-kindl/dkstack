@@ -5,7 +5,7 @@ Protect data and limit damage.
 ## Rules
 
 - Validate all input at the boundary.
-- Do not put a secret in code, commits, logs, errors, issues, PR text or chat. A secret is a credential, a session ID, a token, a key or a password.
+- Do not put a secret in code, commits, logs, errors, issues, pull request text or chat. A secret is a credential, a session ID, a token, a key or a password.
 - Where the project has static analysis (SAST) or secret scanning, run them in CI as gates. Follow [quality gates](quality-gates.md).
 - Do not put personal data in code, logs or errors. Personal data includes direct identifiers. Examples are a name, an email address, a phone number, a postal address and an IP address. Free text from a user is also personal data.
 - Logs have one exception. You can put an opaque internal ID, such as a user ID or an order ID, in a log field. A user ID is still personal data, so log it only when the event needs it.
@@ -76,6 +76,6 @@ Input is checked before use. Secrets stay in a protected store. An error returns
 
 ## Bad example
 
-User input is used directly in a query or command. A secret appears in a log line, a commit or a PR comment. Someone deletes the comment and does not rotate the secret. An error reveals internal details.
+User input is used directly in a query or command. A secret appears in a log line, a commit or a pull request comment. Someone deletes the comment and does not rotate the secret. An error reveals internal details.
 
 Related: [fail-fast.md](../architecture/fail-fast.md), [design-by-contract.md](../architecture/design-by-contract.md).

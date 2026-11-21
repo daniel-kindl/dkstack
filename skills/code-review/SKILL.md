@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: "Use when you review a pull request or a diff, including your own before you open a PR. Reviews on two axes, standards and specification, and gives one verdict. Triggers: review, review this PR, check my diff."
+description: "Use when you review a pull request or a diff, including your own before you open a pull request. Reviews on two axes, standards and specification, and gives one verdict. Triggers: review, review this PR, check my diff."
 ---
 
 # Code review

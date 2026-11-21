@@ -1,6 +1,6 @@
 ---
 name: writing-check
-description: "Use when you write or edit text that people or agents will read, such as docs, comments, commit messages, PR bodies or product copy. Applies the ASD-STE100 writing rules."
+description: "Use when you write or edit text that people or agents will read, such as docs, comments, commit messages, pull request bodies or product copy. Applies the ASD-STE100 writing rules."
 ---
 
 # Writing check

@@ -91,10 +91,10 @@ Per check:
 
 When the check results combine, FAIL wins over NOT RUN.
 
-Put the evidence where the reviewer can open it, for example in the PR or as a CI artifact. A local path is not evidence.
+Put the evidence where the reviewer can open it, for example in the pull request or as a CI artifact. A local path is not evidence.
 
 If you can build and run the UI, do the visual verification. If you cannot, write NOT RUN and the reason. Do not invent screenshots.
 
-Write the result in the PR body as [write-pr](../skills/write-pr/SKILL.md#evidence) says.
+Write the result in the pull request body as [write-pr](../skills/write-pr/SKILL.md#evidence) says.
 
 Automation can check defects that have a fixed rule. Give a reason for each aesthetic finding. Do not use a numeric score for taste.
