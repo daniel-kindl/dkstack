@@ -212,7 +212,7 @@ test("only the git and gh steps that write get the app token, and no step prints
 });
 
 const waitStep = writeSteps.find((s) => s.commands.some((l) => /gh run list --workflow validate\.yml/.test(l)));
-const APPROVE_TEXT = "Daniel: approve this workflow run yourself; no agent approves it";
+const APPROVE_TEXT = "Daniel: approve this workflow run yourself. No agent approves it.";
 
 test("the job finds the pull_request run of validate and watches it with a time limit", () => {
   assert.ok(waitStep, "a step that finds the validate run");
@@ -231,7 +231,7 @@ test("if validate waits for approval, the job tells Daniel, waits about 15 minut
   const lines = waitStep.commands;
   const at = (p, from = 0) => { const i = lines.findIndex((l, n) => n >= from && p.test(l)); assert.notEqual(i, -1, `missing ${p}`); return i; };
   const approval = at(/^if \[ "\$RUN_STATUS" = "action_required" \] \|\| \[ "\$RUN_CONCLUSION" = "action_required" \]; then$/);
-  const message = at(new RegExp(`MESSAGE="${APPROVE_TEXT}: \\$RUN_URL"`), approval);
+  const message = at(new RegExp(`MESSAGE="${APPROVE_TEXT.replace(/\./g, "\\.")} \\$RUN_URL"`), approval);
   const log = at(/^echo "::warning::.*\$MESSAGE"$/, message);
   const summary = at(/^\} >> "\$GITHUB_STEP_SUMMARY"$/, log);
   assert.ok(lines.slice(log, summary).some((l) => l === 'echo "$MESSAGE"'), "the message is in the summary");
@@ -287,7 +287,7 @@ test("the merge waits a short time and prints why GitHub blocks the pull request
 test("a failure before the merge closes the release pull request and deletes only its unchanged branch", () => {
   const cleanup = steps(write).find((s) => /gh pr close/.test(s.text));
   assert.ok(cleanup, "a cleanup step");
-  assert.match(cleanup.text, /if: \$\{\{ failure\(\) && steps\.pr\.outputs\.pr != '' \}\}/);
+  assert.match(cleanup.text, /if: \$\{\{ \(failure\(\) \|\| cancelled\(\)\) && steps\.pr\.outputs\.pr != '' \}\}/);
   assert.match(cleanup.env, /GH_TOKEN:/);
   const lines = cleanup.commands;
   const state = lines.findIndex((l) => /gh pr view "\$PR" --json state --jq \.state/.test(l));
@@ -301,4 +301,24 @@ test("a failure before the merge closes the release pull request and deletes onl
   assert.ok(lines.some((l) => />> "\$GITHUB_STEP_SUMMARY"/.test(l)), "write the recovery to the summary");
   assert.ok(lines.some((l) => /start Release again/.test(l)), "tell Daniel to start Release again");
   assert.doesNotMatch(cleanup.text, /refs\/heads\/(main|v1)\b/);
+});
+
+// ATL-13 and SEN-21 in #154: a cancelled run must also clean up.
+test("a failed or cancelled run after the merge tells how to finish the release", () => {
+  const finish = steps(write).find((s) => /name: Tell how to finish a release after the merge/.test(s.text));
+  assert.ok(finish, "a finish step");
+  assert.match(finish.text, /if: \$\{\{ \(failure\(\) \|\| cancelled\(\)\) && steps\.merge\.outputs\.merge_sha != '' \}\}/);
+});
+
+// SEN-11 in #154: two Release runs must not overlap.
+test("release runs one at a time and does not cancel a run in progress", () => {
+  assert.match(release, /^concurrency:\n {2}group: release\n {2}cancel-in-progress: false$/m);
+});
+
+// SCR-21 in #154: the message to Daniel has no semicolon, and the guide quotes it.
+test("the approval message has no semicolon and versioning quotes it", async () => {
+  assert.doesNotMatch(APPROVE_TEXT, /;/);
+  assert.ok(release.includes(`MESSAGE="${APPROVE_TEXT} $RUN_URL"`));
+  const guide = await readFile(join(repoRoot, "versioning/index.md"), "utf8");
+  assert.ok(guide.replace(/\s+/g, " ").includes(`"${APPROVE_TEXT}"`));
 });

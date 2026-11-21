@@ -143,6 +143,14 @@ export function setPackageVersion(text, version) {
   return text.replace(pattern, `$1"${version}"`);
 }
 
+// Return text as a Markdown code span, so that Markdown in it has no effect.
+function code(text) {
+  const longest = Math.max(0, ...(text.match(/`+/g) ?? []).map((run) => run.length));
+  const fence = "`".repeat(longest + 1);
+  const pad = text.startsWith("`") || text.endsWith("`") ? " " : "";
+  return `${fence}${pad}${text}${pad}${fence}`;
+}
+
 // Return the Markdown for the run summary of the plan job.
 export function planSummary({ version, previous, bump, commits }) {
   return [
@@ -154,7 +162,7 @@ export function planSummary({ version, previous, bump, commits }) {
     "",
     `### Commits since v${previous}`,
     "",
-    ...counted(commits).map((commit) => `- ${commit.subject}`),
+    ...counted(commits).map((commit) => `- ${code(commit.subject)}`),
     "",
   ].join("\n");
 }
