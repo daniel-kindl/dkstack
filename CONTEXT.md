@@ -6,9 +6,9 @@ from one place.
 ## Language
 
 **Owner**:
-The person who approves each change to dkstack and each release of it. The owner is Daniel
-Kindl, who acts in person, or the owner's own words in a record. An agent that acts through the
-owner's account is never the owner.
+The person who is accountable for a repository and approves its changes and releases. The
+owner acts in person, or through a record of the owner's own words. An agent that acts through
+the owner's account is never the owner. For dkstack, the owner is Daniel Kindl.
 _Avoid_: human owner, maintainer
 
 **Consumer**:
@@ -21,8 +21,9 @@ A recorded difference from a dkstack rule. It names the dkstack rule, the projec
 reason.
 
 **Suppression**:
-A diagnostic that is switched off at the smallest scope, with a reason and the approval of a
-reviewer who is not the author.
+A diagnostic that is switched off for one rule ID at the smallest scope. It states the reason
+that the cause cannot be fixed in the repository, and a reviewer who is not the author approves
+it.
 
 **Building block**:
 A skill that does one job. One or more larger skills run it, and a task can also use it alone.
