@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A leak runbook in `coding/security.md` (#185). If a token, a key or a password leaks: tell the
+  owner, revoke the secret, rotate it, read the audit log, read the secret scanning alerts and
+  record the event in an issue. The step for the dkstack release app key links
+  `versioning/index.md`. The leak rule links the runbook.
 - `chart-route` skill (#175). It settles a large, unclear effort in a map in `docs/maps/<slug>.md`,
   one question per session, and hands off to `plan-work`. It plans and never builds. A question is
   owner, research, prototype or task. Each answer is recorded once: an ADR, a `CONTEXT.md` entry or
@@ -73,6 +77,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   default applies when the project's system does not cover that area. A rule marked
   "(dkstack rule)" still applies. To differ from it, record an exception as AGENTS.md
   "Precedence" says.
+- `code-review` gives APPROVE-RECOMMENDED only when each required check is green on the reviewed
+  head (#184). If a required check is pending, the reviewer gives no verdict yet. A broken build or
+  a failing required check is High, in one row of the severity table.
+- Triage routes learning work and CI work (#182). The type list has UI and learning. A Skills line
+  routes a request to learn, practice, assess or review a topic to `learn`. The Section map links
+  `learning/index.md`, and routes a change to `.github/workflows`, tokens, secrets or repository
+  settings to the CI rules in `coding/security.md` and to `workflow/safety.md`. The two writing
+  rows are one row. A rule conflict links AGENTS.md "Precedence". AGENTS.md "Sections" lists
+  `learning/index.md` and no longer lists the empty tips page. README.md no longer lists it.
+  `skills/index.md` links `learning/` next to `learn`.
+- The validate workflow is harder to break (#181). A test checks that each `check:*` script is in
+  `npm run check` and has a validate step that runs after an earlier failure. A push to `main`
+  checks the title of each pushed commit, not only the last one. A new push to a pull request
+  cancels the old run of that pull request. A run on `main` is never cancelled. actionlint 1.7.12,
+  fixed by SHA-256, checks the workflows with shellcheck.
 - The ADR test in `architecture/adrs.md` is narrower (#173). Write an ADR only when the decision
   is hard to reverse, surprising to a new reader without the context, and the result of a real
   trade-off. Record a smaller decision in the map or in the pull request body. `write-adr` step 1

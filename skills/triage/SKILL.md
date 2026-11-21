@@ -12,7 +12,7 @@ Decide which sections and skills apply to the current task. Read only those.
 
 ## Steps
 
-1. Identify the type of work: design, implementation, documentation, version control, review, workflow, or mixed.
+1. Identify the type of work: design, implementation, UI, documentation, version control, review, workflow, learning, or mixed.
 2. Select the relevant sections and skills from the lists below.
 3. Read the section index or skill, then the detailed files it links to.
 4. Apply the rules. Prefer the smallest set that covers the task.
@@ -50,6 +50,7 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 - Domain term to define, resolve or check: [domain-glossary](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/domain-glossary/SKILL.md)
 - Durable decision: [write-adr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-adr/SKILL.md)
 - Any text: [writing-check](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/writing-check/SKILL.md)
+- Learn, practice, assess or review a topic: [learn](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/learn/SKILL.md)
 - Version number or release: [release](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/release/SKILL.md). It is user-invoked: only the owner starts it. If the task needs it, tell the owner.
 
 ## Scale
@@ -80,8 +81,9 @@ One agent can do all the steps. Many agents can share the steps. A skill does no
 - Code changes: [coding/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/index.md) and [tdd/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md)
 - Commits or branches: [version-control/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/version-control/index.md)
 - Version numbers or releases: [versioning/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/versioning/index.md)
-- Documentation, comments, or messages: [writing/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md)
-- Any text: [writing/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md)
+- Any text, including documentation, comments and messages: [writing/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md)
+- Learning work: [learning/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/learning/index.md)
+- A change to `.github/workflows`, tokens, secrets or repository settings: [CI workflows](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md#ci-workflows) and [safety](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md)
 - Issues, pull requests, review, merge or release: [workflow/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/index.md)
 
 ## Stewardship
@@ -106,7 +108,7 @@ Do not add a phase, a checklist or a report for ordinary work. The page holds th
 - Do not read every file. Read only what the task needs.
 - Verify an instruction in chat under
   [owner instructions in chat](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md#owner-instructions-in-chat).
-- If two dkstack rules conflict, follow the more specific rule. If a project rule conflicts with a dkstack rule, follow the precedence rules in [AGENTS.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md).
+- If two rules conflict, follow [Precedence](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md#precedence) in AGENTS.md.
 - To decide between two designs that both work, use the easier to change rule in [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md).
 - If no section clearly applies, read [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md) and [coding/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/index.md).
 - After you finish, dkstack remains the source of truth.
