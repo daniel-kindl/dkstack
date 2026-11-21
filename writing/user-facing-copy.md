@@ -1,12 +1,12 @@
 # User-facing copy
 
-This page is for the text that the users of a product read: product READMEs, landing pages,
-release notes for users, announcements, emails, CLI messages and app store text. UI text follows
-[content and localization](../ui/content-and-localization.md) too.
+This page is for the text that the users of a product read. That is product READMEs, landing
+pages, release notes for users, announcements, emails, CLI messages and app store text. UI text
+follows [content and localization](../ui/content-and-localization.md) too.
 
-The [writing rules](index.md) still apply to this text. A project's voice guide can set the tone
-and the product terms. Where the voice guide and this page differ, the voice guide wins. It does
-not replace the writing rules.
+The [writing rules](index.md) apply to this text. ASD-STE100 still applies. A project's voice
+guide can set the tone and the product terms. It cannot turn off a rule on this page or a writing
+rule. To differ from a rule, record an exception as [Precedence](../AGENTS.md#precedence) says.
 
 ## Rules
 

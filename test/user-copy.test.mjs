@@ -18,7 +18,8 @@ test("the user-facing copy page covers each kind of copy and keeps ASD-STE100", 
   }
   for (const rule of ["first", "concrete words", "Do not invent numbers, quotes, customers or comparisons",
     "No hype", "fake urgency", "fake scarcity", "(../ui/principles.md#no-deceptive-patterns)", "breaking changes",
-    "voice guide", "(index.md)"]) {
+    "voice guide", "(index.md)", "ASD-STE100 still applies.", "It cannot turn off a rule on this page or a writing rule.",
+    "(../AGENTS.md#precedence)"]) {
     assert.ok(page.includes(rule), rule);
   }
   assert.doesNotMatch(page, /contraction/i);
