@@ -12,7 +12,7 @@ Apply the rules from [writing/index.md](https://raw.githubusercontent.com/daniel
 ## Steps
 
 1. Read the text.
-2. Check against the rules: short sentences, active voice, one word per meaning, imperative steps, no em dashes, no filler.
+2. Check the text against each rule in [writing/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md#rules), and against the [AI prose patterns](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md#ai-prose-patterns).
 3. Rewrite any sentence that violates a rule.
 4. Remove words that do not add meaning.
 
