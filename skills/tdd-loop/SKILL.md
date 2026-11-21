@@ -14,7 +14,7 @@ Use when you implement behavior. Follow the [TDD guidelines](https://raw.githubu
 3. Write only the production code that makes the test pass.
 4. Run the focused test and the relevant existing tests. Do not weaken assertions to make a test pass.
 5. Refactor while the tests are green. Review the logging of the behavior against [logging](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/logging.md).
-6. Repeat for the next behavior. Run the required checks of the repository before you report. Mark each check that did not run as NOT RUN.
+6. Repeat for the next behavior. Run the quality gates of the repository before you report. Mark each check that did not run as NOT RUN.
 
 For behavior that changes a rendered UI, put the presentation logic in code that you can test without a UI. See [presentation logic](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/ui-testing.md#presentation-logic). Then also do [visual verification](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/visual-verification.md).
 

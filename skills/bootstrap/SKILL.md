@@ -11,7 +11,7 @@ Apply the rules from version-control, versioning, and coding sections. Then prot
 
 ## Steps
 
-Do step 1 first. Do steps 2 to 6 each with its building block. Each block links the rules and does not copy them.
+Do step 1 first. Do steps 2 to 6 each with its building block. Each building block links the rules and does not copy them.
 
 1. Copy [sample-AGENTS.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/sample-AGENTS.md) into the repository as `AGENTS.md`. Record each project exception to a dkstack rule in its Exceptions section.
 2. Set up the editor settings and LF line endings with [setup-editorconfig](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-editorconfig/SKILL.md).

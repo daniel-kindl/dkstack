@@ -5,8 +5,8 @@ Rules and skills for AI coding agents, in one place.
 dkstack has rules, skills and check scripts for architecture, code, tests, UI, commits, versions,
 writing and the review workflow. It is guidance only: your agents read the pages and run the
 skills. It runs no service, and it changes nothing in your project by itself. It is for any team
-that uses AI coding agents, under the [MIT license](LICENSE). Update the rules here once, and each project that points to them
-gets the new rules.
+that uses AI coding agents, under the [MIT license](LICENSE). Update the rules here once, and each
+consumer gets the new rules. A consumer is a repository whose `AGENTS.md` points to dkstack.
 
 ## Start
 

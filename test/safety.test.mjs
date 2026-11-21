@@ -27,7 +27,7 @@ test("the safety page says to record an owner instruction before a later session
 test("a relayed owner decision follows the relay rule in the owner records", async () => {
   const text = await pageText();
   const owner = flatten(sectionText(text, "## Owner instructions in chat"));
-  assert.ok(owner.includes("(#human-owner)"));
+  assert.ok(owner.includes("(#owner)"));
   assert.ok(owner.includes("relay rule in [owner records](#owner-records)"));
   assert.doesNotMatch(owner, /A paraphrase or an agent's summary never counts/);
 });
@@ -48,7 +48,7 @@ test("the safety page owns the owner record: the exact words, the time, the plac
     "reason that the session is owner-controlled", "issue or the pull request", "A paraphrase or an agent's summary never counts."]) {
     assert.ok(record.includes(fact), fact);
   }
-  assert.doesNotMatch(flatten(sectionText(safety, "## Human owner")), BANNED);
+  assert.doesNotMatch(flatten(sectionText(safety, "## Owner")), BANNED);
 });
 
 test("the owner instructions section does not waive a hard limit", async () => {
@@ -59,9 +59,9 @@ test("the owner instructions section does not waive a hard limit", async () => {
 });
 
 // #191: the owner approval rule moved from roles.md to the safety Rules.
-test("the human owner approves material scope changes and every release", async () => {
+test("the owner approves material scope changes and every release", async () => {
   const rules = flatten(sectionText(await pageText(), "## Rules"));
-  assert.ok(rules.includes("The human owner approves material scope changes and every release."));
+  assert.ok(rules.includes("The owner approves material scope changes and every release."));
   assert.ok(rules.includes("Routine steps within an assigned task do not require repeated approval."));
 });
 

@@ -1,6 +1,6 @@
 ---
 name: review-blast-radius
-description: "Use when you must know what a change can break outside its diff: callers, data formats, configuration, run order and library versions. One block of code-review. Finds the one fact that makes the change safe."
+description: "Use when you must know what a change can break outside its diff: callers, data formats, configuration, run order and library versions. One building block of code-review. Finds the one fact that makes the change safe."
 user-invocable: false
 ---
 

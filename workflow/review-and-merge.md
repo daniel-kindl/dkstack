@@ -28,7 +28,7 @@ keeps the review and merge rules.
 - The reviewer merges only the head that they reviewed. The reviewer merges only when the review
   passes and all required checks are green. The reviewer also merges only when the code host shows
   the pull request as ready to merge with no rule bypassed. The author never merges. The
-  [human owner](safety.md#human-owner) may also merge, including a pull request that they
+  [owner](safety.md#owner) may also merge, including a pull request that they
   authored, after the same checks pass. Reason: a later push, a failed check, an open finding or a bypassed rule
   must not reach `main`.
 - Use squash merge only and keep history linear. Reason: each pull request becomes one commit on
@@ -41,7 +41,7 @@ keeps the review and merge rules.
 
 ## After the merge
 
-The agent that merged cleans the local clone that it used for the merge. When the human owner
+The agent that merged cleans the local clone that it used for the merge. When the owner
 merges, the owner can ask an agent to do these steps.
 
 - Switch to `main` and update it with a fast-forward only. Reason: the next task starts from the

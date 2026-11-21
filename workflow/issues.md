@@ -25,7 +25,7 @@ The [start-issue](../skills/start-issue/SKILL.md) skill applies these rules.
   only open, triage or review it. Reason: an assignment tells other people and agents that the
   work on the issue has started.
 - An assignment is a marker only. It is not an approval, a claim or a review. Reason: agents that
-  share the owner's account show as the owner. See [human owner](safety.md#human-owner).
+  share the owner's account show as the owner. See [owner](safety.md#owner).
 - If a different account is assigned, do not start the work. Ask the owner. Reason: someone
   else can already do the work.
 - If you stop before you open a pull request, remove your assignment and write a comment that

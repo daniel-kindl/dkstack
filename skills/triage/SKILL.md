@@ -6,7 +6,7 @@ user-invocable: false
 
 # Triage
 
-Use this skill first when you work in any repository that points to dkstack.
+Use this skill first when you work in a consumer: a repository whose `AGENTS.md` points to dkstack.
 
 Decide which sections and skills apply to the current task. Read only those.
 

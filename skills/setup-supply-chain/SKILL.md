@@ -1,6 +1,6 @@
 ---
 name: setup-supply-chain
-description: "Use when a repository adds or updates dependencies or CI actions without pins, a lockfile, an audit or update proposals. One block of bootstrap. Applies the supply chain rules."
+description: "Use when a repository adds or updates dependencies or CI actions without pins, a lockfile, an audit or update proposals. One building block of bootstrap. Applies the supply chain rules."
 user-invocable: false
 ---
 

@@ -65,5 +65,5 @@ Separate form checks from meaning checks.
 - Prefer native analyzers. Do not add a custom rule that duplicates an existing check or gives
   many false positives. If a convention has no reliable analyzer, review it instead.
 
-Follow [quality-gate exceptions](quality-gates.md#exceptions) when a diagnostic cannot be fixed
+Follow [suppressions](quality-gates.md#suppressions) when a diagnostic cannot be fixed
 in the repository. Do not lower or disable a gate to accept a name.

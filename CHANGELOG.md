@@ -142,6 +142,13 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Changed
 
+- The pages use the terms of `CONTEXT.md` (#285): "owner", "consumer", "suppression", "building
+  block" and, for the checks that you run locally, "quality gates". The heading `## Human owner` in
+  `workflow/safety.md` is now `## Owner`. The heading `## Exceptions` in `coding/quality-gates.md`
+  is now `## Suppressions`. A test checks that no page uses a word from an `_Avoid_:` line.
+  Consumer action: change a link to `workflow/safety.md#human-owner` to
+  `workflow/safety.md#owner`, and a link to `coding/quality-gates.md#exceptions` to
+  `coding/quality-gates.md#suppressions`.
 - The fix loop in `workflow/review-and-merge.md` (#279). After a verdict that is not
   APPROVE-RECOMMENDED, the author fixes each finding of every severity with `tdd-loop` and gets a
   new independent review. This repeats until APPROVE-RECOMMENDED. The author does not ask the

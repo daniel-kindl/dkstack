@@ -1,6 +1,6 @@
 ---
 name: setup-repo-protection
-description: "Use when a repository has no branch protection, tag rules, secret scanning or security policy. One block of bootstrap. Lists the protection settings and asks the owner to apply them."
+description: "Use when a repository has no branch protection, tag rules, secret scanning or security policy. One building block of bootstrap. Lists the protection settings and asks the owner to apply them."
 user-invocable: false
 ---
 

@@ -32,7 +32,7 @@ Use this cycle for each new or changed observable behavior. A cycle ends with wo
 
 Keep a record of red and then green when the tools can show it. Examples are test output and a short note in the pull request. A passing test does not prove that the test came first. A test that you write after the code is not test-first. Say so when you did not see the red step.
 
-Repeat the cycle for the next requirement. Run all required checks before you open the pull request. Report each check that did not run as NOT RUN. For a bug, start with [regression testing](regression-testing.md).
+Repeat the cycle for the next requirement. Run all quality gates before you open the pull request. Report each check that did not run as NOT RUN. For a bug, start with [regression testing](regression-testing.md).
 
 ## Example
 

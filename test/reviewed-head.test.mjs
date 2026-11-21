@@ -39,7 +39,7 @@ test("owner and agent merge authority stays distinct", async () => {
   const review = (await readFile(join(repoRoot, "workflow/review-and-merge.md"), "utf8")).replace(/\s+/g, " ");
   const skill = (await readFile(join(repoRoot, "skills/code-review/SKILL.md"), "utf8")).replace(/\s+/g, " ");
   assert.match(review, /The author never merges\./);
-  assert.match(review, /human owner\]\(safety\.md#human-owner\) may also merge/i);
+  assert.match(review, /owner\]\(safety\.md#owner\) may also merge/i);
   assert.match(skill, /author never gives the verdict on, approves or merges their own pull request/i);
   for (const text of [review, skill]) {
     assert.doesNotMatch(text, /agent may merge only with the owner's explicit authorization/i);
@@ -65,13 +65,13 @@ test("the code-review rules link the merge gate", async () => {
   assert.doesNotMatch(rules[1], /agent may merge only with the owner's explicit authorization/);
 });
 
-test("safety.md defines the human owner under its own heading", async () => {
+test("safety.md defines the owner under its own heading", async () => {
   const text = await readFile(join(repoRoot, "workflow/safety.md"), "utf8");
-  const section = /^## Human owner\r?\n([\s\S]*?)(?=^## )/m.exec(text);
-  assert.ok(section, "safety.md must have a Human owner section");
+  const section = /^## Owner\r?\n([\s\S]*?)(?=^## )/m.exec(text);
+  assert.ok(section, "safety.md must have an Owner section");
   const flat = section[1].replace(/\s+/g, " ");
   assert.ok(flat.includes("A bot or an agent that acts through the owner's account is always an agent."));
-  assert.ok(flat.includes("It is never the human owner."));
+  assert.ok(flat.includes("It is never the owner."));
 });
 // #191: an agent does not get a role. The task and the skills tell it what to do.
 async function markdownFiles(dir) {

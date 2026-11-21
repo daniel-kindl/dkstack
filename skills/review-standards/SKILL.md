@@ -1,6 +1,6 @@
 ---
 name: review-standards
-description: "Use when a review must check a change against the documented rules: safety, correctness, security, dependencies, naming, quality gates, logging, architecture, UI, docs and writing. One block of code-review. Includes the code smell list."
+description: "Use when a review must check a change against the documented rules: safety, correctness, security, dependencies, naming, quality gates, logging, architecture, UI, docs and writing. One building block of code-review. Includes the code smell list."
 user-invocable: false
 ---
 
@@ -33,7 +33,7 @@ Check each file against this list. Link the rule in each finding. Do not copy th
 - Dependencies: each new dependency has a reason, a pinned version and a lockfile change. Each third-party CI step is pinned to a full commit SHA. Run the project's dependency audit if you can. See [coding/dependencies.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md).
 - Clean code: semantic naming, readability and broken windows. See [coding/quality.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality.md) and [coding/naming.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/naming.md).
 - Domain language: names in code, tests and docs use the terms in `CONTEXT.md`, if the file exists. See the [glossary](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md#glossary). A name that uses a word from an `_Avoid_:` line is Low. A name that gives a glossary term a different meaning is Medium. A changed meaning with no change to `CONTEXT.md` is Medium.
-- Quality gates: no check is disabled, skipped or lowered. A warning suppression follows the exception rules. See [coding/quality-gates.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality-gates.md).
+- Quality gates: no check is disabled, skipped or lowered. A warning suppression follows the suppression rules. See [coding/quality-gates.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality-gates.md).
 - Logging: check the changed events and the `Observability:` line against [coding/logging.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/logging.md). A secret or personal data in a log is Blocking. A missing or wrong `Observability:` line in the pull request body is Medium. A duplicate terminal Error is Medium. A missing event is Medium only when you name the diagnostic gap. A wrong level is Low.
 - Architecture: the change follows the Accepted ADRs. Code that contradicts one is High under the [ADR findings](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#adr-findings) rule. The change also follows [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md). For a structural change, use [apply-architecture](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/apply-architecture/SKILL.md).
 - Sustainability: follow [stewardship](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/stewardship.md) when the change matches a signal on that page. An unrelated refactor is work the specification did not ask for. Do not require a stewardship report for ordinary work.
