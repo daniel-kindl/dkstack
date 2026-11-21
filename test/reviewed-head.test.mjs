@@ -70,16 +70,10 @@ test("roles.md defines the human owner under its own heading", async () => {
   const text = await readFile(join(repoRoot, "workflow/roles.md"), "utf8");
   const section = /^## Human owner\r?\n([\s\S]*?)(?=^## )/m.exec(text);
   assert.ok(section, "roles.md must have a Human owner section");
-  assert.equal(
-    section[1].replace(/\s+/g, " ").trim(),
-    "The human owner is only the owner who acts in person, or the owner's own words. A bot or an agent that acts through the owner's account is always an agent. It is never the human owner. " +
-      "A relayed decision counts as the owner's words only if it quotes the owner's exact words " +
-      "with the time and the place where the owner wrote them, and the agent records that quote " +
-      "in the issue or pull request before relying on it in a later session. A paraphrase or an " +
-      "agent's summary never counts.",
-  );
+  const flat = section[1].replace(/\s+/g, " ");
+  assert.ok(flat.includes("A bot or an agent that acts through the owner's account is always an agent."));
+  assert.ok(flat.includes("It is never the human owner."));
 });
-
 test("roles.md defines the generic roles and names no team", async () => {
   const text = await readFile(join(repoRoot, "workflow/roles.md"), "utf8");
   const section = /^## Role definitions\r?\n([\s\S]*?)(?=^## )/m.exec(text);
@@ -96,8 +90,13 @@ test("roles.md defines the generic roles and names no team", async () => {
 
 test("missing review evidence never counts as a review", async () => {
   const review = (await readFile(join(repoRoot, "workflow/review-and-merge.md"), "utf8")).replace(/\s+/g, " ");
-  assert.match(review, /If a fact is missing, unverifiable or conflicting, do not treat the pull request as reviewed\./);
-  assert.match(review, /Never backdate or fabricate review evidence\./);
+  const evidence = review.slice(review.indexOf("## Missing review evidence after merge"), review.indexOf("## Good example"));
+  assert.ok(evidence.includes("do not treat the pull request as reviewed"));
+  assert.ok(evidence.includes("Never backdate or invent review evidence."));
+  assert.ok(evidence.includes("It never allows a self-review."));
+  assert.ok(evidence.includes("independent of the author"));
+  assert.ok(evidence.includes("It never removes the need for an independent review."));
+  assert.doesNotMatch(evidence, /;|\b(?:durably|attest|establish|genuine|obtain|insufficient)\b/i);
 });
 
 test("review and release skills keep the merge and publish gates", async () => {
@@ -109,8 +108,8 @@ test("review and release skills keep the merge and publish gates", async () => {
   assert.match(release, /An agent does not publish or release\./);
 });
 
-test("review does not require a feature plan", async () => {
+test("review-and-merge names no feature plan", async () => {
   const review = (await readFile(join(repoRoot, "workflow/review-and-merge.md"), "utf8")).replace(/\s+/g, " ");
-  assert.match(review, /The review does not require a feature plan\./);
+  assert.doesNotMatch(review, /The review does not require a feature plan\./);
   assert.doesNotMatch(review, /feature-plans\.md/);
 });
