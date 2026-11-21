@@ -221,6 +221,6 @@ async function main() {
   console.log(`${skills.length} skill(s) valid: ${skills.join(", ")}`);
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   await main();
 }

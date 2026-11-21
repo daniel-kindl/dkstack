@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readdir, readFile } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
+import { readFile } from "./helpers.mjs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 

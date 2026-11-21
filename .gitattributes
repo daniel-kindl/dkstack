@@ -1,0 +1,2 @@
+# Check out text files with LF line endings on each platform (FRG-M4 in #154).
+* text=auto eol=lf

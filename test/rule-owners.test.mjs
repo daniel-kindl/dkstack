@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { readFile } from "node:fs/promises";
+import { readFile } from "./helpers.mjs";
 
 // SCR-20, ATL-12, REED-9 and SEN-18 in #154: each rule has one owner page.
 // The other pages link the owner and do not copy the rule.
