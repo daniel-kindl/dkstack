@@ -21,7 +21,7 @@ export async function checkChangelog(root) {
     return ["CHANGELOG.md: the file does not exist"];
   }
   const errors = [];
-  if (!/^## \[Unreleased\]\r?$/m.test(text)) errors.push('CHANGELOG.md: add a "## [Unreleased]" heading line');
+  if (!text.split("\n").includes("## [Unreleased]")) errors.push('CHANGELOG.md: add a "## [Unreleased]" heading line');
   if (!/^\[Unreleased\]: /m.test(text)) errors.push('CHANGELOG.md: add an "[Unreleased]:" compare link');
   const entry = new RegExp(`^## \\[${escape(version)}\\](?:\\s|$)`, "m");
   if (!entry.test(text)) errors.push(`CHANGELOG.md: add a "## [${version}]" entry for the package.json version ${version}`);
