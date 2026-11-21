@@ -11,7 +11,8 @@ Keep branches short so integration stays easy and feedback stays fast.
 - Merge `main` into the branch often. See [review and merge](../workflow/review-and-merge.md).
 - Open a pull request early. Get feedback before the branch grows.
 - Merge as soon as the change is ready and reviewed.
-- Delete the branch after merge.
+- Delete the branch after merge. Clean the local clone as
+  [after the merge](../workflow/review-and-merge.md#after-the-merge) says.
 - Do not accumulate unrelated commits on a long-lived branch.
 
 ## Good example

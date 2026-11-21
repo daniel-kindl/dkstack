@@ -32,6 +32,53 @@ keeps the review and merge rules.
 - To update a branch, merge `main` into it. Do not rebase a pushed branch. Reason: a rebase of a
   pushed branch needs a force-push.
 
+## After the merge
+
+The agent that merged cleans the local clone that it used for the merge. When the human owner
+merges, the owner can ask an agent to do these steps.
+
+- Switch to `main` and update it with a fast-forward only. Reason: the next task starts from the
+  merged state, and a fast-forward never makes a merge commit on `main`.
+- Remove the worktree of the merged branch. Then delete the local branch. Reason: a stale
+  worktree or branch can make the next agent start on old code.
+- A local branch is stale only when its pull request is merged and its tip is the merged head or
+  an ancestor of it. Delete only stale branches. Reason: a squash merge does not make the branch
+  an ancestor of `main`, so `git branch -d` refuses it. The check on the merged head proves that
+  the branch has no commit that is not merged.
+- Keep each other branch and worktree, and name it in your report. Reason: it can hold work that
+  is not merged, for example from a pull request that was closed without a merge.
+- Never discard uncommitted changes or a commit that is not merged. Stop and tell the owner.
+  Reason: the work can be lost. See [safety.md](safety.md): do not delete a branch with unmerged
+  work.
+- Prune the stale remote-tracking refs and worktree records. Reason: a pruned clone shows which
+  remote branches were deleted.
+
+On GitHub, use `git` and `gh`. These commands were verified with `git` 2.55.0 and `gh` 2.97.0:
+
+```bash
+# Go to the main worktree. Update the remote refs and remove the deleted ones.
+git fetch --prune
+git switch main
+git pull --ff-only
+
+# Remove the worktree of the merged branch. This fails if the worktree has changes.
+# Then stop and tell the owner.
+git worktree list
+git worktree remove <path>
+git worktree prune
+
+# Delete each local branch whose remote branch is gone, but only when its pull request is
+# merged and its tip is the merged head or an ancestor of it. Report each kept branch.
+for b in $(git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads \
+    | awk '$2 == "[gone]" {print $1}'); do
+  merged=$(gh pr list --state merged --head "$b" --json headRefOid -q '.[0].headRefOid')
+  [ -n "$merged" ] && git merge-base --is-ancestor "$b" "$merged" && git branch -D "$b" \
+    || echo "kept: $b"
+done
+```
+
+A branch that is checked out in a worktree is not deleted. Remove its worktree first.
+
 ## Missing review evidence after merge
 
 The native review record of the pull request is the normal evidence. Check that an independent
