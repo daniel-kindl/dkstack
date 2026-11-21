@@ -93,6 +93,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The Release workflow fails early and cleans up on cancel (#180). `check-changelog` fails when
+  CHANGELOG.md has no exact `## [Unreleased]` line or no `[Unreleased]:` compare link. A cancelled
+  run closes the release pull request or tells how to finish the release, as a failed run does.
+  The plan summary shows each commit title as code, so Markdown in a title has no effect. The
+  approval message to Daniel has no semicolon.
 - `check-links` checks anchors. A link to a Markdown file with `#anchor`, a pure `#anchor` and a
   repository URL with an anchor must match a heading or an HTML id in the target file. It also checks
   reference definitions, as in `[d]: file.md` (#154).

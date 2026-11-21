@@ -213,6 +213,21 @@ test("prepare writes the next version and CHANGELOG from the commits since the t
   }
 });
 
+test("prepare fails and changes no file on a bad date", async () => {
+  const root = await repo();
+  try {
+    await commit(root, "fix: one (#135)");
+    for (const date of ["2026-1-12", "12.11.2026", ""]) {
+      const r = run(root, "prepare", "--bump", "auto", "--date", date);
+      assert.equal(r.status, 1, date);
+      assert.match(r.stderr, /the date must be YYYY-MM-DD/);
+    }
+    assert.equal(git(root, "status", "--porcelain"), "");
+  } finally {
+    await removeTree(root);
+  }
+});
+
 test("prepare fails and changes no file on a breaking change or no commits", async () => {
   const root = await repo();
   try {
@@ -294,8 +309,8 @@ test("the plan summary shows the version, the bump and each counted commit", () 
     "",
     "### Commits since v1.3.0",
     "",
-    "- feat: two (#136)",
-    "- fix: one (#135)",
+    "- `feat: two (#136)`",
+    "- `fix: one (#135)`",
     "",
   ].join("\n"));
 });
@@ -311,6 +326,17 @@ const ENV = {
   ],
 };
 const POLICIES = { total_count: 1, branch_policies: [{ name: "main", type: "branch" }] };
+
+// SCR-21 and FRG-12 in #154: a commit title must not add a link or other
+// Markdown to the run summary that Daniel reads before he approves.
+test("the plan summary shows each commit title as code, so Markdown in it does nothing", () => {
+  const text = planSummary({
+    version: "1.4.0", previous: "1.3.0", bump: "auto",
+    commits: [c("fix: see [x](y) (#1)"), c("fix: a `b` c (#2)"), c("fix: two `` ticks (#3)")],
+  });
+  const lines = text.split("\n").filter((l) => l.startsWith("- ") && l.includes("#"));
+  assert.deepEqual(lines, ["- `fix: see [x](y) (#1)`", "- ``fix: a `b` c (#2)``", "- ```fix: two `` ticks (#3)```"]);
+});
 
 test("the release environment passes with Daniel as reviewer and main as the only branch", () => {
   assert.deepEqual(checkEnvironment(ENV, POLICIES, "daniel-kindl"), []);
@@ -357,7 +383,7 @@ test("plan prints the version, writes the summary and changes no file", async ()
       { cwd: root, encoding: "utf8", env: { ...process.env, GITHUB_OUTPUT: "", GITHUB_STEP_SUMMARY: summary } });
     assert.equal(r.status, 0, r.stderr);
     assert.equal(r.stdout, "version=1.4.0\nprevious=1.3.0\n");
-    assert.match(await readFile(summary, "utf8"), /^## Release v1\.4\.0\n[\s\S]*- feat: two \(#136\)\n/);
+    assert.match(await readFile(summary, "utf8"), /^## Release v1\.4\.0\n[\s\S]*- `feat: two \(#136\)`\n/);
     assert.equal(git(root, "status", "--porcelain"), "");
   } finally {
     await removeTree(root);

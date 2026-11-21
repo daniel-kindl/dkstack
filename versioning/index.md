@@ -116,6 +116,8 @@ Make sure that it lists every skill.
 
 ### If a run fails
 
+A cancelled run counts as a failure here.
+
 - A failure in `plan`, or a rejected approval, writes nothing.
 - A failure before the merge leaves `main`, the tags and `v1` as they were. The job closes the
   release pull request. It deletes the branch `release/vX.Y.Z` if the branch is still at the
@@ -135,7 +137,7 @@ any commit or pull request merged into the repository will not require approval"
 first release with the app, the next runs should not wait.
 
 When the run waits, the job writes this message with the link to the run, in the log and in the
-run summary: "Daniel: approve this workflow run yourself; no agent approves it".
+run summary: "Daniel: approve this workflow run yourself. No agent approves it."
 
 1. Open the link. Make sure that it is the `validate` run of the release pull request
    `chore(release): prepare vX.Y.Z`, on the branch `release/vX.Y.Z`.
