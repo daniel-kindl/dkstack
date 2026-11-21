@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `clarify-intent` rounds (#172). Switch to rounds when more than 3 questions are open, a question
+  depends on another question, the owner asks to be grilled, or `chart-route` sends a question.
+  Each round starts with a "Settled so far" summary and asks at most 3 frontier questions, each with
+  one recommended answer that "yes" accepts. The agent finds the facts and never answers the
+  owner's decisions. The rounds are done when no question is open and the owner confirms the
+  summary in their own words. Steps 1 to 5 do not change.
 - Skill building blocks (#167). `code-review` runs `review-spec`, `review-standards`,
   `review-blast-radius` and `verify-claim`. `bootstrap` runs `setup-editorconfig`,
   `setup-quality-gates`, `setup-versioning` and `setup-supply-chain`. The text moved from the two
