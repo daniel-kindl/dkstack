@@ -133,7 +133,7 @@ test("plan-work step 1 takes the map content and invents none of it", async () =
   const text = (await readFile(join(repoRoot, "skills", "plan-work", "SKILL.md"), "utf8")).replace(/\s+/g, " ");
   const step1 = /## Steps 1\. (.*?) 2\. /.exec(text);
   assert.ok(step1);
-  assert.match(step1[1], /If a map for the goal exists in `docs\/maps\/`, take the goal, the acceptance criteria, the dependencies and the decisions from the map\. Invent none of them\./);
+  assert.match(step1[1], /If a map for the goal exists in `docs\/maps\/`, use the map\. Take the goal, the acceptance criteria, the dependencies and the decisions from it\. Invent none of them\./);
   assert.match(text, /7\. Before you report/);
   assert.doesNotMatch(text, / 8\. /);
 });

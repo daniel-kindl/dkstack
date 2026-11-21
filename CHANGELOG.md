@@ -127,6 +127,9 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Changed
 
+- Long sentences and semicolons on 11 pages are split, so `check-writing` gives no warning on them.
+  The meaning of each rule stays the same. `ui/typography.md` says "This fails Resize text
+  (1.4.4)". `versioning/index.md` wraps at 100 characters in the release section.
 - The tests share one `sectionText` and one `flatten` from `test/helpers.mjs` (#250). Three test
   files had their own copies. The test count stays the same.
 - One word for each meaning (#247). The rule text in `versioning/index.md` and `workflow/safety.md`

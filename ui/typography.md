@@ -18,4 +18,4 @@ Use these only when the project has no type scale. See [design systems](design-s
 - Use `font-variant-numeric: tabular-nums` in tables.
 - Set font sizes in rem, not px.
 - For fluid type, use `clamp(1rem, 0.9rem + 0.5vw, 1.25rem)`. Always include a rem term.
-- A clamp with only vw does not grow with zoom. It fails (1.4.4).
+- A clamp with only vw does not grow with zoom. This fails Resize text (1.4.4).

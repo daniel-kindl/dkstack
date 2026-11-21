@@ -11,7 +11,7 @@ Put the plan where the task asks: in the issue, in the pull request or in the ch
 
 ## Steps
 
-1. Find the goal, the acceptance criteria, the non-goals, the constraints and the known facts. If a requirement that changes the plan is not clear, use `clarify-intent`. If a map for the goal exists in `docs/maps/`, take the goal, the acceptance criteria, the dependencies and the decisions from the map. Invent none of them. See [chart-route](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/chart-route/SKILL.md).
+1. Find the goal, the acceptance criteria, the non-goals, the constraints and the known facts. If a requirement that changes the plan is not clear, use `clarify-intent`. If a map for the goal exists in `docs/maps/`, use the map. Take the goal, the acceptance criteria, the dependencies and the decisions from it. Invent none of them. See [chart-route](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/chart-route/SKILL.md).
 2. Read the work that exists. Do not plan work again that is done.
 3. Divide the work into the smallest increments that are complete and that a reviewer can review alone. Plan each increment as a logical conventional commit. Do not plan a fixed number of commits. For each increment, write its dependencies, its risks and how to verify it. Write full details only for the items that the known facts support. For the later items, write only the outcome. See [small steps](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/small-steps.md). For each increment, assess logging against [logging](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/logging.md). Write the result in the `Observability:` entry. For an increment that changes a rendered UI, plan the checks in the [minimum evidence](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/visual-verification.md#minimum-evidence). Write them in Verification.
 4. In each increment, put the tests before the behavior changes. See [tdd/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md).
@@ -51,7 +51,7 @@ Each increment must describe a change that has a purpose and a result that you c
 
 ## Subagents
 
-If you can start subagents, use them for the checks that do not depend on each other. In step 7, compare the plan with the issue, with the commits and with the check results at the same time, each in its own subagent. Give each subagent a brief that is complete without your context:
+If you can start subagents, use them for the checks that do not depend on each other. In step 7, compare the plan with the issue, with the commits and with the check results. Do the three comparisons at the same time, each in its own subagent. Give each subagent a brief that is complete without your context:
 
 - The plan text.
 - The source for its comparison: the issue text, the list of commits, or the check results.
@@ -69,7 +69,7 @@ The steps expect an issue, automated checks and a place for the plan. If a piece
 
 - No issue: write `none` in the `Issue` field. In step 1, take the goal and the acceptance criteria from the person who asked for the plan. If you cannot find them, ask. Do not invent them.
 - No automated checks: run the project checks locally if you can, and record the real result. If you cannot run a check, record it as NOT RUN. A check that did not run is not a pass.
-- You cannot write the plan where the task asks: give the plan in your report, say why you could not write it, and ask where to put it.
+- You cannot write the plan where the task asks: give the plan in your report and say why. Ask where to put it.
 
 ## Boundaries
 
