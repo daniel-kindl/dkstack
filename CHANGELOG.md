@@ -69,6 +69,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Triage routes learning work and CI work (#182). The type list has UI and learning. A Skills line
+  routes a request to learn, practice, assess or review a topic to `learn`. The Section map links
+  `learning/index.md`, and routes a change to `.github/workflows`, tokens, secrets or repository
+  settings to the CI rules in `coding/security.md` and to `workflow/safety.md`. The two writing
+  rows are one row. A rule conflict links AGENTS.md "Precedence". AGENTS.md "Sections" lists
+  `learning/index.md` and no longer lists the empty tips page. README.md no longer lists it.
+  `skills/index.md` links `learning/` next to `learn`.
 - The ADR test in `architecture/adrs.md` is narrower (#173). Write an ADR only when the decision
   is hard to reverse, surprising to a new reader without the context, and the result of a real
   trade-off. Record a smaller decision in the map or in the pull request body. `write-adr` step 1
