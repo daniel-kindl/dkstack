@@ -30,6 +30,7 @@ A building block does one job. A larger skill, such as `code-review` or `bootstr
   - [setup-quality-gates](setup-quality-gates/SKILL.md) (agent): Warnings as errors, CI and deterministic checks.
   - [setup-versioning](setup-versioning/SKILL.md) (agent): Commit and branch rules, semantic versioning and a changelog.
   - [setup-supply-chain](setup-supply-chain/SKILL.md) (agent): Apply the supply chain rules.
+  - [setup-repo-protection](setup-repo-protection/SKILL.md) (agent): List the branch, tag and security settings for the owner to apply.
 - [start-issue](start-issue/SKILL.md) (both): Find or open one issue for the task and set the labels. Assign it and start the branch when the work on the issue starts.
 - [clarify-intent](clarify-intent/SKILL.md) (both): Clarify requirements and domain language before coding.
 - [domain-glossary](domain-glossary/SKILL.md) (both): Read `CONTEXT.md`, flag a word that conflicts with it, and record a resolved domain term.

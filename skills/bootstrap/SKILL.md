@@ -11,13 +11,15 @@ Apply the rules from version-control, versioning, and coding sections. Step 5 ap
 
 ## Steps
 
-Do step 1 first. Do each later step with its building block. Each block links the rules and does not copy them.
+Do step 1 first. Do steps 2 to 6 each with its building block. Each block links the rules and does not copy them.
 
 1. Copy [sample-AGENTS.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/sample-AGENTS.md) into the repository as `AGENTS.md`. Record each project exception to a dkstack rule in its Exceptions section.
 2. Set up the editor settings and LF line endings with [setup-editorconfig](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-editorconfig/SKILL.md).
 3. Make warnings errors, set up CI, make the checks deterministic and copy the dkstack format checks with [setup-quality-gates](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-quality-gates/SKILL.md).
 4. Document the commit and branch rules and set up semantic versioning with [setup-versioning](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-versioning/SKILL.md).
 5. Apply the [supply chain rules](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md#supply-chain-rules) with [setup-supply-chain](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-supply-chain/SKILL.md).
+6. Protect the repository with [setup-repo-protection](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-repo-protection/SKILL.md).
+7. Check that the README says what the project is, who it is for, how to install it, how to run it and how to contribute. Add each part that is missing.
 
 ## Rules
 
