@@ -1,8 +1,19 @@
 # dkstack
 
-Central guidelines, skills, rules, and standards for coding AI agents.
+Rules and skills for AI coding agents, in one place.
 
-Update this repository once. Point agents at it so they follow the current rules.
+dkstack has rules, skills and check scripts for architecture, code, tests, UI, commits, versions,
+writing and the review workflow. It is guidance only: your agents read the pages and run the
+skills. It runs no service, and it changes nothing in your project by itself. It is for any team
+that uses AI coding agents, under the [MIT license](LICENSE). Update the rules here once, and each project that points to them
+gets the new rules.
+
+## Start
+
+1. Copy [sample-AGENTS.md](sample-AGENTS.md) into your project as `AGENTS.md`.
+2. Optional: install the skills. See [Install the skills](#install-the-skills).
+3. Give your agent a task. It reads the triage skill first, and triage selects the rules for the
+   task.
 
 ## Release status
 

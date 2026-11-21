@@ -102,6 +102,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- README.md says what dkstack is and who it is for (#235). The top says that dkstack is guidance
+  only and is for any team that uses AI coding agents, and a short "Start" list follows. README.md,
+  `package.json` and AGENTS.md use one tagline: "Rules and skills for AI coding agents, in one
+  place."
 - `writing/index.md` has one Scope section (#234). ASD-STE100 applies to all text that people or
   agents read, including product copy: UI text, landing pages, product READMEs, release notes,
   announcements and emails. Nothing is out of scope. `writing-check` and
