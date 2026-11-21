@@ -38,7 +38,7 @@ The steps expect a pull request on a code host, a base ref, a specification, aut
 - No pull request or no code host: give the review in the chat, or to the person who asked for it. If there is no chat, write the review to a file and say where it is.
 - You cannot post a comment, for example because you have no access or no permission: do the same, and say why you could not post.
 - No base ref, for example a working tree or a patch: review the uncommitted changes or the given patch. State exactly what you reviewed, for example "uncommitted changes on branch `x` at commit `abc1234`" or the patch name.
-- No pull request text yet, for example in a review of your own change before you open it. In step 3, check the planned title, the body and the commit messages. If none of them exists, write NOT RUN for step 3.
+- No pull request text yet, for example in a review of your own change before the pull request exists. In step 3, check the planned title and body and the commit messages. If none of them exists, write NOT RUN for step 3.
 - No automated checks on the code host: say so in step 8. Run the project's own checks locally if you can. A local run is level 4, Run, only for the operating system that you ran it on. Name that system.
 - No specification or issue: say so in step 4 and use the search order in step 2. If the intent decides the verdict, ask the requester before you give the verdict. If you cannot ask, or get no answer, give BLOCKED and state the question.
 - You cannot build or run the artifact: say so in step 8. Each claim then reaches level 3, Reasoned, at most.
