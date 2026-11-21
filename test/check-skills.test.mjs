@@ -27,6 +27,7 @@ test("the repository skills use the folder layout and valid frontmatter", async 
   assert.deepEqual(result.skills, [
     "apply-architecture",
     "bootstrap",
+    "chart-route",
     "clarify-intent",
     "code-review",
     "domain-glossary",
