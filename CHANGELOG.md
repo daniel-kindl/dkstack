@@ -126,6 +126,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- README.md and SECURITY.md describe the releases that exist (#209). README "Release status" links
+  the latest release. README "Checks" lists each check of `validate`, says that only the release
+  job uses the release app secrets, and names Node 24 or later. The ADR line names ADR 0001.
+  SECURITY.md says that the latest release on `v1` is supported and that a fix ships as a PATCH
+  release on `v1`. A test fails if the text from before the first release comes back.
 - `check-links` checks anchors. A link to a Markdown file with `#anchor`, a pure `#anchor` and a
   repository URL with an anchor must match a heading or an HTML id in the target file. It also checks
   reference definitions, as in `[d]: file.md` (#154).
