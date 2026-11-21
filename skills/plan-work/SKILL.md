@@ -58,7 +58,7 @@ A plan can cover more than one task, for example a milestone. Each task gets its
 - Set the order as "blocked by" relations. When an increment depends on an increment of a different task, its task issue is blocked by that other task issue.
 - Follow the [relations](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/issues.md#relations) rules.
 
-If the `Issue` field is `none`, there is no parent. Record the order in the `Depends on` lines only.
+If the `Issue` field is `none`, there is no parent. Still set the "blocked by" relations between the task issues.
 
 ## Subagents
 

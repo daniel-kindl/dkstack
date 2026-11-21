@@ -15,8 +15,9 @@ change that a consumer must act on has a "Consumer action:" line.
 - Issue relations in `workflow/issues.md` (#192). A task that has parts is a parent issue, and
   each part is a sub-issue. An issue that must wait for another is "blocked by" it. Do not start
   work while a blocker is open. The page gives the `gh` commands. The local files get `Parent:`
-  and `Blocked by:` lines. `start-issue` sets and checks the relations. `plan-work` and
-  `chart-route` open the tasks as sub-issues of the plan issue, in order.
+  and `Blocked by:` lines. `start-issue` sets and checks the relations. In `plan-work`, each task issue is a
+  sub-issue of the plan issue, if one exists, and the order is set as "blocked by" relations.
+  `chart-route` uses the `plan-work` rule for the map tasks.
 - Forced colors rules in `ui/colors-and-themes.md` (#248). When the project supports Windows, test
   each changed surface in forced colors mode. Use system colors there. Do not show a state with a
   background color only. On the web, use `@media (forced-colors: active)`. The minimum evidence in
