@@ -228,7 +228,7 @@ jobs:
           RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$RUN_ID"
           echo "validate: $RUN_URL"
           if [ "$RUN_STATUS" = "action_required" ] || [ "$RUN_CONCLUSION" = "action_required" ]; then
-            MESSAGE="Daniel: approve this workflow run yourself; no agent approves it: $RUN_URL"
+            MESSAGE="Daniel: approve this workflow run yourself. No agent approves it. $RUN_URL"
             echo "::warning::validate on pull request #$PR waits for approval. $MESSAGE"
             {
               echo "validate on pull request #$PR waits for approval."
@@ -355,7 +355,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Close the release pull request if it was not merged
-        if: ${{ failure() && steps.pr.outputs.pr != '' }}
+        if: ${{ (failure() || cancelled()) && steps.pr.outputs.pr != '' }}
         env:
           GH_TOKEN: ${{ steps.app.outputs.token }}
           PR: ${{ steps.pr.outputs.pr }}
@@ -368,7 +368,7 @@ jobs:
             echo "Pull request #$PR is $STATE. Nothing to close."
             exit 0
           fi
-          gh pr close "$PR" --comment "The Release run $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID failed before the merge. Nothing was merged or tagged. Fix the cause, then start Release again."
+          gh pr close "$PR" --comment "The Release run $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID failed or was cancelled before the merge. Nothing was merged or tagged. Fix the cause, then start Release again."
           # Delete the branch only if it is still at the release commit.
           BRANCH_SHA=$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)
           if [ "$BRANCH_SHA" = "$HEAD_SHA" ]; then
@@ -377,7 +377,7 @@ jobs:
             echo "::warning::$BRANCH is at ${BRANCH_SHA:-nothing}, not at $HEAD_SHA. It was not deleted."
           fi
           {
-            echo "Release v$VERSION was not merged. The run failed before the merge. See the error above."
+            echo "Release v$VERSION was not merged. The run failed or was cancelled before the merge. See the error above."
             echo
             echo "- main, the tags and v1 did not change."
             echo "- The job closed pull request #$PR and deleted the branch $BRANCH if it was unchanged."
@@ -385,12 +385,12 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Tell how to finish a release after the merge
-        if: ${{ failure() && steps.merge.outputs.merge_sha != '' }}
+        if: ${{ (failure() || cancelled()) && steps.merge.outputs.merge_sha != '' }}
         env:
           VERSION: ${{ steps.prepare.outputs.version }}
           MERGE_SHA: ${{ steps.merge.outputs.merge_sha }}
         run: |
           {
-            echo "The release commit $MERGE_SHA is on main, but a later step failed."
+            echo "The release commit $MERGE_SHA is on main, but a later step failed or the run was cancelled."
             echo "Finish v$VERSION by hand. See \"Finish a release\" in versioning/index.md."
           } >> "$GITHUB_STEP_SUMMARY"
