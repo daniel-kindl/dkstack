@@ -170,6 +170,24 @@ Workflows (write). The app is in no ruleset bypass list, so `protect-main` still
 `validate`. With `GITHUB_TOKEN` only, the release pull request did not get a `validate` check
 that `protect-main` counts (runs 43070086329 and 43073954019).
 
+### Amendment 2026-11-21, no agent releases
+
+Daniel decided on 2026-11-20 at 09:34 (Prague), as D2 in #154: "D2: only the Release run I start;
+no agent tags, moves v1 or starts a release". This amendment replaces the amendment of 2026-10-28.
+No bot pushes to `v1` or creates a release tag, even with an OK. Only the `Release` run that
+Daniel starts does these steps. See [workflow/safety.md](../../workflow/safety.md).
+
+### Amendment 2026-11-21, tag pins
+
+This corrects the Context. The Context says: "A consumer that pins the entry URL also pins every
+linked file." That is true only for relative links. The skills and the triage routes link other
+dkstack files with absolute URLs on `v1`. A consumer that pins a tag reads each dkstack raw URL on
+that tag in place of `v1`. [AGENTS.md](../../AGENTS.md#version) says this. See ATL-1 in #154.
+
+On 2026-11-21 Daniel told the agents to decide the open items of #154. His words are "you
+decide, fix and merge". The agent chose option A of D6: an ADR gets dated amendments. See
+[Amendments](../../architecture/adrs.md#amendments).
+
 ## Consequences
 
 The follow-up work is issue #5 (Forge) and issue #12 (Scribe).

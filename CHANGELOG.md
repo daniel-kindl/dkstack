@@ -127,6 +127,9 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Changed
 
+- `architecture/adrs.md` has a place rule and an amendment rule (D6 in #154). Store each ADR in
+  `docs/adr/` as `NNNN-short-title.md`. If the owner changes a decision, add a dated amendment and
+  do not change the old text. ADR 0001 records D2 and corrects the tag pin statement in its Context.
 - The tests share one `sectionText` and one `flatten` from `test/helpers.mjs` (#250). Three test
   files had their own copies. The test count stays the same.
 - One word for each meaning (#247). The rule text in `versioning/index.md` and `workflow/safety.md`

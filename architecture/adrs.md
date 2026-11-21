@@ -28,12 +28,28 @@ Do not add these lines to an old ADR. An old ADR with no `Status:` line counts a
 A review uses these lines to find the ADRs that a change must follow. See the
 [ADR findings](../skills/code-review/SKILL.md#adr-findings) rule.
 
+## Place and name
+
+Store each ADR in `docs/adr/` as `NNNN-short-title.md`. `NNNN` is the next free number, with
+four digits. `check-adrs` reads this folder.
+
+## Amendments
+
+Do not rewrite history. Do not change the text of an Accepted ADR.
+
+- If the owner changes or narrows the decision, add a dated amendment. Put a heading
+  `### Amendment YYYY-MM-DD` at the end of the Decision section.
+- The amendment quotes the owner's words, gives the date and links the issue. It says which
+  earlier text it replaces.
+- An amendment can also correct a wrong fact in the Context. It quotes the wrong text.
+- If the owner replaces the whole decision, write a new ADR. Set the old ADR to
+  `Superseded by NNNN`.
+- An agent writes an amendment only after the owner decided.
+
 ## Rules
 
 - Include the context, the options considered, the decision, and the consequences.
 - Keep the ADR short.
-- Store ADRs with the code they affect.
-- Do not rewrite history. Add a new ADR if the decision changes.
 
 ## Good example
 
