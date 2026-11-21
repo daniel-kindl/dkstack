@@ -24,6 +24,8 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          # check-adrs compares the change with origin/main, so it needs the history.
+          fetch-depth: 0
 
       - name: Set up Node.js
         id: node
@@ -61,6 +63,18 @@ jobs:
       - name: Check that CHANGELOG.md has an entry for the package.json version
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:changelog
+
+      - name: Check the format of the maps in docs/maps
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:maps
+
+      - name: Check the format of CONTEXT.md
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:context
+
+      - name: Check that new ADRs have Status and Affects
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:adrs
 
       - name: Run the unit tests
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}

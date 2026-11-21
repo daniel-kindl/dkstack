@@ -20,6 +20,7 @@ Create an Architecture Decision Record using [architecture/adrs.md](https://raw.
    - Consequences
 3. Store it with the code it affects.
 4. Do not rewrite old ADRs. Add a new one if the decision changes.
+5. Before you open a pull request, run `check-adrs` (`scripts/check-adrs.mjs`, copied by [bootstrap](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/bootstrap/SKILL.md)). Fix each finding.
 
 ## Subagents
 
@@ -32,7 +33,7 @@ If you can start subagents, use them to research the options. Do step 1 yourself
 - A word limit, for example 300 words.
 - This line: "Report to me only. Do not write the ADR, post, approve or merge."
 
-Then collect the reports. Write the ADR yourself in step 2, and do steps 3 and 4 yourself. A report from a subagent is a claim. Check each claim that the decision depends on at its source. If a claim has no source, do not put it in the ADR.
+Then collect the reports. Write the ADR yourself in step 2, and do steps 3 to 5 yourself. A report from a subagent is a claim. Check each claim that the decision depends on at its source. If a claim has no source, do not put it in the ADR.
 
 If you cannot start subagents, do the steps one at a time in the order of this skill. Research one option fully before you start the next option.
 
