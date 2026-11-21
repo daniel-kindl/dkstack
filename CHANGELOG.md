@@ -111,6 +111,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The writing rules have limits that a check can test (#243). A step has at most 20 words. A
+  sentence in a description has at most 25 words. Do not use a semicolon. A new "AI prose patterns"
+  section gives six examples. The scope includes the text that an agent writes to a person, such as
+  the learn tutor. `writing-check` step 2 checks each rule in `writing/index.md` and lists no subset.
 - The owner record has one owner, `workflow/roles.md` "Owner records" (#229). It names the fields
   (the owner's exact words, the time, the place, the scope and a session link) and where the record
   goes. `workflow/safety.md` "Owner instructions in chat" keeps one rule and links it. That section
