@@ -69,6 +69,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The validate workflow is harder to break (#181). A test checks that each `check:*` script is in
+  `npm run check` and has a validate step that runs after an earlier failure. A push to `main`
+  checks the title of each pushed commit, not only the last one. A new push to a pull request
+  cancels the old run of that pull request. A run on `main` is never cancelled. actionlint 1.7.12,
+  fixed by SHA-256, checks the workflows with shellcheck.
 - The ADR test in `architecture/adrs.md` is narrower (#173). Write an ADR only when the decision
   is hard to reverse, surprising to a new reader without the context, and the result of a real
   trade-off. Record a smaller decision in the map or in the pull request body. `write-adr` step 1
