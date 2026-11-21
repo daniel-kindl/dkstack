@@ -6,7 +6,8 @@ import { dirname, join } from "node:path";
 import { checkWriting, writingWarnings } from "../scripts/check-writing.mjs";
 import { makeTree, removeTree } from "./helpers.mjs";
 
-// SCR-M8 in #154, after the D3 sub-choices: warn on a step over 20 words, a
+// SCR-M8 in #154, after the D3 sub-choices: warn on a step (numbered or a
+// checklist item) over 20 words, a
 // sentence over 25 words and a semicolon. The first stage only warns.
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -20,6 +21,10 @@ test("a short sentence gives no warning, and a long one gives one", () => {
 
 test("a numbered step has a limit of 20 words", () => {
   assert.deepEqual(writingWarnings("a.md", `1. ${words(20)}.\n2. ${words(21)}.\n`), ["a.md:2: a step has 21 words, more than 20"]);
+});
+
+test("a checklist item is a step too", () => {
+  assert.deepEqual(writingWarnings("a.md", `- [ ] ${words(21)}.\n- [x] ${words(20)}.\n`), ["a.md:1: a step has 21 words, more than 20"]);
 });
 
 test("a sentence over two lines counts as one, and is reported at its first line", () => {

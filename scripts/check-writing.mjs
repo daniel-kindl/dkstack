@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Warn about text that breaks the sentence limits of writing/index.md: a step
 // with more than 20 words, a sentence with more than 25 words, and a
-// semicolon. A step is a numbered list item. CHANGELOG.md, code, block
+// semicolon. A step is a numbered list item or a checklist item ("- [ ]"). CHANGELOG.md, code, block
 // quotes, tables, headings and text in double quotes are not checked. This is
 // the first stage: the check prints warnings and always exits 0 (#154, P40).
 
@@ -15,6 +15,7 @@ const SENTENCE_LIMIT = 25;
 const SKIP_FILES = new Set(["CHANGELOG.md"]);
 const NUMBERED = /^\s*\d+[.)]\s+/;
 const BULLET = /^\s*[-*+]\s+/;
+const CHECKLIST = /^\s*[-*+]\s+\[[ xX]\]\s+/;
 
 // Return the text of a line without code, links, HTML tags and quotes.
 function plain(line) {
@@ -51,7 +52,7 @@ function* blocks(text) {
     const item = NUMBERED.test(raw) || BULLET.test(raw);
     if (item || current === null) {
       if (current) yield current;
-      current = { line: i + 1, text: raw.replace(NUMBERED, "").replace(BULLET, ""), step: NUMBERED.test(raw) };
+      current = { line: i + 1, text: raw.replace(CHECKLIST, "").replace(NUMBERED, "").replace(BULLET, ""), step: NUMBERED.test(raw) || CHECKLIST.test(raw) };
     } else {
       current.text += ` ${raw.trim()}`;
     }
