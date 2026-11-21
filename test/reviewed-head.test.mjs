@@ -127,8 +127,8 @@ test("review and release skills keep the merge and publish gates", async () => {
   assert.match(review, /reviewer merges only the head that they reviewed/i);
   assert.doesNotMatch(review, /agent may merge only with the owner's explicit authorization/i);
   assert.match(review, /required checks on that head must be green/i);
-  assert.match(release, /OK names the exact version/);
-  assert.match(release, /never covers a production deploy/);
+  // D2 in #154: no agent publishes or releases.
+  assert.match(release, /An agent does not publish or release\./);
 });
 
 test("review does not require a feature plan", async () => {

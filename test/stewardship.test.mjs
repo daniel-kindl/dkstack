@@ -60,13 +60,14 @@ function between(body, start, end) {
   return rest.slice(0, stop);
 }
 
-test("triage reads stewardship only for a signal or a human request", async () => {
+// ATL-6 in #154: the signals have one owner. Triage links the Analysis
+// section and does not copy the list.
+test("triage reads stewardship only for a signal or a human request, and links the signals", async () => {
   const triage = await text("skills/triage/SKILL.md");
   const page = await text("architecture/stewardship.md");
-  assert.ok(triage.includes(raw));
   assert.match(triage, /Routine work does not read/);
   assert.match(triage, /human asks/);
-  const triageSignals = between(triage, "these signals:", "Do not add a phase");
+  assert.ok(triage.includes(`${raw}#analysis`), "triage links the Analysis section");
   const pageSignals = between(page, "A signal is one of these:", "Examine the consequences");
   for (const signal of [
     "new public interface",
@@ -77,7 +78,6 @@ test("triage reads stewardship only for a signal or a human request", async () =
     "compatibility",
     "ADR no longer matches",
   ]) {
-    assert.ok(triageSignals.includes(signal), `triage signal list omits ${signal}`);
     assert.ok(pageSignals.includes(signal), `page signal list omits ${signal}`);
   }
 });
@@ -98,6 +98,7 @@ test("specialized skills point at stewardship and do not copy it", async () => {
     "skills/plan-work/SKILL.md",
     "skills/tdd-loop/SKILL.md",
     "skills/review-standards/SKILL.md",
+    "skills/triage/SKILL.md",
   ];
   for (const skill of skills) {
     const body = await text(skill);
