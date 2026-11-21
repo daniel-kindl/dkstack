@@ -43,6 +43,7 @@ A building block does one job. A larger skill, such as `code-review` or `bootstr
   - [verify-claim](verify-claim/SKILL.md) (agent): Prove a claim on five evidence levels before you report it.
 - [write-adr](write-adr/SKILL.md) (both): Create an Architecture Decision Record.
 - [write-pr](write-pr/SKILL.md) (both): Write or update a pull request body with evidence and merge risk.
+- [make-diagram](make-diagram/SKILL.md) (both): Make and check a diagram or a visual aid for a pull request, an issue, a spec, an ADR or a docs page.
 - [writing-check](writing-check/SKILL.md) (both): Apply ASD-STE100 to text.
 - [plan-work](plan-work/SKILL.md) (both): Plan a goal as small, reviewable increments with tests first.
 - [chart-route](chart-route/SKILL.md) (both): Settle a large, unclear effort in a map in `docs/maps/`, one question per session, then hand off to `plan-work`.

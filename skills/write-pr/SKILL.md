@@ -38,7 +38,8 @@ developers. Describe the behavior. Do not describe only the files.
 
 Add a small visual only when it makes the change easier to see. You can use a diff sketch,
 pseudocode, a call tree, a file tree, a diagram or a screenshot. Do not require a visual for a
-trivial change. A trivial change can omit the visual.
+trivial change. A trivial change can omit the visual. To make a diagram, use
+[make-diagram](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/make-diagram/SKILL.md).
 
 ## Evidence
 

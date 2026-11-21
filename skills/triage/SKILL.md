@@ -43,6 +43,7 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 - Pull request body: [write-pr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-pr/SKILL.md).
   Use it when you write or materially update the body. Do not use it for a review that leaves
   the body unchanged.
+- Diagram or visual for a pull request, an issue, a spec, an ADR or a docs page: [make-diagram](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/make-diagram/SKILL.md)
 - New or changed rendered UI: [ui-design](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/ui-design/SKILL.md).
 - Review of a rendered UI: [ui-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/ui-review/SKILL.md). Use it with `code-review` for a pull request.
 - Review: [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md)

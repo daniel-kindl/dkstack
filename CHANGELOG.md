@@ -12,6 +12,12 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `skills/make-diagram` (#193). It tells when a diagram helps and when the text is sufficient.
+  It maps each need to a kind of diagram: flow, sequence, state, component or dependency, data
+  model, and before and after. It prefers Mermaid in Markdown, with a plain-text sketch as the
+  fallback, and no binary image. It names the place for each target and checks that the diagram
+  matches the code, renders and has a text alternative. `triage` routes a request for a diagram
+  or a visual to it. `write-pr`, `write-adr` and `plan-work` link it.
 - `CONTEXT.md`, the domain glossary of dkstack (#283). It defines Owner, Consumer, Exception,
   Suppression, Building block, Quality gate, Required check and Owner record.
 - Clean-up rules after a merge in `workflow/review-and-merge.md` (#277). The agent that merged
