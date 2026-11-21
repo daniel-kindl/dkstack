@@ -23,6 +23,7 @@ Each changed surface needs this evidence. Mark an item NOT RUN or NOT APPLICABLE
 - A keyboard walk-through: focus order, visible focus, focus not hidden and no keyboard trap.
 - Text at 200% and the text spacing values. On native UI, use the largest system text size.
 - Reduced motion, when the change has motion.
+- A check in forced colors mode, when the project supports Windows. See [forced colors](colors-and-themes.md#forced-colors).
 - A screen reader or accessibility inspector pass of each changed control: its name, role, state and announcements. Record the tool and its version.
 - The automated checker output: the tool, its version, the number of violations and its limits.
 - The measured contrast ratio of each new or changed color pair.
@@ -91,10 +92,10 @@ Per check:
 
 When the check results combine, FAIL wins over NOT RUN.
 
-Put the evidence where the reviewer can open it, for example in the PR or as a CI artifact. A local path is not evidence.
+Put the evidence where the reviewer can open it, for example in the pull request or as a CI artifact. A local path is not evidence.
 
 If you can build and run the UI, do the visual verification. If you cannot, write NOT RUN and the reason. Do not invent screenshots.
 
-Write the result in the PR body as [write-pr](../skills/write-pr/SKILL.md#evidence) says.
+Write the result in the pull request body as [write-pr](../skills/write-pr/SKILL.md#evidence) says.
 
 Automation can check defects that have a fixed rule. Give a reason for each aesthetic finding. Do not use a numeric score for taste.

@@ -39,6 +39,7 @@ test("the repository skills use the folder layout and valid frontmatter", async 
     "review-standards",
     "setup-editorconfig",
     "setup-quality-gates",
+    "setup-repo-protection",
     "setup-supply-chain",
     "setup-versioning",
     "start-issue",

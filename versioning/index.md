@@ -14,6 +14,26 @@ Version numbers communicate the impact of a change.
 - Do not change a released version. Release a new version instead.
 - Document breaking changes clearly.
 
+## Breaking changes in dkstack
+
+Consumers read dkstack pages, skills and anchors by URL. A change that breaks such a URL, or that
+gives agents a new limit, is breaking. Use these classes for each dkstack change:
+
+- MAJOR: remove or rename a skill, a page or an anchor that a skill or AGENTS.md links, or add a
+  hard limit. Example: rename the skill `tdd-loop` to `tdd`.
+- MINOR: a new skill, a new page or a new duty for agents. A renamed anchor also counts as MINOR if
+  the page keeps the old anchor as a redirect line. Example: add the skill `chart-route`.
+- PATCH: wording only. The rules and the links do not change. Example: split a long sentence.
+
+For a MAJOR change, the author adds `!` to the pull request title, for example
+`feat(skills)!: rename tdd-loop to tdd`. A release with a MAJOR change starts the next major branch, for example `v2` after `v1`.
+
+If a release changes something that a consumer must change in their project, its CHANGELOG entry
+has a line that starts with "Consumer action:". The line says what the consumer must do, for
+example "Consumer action: change `tdd-loop` to `tdd` in your AGENTS.md."
+
+After `v2` is released, `v1` gets no fixes. See [SECURITY.md](../SECURITY.md#versions).
+
 ## Release dkstack
 
 These steps are for the dkstack repository only. A consumer repository does not use them.
@@ -21,19 +41,25 @@ These steps are for the dkstack repository only. A consumer repository does not 
 dkstack releases follow [ADR 0001](../docs/adr/0001-how-consumers-follow-versions.md), option C2.
 The `Release` workflow ([release.yml](../.github/workflows/release.yml)) does the full release.
 
-Only Daniel starts the `Release` workflow. The workflow has two jobs. The `plan` job is read-only.
+Only the owner starts the `Release` workflow. The workflow has two jobs. The `plan` job is read-only.
 It works out the version and shows it in the run summary. The `release` job does all the writes.
-It runs in the `release` environment, so it waits until Daniel approves it. Daniel's OK for a
-release is two actions: he starts `Release`, and he approves the `release` environment after he
-reads the planned version in the run summary. No bot starts the workflow or approves the
-environment. No bot pushes to `v1` or creates a release tag in another way. See
-[workflow/safety.md](../workflow/safety.md).
+It runs in the `release` environment, so it waits until the owner approves it. The owner's OK for a
+release is two actions. The owner starts `Release`. Then the owner reads the planned version in the run summary
+and approves the `release` environment. No bot starts the workflow or approves the
+environment. [Safety](../workflow/safety.md) owns the release rule.
+
+dkstack agents use the owner's account today (D1 in
+[#154](https://github.com/daniel-kindl/dkstack/issues/154)). The rulesets and the `release`
+environment do not stop an agent that uses the owner's account. The release rule is an honor rule
+until the agents get their own identity. For the same reason, dkstack does not meet the rule "No
+bot identity can act as that reviewer" in
+[CI workflows](../coding/security.md#release-and-deploy-workflows) yet.
 
 ### One-time setup
 
 The `release` job does its writes with a token from the GitHub App of dkstack releases. The
 token is for dkstack only, with three permissions only. The job uses no personal token and no
-ruleset bypass. `GITHUB_TOKEN` only reads. Daniel set up the app on 2026-11-11 (#135). The
+ruleset bypass. `GITHUB_TOKEN` only reads. The owner set up the app on 2026-11-11 (#135). The
 setup, for a check or a new app:
 
 1. The GitHub App:
@@ -44,11 +70,11 @@ setup, for a check or a new app:
      `protect-main` requires `validate` for the release pull request, as for all pull requests.
 2. In Settings, Environments, the environment `release`:
    - Required reviewers: `daniel-kindl`.
-   - "Prevent self-review": off. Daniel starts the run, so he must be able to approve it.
+   - "Prevent self-review": off. The owner starts the run, so the owner must be able to approve it.
    - Deployment branches and tags: "Selected branches and tags", with the one branch rule `main`.
    - Environment secrets: `RELEASE_APP_ID` (the App ID of the app) and `RELEASE_APP_PRIVATE_KEY`
      (a private key of the app, the full `.pem` text). Add them to the environment, not to the
-     repository. Then only the `release` job gets them, after Daniel approves it.
+     repository. Then only the `release` job gets them, after the owner approves it.
 
 The `plan` job reads the environment and stops if it does not have the reviewer and the branch
 rule. A job that names an environment that does not exist gets a new environment with no
@@ -59,8 +85,8 @@ the job writes nothing.
 The workflow does not need "Allow GitHub Actions to create and approve pull requests", because
 `GITHUB_TOKEN` does not open the pull request.
 
-To change a key: generate a new private key in the app settings, replace
-`RELEASE_APP_PRIVATE_KEY` in the `release` environment, then delete the old key in the app
+To change a key: generate a new private key in the app settings. Replace
+`RELEASE_APP_PRIVATE_KEY` in the `release` environment. Then delete the old key in the app
 settings.
 
 ### Start a release
@@ -80,12 +106,12 @@ The `plan` job steps:
 2. It finds the latest `v1.x.y` tag and the commits on `main` since that tag. If there are no
    commits, it stops.
 3. It works out the version. A `feat` commit gives MINOR. All other types give PATCH. A breaking
-   change (`!` or `BREAKING CHANGE:`) stops the run, because a major release needs Daniel. The
+   change (`!` or `BREAKING CHANGE:`) stops the run, because a major release needs the owner. The
    workflow never releases `v2`.
 4. It writes the version and the commits to the run summary.
 5. It stops if the `release` environment does not have the one-time setup.
 
-The `release` job starts only after Daniel approves the environment. Its steps:
+The `release` job starts only after the owner approves the environment. Its steps:
 
 1. It does the checks of `plan` steps 1 to 3 again. It stops if the version is not the planned
    version.
@@ -99,7 +125,7 @@ The `release` job starts only after Daniel approves the environment. Its steps:
    a pull request to `main`. The app opens it, so the normal `pull_request` run of `validate`
    starts.
 5. It waits for this run of `validate`. If the run waits for approval, the job waits up to 15
-   minutes for Daniel to approve it. Only Daniel approves it. No agent and no job approves it. See
+   minutes for the owner to approve it. Only the owner approves it. No agent and no job approves it. See
    [If validate waits for approval](#if-validate-waits-for-approval).
 6. It makes sure that `main` did not move and that `protect-main` lets the pull request merge.
    Then it squash-merges the pull request, only at the validated commit. `protect-main` applies
@@ -146,7 +172,7 @@ run summary: "Daniel: approve this workflow run yourself. No agent approves it."
 3. Click "Awaiting approval", then "Approve workflows to run". This is the step in the GitHub
    documentation "Approving workflow runs from forks".
 
-Only Daniel approves this run. No agent and no job approves it. The job only reads the run state.
+Only the owner approves this run. No agent and no job approves it. The job only reads the run state.
 It waits up to 15 minutes. If `validate` passes, the job merges and finishes the release. If
 nobody approves the run in 15 minutes, or `validate` fails, the job closes the pull request and
 nothing is merged or tagged. Then start `Release` again. Do not approve the run of a closed pull
@@ -159,6 +185,8 @@ merged into this repository". The bot user of the app is new on GitHub, so this 
 does not stop the wait. The approval of the first run is the recommended way.
 
 ### Finish a release
+
+The owner only. No agent does these steps.
 
 Do these steps in a checkout of dkstack with the latest `main`. Set `V` to the version, for
 example `V=1.4.0`. Set `SHA` to the merge commit of the release pull request:

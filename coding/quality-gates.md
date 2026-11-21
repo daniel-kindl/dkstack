@@ -31,6 +31,9 @@ Each exception must have all of these parts:
 Record a persistent exception beside the code or in the repository docs. A temporary exception
 links to the issue that removes it.
 
+A diagnostic exception is not an exception to a dkstack rule. To differ from a dkstack rule,
+record an exception as [Precedence](../AGENTS.md#precedence) says.
+
 Never add a blanket suppression. Do not add a broad pragma, a global `NoWarn`, a disabled analyzer,
 or a general formatter exclusion.
 

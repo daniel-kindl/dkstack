@@ -100,7 +100,7 @@ function generatedEntries(commits) {
 
 // Move the [Unreleased] notes into "## [version] - date" and update the compare links.
 export function releaseChangelog(text, { version, previous, date, commits }) {
-  const lines = text.split("\n");
+  const lines = text.replace(/\r\n/g, "\n").split("\n");
   const start = lines.indexOf("## [Unreleased]");
   if (start === -1) throw new Error('CHANGELOG.md has no "## [Unreleased]" section');
   if (new RegExp(`^## \\[${escape(version)}\\](?:\\s|$)`, "m").test(text)) {
@@ -125,7 +125,7 @@ export function releaseChangelog(text, { version, previous, date, commits }) {
 
 // Return the body of the "## [version]" section, without its heading.
 export function releaseNotes(text, version) {
-  const lines = text.split("\n");
+  const lines = text.replace(/\r\n/g, "\n").split("\n");
   const start = lines.findIndex((line) => new RegExp(`^## \\[${escape(version)}\\](?:\\s|$)`).test(line));
   if (start === -1) throw new Error(`CHANGELOG.md has no "## [${version}]" section`);
   let end = lines.findIndex((line, i) => i > start && (/^## /.test(line) || /^\[[^\]]+\]: /.test(line)));
@@ -288,7 +288,7 @@ async function main(argv) {
   throw new Error("use one of: plan, prepare, guard, environment, notes");
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
     await main(process.argv.slice(2));
   } catch (error) {

@@ -11,7 +11,7 @@ UI findings use the [code-review severities](../skills/code-review/SKILL.md#seve
 - [Principles](principles.md): User tasks, scope, platform conventions and deceptive patterns.
 - [Visual design](visual-design.md): Hierarchy, visual direction and generic patterns.
 - [Typography](typography.md): Readable type and a type scale.
-- [Colors and themes](colors-and-themes.md): Tokens, contrast and themes.
+- [Colors and themes](colors-and-themes.md): Tokens, contrast, themes and forced colors mode.
 - [Layout and spacing](layout-and-spacing.md): Structure, alignment and spacing.
 - [Responsive design](responsive-design.md): Widths, scaling and input methods.
 - [Components](components.md): Reuse, states and icons.

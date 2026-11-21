@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile } from "./helpers.mjs";
 import { test } from "node:test";
 
 const raw = "https://raw.githubusercontent.com/daniel-kindl/dkstack/v1";
@@ -74,7 +74,7 @@ test("UI findings use the code-review severities and no P scale", async () => {
   const uiLine = line(section(review, "## Checklist"), "- Rendered UI:");
   assert.ok(uiLine.includes(`[ui-review](${raw}/skills/ui-review/SKILL.md)`));
   assert.ok(uiLine.includes("A failed WCAG 2.2 A or AA criterion on a changed surface is High."));
-  assert.ok(uiLine.includes("A missing or wrong `Visual verification:` line in the PR body is Medium."));
+  assert.ok(uiLine.includes("A missing or wrong `Visual verification:` line in the pull request body is Medium."));
   const pages = ["ui/index.md", "ui/visual-verification.md", "skills/ui-review/SKILL.md", "skills/ui-design/SKILL.md"];
   for (const path of pages) {
     assert.doesNotMatch(await document(path), /\bP[0-2]\b/, `${path} has a P severity`);
@@ -245,4 +245,64 @@ test("the accessibility page gives native examples for each web-only rule", asyn
 test("native apps use the platform's adaptive layout tools, not web breakpoints", async () => {
   const page = (await document("ui/responsive-design.md")).replace(/\s+/g, " ");
   assert.ok(page.includes("Do not copy web breakpoint values into native apps. Use the platform's adaptive layout tools and window size classes."));
+});
+
+// IRIS-12 and IRIS-14 in #154: each accessibility rule on these pages says
+// where it comes from: a WCAG criterion number or "(dkstack rule)". The test
+// reads each bullet that names an accessibility topic. A bullet that only
+// links another page needs no marker.
+const MARKED_PAGES = ["forms", "interactions", "components", "motion", "typography", "layout-and-spacing"];
+const A11Y = /accessible name|screen reader|keyboard|focus-visible|keyboard focus|Move focus|Return focus|contrast|aria-|role=|announce|reduced motion|clip|zoom|reading order|color alone|autocomplete|placeholder is|toast|tooltip|decorative icon|visible label|text label next to an icon|feedback that the user can see|how to (?:fix|recover)|in text next to|again for data|cognitive|legal commitment|required fields|disable the submit|first time|says what the action|disabled control|type size alone/i;
+const MARKER = /\((?:\d\.\d+\.\d+(?:, \d\.\d+\.\d+)*|dkstack rule)\)/;
+const POINTER = /^(?:For [^.]*, follow \[|Follow the \[|Meet the [^.]* in \[|Sign-in and access errors follow \[)/;
+
+test("each accessibility rule on the UI pages has a WCAG number or the dkstack marker", async () => {
+  for (const name of MARKED_PAGES) {
+    const text = await readFile(new URL(`../ui/${name}.md`, import.meta.url), "utf8");
+    const bullets = text.split(/\n(?=- )/).filter((b) => b.startsWith("- ")).map((b) => b.split("\n\n")[0].replace(/\s+/g, " ").slice(2));
+    for (const bullet of bullets) {
+      if (!A11Y.test(bullet) || POINTER.test(bullet)) continue;
+      assert.match(bullet, MARKER, `ui/${name}.md: ${bullet}`);
+    }
+  }
+});
+
+test("component states, reading width and error placement each have one owner page", async () => {
+  const components = await document("ui/components.md");
+  const interactions = await document("ui/interactions.md");
+  assert.match(components, /default, hover, focus, pressed, selected, disabled/);
+  assert.ok(interactions.includes("(components.md)"), "interactions links the states in components");
+  assert.doesNotMatch(interactions, /\bactive\b/, 'the state is "pressed"');
+  const layout = await document("ui/layout-and-spacing.md");
+  assert.ok((await document("ui/typography.md")).includes("65ch"));
+  assert.ok(layout.includes("(typography.md#defaults)"), "layout links the reading width");
+  assert.doesNotMatch(layout, /65ch/);
+  assert.ok(interactions.includes("(forms.md)"), "interactions links the error placement in forms");
+  assert.doesNotMatch(interactions, /Put the error near the control/);
+});
+
+// IRIS-M6 in #154, after D9: a pinned image has rules for tolerance, update
+// and place.
+test("the UI test rules set zero tolerance, a reviewed update and one place for visual baselines", async () => {
+  const tests = section(await document("tdd/ui-testing.md"), "## UI tests");
+  for (const phrase of ["zero tolerance", "before and after image", "reviewer", "next to the test that uses it"]) {
+    assert.ok(tests.includes(phrase), phrase);
+  }
+});
+
+// IRIS-M5 in #154, after D9: forced colors mode (Windows contrast themes).
+test("the UI pages cover forced colors mode and its evidence", async () => {
+  const colors = await document("ui/colors-and-themes.md");
+  const forced = section(colors, "## Forced colors");
+  // M1 on #257: one phrase for each rule, so that a deleted or reversed rule fails.
+  for (const phrase of ["Test each changed surface in forced colors mode when the project supports Windows",
+    "In forced colors mode, use system colors", "`CanvasText`", "Do not set a fixed color there",
+    "Do not show a state, such as selected, focus or error, with a background color only.",
+    "Add a border, an outline, an icon or text", "`@media (forced-colors: active)`",
+    "Use `forced-color-adjust: none` only for a small element"]) {
+    assert.ok(forced.includes(phrase), phrase);
+  }
+  const evidence = section(await document("ui/visual-verification.md"), "## Minimum evidence");
+  assert.ok(evidence.includes("forced colors mode"));
+  assert.ok(evidence.includes("supports Windows"));
 });

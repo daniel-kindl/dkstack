@@ -4,11 +4,55 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The classes for dkstack are in
+[breaking changes in dkstack](versioning/index.md#breaking-changes-in-dkstack). An entry for a
+change that a consumer must act on has a "Consumer action:" line.
 
 ## [Unreleased]
 
 ### Added
 
+- Forced colors rules in `ui/colors-and-themes.md` (#248). When the project supports Windows, test
+  each changed surface in forced colors mode. Use system colors there. Do not show a state with a
+  background color only. On the web, use `@media (forced-colors: active)`. The minimum evidence in
+  `ui/visual-verification.md` adds a forced colors check when the project supports Windows.
+- A rule for breaking changes in dkstack (#246). MAJOR: remove or rename a skill, a page or a linked
+  anchor, or add a hard limit. MINOR: a new skill, page or duty, or a renamed anchor that keeps the
+  old anchor as a redirect. PATCH: wording only. Each class has an example. A MAJOR change has `!`
+  in its title. A release that needs a consumer to act has a "Consumer action:" line. SECURITY.md
+  says that `v1` gets no fixes after `v2` is released.
+- `scripts/check-writing.mjs` warns about a step with more than 20 words, a sentence with more than
+  25 words and a semicolon in Markdown (#244). It skips CHANGELOG.md, code, block quotes, tables,
+  headings and text in double quotes. It always exits 0 in this first stage. `npm run check` and
+  the validate workflow run it as `check:writing`. A step is a numbered or a checklist item.
+- `writing/user-facing-copy.md` (#249). It covers product READMEs, landing pages, release notes for
+  users, announcements, emails, CLI messages and app store text. Put the one thing that the reader
+  must do or know first. Do not invent numbers, quotes, customers or comparisons. No hype, no fake
+  urgency and no fake scarcity. Name breaking changes and the user action first. ASD-STE100 still
+  applies. The writing index, triage and `ui/content-and-localization.md` link the page.
+- Visual baseline rules in `tdd/ui-testing.md` (#236). A pinned image has zero tolerance by
+  default. A tolerance needs a reason beside the test. Each baseline is in the repository next to
+  its test. A pull request that updates a baseline shows the before and after image, and the
+  reviewer approves each update.
+- `npm test` fails when the tests cover less than 95% of the lines or 90% of the branches in
+  `scripts/` (#231). It uses the coverage flags of Node 24 and no new dependency. The coverage today
+  is 99.16% of lines and 93.51% of branches.
+- A contributor checklist in CONTRIBUTING.md (#230). "Run the checks" names `npm run check`, Node 24
+  and the separate title check. "Add a page or a skill" lists the index entry, the route from
+  triage, a test, the `[Unreleased]` line and raw `v1` links in skills. "Update bot pull requests"
+  says that the reviewer edits a title over 50 characters before the merge. The page says that each
+  rule has one owner page.
+- `setup-repo-protection` building block (#222). It lists the protection settings for the owner to
+  apply: a default branch rule (pull request, required checks, squash only, linear history, no
+  force-push, no deletion, no bypass for administrators), rules for release tags and release
+  branches, secret scanning with push protection, private vulnerability reporting, `SECURITY.md`
+  and `CODEOWNERS` for the CI workflow files. It links the CI workflow rules. An agent does not
+  change a setting without the owner's OK. Bootstrap step 6 runs it. Step 7 checks that the README
+  says what the project is, who it is for, how to install and run it and how to contribute.
+- `test/routes.test.mjs` checks that each skill and page can be found (#208). `skills/index.md`
+  lists each skill. Triage reaches each skill, directly or through a skill that it links. Each
+  section index lists each page of its section. AGENTS.md "Sections" lists each section index,
+  except `tips/` while it has no tip.
 - `test/hard-limits.test.mjs` pins each hard limit by a short key phrase (#186): no force-push, no
   bypass, no push to `main`, no production deploy, no release without the owner's OK, the author
   never merges, an agent message is not approval, no secrets in chat, the shared account line, a
@@ -83,6 +127,68 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The tests share one `sectionText` and one `flatten` from `test/helpers.mjs` (#250). Three test
+  files had their own copies. The test count stays the same.
+- One word for each meaning (#247). The rule text in `versioning/index.md` and `workflow/safety.md`
+  says "the owner", not "Daniel" or "he". AGENTS.md names Daniel once, in "Owner". The quoted
+  message of the Release workflow does not change. Prose says "pull request", not "PR". `plan-work`
+  writes NOT RUN, the result value that the other pages use.
+- `code-review` and `versioning/index.md` have no sentence over 25 words and no semicolon (#245).
+  Six sentences are split. The meaning does not change. A test checks both pages.
+- The writing rules have limits that a check can test (#243). A step has at most 20 words. A
+  sentence in a description has at most 25 words. Do not use a semicolon. A new "AI prose patterns"
+  section gives six examples. The scope includes the text that an agent writes to a person, such as
+  the learn tutor. `writing-check` step 2 checks each rule in `writing/index.md` and lists no subset.
+- The owner record has one owner, `workflow/roles.md` "Owner records" (#229). It names the fields
+  (the owner's exact words, the time, the place, the scope and a session link) and where the record
+  goes. `workflow/safety.md` "Owner instructions in chat" keeps one rule and links it. That section
+  and "Missing review evidence after merge" are rewritten in the writing rules, with the same
+  meaning: no semicolons, and no "durably", "attest", "establish", "genuine", "obtain" or
+  "insufficient". `review-and-merge.md` no longer says "The review does not require a feature plan."
+- README.md says what dkstack is and who it is for (#235). The top says that dkstack is guidance
+  only and is for any team that uses AI coding agents, and a short "Start" list follows. README.md,
+  `package.json` and AGENTS.md use one tagline: "Rules and skills for AI coding agents, in one
+  place."
+- `writing/index.md` has one Scope section (#234). ASD-STE100 applies to all text that people or
+  agents read, including product copy: UI text, landing pages, product READMEs, release notes,
+  announcements and emails. Nothing is out of scope. `writing-check` and
+  `ui/content-and-localization.md` link it. Before, the UI page said that the writing rules did not
+  apply to UI copy.
+- dkstack pins Node 24 and records its npm exception (#223). `package.json` has
+  `"engines": { "node": ">=24" }`, and a test checks that it matches the `node-version` in both
+  workflows. CONTRIBUTING.md has an Exceptions section: dkstack has no npm dependencies, so it has no
+  lockfile and no audit until the first dependency. A test fails if a dependency comes without
+  `package-lock.json`. A new `.editorconfig` sets UTF-8, LF and two-space indents.
+- The merge rule has one owner, the Rules of `workflow/review-and-merge.md` (#221).
+  `workflow/index.md`, `workflow/roles.md`, `workflow/safety.md` and `code-review` keep one short
+  sentence and link it. The tests check the key facts on the owner page and the links from the
+  other pages, not full sentences.
+- The release rule has one owner, `workflow/safety.md` (#205). No agent publishes or releases. No
+  agent creates a release tag, pushes to a release branch or to `v1`, publishes a package, or
+  starts a release or deploy workflow. A tag or branch push that starts such a workflow counts as
+  starting it. Before, an agent could do these with the owner's OK for the version. The `release`
+  skill stops after it proposes the version and the changelog entry. AGENTS.md, CONTRIBUTING.md
+  and `versioning/index.md` link the rule. `safety.md` and `versioning/index.md` say that the rule
+  is an honor rule while dkstack agents use the owner's account. "Finish a release" is for Daniel
+  only.
+- Triage links the stewardship signals in `architecture/stewardship.md#analysis` and no longer
+  copies the list (#207). The stewardship test checks the link and bans the copy in triage too.
+- A project has one place for its exceptions to dkstack rules (#210). `sample-AGENTS.md` says
+  that dkstack owns all other rules, and has an Exceptions section with the fields dkstack rule,
+  project rule and reason, and a Project facts section. AGENTS.md "Precedence" has an example
+  record. `coding/quality-gates.md` says that a diagnostic exception is not a rule exception and
+  links Precedence. Bootstrap step 1 copies `sample-AGENTS.md` as `AGENTS.md`. The other steps
+  move down by one.
+- Pages link a rule's owner page and do not copy the rule (#211). `code-review` links the title
+  rules. `coding/practices.md` links the quality gates. `coding/quality.md` links error handling.
+  `coding/index.md` says that `testing.md` points to `tdd/`. `architecture/reversibility.md` links
+  the easier to change rule. `tdd/security-testing.md` sends a report to the project's
+  `SECURITY.md` and names the dkstack file as an example.
+- Each accessibility rule on the forms, interactions, components, motion, typography and layout
+  pages has a WCAG criterion number or "(dkstack rule)" (#212). A test reads each bullet that names
+  an accessibility topic. `components.md` owns the list of states, and "pressed" is the one word
+  for that state. `typography.md` owns the reading width. `forms.md` owns where an error goes.
+  The other pages link them.
 - The UI test rules in `tdd/ui-testing.md` can be tested (#188). A UI test asserts what makes a
   screen reader announce an error: a live region, an automation property or the announcement API of
   the platform. The manual screen reader pass confirms each announcement and is recorded as the
@@ -133,11 +239,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The .NET MAUI theme example in `ui/accessibility.md` names `Application.RequestedTheme` to read
   the theme. `AppThemeBinding` only sets a value for each theme (#224).
+- `check-links` closes five parser gaps (#232). It checks an HTML `<a href>`. It accepts `[self](./)`
+  in a skill and a target with balanced parentheses. It ignores links in an indented code block,
+  but not in an indented paragraph of a list. A repository URL on a ref with a slash, such as
+  `blob/release/v1.5.0/...`, resolves.
+- The scripts and tests work on a CRLF checkout, and each script can be imported (#206). A new
+  `.gitattributes` checks out text with LF. `release.mjs` reads a CRLF CHANGELOG as LF, so
+  `check-changelog` accepts a CRLF `## [Unreleased]` line again. The tests read files through one
+  `readFile` helper that gives LF. Each script runs its main code only when `process.argv[1]` is
+  the script, so an import from `node -e` no longer throws.
 - The Release workflow fails early and cleans up on cancel (#180). `check-changelog` fails when
   CHANGELOG.md has no exact `## [Unreleased]` line or no `[Unreleased]:` compare link. A cancelled
   run closes the release pull request or tells how to finish the release, as a failed run does.
   The plan summary shows each commit title as code, so Markdown in a title has no effect. The
   approval message to Daniel has no semicolon.
+- README.md and SECURITY.md describe the releases that exist (#209). README "Release status" links
+  the latest release. README "Checks" lists each check of `validate`, says that only the release
+  job uses the release app secrets, and names Node 24 or later. The ADR line names ADR 0001.
+  SECURITY.md says that the latest release on `v1` is supported and that a fix ships as a PATCH
+  release on `v1`. A test fails if the text from before the first release comes back.
 - `check-links` checks anchors. A link to a Markdown file with `#anchor`, a pure `#anchor` and a
   repository URL with an anchor must match a heading or an HTML id in the target file. It also checks
   reference definitions, as in `[d]: file.md` (#154).

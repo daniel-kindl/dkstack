@@ -11,7 +11,7 @@ Prefer designs that keep options open.
 - Isolate decisions behind clear boundaries.
 - Prefer configuration or composition over hard-coded choices.
 - Do not embed assumptions that are expensive to unwind.
-- Choose the option that is cheaper to change when two options are otherwise equal.
+- When two options both work, use the [easier to change](index.md#easier-to-change) rule.
 - Delay irreversible decisions until you have more information.
 
 ## Good example

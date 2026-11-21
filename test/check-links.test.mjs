@@ -349,3 +349,41 @@ test("a link to exactly .. leaves the repository", async () => {
   const result = await linksFor({ "README.md": "[up](..)\n" });
   assert.deepEqual(result.errors, ["README.md:1: link leaves the repository .."]);
 });
+
+// FRG-6 in #154: gaps of the link parser.
+test("an HTML a href is checked like a link", async () => {
+  const result = await linksFor({
+    "README.md": '# R\n\n<a href="docs/missing.md">x</a> and <a href="LICENSE">y</a>\n',
+    "LICENSE": "x\n",
+  });
+  assert.deepEqual(result.errors, ["README.md:3: broken link docs/missing.md"]);
+});
+
+test("a skill can link its own folder with ./", async () => {
+  const result = await linksFor({ "skills/s/SKILL.md": "# S\n\nSee [self](./) and [self](.).\n" });
+  assert.deepEqual(result.errors, []);
+});
+
+test("a link in an indented code block is ignored, and a link in a nested list is checked", async () => {
+  const result = await linksFor({
+    "README.md": "# R\n\nText.\n\n    [a](missing-code.md)\n\n- item\n\n    [b](missing-list.md)\n",
+  });
+  assert.deepEqual(result.errors, ["README.md:9: broken link missing-list.md"]);
+});
+
+test("a target with balanced parentheses is read whole", async () => {
+  const result = await linksFor({
+    "README.md": "# R\n\n[a](file_(1).md) and [b](gone_(2).md)\n",
+    "file_(1).md": "x\n",
+  });
+  assert.deepEqual(result.errors, ["README.md:3: broken link gone_(2).md"]);
+});
+
+test("a repository URL on a ref with a slash, such as release/v1.5.0, resolves", async () => {
+  const result = await linksFor({
+    "README.md": "# R\n\n[a](https://github.com/daniel-kindl/dkstack/blob/release/v1.5.0/LICENSE) "
+      + "[b](https://github.com/daniel-kindl/dkstack/blob/release/v1.5.0/missing.md)\n",
+    "LICENSE": "x\n",
+  });
+  assert.deepEqual(result.errors, ["README.md:3: broken link https://github.com/daniel-kindl/dkstack/blob/release/v1.5.0/missing.md"]);
+});

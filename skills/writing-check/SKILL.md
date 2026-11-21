@@ -1,18 +1,18 @@
 ---
 name: writing-check
-description: "Use when you write or edit text that people or agents will read, such as docs, comments, commit messages or PR bodies. Applies the ASD-STE100 writing rules."
+description: "Use when you write or edit text that people or agents will read, such as docs, comments, commit messages, pull request bodies or product copy. Applies the ASD-STE100 writing rules."
 ---
 
 # Writing check
 
 Use when you write or edit text that agents or humans will read.
 
-Apply the rules from [writing/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md).
+Apply the rules from [writing/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md) to each kind of text in its [scope](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md#scope).
 
 ## Steps
 
 1. Read the text.
-2. Check against the rules: short sentences, active voice, one word per meaning, imperative steps, no em dashes, no filler.
+2. Check the text against each rule in [writing/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md#rules), and against the [AI prose patterns](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md#ai-prose-patterns).
 3. Rewrite any sentence that violates a rule.
 4. Remove words that do not add meaning.
 

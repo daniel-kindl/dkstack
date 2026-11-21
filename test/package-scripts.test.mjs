@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile } from "./helpers.mjs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -68,4 +68,42 @@ test("validate checks the pull request title and each pushed commit title", () =
   assert.match(push, /BEFORE: \$\{\{ github\.event\.before \}\}/);
   assert.match(push, /git log --format=%s "\$BEFORE\.\.\$GITHUB_SHA"/);
   assert.match(push, /node scripts\/check-title\.mjs "\$title"/);
+});
+
+// FRG-11, SEN-19 and SCR-16 in #154: one Node version in package.json and in
+// each workflow, and no dependency without a lockfile.
+test("engines.node matches the node-version of each workflow", async () => {
+  assert.equal(pkg.engines?.node, ">=24");
+  for (const file of ["validate.yml", "release.yml"]) {
+    const text = await readFile(join(repoRoot, ".github/workflows", file), "utf8");
+    const versions = [...text.matchAll(/node-version: (\S+)/g)].map((m) => m[1]);
+    assert.ok(versions.length > 0, `${file} sets node-version`);
+    for (const v of versions) assert.equal(`>=${v}`, pkg.engines.node, `${file}: node-version ${v}`);
+  }
+});
+
+test("a dependency needs a lockfile, and CONTRIBUTING.md records the exception until then", async () => {
+  const { readdir } = await import("node:fs/promises");
+  const files = await readdir(repoRoot);
+  const deps = Object.keys({ ...pkg.dependencies, ...pkg.devDependencies });
+  if (deps.length > 0) assert.ok(files.includes("package-lock.json"), "add package-lock.json with the first dependency");
+  const contributing = (await readFile(join(repoRoot, "CONTRIBUTING.md"), "utf8")).replace(/\s+/g, " ");
+  assert.ok(contributing.includes("dkstack has no npm dependencies, so it has no lockfile and no audit. Add both with the first dependency."));
+});
+
+test("the repository has an .editorconfig with LF line endings", async () => {
+  const text = await readFile(join(repoRoot, ".editorconfig"), "utf8");
+  assert.match(text, /^root = true$/m);
+  assert.match(text, /^end_of_line = lf$/m);
+});
+
+// FRG-M6 in #154: npm test fails when the scripts lose coverage. Node reads
+// each threshold as a whole number.
+test("npm test gates the coverage of scripts/ at 95% of lines and 90% of branches", () => {
+  const command = pkg.scripts.test;
+  for (const flag of ["--experimental-test-coverage", "--test-coverage-include='scripts/**'",
+    "--test-coverage-lines=95", "--test-coverage-branches=90"]) {
+    assert.ok(command.includes(flag), flag);
+  }
+  assert.match(command, /test\/\*\.test\.mjs$/);
 });

@@ -18,9 +18,8 @@ These rules prevent real damage in a shared repository. Read them before you cha
    [issues.md](issues.md).
 2. The implementer, architect or writer does the work on one branch and opens one pull request.
 3. The reviewer reviews the pull request.
-4. The reviewer merges only the head that they reviewed, and only when the review passes, all
-   required checks are green, and the code host shows the pull request as ready to merge with no
-   rule bypassed. The author never merges. The [human owner](roles.md#human-owner) may also merge.
+4. The reviewer merges as the [merge rule](review-and-merge.md#rules) says. The author never
+   merges. The [human owner](roles.md#human-owner) may also merge.
 
 Related: [version-control/index.md](../version-control/index.md),
 [CONTRIBUTING.md](../CONTRIBUTING.md).

@@ -86,11 +86,11 @@ test("each missing part gives its own message", async () => {
   assert.deepEqual(await forText("## [0.9.0]\n"), [NO_HEADING, NO_LINK, ...missing("1.0.0")]);
 });
 
-// M1 on #189: release.mjs splits the file on "\n" and needs the exact line.
-// A CRLF heading line fails here, so that it does not fail the Release run.
-test("a CRLF Unreleased heading line fails, as release.mjs needs the exact line", async () => {
+// M1 on #189 and FRG-3 in #154: release.mjs reads a CRLF file as LF, so the
+// check accepts a CRLF Unreleased line too. Both sides agree.
+test("a CRLF Unreleased heading line passes, and release.mjs accepts the same text", async () => {
   const text = "## [Unreleased]\r\n\r\n## [1.0.0] - 2026-10-28\r\n\r\n[Unreleased]: https://example.com\r\n";
-  assert.deepEqual(await forText(text), [NO_HEADING]);
+  assert.deepEqual(await forText(text), []);
   const { releaseChangelog } = await import("../scripts/release.mjs");
-  assert.throws(() => releaseChangelog(text, { version: "1.0.1", previous: "1.0.0", date: "2026-11-21", commits: [] }), /no "## \[Unreleased\]" section/);
+  assert.doesNotThrow(() => releaseChangelog(text, { version: "1.0.1", previous: "1.0.0", date: "2026-11-21", commits: [] }));
 });

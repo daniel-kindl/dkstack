@@ -1,7 +1,7 @@
 # Motion
 
 - Use motion only to show a change of state, a relation or feedback. Motion must not hide an action or delay it.
-- Follow the reduced motion setting of the platform. Give a static alternative to essential motion. This is a dkstack rule. WCAG 2.3.3 is level AAA and is not part of the AA baseline.
+- Follow the reduced motion setting of the platform. Give a static alternative to essential motion (dkstack rule). WCAG 2.3.3 is level AAA and is not part of the AA baseline.
 - Do not use continuous decorative animation, long entrance sequences or layout movement that has no purpose.
 - A transition does not block interaction, accessibility or automated tests.
 - Meet the pause and flash rules in [accessibility](accessibility.md#content-and-changes).

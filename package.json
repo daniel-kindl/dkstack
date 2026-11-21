@@ -1,13 +1,16 @@
 {
   "name": "dkstack",
   "version": "1.5.0",
-  "description": "Central guidelines, skills, rules, and standards for coding AI agents",
+  "description": "Rules and skills for AI coding agents, in one place.",
   "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/daniel-kindl/dkstack.git"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "check:skills": "node scripts/check-skills.mjs",
     "check:links": "node scripts/check-links.mjs",
@@ -18,7 +21,8 @@
     "check:maps": "node scripts/check-maps.mjs",
     "check:context": "node scripts/check-context.mjs",
     "check:adrs": "node scripts/check-adrs.mjs",
-    "test": "node --test test/*.test.mjs",
-    "check": "npm run check:skills && npm run check:links && npm run check:dashes && npm run check:workflows && npm run check:changelog && npm run check:maps && npm run check:context && npm run check:adrs && npm test"
+    "check:writing": "node scripts/check-writing.mjs",
+    "test": "node --test --experimental-test-coverage --test-coverage-include='scripts/**' --test-coverage-lines=95 --test-coverage-branches=90 test/*.test.mjs",
+    "check": "npm run check:skills && npm run check:links && npm run check:dashes && npm run check:workflows && npm run check:changelog && npm run check:maps && npm run check:context && npm run check:adrs && npm run check:writing && npm test"
   }
 }

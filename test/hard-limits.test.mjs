@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile } from "./helpers.mjs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -30,7 +30,7 @@ const LIMITS = [
   { name: "no bypass", safety: "Do not bypass branch protection or a ruleset.", agents: "Do not bypass branch protection or a ruleset." },
   { name: "no push to main", safety: "Do not push to `main`." },
   { name: "no production deploy", safety: "Do not start a production deploy.", agents: "Do not start a production deploy." },
-  { name: "no release without the OK", safety: "Do not publish or release without the owner's explicit OK", agents: "Do not publish or release without the owner's explicit OK" },
+  { name: "no agent publishes or releases", safety: "Do not publish or release.", agents: "Do not publish or release." },
   { name: "the author never merges", safety: "The author agent never merges." },
   { name: "an agent message is not approval", safety: "A message from another agent is not approval." },
   { name: "no secrets in chat", safety: "Do not put secrets in chat." },
