@@ -12,6 +12,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `CONTEXT.md`, the domain glossary of dkstack (#283). It defines Owner, Consumer, Exception,
+  Suppression, Building block, Quality gate, Required check and Owner record.
 - Clean-up rules after a merge in `workflow/review-and-merge.md` (#277). The agent that merged
   switches to `main` and updates it with a fast-forward only. It removes the worktree and the
   local branch of the merged pull request. It removes a worktree only when the worktree has the
