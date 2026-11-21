@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Format checks (#174). `scripts/check-maps.mjs` checks the maps in `docs/maps/`.
+  `scripts/check-context.mjs` checks the `CONTEXT.md` format, duplicate terms and terms on an
+  `_Avoid_:` line. `scripts/check-adrs.mjs` checks that each added ADR has a known `Status:`, an
+  `Affects:` line whose globs match files, and an existing Superseded by target. Its `--review`
+  mode lists the ADRs that a reviewer must read and always exits 0. Each script prints
+  `path:line: message`, exits 0, 1 or 2, and has no dependencies. A missing `docs/maps/` or
+  `CONTEXT.md` is a pass. `npm run check` and the validate workflow run them, and the workflow
+  fetches the full history for `check-adrs`. `setup-quality-gates` copies the scripts from a fixed
+  release tag and makes them required. `write-adr` runs `check-adrs` before a pull request.
 - ADR findings (#173). Code that contradicts an Accepted ADR is High and blocks the merge. The
   finding quotes the ADR line and the code line, or it is a question. A newer ADR that supersedes
   the old ADR clears it. A new ADR has a `Status:` line and an `Affects:` line. An old ADR with no

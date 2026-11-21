@@ -68,3 +68,18 @@ test("setup-editorconfig sets LF line endings in .gitattributes", async () => {
 test("the setup-quality-gates CI step runs on every pull request", async () => {
   assert.match(await step(2, "setup-quality-gates"), /every pull request/);
 });
+
+// The format checks of #174. A consumer copies them from a fixed release tag.
+test("setup-quality-gates copies the three format checks from a pinned tag and makes them required", async () => {
+  const four = (await step(4, "setup-quality-gates")).replace(/\s+/g, " ");
+  for (const name of ["check-maps.mjs", "check-context.mjs", "check-adrs.mjs"]) {
+    assert.ok(four.includes(`\`${name}\``), `step 4 must name ${name}`);
+  }
+  assert.match(four, /from a fixed dkstack release tag, for example `v1\.6\.0`/);
+  assert.match(four, /Do not copy them from `main`, from `v1` or from a URL at run time\./);
+  assert.match(four, /The checks are required\. A failed check blocks the merge\./);
+  assert.match(four, /A missing `docs\/maps\/` folder or a missing `CONTEXT\.md` is a pass\./);
+  assert.match(four, /Do not change the copied scripts\./);
+  const two = await step(2);
+  assert.match(two, /copy the dkstack format checks/);
+});

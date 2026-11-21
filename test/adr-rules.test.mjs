@@ -71,3 +71,9 @@ test("ADR 0001 has no Affects line", async () => {
   const text = await readFile(join(repoRoot, "docs/adr/0001-how-consumers-follow-versions.md"), "utf8");
   assert.doesNotMatch(text, /Affects:/);
 });
+
+test("write-adr runs check-adrs before it opens a pull request", async () => {
+  const text = await read("skills/write-adr/SKILL.md");
+  assert.match(text, /5\. Before you open a pull request, run `check-adrs`/);
+  assert.match(text, /Fix each finding\./);
+});

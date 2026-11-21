@@ -1,6 +1,6 @@
 ---
 name: setup-quality-gates
-description: "Use when a repository lets warnings pass, has no CI or has checks that are not deterministic. One block of bootstrap. Makes warnings errors, sets up CI on every push and pull request and makes the checks deterministic."
+description: "Use when a repository lets warnings pass, has no CI or has checks that are not deterministic. One block of bootstrap. Makes warnings errors, sets up CI on every push and pull request, makes the checks deterministic and copies the dkstack format checks."
 user-invocable: false
 ---
 
@@ -28,3 +28,11 @@ A building block of [bootstrap](https://raw.githubusercontent.com/daniel-kindl/d
      Configure naming rules that native tools can check reliably, such as supported Roslyn,
      ESLint or Ruff rules. Run those checks in CI as errors. An `.editorconfig` file alone does
      not enforce naming in every language. Leave unsupported or semantic rules to review.
+
+4. Copy the dkstack format checks:
+   - Copy `check-maps.mjs`, `check-context.mjs` and `check-adrs.mjs` into `scripts/` from a fixed dkstack release tag, for example `v1.6.0`. The source URL is `https://raw.githubusercontent.com/daniel-kindl/dkstack/<tag>/scripts/<name>`. Do not copy them from `main`, from `v1` or from a URL at run time. See [ADR 0001](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/docs/adr/0001-how-consumers-follow-versions.md).
+   - Write the tag in a comment next to the checks in CI, so that a later update knows the source.
+   - Add the three checks to CI. The checks are required. A failed check blocks the merge.
+   - The scripts need Node.js and no package. `check-adrs.mjs` compares the change with the default branch, so CI fetches the history of that branch. If the default branch is not `main`, give it with `--base`.
+   - A missing `docs/maps/` folder or a missing `CONTEXT.md` is a pass. The repository may not have them yet.
+   - Do not change the copied scripts. To update them, copy them again from a newer tag.
