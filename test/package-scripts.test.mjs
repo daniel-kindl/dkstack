@@ -134,9 +134,11 @@ test("the repository has an .editorconfig with LF line endings", async () => {
 // each threshold as a whole number.
 test("npm test gates the coverage of scripts/ at 95% of lines and 90% of branches", () => {
   const command = pkg.scripts.test;
-  for (const flag of ["--experimental-test-coverage", "--test-coverage-include='scripts/**'",
+  for (const flag of ["--experimental-test-coverage", "--test-coverage-include=scripts/**",
     "--test-coverage-lines=95", "--test-coverage-branches=90"]) {
     assert.ok(command.includes(flag), flag);
   }
   assert.match(command, /test\/\*\.test\.mjs$/);
+  // The Low on #242: cmd.exe passes quotes on as text, and then no file matches.
+  assert.doesNotMatch(command, /['"]/);
 });
