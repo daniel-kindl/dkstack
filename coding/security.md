@@ -12,7 +12,7 @@ Protect data and limit damage.
 - Log each failed sign-in and each denied access at Warning. Include the opaque user ID and the outcome. Do not log the credential, the token or other personal data.
 - If no account matches, do not log the submitted name. Log `outcome=unknown_account` with no user ID. Return the same response for an unknown account and a wrong credential.
 - Do not alert on one event. Alert on a pattern, such as repeated failures for one account or from one source.
-- If a secret leaks, tell the owner and rotate it. Deleting the text does not make it safe.
+- If a secret leaks, tell the owner and rotate it. Deleting the text does not make it safe. Follow [If a secret leaks](#if-a-secret-leaks).
 - Use the least privilege that works.
 - Do not trust data from outside the system.
 - Prefer safe defaults.
@@ -49,6 +49,26 @@ A release or deploy workflow is safe only when all of these are true:
 - It sets `concurrency`, so that two runs do not overlap.
 - It uses a short-lived token with the least scope, such as a GitHub App token for one
   repository.
+
+## If a secret leaks
+
+Do these steps in this order when a token, a key or a password is in code, a commit, a log, an
+issue, pull request text or chat. The owner, or a person that the owner names, does steps 2 and 3.
+An agent does not change a secret or a setting without the owner's OK. See
+[safety](../workflow/safety.md).
+
+1. Tell the owner at once. Say where the secret is. Do not copy the secret into the message.
+2. Revoke the secret at the service that issued it, so that it stops working. Do this before you
+   remove the text.
+3. Rotate the secret: make a new one and put it only in the protected store, such as the CI
+   environment. For the dkstack release app key, follow "To change a key" in
+   [versioning](../versioning/index.md#one-time-setup).
+4. Read the audit log of the service and of the code host from the time of the leak. Look for
+   each action that used the secret.
+5. Read the secret scanning alerts of the repository. Close an alert only after the secret is
+   revoked.
+6. Record the event in an issue: what leaked, where and when, what was revoked and rotated, and
+   what the audit log showed. Do not put the secret in the record.
 
 ## Good example
 

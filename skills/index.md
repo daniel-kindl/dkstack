@@ -25,7 +25,7 @@ A building block does one job. A larger skill, such as `code-review` or `bootstr
 ## Current skills
 
 - [triage](triage/SKILL.md) (agent): Decide which guidelines and skills apply to the current task. Read this first.
-- [bootstrap](bootstrap/SKILL.md) (both): Set up conventional commits, branches, semver, strict editorconfig, warnings-as-errors, and deterministic checks.
+- [bootstrap](bootstrap/SKILL.md) (both): Set up conventional commits, short-lived branches, semver, strict editorconfig, warnings as errors, deterministic checks and supply chain rules.
   - [setup-editorconfig](setup-editorconfig/SKILL.md) (agent): Strict editor settings and LF line endings.
   - [setup-quality-gates](setup-quality-gates/SKILL.md) (agent): Warnings as errors, CI and deterministic checks.
   - [setup-versioning](setup-versioning/SKILL.md) (agent): Commit and branch rules, semantic versioning and a changelog.
@@ -46,6 +46,6 @@ A building block does one job. A larger skill, such as `code-review` or `bootstr
 - [plan-work](plan-work/SKILL.md) (both): Plan a goal as small, reviewable increments with tests first.
 - [chart-route](chart-route/SKILL.md) (both): Settle a large, unclear effort in a map in `docs/maps/`, one question per session, then hand off to `plan-work`.
 - [release](release/SKILL.md) (user): Prepare a release. Link the versioning and safety rules. Do not publish.
-- [learn](learn/SKILL.md) (both): Teach, practice, assess and review any topic with an adaptive curriculum.
+- [learn](learn/SKILL.md) (both): Teach, practice, assess and review any topic with an adaptive curriculum. The rules are in [learning/](../learning/index.md).
 - [ui-design](ui-design/SKILL.md) (both): Make or change a rendered UI and check the rendered result.
 - [ui-review](ui-review/SKILL.md) (both): Review a rendered UI and report through code-review.

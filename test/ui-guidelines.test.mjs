@@ -90,9 +90,16 @@ test("ui-review is read-only and reports through code-review", async () => {
   assert.ok(steps.includes(`(${raw}/ui/visual-verification.md)`));
 });
 
-test("the UI defaults apply only when the project has no design system", async () => {
+test("the UI defaults fill only the areas that the project's design system does not cover", async () => {
   const systems = await document("ui/design-systems.md");
-  assert.ok(section(systems, "## Defaults").includes("The defaults on the ui/ pages apply only when the project has no design system. The project's system always wins."));
+  // IRIS-5 and IRIS-7 in #154: the project's system wins over the Defaults
+  // sections only. A default fills an area that the system does not cover.
+  const defaults = section(systems, "## Defaults").replace(/\s+/g, " ");
+  assert.ok(defaults.includes("The project's system wins over the Defaults sections only."));
+  assert.ok(defaults.includes("when the project's system does not cover that area"));
+  assert.ok(defaults.includes('"(dkstack rule)"'));
+  assert.ok(defaults.includes("[Precedence](../AGENTS.md#precedence)"));
+  assert.doesNotMatch(defaults, /always wins/);
   const pages = {
     "ui/typography.md": "## Defaults",
     "ui/colors-and-themes.md": "## Defaults",
