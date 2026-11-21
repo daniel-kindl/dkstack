@@ -25,8 +25,8 @@ formatter only to change brace placement. Do not reformat unrelated code.
 
 ## Configuration and enforcement
 
-EditorConfig has no standard brace-placement property. A comment records the preference;
-it does not enforce it. Tool-specific properties work only when the selected tool supports
+EditorConfig has no standard brace-placement property. A comment records the preference.
+It does not enforce it. Tool-specific properties work only when the selected tool supports
 them. See [EditorConfig supported properties](https://editorconfig.org/#supported-properties).
 
 For C# with a formatter that reads Roslyn settings, add this section to `.editorconfig`:

@@ -211,8 +211,9 @@ test("the accessibility page covers each WCAG 2.2 A and AA criterion", async () 
 test("forms state the AA rules of 3.3.8 and 3.3.4", async () => {
   const forms = await document("ui/forms.md");
   assert.ok(forms.includes("must also give a help or an alternative. Paste and password managers are a help (3.3.8)."));
-  const submit = line(forms, "- For a submit that makes a legal commitment");
-  for (const phrase of ["a financial transaction", "changes or deletes user data", "sends test responses", "(3.3.4)"]) {
+  const submit = line(forms, "- Some submits make a legal commitment");
+  for (const phrase of ["a financial transaction", "change or delete user data", "send test responses",
+    "For each such submit, give an undo", "a confirmation step (3.3.4)"]) {
     assert.ok(submit.includes(phrase), `missing: ${phrase}`);
   }
 });

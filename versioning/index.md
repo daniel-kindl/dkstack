@@ -41,12 +41,12 @@ These steps are for the dkstack repository only. A consumer repository does not 
 dkstack releases follow [ADR 0001](../docs/adr/0001-how-consumers-follow-versions.md), option C2.
 The `Release` workflow ([release.yml](../.github/workflows/release.yml)) does the full release.
 
-Only the owner starts the `Release` workflow. The workflow has two jobs. The `plan` job is read-only.
-It works out the version and shows it in the run summary. The `release` job does all the writes.
-It runs in the `release` environment, so it waits until the owner approves it. The owner's OK for a
-release is two actions. The owner starts `Release`. Then the owner reads the planned version in the run summary
-and approves the `release` environment. No bot starts the workflow or approves the
-environment. [Safety](../workflow/safety.md) owns the release rule.
+Only the owner starts the `Release` workflow. The workflow has two jobs. The `plan` job is
+read-only. It works out the version and shows it in the run summary. The `release` job does all the
+writes. It runs in the `release` environment, so it waits until the owner approves it. The owner's
+OK for a release is two actions. The owner starts `Release`. Then the owner reads the planned
+version in the run summary and approves the `release` environment. No bot starts the workflow or
+approves the environment. [Safety](../workflow/safety.md) owns the release rule.
 
 dkstack agents use the owner's account today (D1 in
 [#154](https://github.com/daniel-kindl/dkstack/issues/154)). The rulesets and the `release`
@@ -125,8 +125,8 @@ The `release` job starts only after the owner approves the environment. Its step
    a pull request to `main`. The app opens it, so the normal `pull_request` run of `validate`
    starts.
 5. It waits for this run of `validate`. If the run waits for approval, the job waits up to 15
-   minutes for the owner to approve it. Only the owner approves it. No agent and no job approves it. See
-   [If validate waits for approval](#if-validate-waits-for-approval).
+   minutes for the owner to approve it. Only the owner approves it. No agent and no job approves
+   it. See [If validate waits for approval](#if-validate-waits-for-approval).
 6. It makes sure that `main` did not move and that `protect-main` lets the pull request merge.
    Then it squash-merges the pull request, only at the validated commit. `protect-main` applies
    in full.

@@ -25,7 +25,7 @@ Test most user interface (UI) behavior below the UI. Use a few UI tests for the 
 
 - For labels and state in presentation logic, follow [presentation logic](#presentation-logic).
 - In the UI tests, find controls by role and accessible name.
-- For each error, assert what makes a screen reader announce it: a live region on the web, an automation property on native UI, or a call to the announcement API of the platform. A test cannot hear the announcement. The manual pass confirms it.
+- For each error, assert what makes a screen reader announce it. This is a live region on the web, an automation property on native UI or a call to the announcement API of the platform. A test cannot hear the announcement. The manual pass confirms it.
 - Run the automated accessibility checker of the platform in the UI tests. Examples are axe-core on the web, the Accessibility Test Framework on Android and `performAccessibilityAudit` in XCUITest on iOS.
 - An automated checker does not find all problems. Then do the manual checks: a keyboard walk-through, a screen reader pass that confirms each announcement, the largest text size and a contrast measurement.
 - Record each manual check as the [minimum evidence](../ui/visual-verification.md#minimum-evidence) says.

@@ -18,8 +18,8 @@ action with the owner's OK. Only then can an agent do it.
   The author agent never merges. See the [merge rule](review-and-merge.md#rules). Reason: every
   merge needs an independent review.
 - Do not publish or release. Only the owner does it, or a release run that the owner starts.
-  No agent creates a release tag, pushes to a release branch or to `v1`, publishes a package, or
-  does an action that starts a release or deploy workflow. A push of a tag or a branch that
+  No agent creates a release tag or pushes to a release branch or to `v1`. No agent publishes a
+  package or does an action that starts a release or deploy workflow. A push of a tag or a branch that
   starts such a workflow counts as starting it. An agent can prepare a release and propose the
   version. See [ADR 0001](../docs/adr/0001-how-consumers-follow-versions.md). Reason: only the
   human owner decides when to publish.

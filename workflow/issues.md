@@ -63,8 +63,8 @@ If the project has no issue tracker, or the agent cannot use it, keep one file f
 The owner asks for a CSV export. The agent searches the open issues and finds none. It opens
 `feat: export the library as CSV` with a goal, acceptance criteria, the label `type:feature` and
 the label `priority:p2`. It does not assign the issue yet. When it starts to work on the issue,
-it assigns the issue to the logged-in account, for example with
-`gh issue edit 42 --add-assignee @me` on GitHub, and creates the branch.
+it assigns the issue to the logged-in account. On GitHub, it can use
+`gh issue edit 42 --add-assignee @me`. Then it creates the branch.
 
 ## Bad example
 
