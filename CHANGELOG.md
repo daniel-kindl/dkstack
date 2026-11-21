@@ -83,6 +83,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Pages link a rule's owner page and do not copy the rule (#211). `code-review` links the title
+  rules. `coding/practices.md` links the quality gates. `coding/quality.md` links error handling.
+  `coding/index.md` says that `testing.md` points to `tdd/`. `architecture/reversibility.md` links
+  the easier to change rule. `tdd/security-testing.md` sends a report to the project's
+  `SECURITY.md` and names the dkstack file as an example.
 - The UI test rules in `tdd/ui-testing.md` can be tested (#188). A UI test asserts what makes a
   screen reader announce an error: a live region, an automation property or the announcement API of
   the platform. The manual screen reader pass confirms each announcement and is recorded as the

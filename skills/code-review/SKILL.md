@@ -58,7 +58,7 @@ Find the specification with the [sources](https://raw.githubusercontent.com/dani
 
 Check against [workflow/review-and-merge.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md) and [version-control/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/version-control/index.md):
 
-- The title is a conventional commit with 50 characters or fewer. Count Unicode code points. Do not count the ` (#NN)` suffix.
+- The title is a conventional commit that follows the [title rules](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/version-control/index.md#rules).
 - The body links the issue.
 - The body lists the tests that prove the behavior and names each check that did not run as NOT RUN.
 - The pull request is one logical change from one issue.
