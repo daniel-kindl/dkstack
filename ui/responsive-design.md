@@ -1,6 +1,7 @@
 # Responsive design
 
-- Identify the supported devices, orientations, display scales and input methods. Do not use web breakpoints in native apps.
+- Identify the supported devices, orientations, display scales and input methods.
+- Do not copy web breakpoint values into native apps. Use the platform's adaptive layout tools and window size classes.
 - Check the widths in the [minimum evidence](visual-verification.md#minimum-evidence). Do not test each combination of device and state.
 - Keep critical tasks available with no horizontal clipping and no hidden controls.
 - Do not require hover for essential information or actions. Keep the reading and focus order when the layout changes.

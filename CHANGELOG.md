@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A "Native equivalents" table in `ui/accessibility.md` (#187). It gives examples for a live
+  announcement, an accessible name, a heading, the language and the theme on Avalonia, .NET MAUI,
+  Android and iOS. The rows are examples, not requirements. `ui/responsive-design.md` says not to
+  copy web breakpoint values into native apps, and to use the platform's adaptive layout tools and
+  window size classes.
 - `chart-route` skill (#175). It settles a large, unclear effort in a map in `docs/maps/<slug>.md`,
   one question per session, and hands off to `plan-work`. It plans and never builds. A question is
   owner, research, prototype or task. Each answer is recorded once: an ADR, a `CONTEXT.md` entry or
