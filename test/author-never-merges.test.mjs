@@ -35,11 +35,11 @@ test("the review Rules own the full merge gate", async () => {
   }
 });
 
-test("the role Rules say that the author must not merge, and link the merge gate", async () => {
-  const rules = flatten(sectionText(await page("workflow/roles.md"), "## Rules"));
-  assert.ok(rules.includes("the author must not review, approve or merge their own pull request"));
-  assert.match(rules, OWNER_LINK);
-  assert.doesNotMatch(rules, /all merge checks pass/);
+// #191: the author rule moved from roles.md to the review Rules.
+test("the review Rules say that the author must not review, approve or merge their own pull request", async () => {
+  const rules = flatten(sectionText(await page("workflow/review-and-merge.md"), "## Rules"));
+  assert.ok(rules.includes("The author must not review, approve or merge their own pull request."));
+  assert.ok(rules.includes("a second agent finds errors that the author does not see"));
 });
 
 test("the Flow merge step says that the author never merges, and links the merge gate", async () => {

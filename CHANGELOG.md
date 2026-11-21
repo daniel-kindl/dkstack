@@ -249,6 +249,18 @@ change that a consumer must act on has a "Consumer action:" line.
   weekly and update titles that pass the title check. `bootstrap` step 7 links them, and step 1 adds
   `.gitattributes` with LF line endings (#154).
 
+### Removed
+
+- The agent roles and `workflow/roles.md` (#191). An agent does not get a role such as implementer,
+  reviewer, architect, writer or coordinator. The task and the skills that triage selects tell the
+  agent what to do. The kept rules moved. The author rule is in the Rules of
+  `workflow/review-and-merge.md`: the author must not review, approve or merge their own pull
+  request. The human owner, the owner records with the relay rule, and the rule that the owner
+  approves material scope changes and every release are in `workflow/safety.md`. The workflow flow
+  and `review-spec` name no role.
+  Consumer action: if your project links `workflow/roles.md`, link `workflow/safety.md#human-owner`
+  or `workflow/review-and-merge.md#rules` in its place.
+
 ### Fixed
 
 - The coverage glob in `npm test` has no quotes. In `cmd.exe` the quotes stayed in the value, so
