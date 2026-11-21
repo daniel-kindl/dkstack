@@ -18,8 +18,8 @@ Create an Architecture Decision Record using [architecture/adrs.md](https://raw.
    - Options considered
    - Decision
    - Consequences
-3. Store it with the code it affects.
-4. Do not rewrite old ADRs. Add a new one if the decision changes.
+3. Store it as the [place and name](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/adrs.md#place-and-name) rule says.
+4. Do not rewrite old ADRs. To change a decision, follow [Amendments](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/adrs.md#amendments).
 5. Before you open a pull request, run `check-adrs` (`scripts/check-adrs.mjs`, copied by [bootstrap](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/bootstrap/SKILL.md)). Fix each finding.
 
 ## Subagents
