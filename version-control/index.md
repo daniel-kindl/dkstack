@@ -9,7 +9,8 @@ Use conventional commits. Keep history clear and machine-readable. Use short-liv
   `fix(skills): ...`. Use only `a-z`, `0-9` and single hyphens.
 - The `!` is optional. It marks a breaking change, for example `feat(api)!: ...`. A breaking change
   needs a MAJOR version. See [versioning](../versioning/index.md).
-- Common types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`.
+- Allowed types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `build`, `ci`, `perf`,
+  `style`, `revert`. A title with a different type fails the title check.
 - Write the description in imperative mood. Start with a verb.
 - Keep the subject line short (50 characters or fewer). The type, the scope and the `!` count.
   A character is one Unicode code point. Some marks that look like one character, such as a flag

@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Dependabot commit and pull request titles in dkstack start with `ci:`, so a short update title
   passes the title check (#154).
+- `version-control/index.md` lists all 11 commit types that the title check allows and says that
+  other types fail. A test compares the list with the title check (#154).
 
 ### Fixed
 
