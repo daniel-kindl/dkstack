@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A leak runbook in `coding/security.md` (#185). If a token, a key or a password leaks: tell the
+  owner, revoke the secret, rotate it, read the audit log, read the secret scanning alerts and
+  record the event in an issue. The step for the dkstack release app key links
+  `versioning/index.md`. The leak rule links the runbook.
 - `chart-route` skill (#175). It settles a large, unclear effort in a map in `docs/maps/<slug>.md`,
   one question per session, and hands off to `plan-work`. It plans and never builds. A question is
   owner, research, prototype or task. Each answer is recorded once: an ADR, a `CONTEXT.md` entry or
