@@ -7,6 +7,7 @@ A number in parentheses names a WCAG 2.2 criterion. "(dkstack rule)" marks a rul
 ## Scope
 
 - WCAG 2.2 level AA criteria are the test baseline on every platform. Measure them in the units of the platform.
+- This page does not list each WCAG 2.2 A and AA criterion. Each one applies, also when this page does not name it. See the [WCAG 2.2 quick reference](https://www.w3.org/WAI/WCAG22/quickref/).
 - Native UI never claims formal WCAG conformance.
 - [UI testing](../tdd/ui-testing.md#accessibility-checks) says how to test these rules.
 
@@ -32,13 +33,17 @@ A number in parentheses names a WCAG 2.2 criterion. "(dkstack rule)" marks a rul
   - It is inline in text.
   - The user agent sets its size.
   - Its size is essential.
-- On the web, use at least 44 by 44 CSS px for primary touch controls (dkstack rule).
+- On the web, use at least 44 by 44 CSS px for primary touch controls (dkstack rule). A primary touch control is the main action of a screen or an item of the main navigation.
 - On Android, each touch target is at least 48 by 48 dp (Material Design and Android accessibility guidance) (dkstack rule).
 - On iOS, each touch target is at least 44 by 44 pt (Apple Human Interface Guidelines) (dkstack rule).
 - Each drag action has a single-pointer alternative (2.5.7).
+- Each multipoint or path-based gesture, such as a pinch or a swipe, has a single-pointer alternative with no path (2.5.1).
+- A single-pointer action runs on the up event. If it runs on the down event, the user can abort or undo it (2.5.2).
+- An action from device motion, such as a shake or a tilt, also has a control. The user can turn off the motion response (2.5.4).
 
 ## Text and layout
 
+- Content works in portrait and in landscape. Do not lock the orientation, unless one orientation is essential (1.3.4).
 - Content reflows at 320 CSS px wide with no horizontal scroll (1.4.10). Data tables, maps and code are exceptions.
 - Text resizes to 200% with no loss of content or function (1.4.4).
 - Content works with line height 1.5, paragraph spacing 2 em, letter spacing 0.12 em and word spacing 0.16 em (1.4.12).
