@@ -289,3 +289,20 @@ test("the UI test rules set zero tolerance, a reviewed update and one place for 
     assert.ok(tests.includes(phrase), phrase);
   }
 });
+
+// IRIS-M5 in #154, after D9: forced colors mode (Windows contrast themes).
+test("the UI pages cover forced colors mode and its evidence", async () => {
+  const colors = await document("ui/colors-and-themes.md");
+  const forced = section(colors, "## Forced colors");
+  // M1 on #257: one phrase for each rule, so that a deleted or reversed rule fails.
+  for (const phrase of ["Test each changed surface in forced colors mode when the project supports Windows",
+    "In forced colors mode, use system colors", "`CanvasText`", "Do not set a fixed color there",
+    "Do not show a state, such as selected, focus or error, with a background color only.",
+    "Add a border, an outline, an icon or text", "`@media (forced-colors: active)`",
+    "Use `forced-color-adjust: none` only for a small element"]) {
+    assert.ok(forced.includes(phrase), phrase);
+  }
+  const evidence = section(await document("ui/visual-verification.md"), "## Minimum evidence");
+  assert.ok(evidence.includes("forced colors mode"));
+  assert.ok(evidence.includes("supports Windows"));
+});
