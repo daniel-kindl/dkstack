@@ -29,4 +29,4 @@ A required behavior below level 4 is unproven. Mark it unproven. It is at least 
 
 ## Credit
 
-The evidence levels come from the [prove-it-works](https://github.com/cursor/plugins/blob/main/pstack/skills/principle-prove-it-works/SKILL.md) skills in pstack by Lauren Tan (MIT).
+The evidence levels come from the [prove-it-works](https://github.com/cursor/plugins/blob/main/pstack/skills/principle-prove-it-works/SKILL.md) skill in pstack by Lauren Tan (MIT).

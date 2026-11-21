@@ -12,7 +12,7 @@ Use the [UI guidelines](https://raw.githubusercontent.com/daniel-kindl/dkstack/v
 1. Identify the specification, the changed surfaces, the platform, the project's design system and the evidence.
 2. Follow [visual verification](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/visual-verification.md). Check the author's evidence, or run the checks yourself when you can.
 3. Check each changed surface against the UI pages that apply to it.
-4. Report through [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#output). Use its two axes, its [evidence levels](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#8-verify), its [severity table](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#severity) and its verdict. The UI line in its standards axis maps UI findings to severities.
+4. Report through [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#output). Use its two axes, the [evidence levels](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/verify-claim/SKILL.md#steps) of verify-claim, its [severity table](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#severity) and its verdict. The UI line in the [standards checklist](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-standards/SKILL.md#checklist) maps UI findings to severities.
 
 ## Boundaries
 

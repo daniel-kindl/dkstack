@@ -4,11 +4,17 @@ Skills are specific capabilities agents should apply when relevant.
 
 ## Invocation
 
-Each skill has one invocation class. The class is in the frontmatter, so that each client applies it.
+Each skill has one invocation class. The class is in the skill files. A client applies only the parts that it supports.
 
-- user: only a person starts the skill, for example with `/release`. The frontmatter has `disable-model-invocation: true`. The file `agents/openai.yaml` has `allow_implicit_invocation: false`. `npm run check:skills` makes sure that the two agree.
-- agent: only an agent loads the skill, when its description matches the task or another skill links it. The frontmatter has `user-invocable: false`. Most agent skills are building blocks of a larger skill.
+- user: only a person starts the skill, for example with `/release`. The frontmatter has `disable-model-invocation: true`. The file `agents/openai.yaml` has `allow_implicit_invocation: false` under `policy:`. `npm run check:skills` makes sure that the two agree.
+- agent: an agent loads the skill when its description matches the task or another skill links it. The frontmatter has `user-invocable: false`. Most agent skills are building blocks of a larger skill.
 - both: a person or an agent can start the skill. The frontmatter has neither key.
+
+What each client applies:
+
+- Claude Code reads both frontmatter keys. A user skill does not load by itself. An agent skill is not in the menu of commands.
+- Codex reads `agents/openai.yaml`. A user skill does not load by itself. Codex has no key that hides a skill from a person, so a person can still start an agent skill.
+- A client that reads neither file treats each skill as both.
 
 A description can end with `Triggers:` and the words that a person uses to ask for the skill, for example `Triggers: teach me, quiz me`.
 

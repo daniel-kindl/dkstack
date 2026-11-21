@@ -23,4 +23,4 @@ Report confirmed risks and cleared risks separately. For each risk, give how it 
 
 ## Credit
 
-The blast radius and the one safety fact come from the [blast-radius](https://github.com/cursor/plugins/blob/main/pstack/skills/blast-radius/SKILL.md) skills in pstack by Lauren Tan (MIT).
+The blast radius and the one safety fact come from the [blast-radius](https://github.com/cursor/plugins/blob/main/pstack/skills/blast-radius/SKILL.md) skill in pstack by Lauren Tan (MIT).

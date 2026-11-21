@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { checkSkills, parseFrontmatter } from "../scripts/check-skills.mjs";
+import { checkSkills, codexPolicyOff, parseFrontmatter } from "../scripts/check-skills.mjs";
 import { makeTree, removeTree } from "./helpers.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -286,4 +286,12 @@ test("a skill that neither a user nor an agent can invoke is rejected", async ()
   assert.deepEqual(result.errors, [
     "skills/none/SKILL.md: disable-model-invocation: true and user-invocable: false together leave no way to invoke the skill.",
   ]);
+});
+
+test("the Codex policy key counts only in the policy block", () => {
+  assert.equal(codexPolicyOff("policy:\n  allow_implicit_invocation: false\n"), true);
+  assert.equal(codexPolicyOff("interface:\n  display_name: x\npolicy:\n  allow_implicit_invocation: false\n"), true);
+  assert.equal(codexPolicyOff("interface:\n  allow_implicit_invocation: false\n"), false);
+  assert.equal(codexPolicyOff("policy:\n  allow_implicit_invocation: true\n"), false);
+  assert.equal(codexPolicyOff("policy:\ninterface:\n  allow_implicit_invocation: false\n"), false);
 });

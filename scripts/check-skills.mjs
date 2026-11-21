@@ -16,8 +16,19 @@ import { pathToFileURL } from "node:url";
 
 const INVOCATION_KEYS = new Set(["disable-model-invocation", "user-invocable"]);
 const KEYS = new Set(["name", "description", ...INVOCATION_KEYS]);
-// Codex reads agents/openai.yaml. This line turns off implicit invocation.
-const CODEX_POLICY_OFF = /^\s+allow_implicit_invocation:\s*false\s*$/m;
+// Codex reads agents/openai.yaml. The key policy.allow_implicit_invocation:
+// false turns off implicit invocation. The key must be in the policy block.
+export function codexPolicyOff(text) {
+  let inPolicy = false;
+  for (const line of text.split(/\r?\n/)) {
+    if (/^\S/.test(line)) {
+      inPolicy = /^policy:\s*$/.test(line);
+    } else if (inPolicy && /^\s+allow_implicit_invocation:\s*false\s*$/.test(line)) {
+      return true;
+    }
+  }
+  return false;
+}
 const NAME_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const MAX_NAME = 64;
 // Plain YAML scalars that YAML 1.1 or 1.2 reads as null, a boolean, a number
@@ -126,7 +137,7 @@ async function checkCodexPolicy(fields, skillDir) {
   } catch {
     policy = "";
   }
-  const codexOff = CODEX_POLICY_OFF.test(policy);
+  const codexOff = codexPolicyOff(policy);
   const userOnly = fields["disable-model-invocation"] === true;
   if (userOnly && !codexOff) {
     return ["a user-only skill needs agents/openai.yaml with allow_implicit_invocation: false."];
