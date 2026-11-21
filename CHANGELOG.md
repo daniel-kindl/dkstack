@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `scripts/check-writing.mjs` warns about a step with more than 20 words, a sentence with more than
+  25 words and a semicolon in Markdown (#244). It skips CHANGELOG.md, code, block quotes, tables,
+  headings and text in double quotes. It always exits 0 in this first stage. `npm run check` and
+  the validate workflow run it as `check:writing`. A step is a numbered or a checklist item.
 - `writing/user-facing-copy.md` (#249). It covers product READMEs, landing pages, release notes for
   users, announcements, emails, CLI messages and app store text. Put the one thing that the reader
   must do or know first. Do not invent numbers, quotes, customers or comparisons. No hype, no fake
