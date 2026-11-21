@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Visual baseline rules in `tdd/ui-testing.md` (#236). A pinned image has zero tolerance by
+  default. A tolerance needs a reason beside the test. Each baseline is in the repository next to
+  its test. A pull request that updates a baseline shows the before and after image, and the
+  reviewer approves each update.
+- `npm test` fails when the tests cover less than 95% of the lines or 90% of the branches in
+  `scripts/` (#231). It uses the coverage flags of Node 24 and no new dependency. The coverage today
+  is 99.16% of lines and 93.51% of branches.
+- A contributor checklist in CONTRIBUTING.md (#230). "Run the checks" names `npm run check`, Node 24
+  and the separate title check. "Add a page or a skill" lists the index entry, the route from
+  triage, a test, the `[Unreleased]` line and raw `v1` links in skills. "Update bot pull requests"
+  says that the reviewer edits a title over 50 characters before the merge. The page says that each
+  rule has one owner page.
 - `setup-repo-protection` building block (#222). It lists the protection settings for the owner to
   apply: a default branch rule (pull request, required checks, squash only, linear history, no
   force-push, no deletion, no bypass for administrators), rules for release tags and release
@@ -100,6 +112,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and "Missing review evidence after merge" are rewritten in the writing rules, with the same
   meaning: no semicolons, and no "durably", "attest", "establish", "genuine", "obtain" or
   "insufficient". `review-and-merge.md` no longer says "The review does not require a feature plan."
+- README.md says what dkstack is and who it is for (#235). The top says that dkstack is guidance
+  only and is for any team that uses AI coding agents, and a short "Start" list follows. README.md,
+  `package.json` and AGENTS.md use one tagline: "Rules and skills for AI coding agents, in one
+  place."
+- `writing/index.md` has one Scope section (#234). ASD-STE100 applies to all text that people or
+  agents read, including product copy: UI text, landing pages, product READMEs, release notes,
+  announcements and emails. Nothing is out of scope. `writing-check` and
+  `ui/content-and-localization.md` link it. Before, the UI page said that the writing rules did not
+  apply to UI copy.
 - dkstack pins Node 24 and records its npm exception (#223). `package.json` has
   `"engines": { "node": ">=24" }`, and a test checks that it matches the `node-version` in both
   workflows. CONTRIBUTING.md has an Exceptions section: dkstack has no npm dependencies, so it has no
@@ -183,6 +204,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `check-links` closes five parser gaps (#232). It checks an HTML `<a href>`. It accepts `[self](./)`
+  in a skill and a target with balanced parentheses. It ignores links in an indented code block,
+  but not in an indented paragraph of a list. A repository URL on a ref with a slash, such as
+  `blob/release/v1.5.0/...`, resolves.
 - The scripts and tests work on a CRLF checkout, and each script can be imported (#206). A new
   `.gitattributes` checks out text with LF. `release.mjs` reads a CRLF CHANGELOG as LF, so
   `check-changelog` accepts a CRLF `## [Unreleased]` line again. The tests read files through one
