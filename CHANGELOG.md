@@ -130,6 +130,9 @@ change that a consumer must act on has a "Consumer action:" line.
 - Long sentences and semicolons on 11 pages are split, so `check-writing` gives no warning on them.
   Each rule keeps its conditions, its actor and its modality. `ui/typography.md` says "This fails
   Resize text (1.4.4)". `versioning/index.md` wraps at 100 characters in the release section.
+- `architecture/adrs.md` has a place rule and an amendment rule (D6 in #154). Store each ADR in
+  `docs/adr/` as `NNNN-short-title.md`. If the owner changes a decision, add a dated amendment and
+  do not change the old text. ADR 0001 records D2 and corrects the tag pin statement in its Context.
 - The bootstrap description, its intro and the skills index name repository protection and the
   README check (the Low on #227). Step 7 is split into short sentences.
 - The tests share one `sectionText` and one `flatten` from `test/helpers.mjs` (#250). Three test
