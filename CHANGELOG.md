@@ -17,6 +17,15 @@ change that a consumer must act on has a "Consumer action:" line.
   old anchor as a redirect. PATCH: wording only. Each class has an example. A MAJOR change has `!`
   in its title. A release that needs a consumer to act has a "Consumer action:" line. SECURITY.md
   says that `v1` gets no fixes after `v2` is released.
+- `scripts/check-writing.mjs` warns about a step with more than 20 words, a sentence with more than
+  25 words and a semicolon in Markdown (#244). It skips CHANGELOG.md, code, block quotes, tables,
+  headings and text in double quotes. It always exits 0 in this first stage. `npm run check` and
+  the validate workflow run it as `check:writing`. A step is a numbered or a checklist item.
+- `writing/user-facing-copy.md` (#249). It covers product READMEs, landing pages, release notes for
+  users, announcements, emails, CLI messages and app store text. Put the one thing that the reader
+  must do or know first. Do not invent numbers, quotes, customers or comparisons. No hype, no fake
+  urgency and no fake scarcity. Name breaking changes and the user action first. ASD-STE100 still
+  applies. The writing index, triage and `ui/content-and-localization.md` link the page.
 - Visual baseline rules in `tdd/ui-testing.md` (#236). A pinned image has zero tolerance by
   default. A tolerance needs a reason beside the test. Each baseline is in the repository next to
   its test. A pull request that updates a baseline shows the before and after image, and the
@@ -114,6 +123,12 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Changed
 
+- `code-review` and `versioning/index.md` have no sentence over 25 words and no semicolon (#245).
+  Six sentences are split. The meaning does not change. A test checks both pages.
+- The writing rules have limits that a check can test (#243). A step has at most 20 words. A
+  sentence in a description has at most 25 words. Do not use a semicolon. A new "AI prose patterns"
+  section gives six examples. The scope includes the text that an agent writes to a person, such as
+  the learn tutor. `writing-check` step 2 checks each rule in `writing/index.md` and lists no subset.
 - The owner record has one owner, `workflow/roles.md` "Owner records" (#229). It names the fields
   (the owner's exact words, the time, the place, the scope and a session link) and where the record
   goes. `workflow/safety.md` "Owner instructions in chat" keeps one rule and links it. That section

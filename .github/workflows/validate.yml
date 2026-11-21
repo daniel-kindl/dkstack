@@ -107,6 +107,11 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:adrs
 
+      # This check only warns. It always exits 0.
+      - name: Warn about long sentences and semicolons in Markdown
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:writing
+
       - name: Run the unit tests
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm test
