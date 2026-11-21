@@ -21,6 +21,18 @@ test("versioning/index.md defines MAJOR, MINOR and PATCH for dkstack, with one e
     assert.ok(section.includes(phrase), phrase);
   }
   assert.equal(section.split("Example:").length - 1, 3, "one example for each class");
+  // M1 on #255: each rule is pinned to its class.
+  const raw = await readFile(join(repoRoot, "versioning/index.md"), "utf8");
+  const bullet = (cls) => {
+    const at = raw.indexOf(`\n- ${cls}:`);
+    assert.notEqual(at, -1, cls);
+    return raw.slice(at, raw.indexOf("\n- ", at + 3) === -1 ? undefined : raw.indexOf("\n- ", at + 3)).replace(/\s+/g, " ");
+  };
+  assert.ok(bullet("MAJOR").includes("add a hard limit"));
+  assert.ok(bullet("MAJOR").includes("remove or rename a skill"));
+  assert.ok(bullet("MINOR").includes("a new duty"));
+  assert.ok(bullet("MINOR").includes("redirect"));
+  assert.ok(bullet("PATCH").includes("wording only"));
 });
 
 test("SECURITY.md says that v1 gets no fixes after v2, and CHANGELOG.md links the rule", async () => {

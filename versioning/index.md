@@ -26,7 +26,7 @@ gives agents a new limit, is breaking. Use these classes for each dkstack change
 - PATCH: wording only. The rules and the links do not change. Example: split a long sentence.
 
 For a MAJOR change, the author adds `!` to the pull request title, for example
-`feat(skills)!: rename tdd-loop to tdd`. A release with a MAJOR change starts `v2`.
+`feat(skills)!: rename tdd-loop to tdd`. A release with a MAJOR change starts the next major branch, for example `v2` after `v1`.
 
 If a release changes something that a consumer must change in their project, its CHANGELOG entry
 has a line that starts with "Consumer action:". The line says what the consumer must do, for
