@@ -38,7 +38,7 @@ test("bootstrap step 5 and setup-supply-chain link the supply chain rules and do
     assert.doesNotMatch(text, /full commit SHA|lockfile|vulnerability audit/);
   }
   const text = await readFile(skillFile, "utf8");
-  assert.doesNotMatch(text, /^[6-9]\. /m, "bootstrap has the copy step and one step for each building block");
+  assert.doesNotMatch(text, /^(?:[89]|\d{2})\. /m, "bootstrap has seven steps");
 });
 
 test("the supply chain rules cover each rule that bootstrap applies", async () => {
@@ -101,4 +101,27 @@ test("AGENTS.md Precedence has an example exception record, and quality gates li
   for (const field of ["- dkstack rule:", "- Project rule:", "- Reason:"]) assert.ok(precedence.includes(field), field);
   const gates = await readFile(join(repoRoot, "coding", "quality-gates.md"), "utf8");
   assert.ok(gates.includes("(../AGENTS.md#precedence)"));
+});
+
+// SEN-M4, FRG-M3 and REED-MISS-3 in #154: bootstrap protects the repository
+// and checks that the README tells a new reader what they need.
+test("bootstrap step 6 runs setup-repo-protection, which covers each protection", async () => {
+  const six = await step(6);
+  assert.ok(six.includes("(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-repo-protection/SKILL.md)"));
+  const block = (await readFile(join(repoRoot, "skills", "setup-repo-protection", "SKILL.md"), "utf8")).replace(/\s+/g, " ");
+  for (const phrase of ["pull request", "required checks", "squash", "linear history", "force-push", "deletion",
+    "No bypass for administrators", "release tags", "release branches", "secret scanning", "push protection",
+    "private vulnerability reporting", "`SECURITY.md`", "`CODEOWNERS`", "owner's OK"]) {
+    assert.ok(block.includes(phrase), phrase);
+  }
+  assert.ok(block.includes("(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md#ci-workflows)"));
+  const names = [/github/i, /gitlab/i, /gitea/i, /\bgh\b/, /dependabot/i];
+  for (const name of names) assert.doesNotMatch(block.replace(/https:\/\/\S+/g, ""), name);
+});
+
+test("bootstrap step 7 checks that the README says what the project is and how to use it", async () => {
+  const seven = (await step(7)).replace(/\s+/g, " ");
+  for (const phrase of ["what the project is", "who it is for", "how to install", "how to run", "how to contribute"]) {
+    assert.ok(seven.includes(phrase), phrase);
+  }
 });

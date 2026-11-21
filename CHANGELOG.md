@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `setup-repo-protection` building block (#222). It lists the protection settings for the owner to
+  apply: a default branch rule (pull request, required checks, squash only, linear history, no
+  force-push, no deletion, no bypass for administrators), rules for release tags and release
+  branches, secret scanning with push protection, private vulnerability reporting, `SECURITY.md`
+  and `CODEOWNERS` for the CI workflow files. It links the CI workflow rules. An agent does not
+  change a setting without the owner's OK. Bootstrap step 6 runs it. Step 7 checks that the README
+  says what the project is, who it is for, how to install and run it and how to contribute.
 - `test/routes.test.mjs` checks that each skill and page can be found (#208). `skills/index.md`
   lists each skill. Triage reaches each skill, directly or through a skill that it links. Each
   section index lists each page of its section. AGENTS.md "Sections" lists each section index,
