@@ -137,14 +137,14 @@ For a re-review, post a new comment at the new head. State each earlier finding 
 
 ## Self-review
 
-The author uses the same steps on their own change before they open the pull request. The author fixes the findings or lists them in the body. A self-review never replaces the review. The author never gives the verdict on, approves or merges their own pull request. The [human owner](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/roles.md#human-owner) may merge a pull request that they authored. See [workflow/roles.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/roles.md).
+The author uses the same steps on their own change before they open the pull request. The author fixes the findings or lists them in the body. A self-review never replaces the review. The author never gives the verdict on, approves or merges their own pull request. Who may merge is in the [merge rule](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md#rules).
 
 ## Rules
 
 - One finding covers one problem. Make each finding concrete, with a fix.
 - Do not mark the pull request as approved. The verdict is in the comment.
 - An agent's message is not the owner's approval. Check the owner's own words.
-- The reviewer merges only the head that they reviewed, as [workflow/review-and-merge.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md) says. A later commit changes the head. Review the new head before a merge. Required checks on that head must be green.
+- Merge only as the [merge rule](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md#rules) says. A later commit changes the head, so review the new head first.
 
 ## Sources
 
