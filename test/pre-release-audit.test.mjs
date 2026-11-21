@@ -27,7 +27,7 @@ test("ADR 0001 records that 1.6.0 ships its breaking changes on v1, for one rele
   const amendment = adr.slice(adr.indexOf("### Amendment 2026-11-21, 1.6.0 on v1"), adr.indexOf("## Consequences"));
   assert.ok(amendment.includes("See #288."), "the amendment links the issue");
   assert.ok(amendment.includes("three breaking changes"));
-  assert.ok(amendment.includes('the first amendment of 2026-11-11: "This is an exception for one release only. The rule "A breaking release starts `v2`" applies to every later release."'),
+  assert.ok(amendment.includes('the first amendment of 2026-11-11: > This is an exception for one release only. The rule "A breaking release starts `v2`" applies to > every later release.'),
     "the amendment quotes the sentence that it replaces");
 });
 
