@@ -7,8 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Dependabot commit and pull request titles in dkstack start with `ci:`, so a short update title
+  passes the title check (#154).
+- `version-control/index.md` lists all 11 commit types that the title check allows and says that
+  other types fail. A test compares the list with the title check (#154).
+- `AGENTS.md` has one version rule: if your entry URL names a tag, read each dkstack raw URL on that
+  tag in place of `v1`. `README.md` and `versioning/index.md` link the rule. `README.md` tells a
+  consumer to run `npx skills update` after a release (#154).
+
 ### Fixed
 
+- `check-links` checks anchors. A link to a Markdown file with `#anchor`, a pure `#anchor` and a
+  repository URL with an anchor must match a heading or an HTML id in the target file. It also checks
+  reference definitions, as in `[d]: file.md` (#154).
+- The title check rejects an em dash (U+2014) and an en dash (U+2013) in a commit or pull request
+  title (#154).
+- `version-control/feature-branches.md` says to merge `main` into a branch and links review and
+  merge. It no longer says to rebase, which conflicted with the rule that forbids a rebase of a pushed
+  branch (#154).
 - `check-workflows` fails on `secrets: inherit`, on the whole `secrets` context in an expression, on
   the `pull_request_target` and `workflow_run` triggers, on `${{ github.event.* }}` or `${{ inputs.*
   }}` in a `run:` script, and on a checkout step without `persist-credentials: false` (#154).
