@@ -54,6 +54,16 @@ test("a title with a line break or trailing space fails", () => {
   assert.deepEqual(checkTitle("fix: crash "), ["the title must not end with a space"]);
 });
 
+test("a title with an em dash or an en dash fails", () => {
+  assert.deepEqual(checkTitle("fix: a \u2014 b"), [
+    "the title must not have an em dash (U+2014). Use a comma or a new sentence",
+  ]);
+  assert.deepEqual(checkTitle("fix: a \u2013 b"), [
+    "the title must not have an en dash (U+2013). Use a comma or a new sentence",
+  ]);
+  assert.deepEqual(checkTitle("fix: a - b"), []);
+});
+
 test("the CLI exits 1 for a bad title and 0 for a good title", () => {
   const failRun = spawnSync(process.execPath, [script, "update stuff"], { encoding: "utf8" });
   assert.equal(failRun.status, 1);
