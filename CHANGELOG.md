@@ -78,6 +78,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The UI test rules in `tdd/ui-testing.md` can be tested (#188). A UI test asserts what makes a
+  screen reader announce an error: a live region, an automation property or the announcement API of
+  the platform. The manual screen reader pass confirms each announcement and is recorded as the
+  minimum evidence in `ui/visual-verification.md` says. The checker examples add
+  `performAccessibilityAudit` on iOS.
 - The project's design system wins over the Defaults sections of the ui/ pages only (#183). A
   default applies when the project's system does not cover that area. A rule marked
   "(dkstack rule)" still applies. To differ from it, record an exception as AGENTS.md
