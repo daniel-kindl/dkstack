@@ -69,6 +69,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `code-review` gives APPROVE-RECOMMENDED only when each required check is green on the reviewed
+  head (#184). If a required check is pending, the reviewer gives no verdict yet. A broken build or
+  a failing required check is High, in one row of the severity table.
 - The ADR test in `architecture/adrs.md` is narrower (#173). Write an ADR only when the decision
   is hard to reverse, surprising to a new reader without the context, and the result of a real
   trade-off. Record a smaller decision in the map or in the pull request body. `write-adr` step 1
