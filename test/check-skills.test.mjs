@@ -33,6 +33,7 @@ test("the repository skills use the folder layout and valid frontmatter", async 
     "learn",
     "plan-work",
     "release",
+    "start-issue",
     "tdd-loop",
     "triage",
     "ui-design",

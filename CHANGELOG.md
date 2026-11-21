@@ -9,9 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `workflow/issues.md`: one task, one issue. Search for an open issue before you open one. Set
+  exactly one `type:` label and an optional `priority:` label. Do not create a label without the
+  owner's OK. Assign the issue to the logged-in account only when you start to work on it, not
+  when you only open, triage or review it. An assignment is a
+  marker only. A project with no issue tracker keeps one file for each task in `docs/issues/`.
+  The `start-issue` skill applies the rules. `workflow/index.md`, `workflow/review-and-merge.md`,
+  `skills/index.md` and `triage` link them. The removed `status:`, `agent:` and `needs:` labels and
+  the claims do not come back (#166).
 - `architecture/domain-languages.md` has a Glossary section. It owns `CONTEXT.md` at the
   repository root in folium's format: an H1, a `## Language` heading and `**Term**:` entries with an
-  optional `_Avoid_:` line. Only domain terms, and no implementation details. The new
+  optional `_Avoid_:` line. The file holds only domain terms and no implementation details. The new
   `domain-glossary` skill reads the file, flags a conflicting word and records a resolved term.
   `triage` reads `CONTEXT.md` before a task. `clarify-intent` writes new terms to it. The
   `code-review` standards axis has a Domain language line. This lands the Glossary part of #153

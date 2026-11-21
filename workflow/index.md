@@ -6,13 +6,16 @@ These rules prevent real damage in a shared repository. Read them before you cha
 
 ## Sections
 
+- [issues.md](issues.md): One issue for each task, its labels and its assignee.
 - [roles.md](roles.md): The generic roles and the human owner.
 - [review-and-merge.md](review-and-merge.md): The issue to merge flow, review and merge.
 - [safety.md](safety.md): Actions that no agent does, and what counts as approval.
 
 ## Flow
 
-1. The owner or the coordinator opens an issue with acceptance criteria.
+1. The owner, the coordinator or the agent opens one issue for each task, with acceptance criteria
+   and labels. The agent assigns the issue to itself only when it starts to work on it. See
+   [issues.md](issues.md).
 2. The implementer, architect or writer does the work on one branch and opens one pull request.
 3. The reviewer reviews the pull request.
 4. The reviewer merges only the head that they reviewed, and only when the review passes, all
