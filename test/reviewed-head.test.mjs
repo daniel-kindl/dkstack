@@ -6,7 +6,7 @@ import { dirname, join } from "node:path";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-test("the Blocking row matches the release rule", async () => {
+test("the Blocking row names a deploy or release that an agent starts without the owner's OK", async () => {
   const text = await readFile(join(repoRoot, "skills/code-review/SKILL.md"), "utf8");
   const row = text.split("\n").find((line) => line.startsWith("| Blocking |"));
   assert.ok(row, "the severity table must have a Blocking row");
@@ -14,6 +14,24 @@ test("the Blocking row matches the release rule", async () => {
     row,
     /an agent can start a production deploy or a project's release workflow, or release without the owner's OK/,
   );
+});
+
+// SEN-10 in #154: a check that is not green must not get an approval.
+test("APPROVE-RECOMMENDED needs each required check green, and a pending check gets no verdict yet", async () => {
+  const text = await readFile(join(repoRoot, "skills/code-review/SKILL.md"), "utf8");
+  const verdict = text.slice(text.indexOf("## Verdict"), text.indexOf("## Output"));
+  const approve = verdict.split("\n").find((l) => l.startsWith("- APPROVE-RECOMMENDED:"));
+  assert.match(approve, /each required check is green on the reviewed head/);
+  assert.doesNotMatch(approve, /or its state is stated/);
+  assert.match(verdict.replace(/\s+/g, " "), /If a required check is pending, give no verdict yet\./);
+});
+
+test("a broken build or a failing required check is in the High row only", async () => {
+  const text = await readFile(join(repoRoot, "skills/code-review/SKILL.md"), "utf8");
+  const rows = text.split("\n").filter((l) => /^\| (Blocking|High|Medium|Low) \|/.test(l));
+  const withFact = (re) => rows.filter((r) => re.test(r)).map((r) => r.split("|")[1].trim());
+  assert.deepEqual(withFact(/broken build/), ["High"]);
+  assert.deepEqual(withFact(/failing required check/), ["High"]);
 });
 
 test("owner and agent merge authority stays distinct", async () => {

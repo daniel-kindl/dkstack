@@ -48,12 +48,12 @@ Every rule in [workflow/safety.md](workflow/safety.md) is a hard limit. For exam
 - [architecture/index.md](architecture/index.md): Architecture principles.
 - [coding/index.md](coding/index.md): Coding standards and practices.
 - [tdd/index.md](tdd/index.md): Test-driven development.
+- [learning/index.md](learning/index.md): Adaptive learning principles and standards.
 - [ui/index.md](ui/index.md): User interface and experience standards.
 - [version-control/index.md](version-control/index.md): Conventional commits and feature branches.
 - [versioning/index.md](versioning/index.md): Semantic versioning.
 - [writing/index.md](writing/index.md): Writing style (ASD-STE100).
 - [skills/index.md](skills/index.md): Skills to apply.
-- [tips/index.md](tips/index.md): Short tips.
 - [workflow/index.md](workflow/index.md): Workflow: roles, review and merge, and safety.
 
 ## Key rules
