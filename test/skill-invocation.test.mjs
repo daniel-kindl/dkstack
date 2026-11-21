@@ -13,7 +13,7 @@ const front = async (name) => parseFrontmatter(await raw(`skills/${name}/SKILL.m
 
 // Issue #167: building blocks and invocation classes.
 const REVIEW_ATOMS = ["review-spec", "review-standards", "review-blast-radius", "verify-claim"];
-const SETUP_ATOMS = ["setup-editorconfig", "setup-quality-gates", "setup-versioning", "setup-supply-chain"];
+const SETUP_ATOMS = ["setup-editorconfig", "setup-quality-gates", "setup-versioning", "setup-supply-chain", "setup-labels"];
 
 function classOf(fields) {
   if (fields["disable-model-invocation"] === true) return "user";

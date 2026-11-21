@@ -12,6 +12,11 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `skills/setup-labels` (#292), a building block of `bootstrap`. It lists the `type:*` and
+  `priority:*` labels from `workflow/issues.md` that the project does not have. It creates or
+  renames a label only with the owner's OK that names the labels. It does not change or delete
+  an existing label without that OK. A project without an issue tracker skips it. `bootstrap` runs it as step 7,
+  and the README check is now step 8.
 - `skills/setup-dkstack` (#290). It connects a new or an existing repository to dkstack. It
   copies `sample-AGENTS.md` as `AGENTS.md`, or merges the pointer into an existing `AGENTS.md`
   and keeps the project text. It asks the owner to remove or record as an exception each project

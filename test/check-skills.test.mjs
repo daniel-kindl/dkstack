@@ -40,6 +40,7 @@ test("the repository skills use the folder layout and valid frontmatter", async 
     "review-standards",
     "setup-dkstack",
     "setup-editorconfig",
+    "setup-labels",
     "setup-quality-gates",
     "setup-repo-protection",
     "setup-supply-chain",

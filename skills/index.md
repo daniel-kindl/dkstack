@@ -26,12 +26,13 @@ A building block does one job. A larger skill, such as `code-review` or `bootstr
 
 - [triage](triage/SKILL.md) (agent): Decide which guidelines and skills apply to the current task. Read this first.
 - [setup-dkstack](setup-dkstack/SKILL.md) (both): Connect a new or an existing repository to dkstack. Add or merge `AGENTS.md`, make each agent client read it and install the skills with the owner's OK.
-- [bootstrap](bootstrap/SKILL.md) (both): Set up conventional commits, short-lived branches, semver, strict editorconfig, warnings as errors, deterministic checks, supply chain rules, repository protection and a README check.
+- [bootstrap](bootstrap/SKILL.md) (both): Set up conventional commits, short-lived branches, semver, strict editorconfig, warnings as errors and deterministic checks. Applies the supply chain rules and repository protection, sets up issue labels and adds a README check.
   - [setup-editorconfig](setup-editorconfig/SKILL.md) (agent): Strict editor settings and LF line endings.
   - [setup-quality-gates](setup-quality-gates/SKILL.md) (agent): Warnings as errors, CI and deterministic checks.
   - [setup-versioning](setup-versioning/SKILL.md) (agent): Commit and branch rules, semantic versioning and a changelog.
   - [setup-supply-chain](setup-supply-chain/SKILL.md) (agent): Apply the supply chain rules.
   - [setup-repo-protection](setup-repo-protection/SKILL.md) (agent): List the branch, tag and security settings for the owner to apply.
+  - [setup-labels](setup-labels/SKILL.md) (agent): List the missing type and priority labels and create them with the owner's OK.
 - [start-issue](start-issue/SKILL.md) (both): Find or open one issue for the task and set the labels. Assign it and start the branch when the work on the issue starts.
 - [clarify-intent](clarify-intent/SKILL.md) (both): Clarify requirements and domain language before coding.
 - [domain-glossary](domain-glossary/SKILL.md) (both): Read `CONTEXT.md`, flag a word that conflicts with it, and record a resolved domain term.
