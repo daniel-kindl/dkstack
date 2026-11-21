@@ -1,6 +1,6 @@
 ---
 name: learn
-description: "Use when a person asks to learn, practice, assess or review a topic. Runs an adaptive tutor session. Not for one-off factual questions."
+description: "Use when a person asks to learn, practice, assess or review a topic. Runs an adaptive tutor session. Not for one-off factual questions. Triggers: teach me, quiz me, test me on, help me learn."
 ---
 
 # Learn

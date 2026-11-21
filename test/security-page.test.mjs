@@ -57,8 +57,8 @@ test("the security page says what a safe release or deploy workflow is", async (
   }
 });
 
-test("code-review links the CI workflows rules and does not copy them", async () => {
-  const review = await read("skills", "code-review", "SKILL.md");
+test("review-standards links the CI workflows rules and does not copy them", async () => {
+  const review = await read("skills", "review-standards", "SKILL.md");
   assert.ok(
     review.includes("(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md#ci-workflows)"),
   );

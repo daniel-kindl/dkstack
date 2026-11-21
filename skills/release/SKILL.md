@@ -1,6 +1,7 @@
 ---
 name: release
-description: "Use when you prepare a release or choose a version number. Links the versioning and safety rules. Does not publish."
+description: "Use when the owner asks to prepare a release or to choose a version number. Links the versioning and safety rules. Does not publish."
+disable-model-invocation: true
 ---
 
 # Release

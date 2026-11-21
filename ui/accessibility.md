@@ -2,7 +2,7 @@
 
 Accessibility is a requirement. This page owns the accessibility rules and thresholds. Other pages link here.
 
-A number in parentheses names a WCAG 2.2 criterion. "(dkstack rule)" marks a rule that WCAG 2.2 AA does not require. [code-review](../skills/code-review/SKILL.md#5-standards-axis) gives each kind its severity.
+A number in parentheses names a WCAG 2.2 criterion. "(dkstack rule)" marks a rule that WCAG 2.2 AA does not require. [review-standards](../skills/review-standards/SKILL.md#checklist) gives each kind its severity.
 
 ## Scope
 

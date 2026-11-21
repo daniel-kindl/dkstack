@@ -49,7 +49,8 @@ test("triage, clarify-intent and code-review use CONTEXT.md", async () => {
   const clarify = await read("skills/clarify-intent/SKILL.md");
   assert.ok(clarify.includes("`CONTEXT.md`"));
   assert.ok(clarify.includes(`${RAW}architecture/domain-languages.md#glossary`));
-  const review = await read("skills/code-review/SKILL.md");
+  // Since #167 the standards checklist lives in review-standards.
+  const review = await read("skills/review-standards/SKILL.md");
   const domain = review.split("- Domain language: ")[1]?.split(" - ")[0] ?? "";
   assert.ok(domain.includes("`CONTEXT.md`"), "code-review must have a Domain language line");
   assert.ok(domain.includes("A name that uses a word from an `_Avoid_:` line is Low."));

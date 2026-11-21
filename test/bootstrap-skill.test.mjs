@@ -7,11 +7,12 @@ import { dirname, join } from "node:path";
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const skillFile = join(repoRoot, "skills", "bootstrap", "SKILL.md");
 
-// Return the text of step <n> in the Steps list of the bootstrap skill.
-async function step(n) {
-  const text = await readFile(skillFile, "utf8");
-  const m = new RegExp(`^${n}\\. ([\\s\\S]*?)(?=^\\d+\\. |^## )`, "m").exec(text);
-  assert.ok(m, `the bootstrap skill must have step ${n}`);
+// Return the text of step <n> in the Steps list of a skill. Since #167 the
+// bootstrap steps live in the setup-* building blocks.
+async function step(n, skill = "bootstrap") {
+  const text = await readFile(join(repoRoot, "skills", skill, "SKILL.md"), "utf8");
+  const m = new RegExp(`^${n}\\. ([\\s\\S]*?)(?=^\\d+\\. |^## |(?![\\s\\S]))`, "m").exec(text);
+  assert.ok(m, `the ${skill} skill must have step ${n}`);
   return m[1];
 }
 
@@ -26,12 +27,18 @@ test("the bootstrap skill names no code host, package manager or update bot", as
 });
 
 // The supply chain rules have one owner page. Bootstrap links it (#154).
-test("bootstrap step 7 links the supply chain rules and does not copy them", async () => {
-  const seven = await step(7);
-  assert.ok(seven.includes("(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md#supply-chain-rules)"));
-  assert.doesNotMatch(seven, /full commit SHA|lockfile|vulnerability audit/);
+test("bootstrap step 4 and setup-supply-chain link the supply chain rules and do not copy them", async () => {
+  const link = "(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md#supply-chain-rules)";
+  const four = await step(4);
+  assert.ok(four.includes(link));
+  assert.ok(four.includes("(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-supply-chain/SKILL.md)"));
+  const block = await step(1, "setup-supply-chain");
+  assert.ok(block.includes(link));
+  for (const text of [four, block]) {
+    assert.doesNotMatch(text, /full commit SHA|lockfile|vulnerability audit/);
+  }
   const text = await readFile(skillFile, "utf8");
-  assert.doesNotMatch(text, /^8\. /m, "the supply chain steps 8 to 11 are now one step");
+  assert.doesNotMatch(text, /^[5-9]\. /m, "bootstrap has four steps, one for each building block");
 });
 
 test("the supply chain rules cover each rule that bootstrap applies", async () => {
@@ -54,10 +61,10 @@ test("the supply chain rules cover each rule that bootstrap applies", async () =
   }
 });
 
-test("bootstrap step 1 sets LF line endings in .gitattributes", async () => {
-  assert.match(await step(1), /`\.gitattributes` with `\* text=auto eol=lf`/);
+test("setup-editorconfig sets LF line endings in .gitattributes", async () => {
+  assert.match(await step(1, "setup-editorconfig"), /`\.gitattributes` with `\* text=auto eol=lf`/);
 });
 
-test("the bootstrap CI step runs on every pull request", async () => {
-  assert.match(await step(3), /every pull request/);
+test("the setup-quality-gates CI step runs on every pull request", async () => {
+  assert.match(await step(2, "setup-quality-gates"), /every pull request/);
 });

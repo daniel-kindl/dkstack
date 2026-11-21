@@ -21,7 +21,7 @@ For behavior that changes a rendered UI, put the presentation logic in code that
 ## Boundaries
 
 - Do not implement behavior before a relevant failing test exists.
-- Do not claim a red step, a passing test or a check without evidence that it ran.
+- Do not claim a red step, a passing test or a check without evidence that it ran. Use [verify-claim](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/verify-claim/SKILL.md).
 - In the refactor step, stay inside the task scope. Do not change unrelated code. Keep every
   existing test green. Do not limit the refactor to code that a test already executes. When no
   test checks a behavior that this refactor can change, write a test for that behavior first.

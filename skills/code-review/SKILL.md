@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: "Use when you review a pull request or a diff, including your own before you open a PR. Reviews on two axes, standards and specification, and gives one verdict."
+description: "Use when you review a pull request or a diff, including your own before you open a PR. Reviews on two axes, standards and specification, and gives one verdict. Triggers: review, review this PR, check my diff."
 ---
 
 # Code review
@@ -22,8 +22,8 @@ If you can start subagents, use them for the independent checks. Do steps 1 to 3
 
 - The diff command and the commit list from step 1, or the patch.
 - The sources from step 2 that its check needs.
-- The full text of its step. For the standards axis, include the checklist and the smell table.
-- The severity table, the finding format from the output section (ID, `file:line`, problem, rule link, why, fix) and the evidence levels from step 8.
+- The building block of its step: [review-spec](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-spec/SKILL.md), [review-standards](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-standards/SKILL.md) or [review-blast-radius](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-blast-radius/SKILL.md). Give the link, or the full text if the subagent cannot read the link.
+- The severity table, the finding format from the output section (ID, `file:line`, problem, rule link, why, fix) and the evidence levels in [verify-claim](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/verify-claim/SKILL.md).
 - What to report, and a word limit, for example 400 words.
 - This line: "Report to me only. Do not post, approve or merge."
 
@@ -52,25 +52,7 @@ The steps expect a pull request on a code host, a base ref, a specification, aut
 
 ## 2. Sources
 
-Find the specification in this order:
-
-1. Issue references in the pull request and the commits, for example `Closes #12`.
-2. A specification path that the requester gives.
-3. A specification file in the project docs that matches the branch or the feature.
-4. If you find none, ask the requester. If no specification exists, the specification axis reports "no specification available".
-
-Find the standards:
-
-- [AGENTS.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md) and the dkstack pages that apply.
-- The project rules, for example `CONTRIBUTING.md`, the coding standards and the ADRs.
-- The project's documented exceptions to dkstack rules. A dkstack rule wins over a project rule, except through a documented exception. See the precedence rules in [AGENTS.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md).
-
-Skip what an automated check in the project already enforces.
-For naming, review the meaning rules in
-[coding/naming.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/naming.md).
-Check intent, accuracy and domain terms in the changed identifiers. Do not repeat a naming form
-check that the project's automated checks reliably enforce. Review forms that have no reliable
-automated check.
+Find the specification with the [sources](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-spec/SKILL.md#sources) of [review-spec](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-spec/SKILL.md). Find the standards with the [sources](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-standards/SKILL.md#sources) of [review-standards](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-standards/SKILL.md). If no specification exists, the specification axis reports "no specification available".
 
 ## 3. Pull request text
 
@@ -83,74 +65,15 @@ Check against [workflow/review-and-merge.md](https://raw.githubusercontent.com/d
 
 ## 4. Specification axis
 
-Report three types of findings. Quote the specification line for each finding.
-
-- Missing or partial: the specification asks for it, and the change does not do it fully.
-- Not asked for: the change does something that the specification does not ask for.
-- Wrong: the change does it, but the result looks wrong.
-
-If the issue has no acceptance criteria, write assumed criteria from the issue title, body and linked discussion. Put them in the review. Suggest that the issue gets criteria. See [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md). If the intent is not clear enough to decide the verdict, ask the issue author or the coordinator. Do not approve on a guess.
+Run [review-spec](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-spec/SKILL.md). Quote the specification line for each finding.
 
 ## 5. Standards axis
 
-Check each file against this list. Link the rule in each finding. Do not copy the rule.
-
-- Safety: no change breaks a rule in [workflow/safety.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md). A path that lets an agent start a production deploy or a project's release workflow, or release without the owner's OK, is Blocking.
-- Correctness: logic, edge cases, empty and null input, error paths and resource cleanup. See [coding/error-handling.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/error-handling.md) and [resource balancing](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/resource-balancing.md).
-- Security: input validation, secrets, injection, permissions, and CI triggers and tokens. See [coding/security.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md) and its [CI workflows](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md#ci-workflows) rules.
-- Dependencies: each new dependency has a reason, a pinned version and a lockfile change. Each third-party CI step is pinned to a full commit SHA. Run the project's dependency audit if you can. See [coding/dependencies.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md).
-- Clean code: semantic naming, readability and broken windows. See [coding/quality.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality.md) and [coding/naming.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/naming.md).
-- Domain language: names in code, tests and docs use the terms in `CONTEXT.md`, if the file exists. See the [glossary](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md#glossary). A name that uses a word from an `_Avoid_:` line is Low. A name that gives a glossary term a different meaning is Medium. A changed meaning with no change to `CONTEXT.md` is Medium.
-- Quality gates: no check is disabled, skipped or lowered. A warning suppression follows the exception rules. See [coding/quality-gates.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality-gates.md).
-- Logging: check the changed events and the `Observability:` line against [coding/logging.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/logging.md). A secret or personal data in a log is Blocking. A missing or wrong `Observability:` line in the PR body is Medium. A duplicate terminal Error is Medium. A missing event is Medium only when you name the diagnostic gap. A wrong level is Low.
-- Architecture: the change follows the ADRs and [architecture/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/index.md). For a structural change, use [apply-architecture](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/apply-architecture/SKILL.md).
-- Sustainability: follow [stewardship](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/stewardship.md) when the change matches a signal on that page. An unrelated refactor is work the specification did not ask for. Do not require a stewardship report for ordinary work.
-- Performance: hot paths, allocations, repeated queries and blocking I/O on the UI thread. For UI, see [UI performance](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/performance.md).
-- Rendered UI: for a rendered UI change, use [ui-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/ui-review/SKILL.md). A failed WCAG 2.2 A or AA criterion on a changed surface is High. A missed dkstack accessibility rule that is not a WCAG criterion is Medium. A missing state that the specification requires is High. A missing or wrong `Visual verification:` line in the PR body is Medium. An inconsistency with the project's design system is Medium. A visual preference is Low.
-- Docs: the README, user docs, ADRs and `CHANGELOG.md` match the change.
-- Writing: all text follows [writing/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md). Use [writing-check](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/writing-check/SKILL.md).
-- Version: the version change matches semver. See [versioning/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/versioning/index.md).
-
-### Code smells
-
-Use this list even if the project documents no rules. A documented rule wins over this list. If a project rule allows a pattern, do not report it as a smell.
-
-A smell is a judgement, not a hard violation. Write it as "possible feature envy". A smell is Medium by default. Make it Low if the impact is small, and give the reason. Make it High if it causes wrong behavior.
-
-| Smell | Fix | Principle |
-| --- | --- | --- |
-| Mysterious name: a name does not say what the thing does or holds | Rename it. If no clear name fits, the design is not clear | [coding/naming.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/naming.md), [domain languages](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md) |
-| Duplicated code: the same logic is in more than one place | Move the logic to one function and use it in each place | [DRY](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/dry.md) |
-| Feature envy: a function uses the data of another object more than its own | Move the function to the data it uses | [decoupling](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/decoupling.md) |
-| Data clumps: the same fields or parameters always go together | Make one type for the group and pass it | [domain languages](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md), [DRY](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/dry.md) |
-| Primitive obsession: a string or number stands for a domain concept | Make a small type for the concept | [domain languages](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md), [design by contract](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/design-by-contract.md) |
-| Repeated switches: the same switch or if chain on the same type is in more than one place | Use polymorphism, or one shared map | [SOLID](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/solid.md) (open-closed) |
-| Shotgun surgery: one logical change needs edits in many files | Put the parts that change together in one module | [orthogonality](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/orthogonality.md) |
-| Divergent change: one module changes for unrelated reasons | Split it, so that each module has one reason to change | [SOLID](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/solid.md) (single responsibility), [separation of concerns](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/separation-of-concerns.md) |
-| Speculative generality, or dead code: code, parameters or hooks with no current use | Delete it. Add it again when a real need exists | [YAGNI](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/yagni.md) |
-| Message chains: a caller walks through many objects, for example `a.b().c().d()` | Ask the first object for the result | [decoupling](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/decoupling.md) |
-| Middle man: a class or function only passes calls on, and it is not a deliberate boundary | Remove it and call the target directly. Keep it if it isolates a dependency or a module boundary | [KISS](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/kiss.md), [decoupling](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/decoupling.md) |
-| Refused bequest: a subtype ignores or overrides most of what it inherits | Use composition, not inheritance | [SOLID](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/solid.md) (Liskov substitution) |
-| Long function or deep nesting | Split it into small functions with clear names | [KISS](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/kiss.md), [separation of concerns](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/separation-of-concerns.md) |
-| Magic value: a literal with no name | Use a named constant. If the value depends on the environment, make it configuration | [DRY](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/dry.md), [configuration](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/configuration.md) |
-| Boolean flags that together encode a state | Model the states and transitions | [state machines](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/state-machines.md) |
-| Shared mutable state with no owner, atomic operation or lock. This is High by default | Give the state one owner, or guard it | [concurrency](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/concurrency.md) |
-| Configuration read in many places, or environment values in code | Read configuration in one place and pass it in | [configuration](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/configuration.md), [reversibility](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/reversibility.md) |
-| An error is ignored, or bad input is accepted and fails later | Fail at once, at the boundary | [fail fast](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/fail-fast.md), [design by contract](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/design-by-contract.md) |
-| Calls that must run in a hidden order | Make the order explicit, or remove it | [temporal coupling](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/temporal-coupling.md) |
+Run [review-standards](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-standards/SKILL.md). It has the checklist and the code smell list. Link the rule in each finding. Do not copy the rule.
 
 ## 6. Blast radius
 
-Look past the diff for what the change can break where a text search does not show it:
-
-- Callers and other consumers of a changed function, type or API.
-- Data formats, stored data and messages that other code or other programs read.
-- Configuration, feature flags and the order in which code runs.
-- The source and the pinned version of a library that the change calls.
-
-Find the one fact that makes the change safe. Usually one fact decides if the change is safe. Prove that fact.
-
-Report confirmed risks and cleared risks separately. For each risk, give how it breaks, the `file:line`, how likely it is and how bad it is. Cite real code. Do not report a caller or an API that you did not find in the code. If a search finds nothing, report that as a result.
+Run [review-blast-radius](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-blast-radius/SKILL.md). Find and prove the one fact that makes the change safe.
 
 ## 7. Tests
 
@@ -164,22 +87,7 @@ Check against [coding/testing.md](https://raw.githubusercontent.com/daniel-kindl
 
 ## 8. Verify
 
-Check the real artifact. A self-report, a summary or "it compiles" is not proof.
-
-- Run the project's check script if you can.
-- Read the state of each required check on the exact head SHA.
-- If a check fails, read the log. Show with evidence if the change caused it or if it is a flake. A cancelled latest run of a required check blocks the merge until it runs again.
-- If you cannot run a check, write NOT RUN, the reason and what covers it instead, for example a CI job and its run.
-
-For each key claim, and for the one safety fact, go as far down this list as is practical. State the level that the claim reached.
-
-1. Stated: someone says that it is true. This alone is not proof.
-2. Located: a real `file:line` shows it.
-3. Reasoned: you follow the failure path step by step and show that it cannot happen.
-4. Run: a test or script runs the real code and fails if the claim is wrong.
-5. Reproduced: you reproduce it in the running application.
-
-A required behavior below level 4 is unproven. Mark it unproven. It is at least Medium until a test or CI proves it.
+Run [verify-claim](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/verify-claim/SKILL.md) for each key claim and for the one safety fact. It has the five evidence levels. State the level that each claim reached. A required behavior below level 4 is unproven. It is at least Medium until a test or CI proves it.
 
 ## Severity
 

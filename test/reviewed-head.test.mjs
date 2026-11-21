@@ -48,7 +48,7 @@ test("the workflow flow uses the same merge gates", async () => {
 });
 
 test("the Safety bullet uses the same three Blocking cases", async () => {
-  const text = await readFile(join(repoRoot, "skills/code-review/SKILL.md"), "utf8");
+  const text = await readFile(join(repoRoot, "skills/review-standards/SKILL.md"), "utf8");
   const line = text.split("\n").find((entry) => entry.startsWith("- Safety:"));
   assert.ok(line, "the standards list must have a Safety bullet");
   assert.match(

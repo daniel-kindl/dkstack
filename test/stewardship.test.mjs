@@ -97,7 +97,7 @@ test("specialized skills point at stewardship and do not copy it", async () => {
     "skills/apply-architecture/SKILL.md",
     "skills/plan-work/SKILL.md",
     "skills/tdd-loop/SKILL.md",
-    "skills/code-review/SKILL.md",
+    "skills/review-standards/SKILL.md",
   ];
   for (const skill of skills) {
     const body = await text(skill);

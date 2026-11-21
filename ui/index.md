@@ -4,7 +4,7 @@ Use these pages when a task changes a rendered UI, its interaction or its visual
 
 ## Severity
 
-UI findings use the [code-review severities](../skills/code-review/SKILL.md#severity). The UI line in the [standards axis](../skills/code-review/SKILL.md#5-standards-axis) maps UI findings to them. A visual preference is a requirement only when the specification asks for it.
+UI findings use the [code-review severities](../skills/code-review/SKILL.md#severity). The UI line in the [standards checklist](../skills/review-standards/SKILL.md#checklist) maps UI findings to them. A visual preference is a requirement only when the specification asks for it.
 
 ## Topics
 
