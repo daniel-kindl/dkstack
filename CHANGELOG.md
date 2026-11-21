@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dependabot commit and pull request titles in dkstack start with `ci:`, so a short update title
   passes the title check (#154).
 
+### Fixed
+
+- `check-links` checks anchors. A link to a Markdown file with `#anchor`, a pure `#anchor` and a
+  repository URL with an anchor must match a heading or an HTML id in the target file. It also checks
+  reference definitions, as in `[d]: file.md` (#154).
+- The title check rejects an em dash (U+2014) and an en dash (U+2013) in a commit or pull request
+  title (#154).
+
 ## [1.5.0] - 2026-11-19
 
 ### Added

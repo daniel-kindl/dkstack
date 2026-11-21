@@ -47,7 +47,7 @@ test("links resolve relative to the file that contains them", async () => {
   assert.equal(result.checked, 2);
 });
 
-test("anchors, titles, images and folder targets are handled", async () => {
+test("a link with an anchor, a title, an image or a folder target resolves, and a missing file fails", async () => {
   const result = await linksFor({
     "README.md": [
       "[a](docs/x.md#part)",
@@ -58,10 +58,13 @@ test("anchors, titles, images and folder targets are handled", async () => {
       "[c](<docs/x.md>)",
       "[gone](docs/missing.md#part)",
     ].join("\n"),
-    "docs/x.md": "x\n",
+    "docs/x.md": "# Part\n",
     "docs/pic.png": "png",
   });
-  assert.deepEqual(result.errors, ["README.md:7: broken link docs/missing.md#part"]);
+  assert.deepEqual(result.errors, [
+    "README.md:5: missing anchor #top",
+    "README.md:7: broken link docs/missing.md#part",
+  ]);
 });
 
 test("external links and links in code are not checked", async () => {
@@ -165,7 +168,7 @@ test("absolute links to a file in this repository resolve against the local tree
     "docs/README.md": `[rel](${raw}/main/AGENTS.md) and ${gh}/blob/main/docs/missing.md`,
     "AGENTS.md": "x\n",
     "coding/index.md": "x\n",
-    "docs/x.md": "x\n",
+    "docs/x.md": "## Part\n",
     "skills/a/SKILL.md": "x\n",
   });
   assert.deepEqual(result.errors, [
@@ -200,6 +203,7 @@ test("a relative link in a skill folder must stay in that folder", async () => {
     "skills/a/SKILL.md": [
       "[own](notes.md) [sub](ref/b.md) [anchor](#x)",
       "[other](../b/SKILL.md) [top](../../coding/index.md) [gone](../../nope.md)",
+      "## X",
     ].join("\n"),
     "skills/a/notes.md": "x\n",
     "skills/a/ref/b.md": "[up](../SKILL.md) [out](../../index.md)\n",
@@ -259,4 +263,89 @@ test("every skill in the repository links to other dkstack files only with v1 ra
   assert.deepEqual(relativeOut, []);
   const wrongRef = inSkills.filter((l) => /^https?:/.test(l.target) && !l.target.startsWith("https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/"));
   assert.deepEqual(wrongRef, []);
+});
+
+// FRG-5 and SEN-7 (#154): an anchor must match a heading in the target file.
+test("a link to a missing anchor fails and a link to a heading anchor passes", async () => {
+  const result = await linksFor({
+    "README.md": "[ok](docs/x.md#first-part)\n[bad](docs/x.md#no-such-part)\n",
+    "docs/x.md": "# Title\n\n## First part\n",
+  });
+  assert.deepEqual(result.errors, ["README.md:2: missing anchor docs/x.md#no-such-part"]);
+});
+
+test("a duplicate heading gets the -1 suffix, as on GitHub", async () => {
+  const result = await linksFor({
+    "README.md": "[a](x.md#good-example) [b](x.md#good-example-1) [c](x.md#good-example-2)\n",
+    "x.md": "# X\n\n## Good example\n\n## Good example\n",
+  });
+  assert.deepEqual(result.errors, ["README.md:1: missing anchor x.md#good-example-2"]);
+});
+
+test("a heading with code, links or punctuation gives the GitHub anchor", async () => {
+  const result = await linksFor({
+    "README.md": [
+      "[a](x.md#the-v1-branch)",
+      "[b](x.md#what-is-in-each-section)",
+      "[c](x.md#amendment-2026-11-11)",
+      "[d](x.md#release-dkstack)",
+      "[e](x.md#step-3-plan--build)",
+      "[f](x.md#old-id)",
+    ].join("\n"),
+    "x.md": [
+      "# The `v1` branch",
+      "## What is in each section?",
+      "## Amendment (2026-11-11)",
+      "## [Release](y.md) dkstack ##",
+      "## Step 3: plan & build",
+      '<a id="old-id"></a>',
+      "```md",
+      "## In code",
+      "```",
+    ].join("\n"),
+    "y.md": "x\n",
+  });
+  assert.deepEqual(result.errors, []);
+  const inCode = await linksFor({ "README.md": "[a](x.md#in-code)\n", "x.md": "```\n## In code\n```\n" });
+  assert.deepEqual(inCode.errors, ["README.md:1: missing anchor x.md#in-code"]);
+});
+
+test("a pure anchor is checked against the same file", async () => {
+  const result = await linksFor({ "README.md": "# Top\n\n[ok](#top) [bad](#bottom)\n" });
+  assert.deepEqual(result.errors, ["README.md:3: missing anchor #bottom"]);
+});
+
+test("a repository URL with an anchor is checked against the local file", async () => {
+  const base = "https://github.com/daniel-kindl/dkstack/blob/main";
+  const result = await linksFor({
+    "README.md": `[ok](${base}/x.md#part) [bad](${base}/x.md#gone)\n`,
+    "x.md": "## Part\n",
+  });
+  assert.deepEqual(result.errors, [`README.md:1: missing anchor ${base}/x.md#gone`]);
+});
+
+test("a reference definition is checked like a link", async () => {
+  const result = await linksFor({
+    "README.md": "[a][d] [b][e] [c][f]\n\n[d]: missing.md\n[e]: x.md#part\n[f]: <x.md#gone>\n",
+    "x.md": "## Part\n",
+  });
+  assert.deepEqual(result.errors, [
+    "README.md:3: broken link missing.md",
+    "README.md:5: missing anchor x.md#gone",
+  ]);
+});
+
+test("a bare URL followed by ;, :, ! or ? keeps the path without the mark", async () => {
+  const base = "https://raw.githubusercontent.com/daniel-kindl/dkstack/v1";
+  const result = await linksFor({
+    "README.md": `See ${base}/x.md; ${base}/x.md: ${base}/x.md! ${base}/x.md?\n`,
+    "x.md": "x\n",
+  });
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.checked, 4);
+});
+
+test("a link to exactly .. leaves the repository", async () => {
+  const result = await linksFor({ "README.md": "[up](..)\n" });
+  assert.deepEqual(result.errors, ["README.md:1: link leaves the repository .."]);
 });
