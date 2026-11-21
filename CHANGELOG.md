@@ -83,6 +83,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The release rule has one owner, `workflow/safety.md` (#205). No agent publishes or releases. No
+  agent creates a release tag, pushes to a release branch or to `v1`, publishes a package, or
+  starts a release or deploy workflow. A tag or branch push that starts such a workflow counts as
+  starting it. Before, an agent could do these with the owner's OK for the version. The `release`
+  skill stops after it proposes the version and the changelog entry. AGENTS.md, CONTRIBUTING.md
+  and `versioning/index.md` link the rule. `safety.md` and `versioning/index.md` say that the rule
+  is an honor rule while dkstack agents use the owner's account. "Finish a release" is for Daniel
+  only.
 - The UI test rules in `tdd/ui-testing.md` can be tested (#188). A UI test asserts what makes a
   screen reader announce an error: a live region, an automation property or the announcement API of
   the platform. The manual screen reader pass confirms each announcement and is recorded as the
