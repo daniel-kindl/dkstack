@@ -127,6 +127,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Changed
 
+- The bootstrap description, its intro and the skills index name repository protection and the
+  README check (the Low on #227). Step 7 is split into short sentences.
 - The tests share one `sectionText` and one `flatten` from `test/helpers.mjs` (#250). Three test
   files had their own copies. The test count stays the same.
 - One word for each meaning (#247). The rule text in `versioning/index.md` and `workflow/safety.md`
