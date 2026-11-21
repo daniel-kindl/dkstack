@@ -15,6 +15,11 @@ const MAX_CHARS = 50;
 // GitHub adds " (#NN)" when it squashes a PR. The limit applies to the title as written.
 const SQUASH_SUFFIX = / \(#\d+\)$/;
 const SCOPE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+// ASD-STE100 does not use these dashes. scripts/check-dashes.mjs has the same list for Markdown.
+const DASHES = new Map([
+  ["\u2014", "em dash (U+2014)"],
+  ["\u2013", "en dash (U+2013)"],
+]);
 
 // Return a list with the first problem, or an empty list for a valid title.
 export function checkTitle(fullTitle) {
@@ -22,6 +27,11 @@ export function checkTitle(fullTitle) {
   const title = fullTitle.replace(SQUASH_SUFFIX, "");
   if (title.trim() === "") return ["the title is empty"];
   if (/[\r\n]/.test(title)) return ["the title must be one line"];
+  for (const [char, name] of DASHES) {
+    if (title.includes(char)) {
+      return [`the title must not have an ${name}. Use a comma or a new sentence`];
+    }
+  }
   const match = HEADER.exec(title);
   if (!match) return ['the title must start with a type, as in "fix: ..."'];
   const [, type, scope, description] = match;
