@@ -14,6 +14,26 @@ Version numbers communicate the impact of a change.
 - Do not change a released version. Release a new version instead.
 - Document breaking changes clearly.
 
+## Breaking changes in dkstack
+
+Consumers read dkstack pages, skills and anchors by URL. A change that breaks such a URL, or that
+gives agents a new limit, is breaking. Use these classes for each dkstack change:
+
+- MAJOR: remove or rename a skill, a page or an anchor that a skill or AGENTS.md links, or add a
+  hard limit. Example: rename the skill `tdd-loop` to `tdd`.
+- MINOR: a new skill, a new page or a new duty for agents. A renamed anchor also counts as MINOR if
+  the page keeps the old anchor as a redirect line. Example: add the skill `chart-route`.
+- PATCH: wording only. The rules and the links do not change. Example: split a long sentence.
+
+For a MAJOR change, the author adds `!` to the pull request title, for example
+`feat(skills)!: rename tdd-loop to tdd`. A release with a MAJOR change starts `v2`.
+
+If a release changes something that a consumer must change in their project, its CHANGELOG entry
+has a line that starts with "Consumer action:". The line says what the consumer must do, for
+example "Consumer action: change `tdd-loop` to `tdd` in your AGENTS.md."
+
+After `v2` is released, `v1` gets no fixes. See [SECURITY.md](../SECURITY.md#versions).
+
 ## Release dkstack
 
 These steps are for the dkstack repository only. A consumer repository does not use them.
