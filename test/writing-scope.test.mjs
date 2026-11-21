@@ -35,7 +35,7 @@ test("writing-check and the UI content page link the scope and do not exclude UI
 test("the writing rules set the sentence limits, ban semicolons and give AI prose examples", async () => {
   const page = await read("writing/index.md");
   const rules = page.slice(page.indexOf("## Rules"), page.indexOf("## Code comments"));
-  for (const phrase of ["20 words", "25 words", "Do not use a semicolon."]) assert.ok(rules.includes(phrase), phrase);
+  for (const phrase of ["A step has at most 20 words.", "A sentence in a description has at most 25 words.", "Do not use a semicolon."]) assert.ok(rules.includes(phrase), phrase);
   const patterns = page.slice(page.indexOf("## AI prose patterns"), page.indexOf("## Code comments"));
   assert.ok(page.includes("## AI prose patterns"));
   const examples = patterns.split(" - ").length - 1;
