@@ -2,8 +2,6 @@
 
 Every change goes from an issue to a reviewed pull request. No change reaches `main` without review.
 
-The review does not require a feature plan.
-
 The author writes the pull request body with [write-pr](../skills/write-pr/SKILL.md). This page
 keeps the review and merge rules.
 
@@ -34,26 +32,25 @@ The author and reviewer limits are in [roles.md](roles.md).
 
 ## Missing review evidence after merge
 
-The native pull request review record is the normal evidence source. Verify that independent
+The native review record of the pull request is the normal evidence. Check that an independent
 review passed for the reviewed head.
 
-For an already-merged pull request with no native review record, the owner may attest that
-independent review actually occurred. Record the attestation durably on that pull request or a
-linked issue. It must identify the pull request, the full reviewed head commit, the reviewer,
-the verdict and the owner's explicit confirmation that this independent review occurred.
-Verify the owner's authorization under [owner instructions in chat](safety.md#owner-instructions-in-chat).
-Verify that the reviewer was independent of the author and the passing verdict covered the
-head that was merged. If a fact is missing, unverifiable or conflicting, do not treat the pull
-request as reviewed.
+An already-merged pull request can have no native review record. Then the owner can confirm that
+an independent review took place. Record the confirmation on that pull request or on a linked
+issue. The record names the pull request, the full reviewed head commit, the reviewer, the verdict
+and the owner's words that the independent review took place. Check the owner's authority as
+[owner instructions in chat](safety.md#owner-instructions-in-chat) says. Check that the reviewer
+was not the author, and that the passing verdict covered the head that was merged. If a fact is
+missing, cannot be checked or conflicts, do not treat the pull request as reviewed.
 
-If the owner cannot confirm that review occurred, obtain a genuine independent review of the
-merged change and record its verdict and reviewed head on the pull request.
+If the owner cannot confirm that a review took place, get a new independent review of the merged
+change. Record its verdict and reviewed head on the pull request.
 
-Never backdate or fabricate review evidence.
+Never backdate or invent review evidence.
 
-This exception repairs evidence for an already-merged change. It never permits self-review,
-waives independent review or authorizes merging an unreviewed open pull request. Ordinary merge
-gates remain unchanged.
+This exception repairs the evidence for a change that is already merged. It never allows a
+self-review. It never removes the need for an independent review. It never allows a merge of an
+open pull request that has no review. The usual merge gates do not change.
 
 ## Good example
 

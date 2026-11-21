@@ -19,10 +19,20 @@ Give each task to one role, so that each agent has one responsibility.
 The human owner is only the owner who acts in person, or the owner's own words. A bot or an agent
 that acts through the owner's account is always an agent. It is never the human owner.
 
-A relayed decision counts as the owner's words only if it quotes the owner's exact words with
-the time and the place where the owner wrote them, and the agent records that quote in the
-issue or pull request before relying on it in a later session. A paraphrase or an agent's
-summary never counts.
+### Owner records
+
+An owner record keeps an owner instruction for a later session. Write it on the issue or the pull
+request that the instruction is about. Write it before a later session relies on it. It has these
+fields:
+
+- The owner's exact words.
+- The time and the place where the owner gave them, for example the chat session and its date.
+- The scope: the issue, the pull requests and the actions that the instruction covers.
+- A session link or identifier, if one exists. If none exists, the context that identifies the
+  session, and the reason that the session is owner-controlled.
+
+A relayed decision counts as the owner's words only if a record quotes the owner's exact words
+with the time and the place. A paraphrase or an agent's summary never counts.
 
 ## Role definitions
 

@@ -94,6 +94,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The owner record has one owner, `workflow/roles.md` "Owner records" (#229). It names the fields
+  (the owner's exact words, the time, the place, the scope and a session link) and where the record
+  goes. `workflow/safety.md` "Owner instructions in chat" keeps one rule and links it. That section
+  and "Missing review evidence after merge" are rewritten in the writing rules, with the same
+  meaning: no semicolons, and no "durably", "attest", "establish", "genuine", "obtain" or
+  "insufficient". `review-and-merge.md` no longer says "The review does not require a feature plan."
 - dkstack pins Node 24 and records its npm exception (#223). `package.json` has
   `"engines": { "node": ">=24" }`, and a test checks that it matches the `node-version` in both
   workflows. CONTRIBUTING.md has an Exceptions section: dkstack has no npm dependencies, so it has no
