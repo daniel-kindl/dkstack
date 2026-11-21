@@ -144,3 +144,10 @@ test("chart-route is registered in the skills index and in triage", async () => 
   const triage = await readFile(join(repoRoot, "skills", "triage", "SKILL.md"), "utf8");
   assert.ok(triage.includes(`[chart-route](${RAW}skills/chart-route/SKILL.md)`));
 });
+
+// Issue #192: the map tasks get their relations from the one plan-work rule.
+test("chart-route sets the task relations through plan-work", () => {
+  const steps = section("Steps").replace(/\s+/g, " ");
+  assert.ok(steps.includes(`Set their relations as [more than one task](${RAW}skills/plan-work/SKILL.md#more-than-one-task) in \`plan-work\` says.`));
+  assert.doesNotMatch(steps, /sub-issue/, "chart-route must not copy the relation rule");
+});

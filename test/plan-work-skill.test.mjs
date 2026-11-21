@@ -122,3 +122,15 @@ test("triage has no lifecycle routing", async () => {
   }
   assert.match(text, /workflow\/safety\.md#owner-instructions-in-chat/);
 });
+
+// Issue #192: a plan with more than one task uses sub-issues and "blocked by" relations.
+test("the plan-work skill opens the tasks as sub-issues in order", async () => {
+  const text = (await section("More than one task")).replace(/\s+/g, " ");
+  assert.match(text, /Open each task issue as a sub-issue of the plan issue\./);
+  assert.match(text, /Set the order as "blocked by" relations\./);
+  assert.match(text, /Write the task issue in the heading of each increment of that task, for example `### 2\. Export the file \(#161\)`\./);
+  assert.match(text, /When an increment depends on an increment of a different task, its task issue is blocked by that other task issue\./);
+  assert.match(text, /If the `Issue` field is `none`, there is no parent\. Still set the "blocked by" relations between the task issues\./);
+  assert.ok(text.includes("https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/start-issue/SKILL.md"));
+  assert.ok(text.includes("https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/issues.md#relations"));
+});
