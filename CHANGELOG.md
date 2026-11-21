@@ -237,6 +237,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Fixed
 
+- The push title step in the validate workflow fails when `git log` fails. Before, the process
+  substitution hid the error, and the step passed with no title checked (the Low on #190).
 - `check-links` closes five parser gaps (#232). It checks an HTML `<a href>`. It accepts `[self](./)`
   in a skill and a target with balanced parentheses. It ignores links in an indented code block,
   but not in an indented paragraph of a list. A repository URL on a ref with a slash, such as
