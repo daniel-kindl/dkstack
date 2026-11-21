@@ -49,6 +49,8 @@ Write `none` when the increment needs no event.
 
 Each increment must describe a change that has a purpose and a result that you can verify. When you learn more, change the increment boundaries.
 
+Add a diagram only when it makes the order of the increments or the structure clearer than the text. Use [make-diagram](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/make-diagram/SKILL.md).
+
 ## More than one task
 
 A plan can cover more than one task, for example a milestone. Each task gets its own issue. The plan issue is the issue in the `Issue` field.

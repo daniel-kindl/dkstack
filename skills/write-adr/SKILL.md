@@ -42,3 +42,4 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 - Keep it short.
 - State trade-offs.
 - Link related principles from architecture/ when useful.
+- Add a diagram only when it shows the options or the decision more clearly than the text. Use [make-diagram](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/make-diagram/SKILL.md).
