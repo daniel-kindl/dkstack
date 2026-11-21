@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `test/routes.test.mjs` checks that each skill and page can be found (#208). `skills/index.md`
+  lists each skill. Triage reaches each skill, directly or through a skill that it links. Each
+  section index lists each page of its section. AGENTS.md "Sections" lists each section index,
+  except `tips/` while it has no tip.
 - `test/hard-limits.test.mjs` pins each hard limit by a short key phrase (#186): no force-push, no
   bypass, no push to `main`, no production deploy, no release without the owner's OK, the author
   never merges, an agent message is not approval, no secrets in chat, the shared account line, a
@@ -161,6 +165,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The scripts and tests work on a CRLF checkout, and each script can be imported (#206). A new
+  `.gitattributes` checks out text with LF. `release.mjs` reads a CRLF CHANGELOG as LF, so
+  `check-changelog` accepts a CRLF `## [Unreleased]` line again. The tests read files through one
+  `readFile` helper that gives LF. Each script runs its main code only when `process.argv[1]` is
+  the script, so an import from `node -e` no longer throws.
 - The Release workflow fails early and cleans up on cancel (#180). `check-changelog` fails when
   CHANGELOG.md has no exact `## [Unreleased]` line or no `[Unreleased]:` compare link. A cancelled
   run closes the release pull request or tells how to finish the release, as a failed run does.
