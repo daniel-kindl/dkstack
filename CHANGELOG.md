@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `test/hard-limits.test.mjs` pins each hard limit by a short key phrase (#186): no force-push, no
+  bypass, no push to `main`, no production deploy, no release without the owner's OK, the author
+  never merges, an agent message is not approval, no secrets in chat, the shared account line, a
+  failing test first in `tdd-loop` and SHA pins in `review-standards`. A deleted limit fails the
+  test. A wording change that keeps the key phrase does not.
 - A "Native equivalents" table in `ui/accessibility.md` (#187). It gives examples for a live
   announcement, an accessible name, a heading, the language and the theme on Avalonia, .NET MAUI,
   Android and iOS. The rows are examples, not requirements. `ui/responsive-design.md` says not to
@@ -78,6 +83,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The release rule has one owner, `workflow/safety.md` (#205). No agent publishes or releases. No
+  agent creates a release tag, pushes to a release branch or to `v1`, publishes a package, or
+  starts a release or deploy workflow. A tag or branch push that starts such a workflow counts as
+  starting it. Before, an agent could do these with the owner's OK for the version. The `release`
+  skill stops after it proposes the version and the changelog entry. AGENTS.md, CONTRIBUTING.md
+  and `versioning/index.md` link the rule. `safety.md` and `versioning/index.md` say that the rule
+  is an honor rule while dkstack agents use the owner's account. "Finish a release" is for Daniel
+  only.
 - Triage links the stewardship signals in `architecture/stewardship.md#analysis` and no longer
   copies the list (#207). The stewardship test checks the link and bans the copy in triage too.
 - The UI test rules in `tdd/ui-testing.md` can be tested (#188). A UI test asserts what makes a
@@ -128,6 +141,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The Release workflow fails early and cleans up on cancel (#180). `check-changelog` fails when
+  CHANGELOG.md has no exact `## [Unreleased]` line or no `[Unreleased]:` compare link. A cancelled
+  run closes the release pull request or tells how to finish the release, as a failed run does.
+  The plan summary shows each commit title as code, so Markdown in a title has no effect. The
+  approval message to Daniel has no semicolon.
 - `check-links` checks anchors. A link to a Markdown file with `#anchor`, a pure `#anchor` and a
   repository URL with an anchor must match a heading or an HTML id in the target file. It also checks
   reference definitions, as in `[d]: file.md` (#154).
