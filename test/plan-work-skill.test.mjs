@@ -128,6 +128,9 @@ test("the plan-work skill opens the tasks as sub-issues in order", async () => {
   const text = (await section("More than one task")).replace(/\s+/g, " ");
   assert.match(text, /Open each task issue as a sub-issue of the plan issue\./);
   assert.match(text, /Set the order as "blocked by" relations\./);
+  assert.match(text, /Write the task issue in the heading of each increment of that task, for example `### 2\. Export the file \(#161\)`\./);
+  assert.match(text, /When an increment depends on an increment of a different task, its task issue is blocked by that other task issue\./);
+  assert.match(text, /If the `Issue` field is `none`, there is no parent\. Record the order in the `Depends on` lines only\./);
   assert.ok(text.includes("https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/start-issue/SKILL.md"));
   assert.ok(text.includes("https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/issues.md#relations"));
 });

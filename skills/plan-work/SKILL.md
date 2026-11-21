@@ -54,7 +54,8 @@ Each increment must describe a change that has a purpose and a result that you c
 A plan can cover more than one task, for example a milestone. Each task gets its own issue. The plan issue is the issue in the `Issue` field.
 
 - Open each task issue as a sub-issue of the plan issue. Use [start-issue](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/start-issue/SKILL.md).
-- Set the order as "blocked by" relations. Use the `Depends on` line of each increment.
+- Write the task issue in the heading of each increment of that task, for example `### 2. Export the file (#161)`.
+- Set the order as "blocked by" relations. When an increment depends on an increment of a different task, its task issue is blocked by that other task issue.
 - Follow the [relations](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/issues.md#relations) rules.
 
 If the `Issue` field is `none`, there is no parent. Record the order in the `Depends on` lines only.

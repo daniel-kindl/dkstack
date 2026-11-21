@@ -71,11 +71,12 @@ test("the issues page owns the relation rules, each with a reason", async () => 
     "A task that has parts is a parent issue. Each part is a sub-issue.",
     "When one issue must wait for another, set \"blocked by\" on the issue that waits.",
     "Before you start work on an issue, check its blockers. Do not start while a blocker is open.",
+    "If the tracker has no relations, write them at the top of the issue body as `Parent: #154` and `Blocked by: #160`.",
   ]) {
     assert.ok(text.includes(phrase), `missing: ${phrase}`);
   }
-  const rules = text.split(" - ").filter((item) => /parent issue|"blocked by"|check its blockers/.test(item));
-  assert.ok(rules.length >= 3, "each relation rule must be a list item");
+  const rules = text.split(" - ").filter((item) => /parent issue|"blocked by"|check its blockers|has no relations/.test(item));
+  assert.ok(rules.length >= 4, "each relation rule must be a list item");
   for (const rule of rules) assert.match(rule, /Reason: /, `no reason: ${rule}`);
 });
 
