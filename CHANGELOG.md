@@ -161,6 +161,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `check-links` closes five parser gaps (#232). It checks an HTML `<a href>`. It accepts `[self](./)`
+  in a skill and a target with balanced parentheses. It ignores links in an indented code block,
+  but not in an indented paragraph of a list. A repository URL on a ref with a slash, such as
+  `blob/release/v1.5.0/...`, resolves.
 - The scripts and tests work on a CRLF checkout, and each script can be imported (#206). A new
   `.gitattributes` checks out text with LF. `release.mjs` reads a CRLF CHANGELOG as LF, so
   `check-changelog` accepts a CRLF `## [Unreleased]` line again. The tests read files through one
