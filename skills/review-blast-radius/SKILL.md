@@ -21,6 +21,10 @@ Find the one fact that makes the change safe. Usually one fact decides if the ch
 
 Report confirmed risks and cleared risks separately. For each risk, give how it breaks, the `file:line`, how likely it is and how bad it is. Cite real code. Do not report a caller or an API that you did not find in the code. If a search finds nothing, report that as a result.
 
+## Subagents
+
+Do not start subagents for this skill. Reason: this is one building block. code-review runs it in its own subagent. See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).
+
 ## Credit
 
 The blast radius and the one safety fact come from the [blast-radius](https://github.com/cursor/plugins/blob/main/pstack/skills/blast-radius/SKILL.md) skill in pstack by Lauren Tan (MIT).

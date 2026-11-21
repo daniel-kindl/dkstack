@@ -17,3 +17,7 @@ A building block of [bootstrap](https://raw.githubusercontent.com/daniel-kindl/d
    - Put the version in the project manifest.
    - Add `CHANGELOG.md`.
    - Point to https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/versioning/index.md
+
+## Subagents
+
+Do not start subagents for this skill. Reason: this is one small job. bootstrap can check it in a subagent. See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).

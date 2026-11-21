@@ -15,6 +15,10 @@ Use when you name a thing, read a request that uses domain words, or resolve the
 4. When the owner resolves a term, add or change its entry at that time. Do not wait for the end of the task.
 5. If the code uses a different word than the glossary, tell the owner. Do not rename code that is out of scope.
 
+## Subagents
+
+Do not start subagents for this skill. Reason: each step compares a few words with one file, and step 4 needs the owner. See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).
+
 ## Boundaries
 
 - Do not define a term yourself when the meaning is the owner's decision. Ask.

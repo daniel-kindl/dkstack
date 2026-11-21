@@ -18,6 +18,24 @@ Use before you change files for a task. Follow the rules in [issues](https://raw
 7. Then, if a different account is assigned, stop and ask the owner. Otherwise, assign the issue to the account that you are logged in as.
 8. Create one branch for the issue from the default branch. See [feature branches](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/version-control/feature-branches.md).
 
+## Subagents
+
+If you can start subagents, use them for step 3 when the request has two or more tasks. Do steps 1 and 2 yourself. Then search the open issues for each task at the same time, each task in its own subagent. Give each subagent a brief that is complete without your context:
+
+- The task, in one or two sentences.
+- How to search the issues of the project.
+- What to report: each open issue that covers the task, with its number and title, or "none found".
+- A word limit, for example 150 words.
+- This line: "Report to me only. Do not open, change, label or assign an issue, post, approve or merge."
+
+Start each subagent with the setting below. The [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md) maps each tier to a model.
+
+- Each issue search: tier small, effort low.
+
+Then read each issue that a report names. Open, label and assign the issues yourself. Do steps 4 to 8 yourself.
+
+If you cannot start subagents, do the steps one at a time in the order of this skill.
+
 ## Boundaries
 
 - Do not create, change or delete a label without the owner's OK.

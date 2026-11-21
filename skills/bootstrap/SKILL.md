@@ -22,6 +22,24 @@ Do step 1 first. Do steps 2 to 7 each with its building block. Each building blo
 7. Set up the issue labels with [setup-labels](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-labels/SKILL.md).
 8. Check the README. It says what the project is and who it is for. It says how to install it and how to run it. It says how to contribute. Add each part that is missing.
 
+## Subagents
+
+If you can start subagents, use them to find what the repository is missing before steps 2 to 7. Do step 1 yourself. Then check the current state for steps 2 to 7 at the same time, each building block in its own subagent. Give each subagent a brief that is complete without your context:
+
+- The repository path.
+- The building block of its step, with its link.
+- What to report: each setting of the building block that is missing or weaker, with the file or the setting name.
+- A word limit, for example 200 words.
+- This line: "Report to me only. Do not change files, change settings, commit, push, post, approve or merge."
+
+Start each subagent with the setting below. The [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md) maps each tier to a model.
+
+- Each building block check: tier small, effort low.
+
+Then collect the reports. Check each gap at its file or setting before you fix it. Do steps 2 to 8 yourself, in order.
+
+If you cannot start subagents, do the steps one at a time in the order of this skill.
+
 ## Rules
 
 - Do not weaken existing quality gates.

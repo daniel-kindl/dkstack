@@ -18,6 +18,10 @@ Use when you implement behavior. Follow the [TDD guidelines](https://raw.githubu
 
 For behavior that changes a rendered UI, put the presentation logic in code that you can test without a UI. See [presentation logic](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/ui-testing.md#presentation-logic). Then also do [visual verification](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ui/visual-verification.md).
 
+## Subagents
+
+Do not start subagents for this skill. Reason: each step depends on the result of the step before it. One agent keeps the test and the code in one context. See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).
+
 ## Boundaries
 
 - Do not implement behavior before a relevant failing test exists.

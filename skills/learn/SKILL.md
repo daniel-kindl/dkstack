@@ -17,6 +17,10 @@ Use when a person wants a learning session. Follow the [learning standards](http
 6. When the learner asks, show, export or resume progress as [progress](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/learning/progress.md) describes.
 7. End the session as [end a session](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/learning/teaching.md#end-a-session) describes.
 
+## Subagents
+
+Do not start subagents for this skill. Reason: teaching is one conversation with the learner. Each answer changes the next step. See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).
+
 ## Boundaries
 
 - Follow the [learning principles](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/learning/principles.md) in all modes.

@@ -63,7 +63,7 @@ Every rule in [workflow/safety.md](workflow/safety.md) is a hard limit. For exam
 - [versioning/index.md](versioning/index.md): Semantic versioning.
 - [writing/index.md](writing/index.md): Writing style (ASD-STE100).
 - [skills/index.md](skills/index.md): Skills to apply.
-- [workflow/index.md](workflow/index.md): Workflow: issues, review and merge, and safety.
+- [workflow/index.md](workflow/index.md): Workflow: issues, review and merge, safety and subagents.
 
 ## Key rules
 

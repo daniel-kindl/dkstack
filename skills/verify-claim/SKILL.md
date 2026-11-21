@@ -27,6 +27,10 @@ For each key claim, and for the one safety fact, go as far down this list as is 
 
 A required behavior below level 4 is unproven. Mark it unproven. It is at least Medium until a test or CI proves it.
 
+## Subagents
+
+Do not start subagents for this skill. Reason: the proof must be your own. A report from a subagent is only level 1, Stated. See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).
+
 ## Credit
 
 The evidence levels come from the [prove-it-works](https://github.com/cursor/plugins/blob/main/pstack/skills/principle-prove-it-works/SKILL.md) skill in pstack by Lauren Tan (MIT).

@@ -33,6 +33,10 @@ If you can start subagents, use them to research the options. Do step 1 yourself
 - A word limit, for example 300 words.
 - This line: "Report to me only. Do not write the ADR, post, approve or merge."
 
+Start each subagent with the setting below. The [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md) maps each tier to a model.
+
+- Each option: tier medium, effort high.
+
 Then collect the reports. Write the ADR yourself in step 2, and do steps 3 to 5 yourself. A report from a subagent is a claim. Check each claim that the decision depends on at its source. If a claim has no source, do not put it in the ADR.
 
 If you cannot start subagents, do the steps one at a time in the order of this skill. Research one option fully before you start the next option.
