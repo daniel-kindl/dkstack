@@ -87,6 +87,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `writing/index.md` has one Scope section (#234). ASD-STE100 applies to all text that people or
+  agents read, including product copy: UI text, landing pages, product READMEs, release notes,
+  announcements and emails. Nothing is out of scope. `writing-check` and
+  `ui/content-and-localization.md` link it. Before, the UI page said that the writing rules did not
+  apply to UI copy.
 - The release rule has one owner, `workflow/safety.md` (#205). No agent publishes or releases. No
   agent creates a release tag, pushes to a release branch or to `v1`, publishes a package, or
   starts a release or deploy workflow. A tag or branch push that starts such a workflow counts as

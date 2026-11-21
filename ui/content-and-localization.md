@@ -1,6 +1,6 @@
 # Content and localization
 
-- UI copy follows the product's own voice and content style. [Writing](../writing/index.md) applies to docs and agent text, not to UI copy.
+- UI copy follows the [writing rules](../writing/index.md#scope).
 - Write clear labels and errors that say how to recover. For sign-in and access errors, follow [security](../coding/security.md#rules).
 - Do not put essential instructions only in placeholders, tooltips or images.
 - When localization is in scope, support longer translated strings, wrapping and the reading direction of the locale.

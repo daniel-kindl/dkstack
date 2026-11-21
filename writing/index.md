@@ -1,8 +1,17 @@
 # Writing
 
-Use Simplified Technical English (ASD-STE100) for documentation, comments, commit messages, and agent instructions.
+Use Simplified Technical English (ASD-STE100) for all text. See [Scope](#scope).
 
 Write so that a reader with limited English or a non-native speaker can understand the text without ambiguity.
+
+## Scope
+
+ASD-STE100 applies to all text that people or agents read:
+
+- Documentation, code comments, commit messages, pull request text and agent instructions.
+- Product copy: UI text, landing pages, product READMEs, release notes, announcements and emails.
+
+Nothing is out of scope.
 
 ## Rules
 
@@ -51,4 +60,4 @@ You might want to consider creating a new branch in order to implement the desir
 
 ## Application
 
-Apply these rules to all text that agents or humans will read: documentation, code comments, commit messages, pull request descriptions, and agent instructions.
+Apply these rules to each kind of text in [Scope](#scope).
