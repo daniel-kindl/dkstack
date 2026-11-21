@@ -23,6 +23,7 @@ Each changed surface needs this evidence. Mark an item NOT RUN or NOT APPLICABLE
 - A keyboard walk-through: focus order, visible focus, focus not hidden and no keyboard trap.
 - Text at 200% and the text spacing values. On native UI, use the largest system text size.
 - Reduced motion, when the change has motion.
+- A screen reader or accessibility inspector pass of each changed control: its name, role, state and announcements. Record the tool and its version.
 - The automated checker output: the tool, its version, the number of violations and its limits.
 - The measured contrast ratio of each new or changed color pair.
 
@@ -37,6 +38,17 @@ These tools are examples. Another tool is allowed when it gives the same evidenc
 - Android and iOS: an emulator or simulator screenshot.
 - Native: the accessibility inspector of the platform, for example Accessibility Inspector, Accessibility Scanner or Accessibility Insights.
 
+This table gives examples of a screen reader and an inspector for each platform. It is not a requirement.
+
+| Platform | Screen reader | Inspector |
+| --- | --- | --- |
+| Web | NVDA on Windows, VoiceOver on macOS | The accessibility tree in the browser developer tools |
+| Windows | Narrator or NVDA | Accessibility Insights for Windows |
+| macOS | VoiceOver | Accessibility Inspector |
+| iOS | VoiceOver | Accessibility Inspector |
+| Android | TalkBack | Accessibility Scanner |
+| Linux | Orca | Accerciser |
+
 ### Web default
 
 - Tool: Playwright with Chromium, headless. Capture full-page screenshots of each changed surface.
@@ -45,15 +57,17 @@ These tools are examples. Another tool is allowed when it gives the same evidenc
 - Text resize: inject `html { font-size: 200% }` at 1280 px wide. This works only for rem-based sizes. Record that limit.
 - Text spacing: inject the 1.4.12 values.
 - Keyboard: press Tab through the surface. Record each `document.activeElement` and take a screenshot of each focus.
-- Automated scan: `@axe-core/playwright` with the tags `wcag2a`, `wcag2aa`, `wcag21aa` and `wcag22aa`.
+- Automated scan: `@axe-core/playwright` with the tags `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22a` and `wcag22aa`.
 - axe finds only part of the WCAG issues. In a 2021 Deque study of first-time audits, axe-core found about 57% of the issues by volume.
 - By WCAG criteria it covered only 16 of the 50 WCAG 2.1 AA criteria. See [Deque](https://www.deque.com/automated-accessibility-coverage-report/).
 - axe cannot check contrast on gradients, images or pseudo-elements. Check those by eye or with a color picker.
-- States: default, hover, focus, loading, empty, error and long content.
+- States: each state in [components](components.md) that the changed surface uses. Also check long content.
 
 On the web, a PASS also needs all of these:
 
-- No serious or critical axe violation on the changed surface.
+- No violation of an axe rule with a WCAG A or AA tag on the changed surface, at any impact.
+- No serious or critical violation of an axe best-practice rule on the changed surface.
+- A screen reader or inspector pass of each changed control, with no wrong name, role or state.
 - No horizontal scroll at 320 px, except the 1.4.10 exceptions.
 - Each tab stop is reachable, in a logical order and visibly focused. No tab stop is hidden.
 - No clipped or overlapping text at 200% and with text spacing.
@@ -76,6 +90,8 @@ Per check:
 - NOT APPLICABLE: a check does not apply to the change, for example reduced motion for a change with no motion. Give the reason.
 
 When the check results combine, FAIL wins over NOT RUN.
+
+Put the evidence where the reviewer can open it, for example in the PR or as a CI artifact. A local path is not evidence.
 
 If you can build and run the UI, do the visual verification. If you cannot, write NOT RUN and the reason. Do not invent screenshots.
 
