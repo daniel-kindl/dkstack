@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `writing/user-facing-copy.md` (#249). It covers product READMEs, landing pages, release notes for
+  users, announcements, emails, CLI messages and app store text. Put the one thing that the reader
+  must do or know first. Do not invent numbers, quotes, customers or comparisons. No hype, no fake
+  urgency and no fake scarcity. Name breaking changes and the user action first. ASD-STE100 still
+  applies. The writing index, triage and `ui/content-and-localization.md` link the page.
 - Visual baseline rules in `tdd/ui-testing.md` (#236). A pinned image has zero tolerance by
   default. A tolerance needs a reason beside the test. Each baseline is in the repository next to
   its test. A pull request that updates a baseline shows the before and after image, and the
