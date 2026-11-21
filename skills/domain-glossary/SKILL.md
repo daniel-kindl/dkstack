@@ -19,4 +19,3 @@ Use when you name a thing, read a request that uses domain words, or resolve the
 
 - Do not define a term yourself when the meaning is the owner's decision. Ask.
 - Do not put implementation details, plans or decisions in `CONTEXT.md`. A durable decision goes to [write-adr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-adr/SKILL.md).
-- Change `CONTEXT.md` in the same pull request as the change that needs the term.

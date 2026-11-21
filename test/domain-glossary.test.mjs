@@ -19,8 +19,9 @@ test("domain-languages owns CONTEXT.md, its path and its format", async () => {
     "`**Term**:`",
     "`_Avoid_:`",
     "Create `CONTEXT.md` when the first term is resolved.",
-    "No implementation details.",
-    "Only terms of the domain.",
+    "Do not put implementation details in the file.",
+    "Put only terms of the domain in the file.",
+    "Under it, write a short definition of what the term is.",
   ]) {
     assert.ok(text.includes(phrase), `missing: ${phrase}`);
   }
@@ -49,6 +50,10 @@ test("triage, clarify-intent and code-review use CONTEXT.md", async () => {
   assert.ok(clarify.includes("`CONTEXT.md`"));
   assert.ok(clarify.includes(`${RAW}architecture/domain-languages.md#glossary`));
   const review = await read("skills/code-review/SKILL.md");
-  assert.match(review, /- Domain language: .*`CONTEXT\.md`/);
+  const domain = review.split("- Domain language: ")[1]?.split(" - ")[0] ?? "";
+  assert.ok(domain.includes("`CONTEXT.md`"), "code-review must have a Domain language line");
+  assert.ok(domain.includes("A name that uses a word from an `_Avoid_:` line is Low."));
+  assert.ok(domain.includes("A name that gives a glossary term a different meaning is Medium."));
+  assert.ok(domain.includes("A changed meaning with no change to `CONTEXT.md` is Medium."));
   assert.match(await read("skills/index.md"), /\[domain-glossary\]\(domain-glossary\/SKILL\.md\)/);
 });

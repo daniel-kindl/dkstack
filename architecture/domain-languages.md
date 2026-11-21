@@ -71,13 +71,12 @@ and agents read it before they name a thing. The
   project is.
 - Put the terms under a `## Language` heading. You can group terms under `###` headings when
   groups occur naturally.
-- Write each term as a `**Term**:` line. On the next line, write what the term is in one or two
-  sentences.
+- Write each term as a `**Term**:` line. Under it, write a short definition of what the term is.
 - When other words exist for the same concept, select one term. List the other words on an
   `_Avoid_:` line under the definition.
-- Only terms of the domain. A general programming concept, such as a timeout or a cache, does not
+- Put only terms of the domain in the file. A general programming concept, such as a timeout or a cache, does not
   go in the file.
-- No implementation details. The file is not a specification, a plan or a list of decisions.
+- Do not put implementation details in the file. The file is not a specification, a plan or a list of decisions.
   Record a decision in an [ADR](adrs.md).
 - One term has one meaning. A term must not also appear on an `_Avoid_:` line.
 - When the meaning of a term changes, change the entry in the same pull request as the code.
