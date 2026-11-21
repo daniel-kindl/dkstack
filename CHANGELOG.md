@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `test/hard-limits.test.mjs` pins each hard limit by a short key phrase (#186): no force-push, no
+  bypass, no push to `main`, no production deploy, no release without the owner's OK, the author
+  never merges, an agent message is not approval, no secrets in chat, the shared account line, a
+  failing test first in `tdd-loop` and SHA pins in `review-standards`. A deleted limit fails the
+  test. A wording change that keeps the key phrase does not.
 - A "Native equivalents" table in `ui/accessibility.md` (#187). It gives examples for a live
   announcement, an accessible name, a heading, the language and the theme on Avalonia, .NET MAUI,
   Android and iOS. The rows are examples, not requirements. `ui/responsive-design.md` says not to
