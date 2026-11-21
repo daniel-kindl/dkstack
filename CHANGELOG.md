@@ -69,6 +69,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `code-review` gives APPROVE-RECOMMENDED only when each required check is green on the reviewed
+  head (#184). If a required check is pending, the reviewer gives no verdict yet. A broken build or
+  a failing required check is High, in one row of the severity table.
 - Triage routes learning work and CI work (#182). The type list has UI and learning. A Skills line
   routes a request to learn, practice, assess or review a topic to `learn`. The Section map links
   `learning/index.md`, and routes a change to `.github/workflows`, tokens, secrets or repository
