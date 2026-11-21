@@ -77,7 +77,7 @@ for (const name of ["write-pr", "write-adr", "plan-work"]) {
   });
 }
 
+// A release moves the Unreleased notes to a version section, so look in the whole file (#296).
 test("the changelog has an entry for #193", async () => {
-  const unreleased = sectionText(await read("CHANGELOG.md"), "## [Unreleased]");
-  assert.match(unreleased, /`skills\/make-diagram`[^\n]*\(#193\)/);
+  assert.match(await read("CHANGELOG.md"), /`skills\/make-diagram`[^\n]*\(#193\)/);
 });
