@@ -8,7 +8,8 @@
 // blocks and inline code are ignored. An anchor in a link to a Markdown file,
 // or a pure "#anchor", must match a heading in that file, with the GitHub
 // rules for the anchor text and the "-1" suffix of a duplicate heading. An
-// HTML id or name attribute is an anchor too. Setext headings are not read. In a skill folder, a relative link must
+// HTML id or name attribute is an anchor too. An HTML <a href> is a link, and
+// links in an indented code block are ignored. Setext headings are not read. In a skill folder, a relative link must
 // stay in that folder, and a link to another dkstack file must be a raw URL on
 // the ref v1. The check still maps each such URL to a file at HEAD.
 
@@ -19,7 +20,9 @@ import { markdownFiles } from "./markdown-files.mjs";
 
 // [text](target) and ![alt](target). The target is <...> or has no spaces,
 // and an optional "title" can follow.
-const LINK_PATTERN = /!?\[[^\]]*\]\(\s*(<[^>]*>|[^\s)]+)(?:\s+"[^"]*")?\s*\)/g;
+const LINK_PATTERN = /!?\[[^\]]*\]\(\s*(<[^>]*>|(?:[^\s()]|\([^\s()]*\))+)(?:\s+"[^"]*")?\s*\)/g;
+// <a href="target"> in HTML.
+const HTML_HREF_PATTERN = /<a\s[^>]*\bhref\s*=\s*"([^"]+)"/gi;
 const SCHEME_PATTERN = /^[a-z][a-z0-9+.-]*:/i;
 // A bare URL in prose. Trailing punctuation is not part of the URL.
 const BARE_URL_PATTERN = /https?:\/\/[^\s<>()[\]"'`]+/g;
@@ -35,22 +38,46 @@ const REPO_URL_PATTERN =
 // The skills CLI copies only a skill folder. A file in a skill folder can link
 // to its own folder with a relative link, and to other dkstack files only with
 // a raw URL on the release ref (ADR 0001).
+const REF_WITH_SLASH = /\/dkstack\/(?:(?:blob|tree)\/)?(?:release|feat|fix|docs|chore|ci|test|refactor|prototype)\//;
 const SKILL_FILE_PATTERN = /^skills\/[^/]+\//;
 const SKILL_URL_PREFIX = "https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/";
 
-// Yield each line outside fenced code as { index, line }.
+const LIST_ITEM = /^\s*(?:[-*+]|\d+[.)])\s/;
+const INDENTED = /^(?: {4}|\t)/;
+
+// Yield each line outside code as { index, line }. Code is a fenced block, or
+// an indented block (4 spaces or a tab) after a blank line that is not part
+// of a list. In a list, an indented line is a nested paragraph, not code.
 function* proseLines(text) {
   let fence = null;
+  let inList = false;
+  let inIndentedCode = false;
+  let previousBlank = true;
   const lines = text.split(/\r?\n/);
   for (let i = 0; i < lines.length; i++) {
-    const fenceMatch = /^\s*(`{3,}|~{3,})/.exec(lines[i]);
+    const line = lines[i];
+    const blank = line.trim() === "";
+    const fenceMatch = /^\s*(`{3,}|~{3,})/.exec(line);
     if (fenceMatch) {
       const marker = fenceMatch[1];
       if (fence === null) fence = marker;
       else if (marker[0] === fence[0] && marker.length >= fence.length) fence = null;
+      previousBlank = false;
       continue;
     }
-    if (fence === null) yield { index: i, line: lines[i] };
+    if (fence !== null) continue;
+    if (!blank) {
+      if (INDENTED.test(line) && !inList && (previousBlank || inIndentedCode)) {
+        inIndentedCode = true;
+        previousBlank = false;
+        continue;
+      }
+      inIndentedCode = false;
+      if (LIST_ITEM.test(line)) inList = true;
+      else if (!/^\s/.test(line)) inList = false;
+    }
+    previousBlank = blank;
+    yield { index: i, line };
   }
 }
 
@@ -82,18 +109,8 @@ export function anchorsIn(text) {
 
 // Yield { line, target } for each link outside code.
 function* linksIn(text) {
-  let fence = null;
-  const lines = text.split(/\r?\n/);
-  for (let i = 0; i < lines.length; i++) {
-    const fenceMatch = /^\s*(`{3,}|~{3,})/.exec(lines[i]);
-    if (fenceMatch) {
-      const marker = fenceMatch[1];
-      if (fence === null) fence = marker;
-      else if (marker[0] === fence[0] && marker.length >= fence.length) fence = null;
-      continue;
-    }
-    if (fence !== null) continue;
-    const prose = lines[i].replace(/`[^`]*`/g, "");
+  for (const { index: i, line } of proseLines(text)) {
+    const prose = line.replace(/`[^`]*`/g, "");
     const reference = REFERENCE_PATTERN.exec(prose);
     if (reference) {
       let target = reference[1];
@@ -106,7 +123,8 @@ function* linksIn(text) {
       if (target.startsWith("<")) target = target.slice(1, -1);
       yield { line: i + 1, target };
     }
-    for (const match of prose.replace(LINK_PATTERN, "").matchAll(BARE_URL_PATTERN)) {
+    for (const match of prose.matchAll(HTML_HREF_PATTERN)) yield { line: i + 1, target: match[1] };
+    for (const match of prose.replace(LINK_PATTERN, "").replace(HTML_HREF_PATTERN, "").matchAll(BARE_URL_PATTERN)) {
       yield { line: i + 1, target: match[0].replace(TRAILING_PUNCTUATION, "") };
     }
   }
@@ -161,13 +179,19 @@ export async function checkLinks(root) {
         errors.push(`${relFile}:${line}: broken link ${target}`);
         continue;
       }
-      const full = resolve(repoUrl ? root : dirname(file), path);
+      let full = resolve(repoUrl ? root : dirname(file), path);
+      // A ref with a slash, such as release/v1.5.0, puts its second part in
+      // the path. Drop it when the ref starts with a branch type.
+      if (repoUrl && REF_WITH_SLASH.test(target) && !(await exists(full))) {
+        const shorter = resolve(root, path.split("/").slice(1).join("/"));
+        if (await exists(shorter)) full = shorter;
+      }
       const resolved = relative(root, full).split(sep).join("/");
       links.push({ file: relFile, line, target, resolved });
       const skillDir = SKILL_FILE_PATTERN.exec(relFile)?.[0];
       if (skillDir && repoUrl && !target.startsWith(SKILL_URL_PREFIX)) {
         errors.push(`${relFile}:${line}: skill link must use ${SKILL_URL_PREFIX}<path>: ${target}`);
-      } else if (skillDir && !repoUrl && !resolved.startsWith(skillDir)) {
+      } else if (skillDir && !repoUrl && !`${resolved}/`.startsWith(skillDir)) {
         errors.push(`${relFile}:${line}: relative link leaves the skill folder ${target}`);
         continue;
       }

@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `npm test` fails when the tests cover less than 95% of the lines or 90% of the branches in
   `scripts/` (#231). It uses the coverage flags of Node 24 and no new dependency. The coverage today
   is 99.16% of lines and 93.51% of branches.
+- A contributor checklist in CONTRIBUTING.md (#230). "Run the checks" names `npm run check`, Node 24
+  and the separate title check. "Add a page or a skill" lists the index entry, the route from
+  triage, a test, the `[Unreleased]` line and raw `v1` links in skills. "Update bot pull requests"
+  says that the reviewer edits a title over 50 characters before the merge. The page says that each
+  rule has one owner page.
 - `setup-repo-protection` building block (#222). It lists the protection settings for the owner to
   apply: a default branch rule (pull request, required checks, squash only, linear history, no
   force-push, no deletion, no bypass for administrators), rules for release tags and release
@@ -180,6 +185,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `check-links` closes five parser gaps (#232). It checks an HTML `<a href>`. It accepts `[self](./)`
+  in a skill and a target with balanced parentheses. It ignores links in an indented code block,
+  but not in an indented paragraph of a list. A repository URL on a ref with a slash, such as
+  `blob/release/v1.5.0/...`, resolves.
 - The scripts and tests work on a CRLF checkout, and each script can be imported (#206). A new
   `.gitattributes` checks out text with LF. `release.mjs` reads a CRLF CHANGELOG as LF, so
   `check-changelog` accepts a CRLF `## [Unreleased]` line again. The tests read files through one
