@@ -113,7 +113,7 @@ change that a consumer must act on has a "Consumer action:" line.
 - Skill building blocks (#167). `code-review` runs `review-spec`, `review-standards`,
   `review-blast-radius` and `verify-claim`. `bootstrap` runs `setup-editorconfig`,
   `setup-quality-gates`, `setup-versioning` and `setup-supply-chain`. The text moved from the two
-  skills to the blocks. No skill is removed or renamed, and the `code-review` anchors stay.
+  skills to the building blocks. No skill is removed or renamed, and the `code-review` anchors stay.
   `tdd-loop` and `write-pr` link `verify-claim`.
 - Invocation classes (#167). A skill is user, agent or both. `scripts/check-skills.mjs` accepts
   `disable-model-invocation` and `user-invocable` with the value `true` or `false`. A user-only
@@ -143,9 +143,10 @@ change that a consumer must act on has a "Consumer action:" line.
 ### Changed
 
 - The pages use the terms of `CONTEXT.md` (#285): "owner", "consumer", "suppression", "building
-  block" and, for the checks that you run locally, "quality gates". `workflow/safety.md` defines the owner under
-  `## Owner`. The heading `## Exceptions` in `coding/quality-gates.md` is now `## Suppressions`. A
-  test checks that no page uses a word from an `_Avoid_:` line.
+  block" and, for the checks that you run locally, "quality gates". `workflow/safety.md` defines
+  the owner under `## Owner`. The heading `## Exceptions` in `coding/quality-gates.md` is now
+  `## Suppressions`. A test checks that no page and no Unreleased entry uses a word from an
+  `_Avoid_:` line.
   Consumer action: change a link to `coding/quality-gates.md#exceptions` to
   `coding/quality-gates.md#suppressions`.
 - The fix loop in `workflow/review-and-merge.md` (#279). After a verdict that is not
@@ -276,7 +277,7 @@ change that a consumer must act on has a "Consumer action:" line.
   reviewer, architect, writer or coordinator. The task and the skills that triage selects tell the
   agent what to do. The kept rules moved. The author rule is in the Rules of
   `workflow/review-and-merge.md`: the author must not review, approve or merge their own pull
-  request. The human owner, the owner records with the relay rule, and the rule that the owner
+  request. The owner, the owner records with the relay rule, and the rule that the owner
   approves material scope changes and every release are in `workflow/safety.md`. The workflow flow
   and `review-spec` name no role.
   Consumer action: if your project links `workflow/roles.md`, link `workflow/safety.md#owner`

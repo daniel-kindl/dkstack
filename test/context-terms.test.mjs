@@ -76,6 +76,16 @@ test("CHANGELOG.md links the Owner anchor and no removed anchor", async () => {
   assert.ok(text.includes("link `workflow/safety.md#owner`"));
 });
 
+// The Unreleased entries become the next release notes, so they use the terms too.
+test("the Unreleased entries of CHANGELOG.md use no avoided word", async () => {
+  const text = await read("CHANGELOG.md");
+  const unreleased = text.slice(text.indexOf("## [Unreleased]"), text.search(/## \[\d/));
+  for (const word of (await avoidedWords()).filter((w) => !SHARED_WORDS.has(w))) {
+    assert.doesNotMatch(unreleased, new RegExp(`\\b${word}s?\\b`, "i"), word);
+  }
+  assert.doesNotMatch(unreleased, /\bthe blocks\b/i);
+});
+
 test("quality-gates calls a switched-off diagnostic a suppression", async () => {
   const text = await raw("coding/quality-gates.md");
   assert.match(text, /^## Suppressions$/m);
