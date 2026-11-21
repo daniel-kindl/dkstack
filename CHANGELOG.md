@@ -17,6 +17,12 @@ change that a consumer must act on has a "Consumer action:" line.
   renames a label only with the owner's OK that names the labels. It does not change or delete
   an existing label. A project without an issue tracker skips it. `bootstrap` runs it as step 7,
   and the README check is now step 8.
+- `skills/setup-dkstack` (#290). It connects a new or an existing repository to dkstack. It
+  copies `sample-AGENTS.md` as `AGENTS.md`, or merges the pointer into an existing `AGENTS.md`
+  and keeps the project text. It asks the owner to remove or record as an exception each project
+  rule that conflicts with dkstack. It adds `@AGENTS.md` to `CLAUDE.md` and points other agent
+  files to `AGENTS.md`. It installs the skills only with the owner's OK and checks the result.
+  `bootstrap` step 1 and `triage` use it.
 - `skills/make-diagram` (#193). It tells when a diagram helps and when the text is sufficient.
   It maps each need to a kind of diagram: flow, sequence, state, component or dependency, data
   model, and before and after. It prefers Mermaid in Markdown, with a plain-text sketch as the

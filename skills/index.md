@@ -25,6 +25,7 @@ A building block does one job. A larger skill, such as `code-review` or `bootstr
 ## Current skills
 
 - [triage](triage/SKILL.md) (agent): Decide which guidelines and skills apply to the current task. Read this first.
+- [setup-dkstack](setup-dkstack/SKILL.md) (both): Connect a new or an existing repository to dkstack. Add or merge `AGENTS.md`, make each agent client read it and install the skills with the owner's OK.
 - [bootstrap](bootstrap/SKILL.md) (both): Set up conventional commits, short-lived branches, semver, strict editorconfig, warnings as errors and deterministic checks. Applies the supply chain rules and repository protection, sets up issue labels and adds a README check.
   - [setup-editorconfig](setup-editorconfig/SKILL.md) (agent): Strict editor settings and LF line endings.
   - [setup-quality-gates](setup-quality-gates/SKILL.md) (agent): Warnings as errors, CI and deterministic checks.

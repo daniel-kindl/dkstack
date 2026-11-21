@@ -10,7 +10,9 @@ consumer gets the new rules. A consumer is a repository whose `AGENTS.md` points
 
 ## Start
 
-1. Copy [sample-AGENTS.md](sample-AGENTS.md) into your project as `AGENTS.md`.
+1. Copy [sample-AGENTS.md](sample-AGENTS.md) into your project as `AGENTS.md`. Or tell your agent
+   to run the [setup-dkstack](skills/setup-dkstack/SKILL.md) skill. It works in a new or an
+   existing project.
 2. Optional: install the skills. See [Install the skills](#install-the-skills).
 3. Give your agent a task. It reads the triage skill first, and triage selects the rules for the
    task.

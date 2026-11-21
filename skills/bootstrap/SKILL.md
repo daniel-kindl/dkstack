@@ -5,7 +5,7 @@ description: "Use when you create a new repository or a repository has no commit
 
 # Bootstrap
 
-Use when you set up a new repository or bring an existing one up to standard.
+Use when you set up a new repository or bring an existing one up to standard. To only connect a repository to dkstack, use [setup-dkstack](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-dkstack/SKILL.md).
 
 Apply the rules from version-control, versioning, and coding sections. Then protect the repository, set up the labels and check the README. Step 5 applies the supply chain rules in [coding/dependencies.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md#supply-chain-rules).
 
@@ -13,7 +13,7 @@ Apply the rules from version-control, versioning, and coding sections. Then prot
 
 Do step 1 first. Do steps 2 to 7 each with its building block. Each building block links the rules and does not copy them.
 
-1. Copy [sample-AGENTS.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/sample-AGENTS.md) into the repository as `AGENTS.md`. Record each project exception to a dkstack rule in its Exceptions section.
+1. Connect the repository to dkstack with [setup-dkstack](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-dkstack/SKILL.md). It adds or merges `AGENTS.md` and records each project exception to a dkstack rule in its Exceptions section.
 2. Set up the editor settings and LF line endings with [setup-editorconfig](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-editorconfig/SKILL.md).
 3. Make warnings errors, set up CI, make the checks deterministic and copy the dkstack format checks with [setup-quality-gates](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-quality-gates/SKILL.md).
 4. Document the commit and branch rules and set up semantic versioning with [setup-versioning](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-versioning/SKILL.md).
