@@ -56,3 +56,12 @@ test("the owner instructions section does not waive a hard limit", async () => {
   assert.doesNotMatch(section, /readiness/);
   assert.doesNotMatch(section, /claim/);
 });
+
+// #272: the D2 hard limit has two sentences. Each one keeps "No agent".
+test("the release hard limit keeps its actor for each action", async () => {
+  const text = (await readFile(join(repoRoot, "workflow/safety.md"), "utf8")).replace(/\s+/g, " ");
+  for (const fact of ["No agent creates a release tag", "or pushes to a release branch or to `v1`",
+    "No agent publishes a package", "or does an action that starts a release or deploy workflow"]) {
+    assert.ok(text.includes(fact), fact);
+  }
+});

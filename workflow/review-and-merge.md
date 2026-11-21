@@ -16,10 +16,11 @@ keeps the review and merge rules.
 - The review gives one verdict: APPROVE-RECOMMENDED, CHANGES-REQUESTED or BLOCKED. Reason: one
   verdict tells the author the next step.
 - The reviewer merges only the head that they reviewed. The reviewer merges only when the review
-  passes and all required checks are green. The code host must also show the pull request as ready
-  to merge, with no rule bypassed. The author never merges. The [human owner](roles.md#human-owner) may also merge,
-  including a pull request that they authored, after the same checks pass. Reason: a later push,
-  a failed check, an open finding or a bypassed rule must not reach `main`.
+  passes and all required checks are green. The reviewer also merges only when the code host shows
+  the pull request as ready to merge with no rule bypassed. The author never merges. The
+  [human owner](roles.md#human-owner) may also merge, including a pull request that they
+  authored, after the same checks pass. Reason: a later push, a failed check, an open finding or a bypassed rule
+  must not reach `main`.
 - Use squash merge only and keep history linear. Reason: each pull request becomes one commit on
   `main`.
 - The pull request title is the commit message. It must be a

@@ -52,8 +52,8 @@ A release or deploy workflow is safe only when all of these are true:
 
 ## If a secret leaks
 
-Do these steps in this order when a token, a key or a password is in a place where it must not
-be. Examples are code, a commit, a log, an issue, pull request text and chat. The owner, or a person that the owner names, does steps 2 and 3.
+Do these steps in this order when a secret leaks. A secret is a token, a key or a password. It
+leaks when it is in code, a commit, a log, an issue, pull request text or chat. The owner, or a person that the owner names, does steps 2 and 3.
 An agent does not change a secret or a setting without the owner's OK. See
 [safety](../workflow/safety.md).
 

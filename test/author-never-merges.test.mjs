@@ -27,7 +27,10 @@ const OWNER_LINK = /review-and-merge\.md#rules\)/;
 test("the review Rules own the full merge gate", async () => {
   const rules = flatten(sectionText(await page("workflow/review-and-merge.md"), "## Rules"));
   for (const fact of ["The author never merges.", "only the head that they reviewed", "all required checks are green",
-    "no rule bypassed", "may also merge, including a pull request that they authored"]) {
+    "no rule bypassed", "may also merge, including a pull request that they authored",
+    // #272: each merge condition stays under "only when".
+    "The reviewer merges only when the review passes",
+    "The reviewer also merges only when the code host shows the pull request as ready to merge"]) {
     assert.ok(rules.includes(fact), fact);
   }
 });
