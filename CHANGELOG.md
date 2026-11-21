@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `test/routes.test.mjs` checks that each skill and page can be found (#208). `skills/index.md`
+  lists each skill. Triage reaches each skill, directly or through a skill that it links. Each
+  section index lists each page of its section. AGENTS.md "Sections" lists each section index,
+  except `tips/` while it has no tip.
 - `test/hard-limits.test.mjs` pins each hard limit by a short key phrase (#186): no force-push, no
   bypass, no push to `main`, no production deploy, no release without the owner's OK, the author
   never merges, an agent message is not approval, no secrets in chat, the shared account line, a
