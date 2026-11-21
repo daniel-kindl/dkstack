@@ -91,7 +91,7 @@ One agent can do all the steps. Many agents can share the steps. A skill does no
 
 Routine work does not read
 [stewardship](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/stewardship.md).
-Read it when a human asks for the analysis, or when the task has one of the
+Read it when a person asks for the analysis, or when the task has one of the
 [signals](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/stewardship.md#analysis)
 in its Analysis section.
 

@@ -11,7 +11,7 @@ A change to that knowledge must happen in only one location.
 - Put shared knowledge in one place.
 - Call or reference that place instead of copying.
 - Do not copy logic, constants, or structure.
-- When you see the same idea twice, extract it.
+- When you see the same idea twice, decide with the stewardship [trade-off](stewardship.md#trade-offs). Extract it when one change to it must update every copy. Keep the copies when the parts change for different reasons.
 - Duplication of data is fine if the data is not knowledge that must stay in sync.
 
 ## Good example

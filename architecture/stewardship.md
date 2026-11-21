@@ -18,7 +18,7 @@ task.
 
 ### Analysis
 
-Use analysis only when a signal is present, or when a human asks for it.
+Use analysis only when a signal is present, or when a person asks for it.
 
 A signal is one of these:
 
