@@ -73,6 +73,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The project's design system wins over the Defaults sections of the ui/ pages only (#183). A
+  default applies when the project's system does not cover that area. A rule marked
+  "(dkstack rule)" still applies. To differ from it, record an exception as AGENTS.md
+  "Precedence" says.
 - `code-review` gives APPROVE-RECOMMENDED only when each required check is green on the reviewed
   head (#184). If a required check is pending, the reviewer gives no verdict yet. A broken build or
   a failing required check is High, in one row of the severity table.
