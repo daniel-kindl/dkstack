@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Dependabot commit and pull request titles in dkstack start with `ci:`, so a short update title
+  passes the title check (#154).
+
 ### Fixed
 
 - `check-links` checks anchors. A link to a Markdown file with `#anchor`, a pure `#anchor` and a
