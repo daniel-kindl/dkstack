@@ -3,9 +3,12 @@
 // that exists inside the repository. Relative links resolve against the file
 // that contains them. Absolute links to a file in this repository (raw and
 // blob or tree URLs on GitHub, with any ref) resolve against the local tree,
-// as Markdown links or as bare URLs. Other URLs and pure anchors are not
+// as Markdown links, reference definitions or bare URLs. Other URLs are not
 // checked, because a network check is not deterministic. Links in fenced code
-// blocks and inline code are ignored. In a skill folder, a relative link must
+// blocks and inline code are ignored. An anchor in a link to a Markdown file,
+// or a pure "#anchor", must match a heading in that file, with the GitHub
+// rules for the anchor text and the "-1" suffix of a duplicate heading. An
+// HTML id or name attribute is an anchor too. Setext headings are not read. In a skill folder, a relative link must
 // stay in that folder, and a link to another dkstack file must be a raw URL on
 // the ref v1. The check still maps each such URL to a file at HEAD.
 
@@ -21,6 +24,10 @@ const SCHEME_PATTERN = /^[a-z][a-z0-9+.-]*:/i;
 // A bare URL in prose. Trailing punctuation is not part of the URL.
 const BARE_URL_PATTERN = /https?:\/\/[^\s<>()[\]"'`]+/g;
 const TRAILING_PUNCTUATION = /[.,;:!?]+$/;
+// [label]: target, with an optional title.
+const REFERENCE_PATTERN = /^ {0,3}\[[^\]]+\]:\s*(<[^>]*>|\S+)/;
+const HEADING_PATTERN = /^ {0,3}#{1,6}\s+(.*?)(?:\s+#+)?\s*$/;
+const HTML_ANCHOR_PATTERN = /<a\s[^>]*\b(?:id|name)\s*=\s*"([^"]+)"/gi;
 // A file or folder in this repository on GitHub. Group 1 is the path.
 const REPO_URL_PATTERN =
   /^https?:\/\/(?:raw\.githubusercontent\.com\/daniel-kindl\/dkstack\/[^/?#]+|github\.com\/daniel-kindl\/dkstack\/(?:blob|tree)\/[^/?#]+)(\/[^?#]*)?/i;
@@ -30,6 +37,48 @@ const REPO_URL_PATTERN =
 // a raw URL on the release ref (ADR 0001).
 const SKILL_FILE_PATTERN = /^skills\/[^/]+\//;
 const SKILL_URL_PREFIX = "https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/";
+
+// Yield each line outside fenced code as { index, line }.
+function* proseLines(text) {
+  let fence = null;
+  const lines = text.split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    const fenceMatch = /^\s*(`{3,}|~{3,})/.exec(lines[i]);
+    if (fenceMatch) {
+      const marker = fenceMatch[1];
+      if (fence === null) fence = marker;
+      else if (marker[0] === fence[0] && marker.length >= fence.length) fence = null;
+      continue;
+    }
+    if (fence === null) yield { index: i, line: lines[i] };
+  }
+}
+
+// The GitHub anchor of a heading: the rendered text in lower case, without
+// punctuation, with each space as a hyphen.
+export function headingAnchor(heading) {
+  const rendered = heading
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/<[^>]+>/g, "")
+    .trim();
+  return rendered.toLowerCase().replace(/[^\p{L}\p{M}\p{N}\p{Pc} -]/gu, "").replace(/ /g, "-");
+}
+
+// Return the set of anchors in a Markdown text.
+export function anchorsIn(text) {
+  const anchors = new Set();
+  const counts = new Map();
+  for (const { line } of proseLines(text)) {
+    for (const m of line.matchAll(HTML_ANCHOR_PATTERN)) anchors.add(m[1]);
+    const heading = HEADING_PATTERN.exec(line);
+    if (!heading) continue;
+    const base = headingAnchor(heading[1]);
+    const n = counts.get(base) ?? 0;
+    counts.set(base, n + 1);
+    anchors.add(n === 0 ? base : `${base}-${n}`);
+  }
+  return anchors;
+}
 
 // Yield { line, target } for each link outside code.
 function* linksIn(text) {
@@ -45,6 +94,13 @@ function* linksIn(text) {
     }
     if (fence !== null) continue;
     const prose = lines[i].replace(/`[^`]*`/g, "");
+    const reference = REFERENCE_PATTERN.exec(prose);
+    if (reference) {
+      let target = reference[1];
+      if (target.startsWith("<")) target = target.slice(1, -1);
+      yield { line: i + 1, target };
+      continue;
+    }
     for (const match of prose.matchAll(LINK_PATTERN)) {
       let target = match[1];
       if (target.startsWith("<")) target = target.slice(1, -1);
@@ -65,16 +121,39 @@ async function exists(path) {
   }
 }
 
+// Return the fragment of a target, decoded, or null when it has none.
+function fragmentOf(target) {
+  const at = target.indexOf("#");
+  if (at === -1 || at === target.length - 1) return null;
+  try {
+    return decodeURIComponent(target.slice(at + 1));
+  } catch {
+    return target.slice(at + 1);
+  }
+}
+
 // Return { checked, links, errors }. Paths use "/" and are relative to root.
 export async function checkLinks(root) {
   const links = [];
   const errors = [];
+  const anchorCache = new Map();
+  const anchorsOf = async (full) => {
+    if (!anchorCache.has(full)) anchorCache.set(full, anchorsIn(await readFile(full, "utf8")));
+    return anchorCache.get(full);
+  };
   for (const file of await markdownFiles(root)) {
     const relFile = relative(root, file).split(sep).join("/");
     const text = await readFile(file, "utf8");
     for (const { line, target } of linksIn(text)) {
       const repoUrl = REPO_URL_PATTERN.exec(target);
-      if (!repoUrl && (SCHEME_PATTERN.test(target) || target.startsWith("#"))) continue;
+      if (!repoUrl && target.startsWith("#")) {
+        const fragment = fragmentOf(target);
+        if (fragment !== null && !(await anchorsOf(file)).has(fragment)) {
+          errors.push(`${relFile}:${line}: missing anchor ${target}`);
+        }
+        continue;
+      }
+      if (!repoUrl && SCHEME_PATTERN.test(target)) continue;
       let path;
       try {
         path = decodeURI(repoUrl ? (repoUrl[1] ?? "").replace(/^\//, "") : target.split("#")[0]);
@@ -97,6 +176,11 @@ export async function checkLinks(root) {
         errors.push(`${relFile}:${line}: link leaves the repository ${target}`);
       } else if (!(await exists(full))) {
         errors.push(`${relFile}:${line}: broken link ${target}`);
+      } else {
+        const fragment = fragmentOf(target);
+        if (fragment !== null && /\.md$/i.test(full) && !(await anchorsOf(full)).has(fragment)) {
+          errors.push(`${relFile}:${line}: missing anchor ${target}`);
+        }
       }
     }
   }

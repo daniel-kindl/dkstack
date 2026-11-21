@@ -18,8 +18,9 @@ Projects follow the `v1` branch. Read this file from this URL:
 
 > https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md
 
-The `main` branch has changes that are not released yet. The links in this file resolve against
-the ref in your URL, so you read all files on the same version. The skills link to `v1`. See
+The `main` branch has changes that are not released yet.
+
+If your entry URL names a tag, read each dkstack raw URL on that tag in place of `v1`. See
 [ADR 0001](docs/adr/0001-how-consumers-follow-versions.md).
 
 ## Precedence
