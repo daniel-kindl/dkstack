@@ -115,6 +115,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `code-review` and `versioning/index.md` have no sentence over 25 words and no semicolon (#245).
+  Six sentences are split. The meaning does not change. A test checks both pages.
 - The writing rules have limits that a check can test (#243). A step has at most 20 words. A
   sentence in a description has at most 25 words. Do not use a semicolon. A new "AI prose patterns"
   section gives six examples. The scope includes the text that an agent writes to a person, such as

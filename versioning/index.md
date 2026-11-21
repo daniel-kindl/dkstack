@@ -24,8 +24,8 @@ The `Release` workflow ([release.yml](../.github/workflows/release.yml)) does th
 Only Daniel starts the `Release` workflow. The workflow has two jobs. The `plan` job is read-only.
 It works out the version and shows it in the run summary. The `release` job does all the writes.
 It runs in the `release` environment, so it waits until Daniel approves it. Daniel's OK for a
-release is two actions: he starts `Release`, and he approves the `release` environment after he
-reads the planned version in the run summary. No bot starts the workflow or approves the
+release is two actions. He starts `Release`. Then he reads the planned version in the run summary
+and approves the `release` environment. No bot starts the workflow or approves the
 environment. [Safety](../workflow/safety.md) owns the release rule.
 
 dkstack agents use Daniel's account today (D1 in
@@ -65,8 +65,8 @@ the job writes nothing.
 The workflow does not need "Allow GitHub Actions to create and approve pull requests", because
 `GITHUB_TOKEN` does not open the pull request.
 
-To change a key: generate a new private key in the app settings, replace
-`RELEASE_APP_PRIVATE_KEY` in the `release` environment, then delete the old key in the app
+To change a key: generate a new private key in the app settings. Replace
+`RELEASE_APP_PRIVATE_KEY` in the `release` environment. Then delete the old key in the app
 settings.
 
 ### Start a release
