@@ -15,7 +15,7 @@ page or the app with a small set of system colors.
 - In forced colors mode, use system colors, such as `CanvasText`, `Canvas`, `LinkText`,
   `ButtonText`, `Highlight` and `GrayText`. Do not set a fixed color there (dkstack rule).
 - Do not show a state, such as selected, focus or error, with a background color only. Add a
-  border, an outline, an icon or text (dkstack rule). Forced colors mode can remove the background.
+  border, an outline, an icon or text (1.4.1). Forced colors mode can remove the background.
 - On the web, use `@media (forced-colors: active)` for the changes. Use `forced-color-adjust: none`
   only for a small element, such as a color swatch, that must keep its own colors (dkstack rule).
 

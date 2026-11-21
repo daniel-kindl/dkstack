@@ -294,7 +294,10 @@ test("the UI test rules set zero tolerance, a reviewed update and one place for 
 test("the UI pages cover forced colors mode and its evidence", async () => {
   const colors = await document("ui/colors-and-themes.md");
   const forced = section(colors, "## Forced colors");
-  for (const phrase of ["forced colors mode", "system colors", "`CanvasText`", "background color only", "(dkstack rule)"]) {
+  // M1 on #257: one phrase for each rule, so that a deleted or reversed rule fails.
+  for (const phrase of ["Test each changed surface in forced colors mode when the project supports Windows",
+    "In forced colors mode, use system colors", "`CanvasText`", "Do not set a fixed color there",
+    "with a background color only", "`@media (forced-colors: active)`", "`forced-color-adjust: none`"]) {
     assert.ok(forced.includes(phrase), phrase);
   }
   const evidence = section(await document("ui/visual-verification.md"), "## Minimum evidence");
