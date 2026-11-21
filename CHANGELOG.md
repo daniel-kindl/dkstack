@@ -12,6 +12,10 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- Forced colors rules in `ui/colors-and-themes.md` (#248). When the project supports Windows, test
+  each changed surface in forced colors mode. Use system colors there. Do not show a state with a
+  background color only. On the web, use `@media (forced-colors: active)`. The minimum evidence in
+  `ui/visual-verification.md` adds a forced colors check when the project supports Windows.
 - A rule for breaking changes in dkstack (#246). MAJOR: remove or rename a skill, a page or a linked
   anchor, or add a hard limit. MINOR: a new skill, page or duty, or a renamed anchor that keeps the
   old anchor as a redirect. PATCH: wording only. Each class has an example. A MAJOR change has `!`

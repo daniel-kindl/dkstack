@@ -289,3 +289,15 @@ test("the UI test rules set zero tolerance, a reviewed update and one place for 
     assert.ok(tests.includes(phrase), phrase);
   }
 });
+
+// IRIS-M5 in #154, after D9: forced colors mode (Windows contrast themes).
+test("the UI pages cover forced colors mode and its evidence", async () => {
+  const colors = await document("ui/colors-and-themes.md");
+  const forced = section(colors, "## Forced colors");
+  for (const phrase of ["forced colors mode", "system colors", "`CanvasText`", "background color only", "(dkstack rule)"]) {
+    assert.ok(forced.includes(phrase), phrase);
+  }
+  const evidence = section(await document("ui/visual-verification.md"), "## Minimum evidence");
+  assert.ok(evidence.includes("forced colors mode"));
+  assert.ok(evidence.includes("supports Windows"));
+});
