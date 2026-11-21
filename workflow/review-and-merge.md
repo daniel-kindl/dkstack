@@ -10,7 +10,7 @@ keeps the review and merge rules.
 ## Rules
 
 - Implement from an issue with acceptance criteria. Reason: the issue states the scope that the
-  review checks.
+  review checks. The issue rules are in [issues.md](issues.md).
 - Use one issue, one branch and one pull request. Link the issue in the pull request. Reason: each
   change stays small and traceable.
 - The pull request body lists the tests that prove the behavior. It names each check that did not

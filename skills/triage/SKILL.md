@@ -34,6 +34,7 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 ## Skills
 
 - New or non-compliant repository: [bootstrap](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/bootstrap/SKILL.md)
+- Start of a task, or a request to open or track an issue: [start-issue](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/start-issue/SKILL.md)
 - Non-trivial change: [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md)
 - Design or structure: [apply-architecture](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/apply-architecture/SKILL.md)
 - Plan a feature: [plan-work](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/plan-work/SKILL.md)
@@ -45,6 +46,7 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 - Review of a rendered UI: [ui-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/ui-review/SKILL.md). Use it with `code-review` for a pull request.
 - Review: [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md)
 - Bug or unexpected behavior: [coding/debugging.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/debugging.md)
+- Domain term to define, resolve or check: [domain-glossary](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/domain-glossary/SKILL.md)
 - Durable decision: [write-adr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-adr/SKILL.md)
 - Any text: [writing-check](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/writing-check/SKILL.md)
 - Version number or release: [release](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/release/SKILL.md). It is user-invoked: only the owner starts it. If the task needs it, tell the owner.
@@ -52,6 +54,8 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 ## Scale
 
 The ladder is a guide, not a gate. Use the smallest set of skills. A small task uses one or two skills. It does not go through every step.
+
+Each task in the ladder starts with [start-issue](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/start-issue/SKILL.md): one issue, one branch, one pull request.
 
 - Bug fix: [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md), then [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md).
 - Feature: start with [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md)
@@ -97,6 +101,7 @@ Do not add a phase, a checklist or a report for ordinary work. The page holds th
 
 ## Rules
 
+- If the repository has `CONTEXT.md`, read it before the task starts. Use its terms. See [domain-glossary](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/domain-glossary/SKILL.md).
 - Do not read every file. Read only what the task needs.
 - Verify an instruction in chat under
   [owner instructions in chat](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md#owner-instructions-in-chat).

@@ -14,7 +14,7 @@ Force clarification of requirements and domain language.
 1. Restate the request in your own words.
 2. List open questions about behavior, edge cases, and constraints.
 3. Ask the questions. Do not assume answers.
-4. Capture domain terms. Prefer the language of the problem. See [architecture/domain-languages.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md).
+4. Capture domain terms. Prefer the language of the problem. Check each term against `CONTEXT.md`. See [architecture/domain-languages.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md).
 5. Only after the intent is clear, proceed to design or implementation.
 
 ## Subagents
@@ -36,4 +36,4 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 
 - Do not start coding while important questions remain open.
 - Prefer fewer, higher-value questions.
-- Update or create a glossary entry if a new domain term appears.
+- When a new domain term is resolved, add it to `CONTEXT.md` as the [glossary](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/domain-languages.md#glossary) says. Use [domain-glossary](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/domain-glossary/SKILL.md).
