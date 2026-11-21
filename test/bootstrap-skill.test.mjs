@@ -86,8 +86,10 @@ test("setup-quality-gates copies the three format checks from a pinned tag and m
 
 // ATL-9, IRIS-6, REED-4 and SCR-M7 in #154: a project has one place for its
 // exceptions to dkstack rules.
+// Since #290 bootstrap step 1 runs setup-dkstack, and setup-dkstack step 3 copies the sample.
 test("bootstrap step 1 copies sample-AGENTS.md, which has an Exceptions section", async () => {
-  assert.ok((await step(1)).includes("(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/sample-AGENTS.md)"));
+  assert.ok((await step(1)).includes("(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-dkstack/SKILL.md)"));
+  assert.ok((await step(3, "setup-dkstack")).includes("(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/sample-AGENTS.md)"));
   const sample = await readFile(join(repoRoot, "sample-AGENTS.md"), "utf8");
   assert.ok(sample.includes("dkstack owns all other rules. Record project exceptions and project facts below."));
   const exceptions = sample.slice(sample.indexOf("## Exceptions\n"));
