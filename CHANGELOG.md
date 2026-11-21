@@ -69,6 +69,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The UI test rules in `tdd/ui-testing.md` can be tested (#188). A UI test asserts what makes a
+  screen reader announce an error: a live region, an automation property or the announcement API of
+  the platform. The manual screen reader pass confirms each announcement and is recorded as the
+  minimum evidence in `ui/visual-verification.md` says. The checker examples add
+  `performAccessibilityAudit` on iOS.
 - The ADR test in `architecture/adrs.md` is narrower (#173). Write an ADR only when the decision
   is hard to reverse, surprising to a new reader without the context, and the result of a real
   trade-off. Record a smaller decision in the map or in the pull request body. `write-adr` step 1

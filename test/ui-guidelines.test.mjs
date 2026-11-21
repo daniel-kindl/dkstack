@@ -209,3 +209,15 @@ test("forms state the AA rules of 3.3.8 and 3.3.4", async () => {
     assert.ok(submit.includes(phrase), `missing: ${phrase}`);
   }
 });
+
+// IRIS-15 and IRIS-11 in #154: an automated test can assert what causes an
+// announcement. Only the manual pass hears the announcement.
+test("the UI test rules assert what causes an announcement and the manual pass confirms it", async () => {
+  const checks = section(await document("tdd/ui-testing.md"), "## Accessibility checks");
+  for (const phrase of ["a live region", "an automation property", "the announcement API of the platform", "`performAccessibilityAudit`"]) {
+    assert.ok(checks.includes(phrase), phrase);
+  }
+  assert.ok(checks.includes("confirms each announcement"));
+  assert.ok(checks.includes("(../ui/visual-verification.md#minimum-evidence)"));
+  assert.doesNotMatch(checks, /Check that a screen reader announces each error/);
+});
