@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { readFile } from "./helpers.mjs";
+import { writingWarnings } from "../scripts/check-writing.mjs";
 
 // REED-3, IRIS-8 and REED-MISS-5 in #154, after D3: "D3: ASD-STE100 for all
 // text, as today". One scope section owns where the rules apply.
@@ -33,17 +34,10 @@ test("writing-check and the UI content page link the scope and do not exclude UI
 // SCR-21 in #154: the two pages that the review named keep their sentences
 // in the limits. A semicolon is a second sentence.
 test("code-review and versioning/index.md have no sentence over 25 words and no semicolon", async () => {
+  // The Low on #254: use the splitter of check-writing, not a copy of it.
   for (const file of ["skills/code-review/SKILL.md", "versioning/index.md"]) {
-    const text = (await readFile(join(repoRoot, file), "utf8"))
-      .replace(/```[\s\S]*?```/g, "").replace(/`[^`]*`/g, "code").replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
-      .replace(/"[^"]*"/g, "quote").split("\n").filter((l) => !/^\s*(#|>|\|)/.test(l)).join("\n");
-    for (const block of text.split(/\n\s*\n|\n(?=\s*(?:[-*+]|\d+\.)\s)/)) {
-      assert.ok(!block.includes(";"), `${file}: a semicolon in: ${block.slice(0, 60)}`);
-      for (const sentence of block.replace(/\s+/g, " ").split(/(?<=[.!?])\s+/)) {
-        const n = sentence.split(" ").filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
-        assert.ok(n <= 25, `${file}: ${n} words: ${sentence.slice(0, 60)}`);
-      }
-    }
+    const text = await readFile(join(repoRoot, file), "utf8");
+    assert.deepEqual(writingWarnings(file, text), []);
   }
 });
 
