@@ -12,3 +12,7 @@ A building block of [bootstrap](https://raw.githubusercontent.com/daniel-kindl/d
 
 1. Apply the [supply chain rules](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md#supply-chain-rules).
    - Do not keep credentials in the checked-out code when a later step does not need them.
+
+## Subagents
+
+Do not start subagents for this skill. Reason: this is one small job. bootstrap can check it in a subagent. See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).

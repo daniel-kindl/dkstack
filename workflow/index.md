@@ -9,6 +9,7 @@ These rules prevent real damage in a shared repository. Read them before you cha
 - [issues.md](issues.md): One issue for each task, its labels and its assignee.
 - [review-and-merge.md](review-and-merge.md): The issue to merge flow, review and merge.
 - [safety.md](safety.md): Actions that no agent does, what counts as approval, and the owner.
+- [subagents.md](subagents.md): When to start a subagent, the brief, and the model tier and effort.
 
 ## Flow
 

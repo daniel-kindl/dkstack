@@ -30,6 +30,11 @@ If you can start subagents, use them for step 3. Do steps 1 and 2 yourself. Then
 
 Then do steps 4 and 5 yourself. A report from a subagent is a claim. Check each claim that the version depends on at its source.
 
+Start each subagent with the setting below. The [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md) maps each tier to a model.
+
+- Compatibility and breaking changes: tier large, effort xhigh.
+- Changelog entry: tier medium, effort medium.
+
 If you cannot start subagents, do the steps one at a time in the order of this skill.
 
 ## When a piece is missing

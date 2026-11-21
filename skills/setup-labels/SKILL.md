@@ -22,3 +22,7 @@ The [issue rules](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/work
    - Rename it to the dkstack label. A rename keeps the label on its issues.
 5. Give the list to the owner. Create or rename only the labels that the owner names in the OK.
 6. Read the labels again. Record in the issue what the owner applied and what stays open.
+
+## Subagents
+
+Do not start subagents for this skill. Reason: this is one small job, and step 5 needs the owner. bootstrap can check it in a subagent. See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).

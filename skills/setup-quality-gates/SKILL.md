@@ -36,3 +36,7 @@ A building block of [bootstrap](https://raw.githubusercontent.com/daniel-kindl/d
    - The scripts need Node.js and no package. `check-adrs.mjs` compares the change with the default branch, so CI fetches the history of that branch. If the default branch is not `main`, give it with `--base`.
    - A missing `docs/maps/` folder or a missing `CONTEXT.md` is a pass. The repository may not have them yet.
    - Do not change the copied scripts. To update them, copy them again from a newer tag.
+
+## Subagents
+
+Do not start subagents for this skill. Reason: this is one building block. bootstrap can check it in a subagent. See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).

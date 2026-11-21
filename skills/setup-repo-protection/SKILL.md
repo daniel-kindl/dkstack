@@ -29,3 +29,7 @@ These are settings of the code host. An agent does not change a protection rule 
    - Add a `CODEOWNERS` entry that requires the owner's review for the CI workflow files.
 5. Apply the [CI workflow rules](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md#ci-workflows) to each workflow.
 6. Give the list to the owner. Record in the issue what the owner applied and what stays open.
+
+## Subagents
+
+Do not start subagents for this skill. Reason: this is one building block. bootstrap can check it in a subagent. The owner applies the settings. See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).

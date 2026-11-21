@@ -28,3 +28,7 @@ A building block of [bootstrap](https://raw.githubusercontent.com/daniel-kindl/d
      setting, record the preference as documentation only. Keep existing quality gates.
    - Also add `.gitattributes` with `* text=auto eol=lf`, so that each checkout has LF line
      endings. `end_of_line` in `.editorconfig` does not change the files that Git checks out.
+
+## Subagents
+
+Do not start subagents for this skill. Reason: this is one small job. bootstrap can check it in a subagent. See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).

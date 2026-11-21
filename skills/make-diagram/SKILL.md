@@ -22,6 +22,24 @@ text around it.
 6. Put the diagram and its text alternative in the place for the target. See [Place](#place).
 7. Do the checks in [Check](#check). Fix each problem before you publish the diagram.
 
+## Subagents
+
+If you can start subagents, use one as a new reader in step 7. Do steps 1 to 6 yourself. Then start one subagent that has not seen your source or your context. Give it a brief that is complete without your context:
+
+- The diagram and its text alternative, or their file paths.
+- Who the readers are.
+- This task: "Say in three sentences what the diagram shows. List each label, arrow or shape that is unclear. Say if the text alternative gives the same idea as the diagram."
+- A word limit, for example 200 words.
+- This line: "Report to me only. Do not change files, post, approve or merge."
+
+Start each subagent with the setting below. The [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md) maps each tier to a model.
+
+- New reader: tier medium, effort medium.
+
+Compare the report with the idea from step 4. If the reader found a different idea, fix the diagram. Do the other checks in step 7 yourself.
+
+If you cannot start subagents, do the steps one at a time in the order of this skill.
+
 ## When to use a diagram
 
 Use a diagram when the reader must see one of these:

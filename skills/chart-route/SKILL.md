@@ -32,6 +32,24 @@ The first session does steps 1 and 2. Each later session does steps 3 to 6 for o
 
 The checks are `scripts/check-maps.mjs`, `scripts/check-context.mjs` and `scripts/check-adrs.mjs`. [Bootstrap](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/bootstrap/SKILL.md) copies them into the repository.
 
+## Subagents
+
+If you can start subagents, use one for step 4 when the question needs research in the code or the docs. Do steps 1 to 3 yourself. Then start one subagent with a brief that is complete without your context:
+
+- The destination and the one question from step 3.
+- What to read, for example the code paths, the ADRs and `CONTEXT.md`.
+- What to report: the facts that answer the question, each with its file and line or link, and what stays unknown.
+- A word limit, for example 400 words.
+- This line: "Report to me only. Do not change files, ask the owner, commit, push, post, approve or merge."
+
+Start each subagent with the setting below. The [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md) maps each tier to a model.
+
+- Question research: tier medium, effort high.
+
+Check each fact at its source before you record it. Ask the owner each question that needs a decision. Do steps 5 to 7 yourself.
+
+If you cannot start subagents, do the steps one at a time in the order of this skill.
+
 ## Rules
 
 - One question per session.

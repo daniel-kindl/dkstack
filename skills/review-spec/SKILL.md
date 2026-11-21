@@ -27,6 +27,10 @@ Report three types of findings. Quote the specification line for each finding.
 
 If the issue has no acceptance criteria, write assumed criteria from the issue title, body and linked discussion. Put them in the review. Suggest that the issue gets criteria. See [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md). If the intent is not clear enough to decide the verdict, ask the issue author or the owner. Do not approve on a guess.
 
+## Subagents
+
+Do not start subagents for this skill. Reason: this is one building block. code-review runs it in its own subagent. See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).
+
 ## Credit
 
 The source search order comes from the [code-review skill](https://github.com/mattpocock/skills/blob/main/skills/engineering/code-review/SKILL.md) by Matt Pocock (MIT).

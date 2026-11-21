@@ -12,6 +12,14 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `workflow/subagents.md` (#294). It says when a subagent helps and when it does not, what the
+  brief contains, and how to use a report. It gives three model tiers (`large`, `medium`,
+  `small`) and four efforts (`low`, `medium`, `high`, `xhigh`). One table maps each tier to a
+  model in Claude Code, Codex and Grok. Only this page names a vendor model.
+- A Subagents section in each skill (#294). A skill that starts subagents gives a tier and an
+  effort for each subagent and links the guide. New sections are in `setup-dkstack`,
+  `bootstrap`, `start-issue`, `make-diagram`, `chart-route`, `ui-design` and `ui-review`. Each
+  other skill says why it starts no subagent.
 - `skills/setup-labels` (#292), a building block of `bootstrap`. It lists the `type:*` and
   `priority:*` labels from `workflow/issues.md` that the project does not have. It creates or
   renames a label only with the owner's OK that names the labels. It does not change or delete

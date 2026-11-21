@@ -38,6 +38,24 @@ Use this skill to make a repository a consumer: a repository whose `AGENTS.md` p
 8. Commit the change on a branch with the title `docs: set up dkstack`. Follow [start-issue](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/start-issue/SKILL.md) and [feature branches](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/version-control/feature-branches.md).
 9. Tell the owner the next step. A new repository often has no commit, version or quality rules. If the repository has none of these rules, continue with [bootstrap](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/bootstrap/SKILL.md) from its step 2.
 
+## Subagents
+
+If you can start subagents, use one for step 4 when the existing files have many project rules. Do steps 1 to 3 yourself. Then start one subagent with a brief that is complete without your context:
+
+- The paths of the existing agent instruction files from step 1.
+- The dkstack [AGENTS.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md) and the section indexes that it links.
+- What to report: each project rule that conflicts with a dkstack rule, with its file and line and the link to the dkstack rule.
+- A word limit, for example 400 words.
+- This line: "Report to me only. Do not change files, ask the owner, commit, push, post, approve or merge."
+
+Start each subagent with the setting below. The [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md) maps each tier to a model.
+
+- Rule comparison: tier medium, effort high.
+
+Then check each conflict at its file and line yourself. Ask the owner about each conflict in step 4. Do steps 5 to 9 yourself.
+
+If you cannot start subagents, do the steps one at a time in the order of this skill.
+
 ## Rules
 
 - Do not delete or overwrite project text without the owner's OK.

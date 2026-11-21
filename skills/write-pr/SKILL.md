@@ -17,6 +17,10 @@ Read [writing](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing
 [writing-check](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/writing-check/SKILL.md)
 on the body.
 
+## Subagents
+
+Do not start subagents for this skill. Reason: the body states your own evidence. For a new reader of the body, use writing-check. See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).
+
 ## When to refresh
 
 Update the body after a material change to the implementation. Update it again before review.
