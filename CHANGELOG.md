@@ -237,6 +237,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Fixed
 
+- `check-links` checks an HTML `href` in single quotes or with no quotes, not only one in double
+  quotes (the Low on #233).
 - The push title step in the validate workflow fails when `git log` fails. Before, the process
   substitution hid the error, and the step passed with no title checked (the Low on #190).
 - The .NET MAUI theme example in `ui/accessibility.md` names `Application.RequestedTheme` to read
