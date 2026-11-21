@@ -37,3 +37,35 @@ test("the validate workflow fetches the history that check-adrs compares with", 
   assert.match(checkout[1], /uses: actions\/checkout@[0-9a-f]{40}/);
   assert.match(checkout[1], /^\s+fetch-depth: 0$/m);
 });
+
+// FRG-2 in #154: a check that is in package.json but not wired into
+// "npm run check" or the validate workflow does not protect main.
+const validateSteps = workflow.split(/\n(?= {6}- name: )/).slice(1);
+const ALWAYS = "if: ${{ !cancelled() && steps.node.outcome == 'success' }}";
+const stepFor = (command) => validateSteps.find((s) => new RegExp(`^\\s+run: ${command.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*$`, "m").test(s));
+
+test("each check script is in npm run check and has a validate step that runs after a failure", () => {
+  const names = Object.keys(pkg.scripts).filter((n) => n.startsWith("check:") && n !== "check:title");
+  assert.ok(names.length >= 8, "the check scripts");
+  const chain = pkg.scripts.check.split(" && ");
+  for (const name of names) {
+    assert.ok(chain.includes(`npm run ${name}`), `"npm run check" runs ${name}`);
+    const step = stepFor(`npm run ${name}`);
+    assert.ok(step, `a validate step runs ${name}`);
+    assert.ok(step.includes(ALWAYS), `the ${name} step runs after an earlier failure`);
+  }
+  assert.equal(chain.at(-1), "npm test");
+  assert.ok(stepFor("npm test")?.includes(ALWAYS), "the validate workflow runs the tests");
+});
+
+test("validate checks the pull request title and each pushed commit title", () => {
+  const pr = validateSteps.find((s) => /node scripts\/check-title\.mjs "\$TITLE"/.test(s));
+  assert.ok(pr, "a pull request title step");
+  assert.match(pr, /github\.event_name == 'pull_request'/);
+  assert.match(pr, /TITLE: \$\{\{ github\.event\.pull_request\.title \}\}/);
+  const push = validateSteps.find((s) => /github\.event_name == 'push'/.test(s) && /check-title/.test(s));
+  assert.ok(push, "a push title step");
+  assert.match(push, /BEFORE: \$\{\{ github\.event\.before \}\}/);
+  assert.match(push, /git log --format=%s "\$BEFORE\.\.\$GITHUB_SHA"/);
+  assert.match(push, /node scripts\/check-title\.mjs "\$title"/);
+});
