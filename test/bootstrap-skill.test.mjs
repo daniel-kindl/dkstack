@@ -38,7 +38,7 @@ test("bootstrap step 5 and setup-supply-chain link the supply chain rules and do
     assert.doesNotMatch(text, /full commit SHA|lockfile|vulnerability audit/);
   }
   const text = await readFile(skillFile, "utf8");
-  assert.doesNotMatch(text, /^(?:[89]|\d{2})\. /m, "bootstrap has seven steps");
+  assert.doesNotMatch(text, /^(?:9|\d{2})\. /m, "bootstrap has eight steps");
 });
 
 test("the supply chain rules cover each rule that bootstrap applies", async () => {
@@ -119,9 +119,9 @@ test("bootstrap step 6 runs setup-repo-protection, which covers each protection"
   for (const name of names) assert.doesNotMatch(block.replace(/https:\/\/\S+/g, ""), name);
 });
 
-test("bootstrap step 7 checks that the README says what the project is and how to use it", async () => {
-  const seven = (await step(7)).replace(/\s+/g, " ");
+test("bootstrap step 8 checks that the README says what the project is and how to use it", async () => {
+  const eight = (await step(8)).replace(/\s+/g, " ");
   for (const phrase of ["what the project is", "who it is for", "how to install", "how to run", "how to contribute"]) {
-    assert.ok(seven.includes(phrase), phrase);
+    assert.ok(eight.includes(phrase), phrase);
   }
 });

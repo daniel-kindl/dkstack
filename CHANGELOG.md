@@ -12,6 +12,11 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `skills/setup-labels` (#292), a building block of `bootstrap`. It lists the `type:*` and
+  `priority:*` labels from `workflow/issues.md` that the project does not have. It creates or
+  renames a label only with the owner's OK that names the labels. It does not change or delete
+  an existing label. A project without an issue tracker skips it. `bootstrap` runs it as step 7,
+  and the README check is now step 8.
 - `skills/make-diagram` (#193). It tells when a diagram helps and when the text is sufficient.
   It maps each need to a kind of diagram: flow, sequence, state, component or dependency, data
   model, and before and after. It prefers Mermaid in Markdown, with a plain-text sketch as the
