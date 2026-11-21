@@ -83,6 +83,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Each accessibility rule on the forms, interactions, components, motion, typography and layout
+  pages has a WCAG criterion number or "(dkstack rule)" (#212). A test reads each bullet that names
+  an accessibility topic. `components.md` owns the list of states, and "pressed" is the one word
+  for that state. `typography.md` owns the reading width. `forms.md` owns where an error goes.
+  The other pages link them.
 - The UI test rules in `tdd/ui-testing.md` can be tested (#188). A UI test asserts what makes a
   screen reader announce an error: a live region, an automation property or the announcement API of
   the platform. The manual screen reader pass confirms each announcement and is recorded as the
