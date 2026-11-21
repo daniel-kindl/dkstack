@@ -33,6 +33,7 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 
 ## Skills
 
+- Repository that does not point to dkstack, or a request to set up dkstack: [setup-dkstack](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-dkstack/SKILL.md)
 - New or non-compliant repository: [bootstrap](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/bootstrap/SKILL.md)
 - Start of a task, or a request to open or track an issue: [start-issue](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/start-issue/SKILL.md)
 - Non-trivial change: [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md)

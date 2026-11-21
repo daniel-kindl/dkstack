@@ -38,6 +38,7 @@ test("the repository skills use the folder layout and valid frontmatter", async 
     "review-blast-radius",
     "review-spec",
     "review-standards",
+    "setup-dkstack",
     "setup-editorconfig",
     "setup-quality-gates",
     "setup-repo-protection",
