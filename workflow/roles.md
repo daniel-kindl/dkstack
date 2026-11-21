@@ -11,8 +11,8 @@ Give each task to one role, so that each agent has one responsibility.
 - The human owner approves material scope changes and every release. Routine steps within an
   assigned task do not require repeated approval. Reason: only the owner is accountable for the
   repository.
-- The human owner may merge a pull request after independent review and all merge checks pass.
-  This includes a pull request that the owner authored. Reason: the owner is not an agent author.
+- The human owner may merge, as the [merge rule](review-and-merge.md#rules) says. Reason: the owner
+  is not an agent author.
 
 ## Human owner
 

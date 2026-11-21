@@ -15,7 +15,7 @@ action with the owner's OK. Only then can an agent do it.
 - Do not change infrastructure or third-party settings, such as DNS, CDN or cloud, without the
   owner's OK. Reason: these changes can break live services outside the repository.
 - Only the independent reviewer or the [human owner](roles.md#human-owner) merges a pull request.
-  The author agent never merges. See [review-and-merge.md](review-and-merge.md). Reason: every
+  The author agent never merges. See the [merge rule](review-and-merge.md#rules). Reason: every
   merge needs an independent review.
 - Do not publish or release. Only the owner does it, or a release run that the owner starts.
   No agent creates a release tag, pushes to a release branch or to `v1`, publishes a package, or

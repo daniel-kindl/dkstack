@@ -87,6 +87,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The merge rule has one owner, the Rules of `workflow/review-and-merge.md` (#221).
+  `workflow/index.md`, `workflow/roles.md`, `workflow/safety.md` and `code-review` keep one short
+  sentence and link it. The tests check the key facts on the owner page and the links from the
+  other pages, not full sentences.
 - The release rule has one owner, `workflow/safety.md` (#205). No agent publishes or releases. No
   agent creates a release tag, pushes to a release branch or to `v1`, publishes a package, or
   starts a release or deploy workflow. A tag or branch push that starts such a workflow counts as
