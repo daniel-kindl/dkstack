@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Visual baseline rules in `tdd/ui-testing.md` (#236). A pinned image has zero tolerance by
+  default. A tolerance needs a reason beside the test. Each baseline is in the repository next to
+  its test. A pull request that updates a baseline shows the before and after image, and the
+  reviewer approves each update.
 - `test/routes.test.mjs` checks that each skill and page can be found (#208). `skills/index.md`
   lists each skill. Triage reaches each skill, directly or through a skill that it links. Each
   section index lists each page of its section. AGENTS.md "Sections" lists each section index,

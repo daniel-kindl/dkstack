@@ -280,3 +280,12 @@ test("component states, reading width and error placement each have one owner pa
   assert.ok(interactions.includes("(forms.md)"), "interactions links the error placement in forms");
   assert.doesNotMatch(interactions, /Put the error near the control/);
 });
+
+// IRIS-M6 in #154, after D9: a pinned image has rules for tolerance, update
+// and place.
+test("the UI test rules set zero tolerance, a reviewed update and one place for visual baselines", async () => {
+  const tests = section(await document("tdd/ui-testing.md"), "## UI tests");
+  for (const phrase of ["zero tolerance", "before and after image", "reviewer", "next to the test that uses it"]) {
+    assert.ok(tests.includes(phrase), phrase);
+  }
+});
