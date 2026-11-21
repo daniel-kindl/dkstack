@@ -20,8 +20,9 @@ The [start-issue](../skills/start-issue/SKILL.md) skill applies these rules.
   urgent). Reason: the owner sets the order of the work.
 - Use only labels that exist in the project. Do not create, change or delete a label without the
   owner's OK. Reason: labels are shared project settings.
-- When you start the work, assign the issue to the account that you are logged in as. Reason:
-  other people and agents see that the work has started.
+- Assign the issue to the account that you are logged in as only when you start to implement it.
+  Do not assign an issue when you open, plan, triage or review it. Reason: an assignment tells
+  other people and agents that the implementation has started.
 - An assignment is a marker only. It is not an approval, a claim or a review. Reason: agents that
   share the owner's account show as the owner. See [roles.md](roles.md#human-owner).
 - If a different account is assigned, do not start the work. Ask the owner. Reason: someone
@@ -50,7 +51,8 @@ If the project has no issue tracker, or the agent cannot use it, keep one file f
   ```
 
 - Then write the goal and the acceptance criteria.
-- The same rules apply: one task for each file, one type, and set `Assignee` when the work starts.
+- The same rules apply: one task for each file, one type, and set `Assignee` only when you start
+  to implement the task.
 - Commit the file with the first change of the task. Set `State: closed` in the pull request that
   completes the task. Do not delete the file.
 - Link the file in the pull request, for example `Closes docs/issues/0007-export-csv.md`.
@@ -59,13 +61,15 @@ If the project has no issue tracker, or the agent cannot use it, keep one file f
 
 The owner asks for a CSV export. The agent searches the open issues and finds none. It opens
 `feat: export the library as CSV` with a goal, acceptance criteria, the label `type:feature` and
-the label `priority:p2`. It assigns the issue to the logged-in account, for example with
-`gh issue edit 42 --add-assignee @me` on GitHub. Then it creates the branch.
+the label `priority:p2`. It does not assign the issue yet. When it starts to implement the issue,
+it assigns the issue to the logged-in account, for example with
+`gh issue edit 42 --add-assignee @me` on GitHub, and creates the branch.
 
 ## Bad example
 
 The owner asks for a CSV export and a fix for a crash on start. The agent opens one issue
-`export and crash fix` with no labels, does not assign it, and does both tasks on one branch.
+`export and crash fix` with no labels. It assigns the issue while it only plans the work. Later it
+does both tasks on one branch.
 
 Related: [review-and-merge.md](review-and-merge.md), [roles.md](roles.md),
 [safety.md](safety.md).

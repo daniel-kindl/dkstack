@@ -16,7 +16,8 @@ test("the issues page owns the one task, one issue rules", async () => {
     "Set exactly one type label: `type:bug`, `type:feature`, `type:chore`, `type:refactor`, `type:docs` or `type:research`.",
     "A priority label is optional",
     "Do not create, change or delete a label without the owner's OK.",
-    "assign the issue to the account that you are logged in as.",
+    "Assign the issue to the account that you are logged in as only when you start to implement it.",
+    "Do not assign an issue when you open, plan, triage or review it.",
     "An assignment is a marker only. It is not an approval, a claim or a review.",
     "If a different account is assigned, do not start the work. Ask the owner.",
     "remove your assignment",
@@ -46,7 +47,9 @@ test("the start-issue skill links the page, names no code host and keeps the lim
   const text = raw.replace(/https:\/\/\S+/g, "").replace(/\s+/g, " ");
   assert.doesNotMatch(text, /github|\bgh\b|gitlab/i);
   assert.ok(text.includes("Do not create, change or delete a label without the owner's OK."));
-  assert.ok(text.includes("If a different account is assigned, stop and ask the owner."));
+  assert.ok(text.includes("if a different account is assigned, stop and ask the owner."));
+  assert.ok(text.includes("If you only open, plan or triage the issue, stop here. Do not assign it."));
+  assert.ok(text.includes("When you start to implement the issue"));
   assert.doesNotMatch(text, /type:bug/, "the skill must not copy the label list");
 });
 
