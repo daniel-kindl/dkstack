@@ -13,6 +13,6 @@ The project owns its brand, tokens, components and platform conventions. dkstack
 
 ## Defaults
 
-The defaults on the ui/ pages apply only when the project has no design system. The project's system always wins.
+A default on the ui/ pages applies when the project has no design system, or when the project's system does not cover that area. The project's system wins over the Defaults sections only. The other rules on the ui/ pages still apply, including each rule marked "(dkstack rule)". To differ from one of them, record an exception as [Precedence](../AGENTS.md#precedence) says.
 
 Do not copy the look of one product. Do not use the generic patterns in [visual design](visual-design.md#generic-patterns). Keep accessibility and usability for each visual choice.

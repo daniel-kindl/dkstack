@@ -90,9 +90,16 @@ test("ui-review is read-only and reports through code-review", async () => {
   assert.ok(steps.includes(`(${raw}/ui/visual-verification.md)`));
 });
 
-test("the UI defaults apply only when the project has no design system", async () => {
+test("the UI defaults fill only the areas that the project's design system does not cover", async () => {
   const systems = await document("ui/design-systems.md");
-  assert.ok(section(systems, "## Defaults").includes("The defaults on the ui/ pages apply only when the project has no design system. The project's system always wins."));
+  // IRIS-5 and IRIS-7 in #154: the project's system wins over the Defaults
+  // sections only. A default fills an area that the system does not cover.
+  const defaults = section(systems, "## Defaults").replace(/\s+/g, " ");
+  assert.ok(defaults.includes("The project's system wins over the Defaults sections only."));
+  assert.ok(defaults.includes("when the project's system does not cover that area"));
+  assert.ok(defaults.includes('"(dkstack rule)"'));
+  assert.ok(defaults.includes("[Precedence](../AGENTS.md#precedence)"));
+  assert.doesNotMatch(defaults, /always wins/);
   const pages = {
     "ui/typography.md": "## Defaults",
     "ui/colors-and-themes.md": "## Defaults",
@@ -220,4 +227,22 @@ test("the UI test rules assert what causes an announcement and the manual pass c
   assert.ok(checks.includes("confirms each announcement"));
   assert.ok(checks.includes("(../ui/visual-verification.md#minimum-evidence)"));
   assert.doesNotMatch(checks, /Check that a screen reader announces each error/);
+});
+
+// IRIS-11 and IRIS-19 in #154: native UI has examples for the web-only rules,
+// and native apps do not copy web breakpoints.
+test("the accessibility page gives native examples for each web-only rule", async () => {
+  const page = await readFile(new URL("../ui/accessibility.md", import.meta.url), "utf8");
+  const table = page.slice(page.indexOf("## Native equivalents\n"), page.indexOf("\nReferences:"));
+  assert.match(table, /examples, not requirements/i);
+  const header = table.split("\n").find((l) => l.startsWith("| Need |"));
+  for (const platform of ["Web", "Avalonia", ".NET MAUI", "Android", "iOS"]) assert.ok(header.includes(platform), platform);
+  for (const need of ["Live announcement", "Accessible name", "Heading", "Language", "Theme"]) {
+    assert.ok(table.split("\n").some((l) => l.startsWith(`| ${need} |`)), need);
+  }
+});
+
+test("native apps use the platform's adaptive layout tools, not web breakpoints", async () => {
+  const page = (await document("ui/responsive-design.md")).replace(/\s+/g, " ");
+  assert.ok(page.includes("Do not copy web breakpoint values into native apps. Use the platform's adaptive layout tools and window size classes."));
 });

@@ -93,8 +93,8 @@ Run [verify-claim](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ski
 
 | Severity | Examples | Blocks merge |
 | --- | --- | --- |
-| Blocking | Security hole, data loss, broken build, a broken rule in `workflow/safety.md`, an agent can start a production deploy or a project's release workflow, or release without the owner's OK | Yes |
-| High | Wrong behavior, missing acceptance criterion, no test for a behavior change, failing required check, code that contradicts an Accepted ADR (see [ADR findings](#adr-findings)) | Yes |
+| Blocking | Security hole, data loss, a broken rule in `workflow/safety.md`, an agent can start a production deploy or a project's release workflow, or release without the owner's OK | Yes |
+| High | Wrong behavior, missing acceptance criterion, no test for a behavior change, broken build or failing required check, code that contradicts an Accepted ADR (see [ADR findings](#adr-findings)) | Yes |
 | Medium | Code smell (default), duplication, weak test, unproven required behavior, wrong or missing docs, two rules that conflict | Yes |
 | Low | Small clarity, naming or wording point, or a smell with small impact | No |
 
@@ -113,7 +113,9 @@ Give one verdict, as [workflow/review-and-merge.md](https://raw.githubuserconten
 
 - BLOCKED: one or more Blocking findings, or the change must not continue in this form, for example wrong scope or a decision that only the owner can make.
 - CHANGES-REQUESTED: one or more High or Medium findings.
-- APPROVE-RECOMMENDED: only Low findings or none, and each required check is green or its state is stated.
+- APPROVE-RECOMMENDED: only Low findings or none, and each required check is green on the reviewed head.
+
+If a required check is pending, give no verdict yet. Wait for the result, then give the verdict.
 
 ## Output
 

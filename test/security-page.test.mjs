@@ -64,3 +64,19 @@ test("review-standards links the CI workflows rules and does not copy them", asy
   );
   assert.ok(!review.includes("persist-credentials"));
 });
+
+// SEN-M9 in #154: one runbook for a leaked token, key or password.
+test("the security page has a leak runbook in order, and the leak rule links it", async () => {
+  const page = await read("coding", "security.md");
+  const runbook = section(page, "## If a secret leaks");
+  const order = ["Tell the owner", "Revoke", "Rotate", "audit log", "secret scanning alerts", "Record the event"]
+    .map((phrase) => {
+      const at = runbook.indexOf(phrase);
+      assert.notEqual(at, -1, `missing: ${phrase}`);
+      return at;
+    });
+  assert.deepEqual([...order].sort((a, b) => a - b), order, "the steps are in order");
+  assert.ok(runbook.includes("(../versioning/index.md#one-time-setup)"), "the release app key step links versioning");
+  const rule = section(page, "## Rules").split("- ").find((r) => r.startsWith("If a secret leaks"));
+  assert.ok(rule?.includes("(#if-a-secret-leaks)"), "the leak rule links the runbook");
+});
