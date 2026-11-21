@@ -17,6 +17,14 @@ Many repositories read these rules. One unreviewed change reaches all of them.
 Follow the flow in [workflow/review-and-merge.md](workflow/review-and-merge.md). For dkstack,
 start the work only after the owner approves the change.
 
+## Exceptions
+
+- dkstack rule: the lockfile and audit rules in
+  [Supply chain rules](coding/dependencies.md#supply-chain-rules).
+- Project rule: dkstack has no npm dependencies, so it has no lockfile and no audit. Add both with
+  the first dependency.
+- Reason: a lockfile and an audit with no dependency check nothing.
+
 ## Release
 
 Only the owner releases dkstack. The rule is in [safety](workflow/safety.md). The steps are in
