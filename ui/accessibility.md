@@ -75,6 +75,6 @@ Some rules on this page name a web feature. This table gives examples of the sam
 | Accessible name | `<label>`, `aria-label` | `AutomationProperties.Name` | `SemanticProperties.Description` | `contentDescription` | `accessibilityLabel` |
 | Heading | `<h1>` to `<h6>` | `AutomationProperties.HeadingLevel` | `SemanticProperties.HeadingLevel` | `accessibilityHeading` (Views), `heading()` semantics (Compose) | `.header` trait (UIKit), `.isHeader` trait (SwiftUI) |
 | Language | `lang` | the app culture | the app culture | `LocaleSpan` (Views), `localeList` in `SpanStyle` (Compose) | `accessibilityLanguage` |
-| Theme | `prefers-color-scheme`, `prefers-contrast` | `ActualThemeVariant` | `AppThemeBinding` | `Configuration.uiMode` (Views), `isSystemInDarkTheme()` (Compose) | `userInterfaceStyle` (UIKit), `colorScheme` environment value (SwiftUI) |
+| Theme | `prefers-color-scheme`, `prefers-contrast` | `ActualThemeVariant` | `Application.RequestedTheme` (read), `AppThemeBinding` (set a value for each theme) | `Configuration.uiMode` (Views), `isSystemInDarkTheme()` (Compose) | `userInterfaceStyle` (UIKit), `colorScheme` environment value (SwiftUI) |
 
 References: [WCAG 2.2](https://www.w3.org/TR/WCAG22/), [WAI-ARIA APG](https://www.w3.org/WAI/ARIA/apg/), [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/accessibility), [Material Design](https://m3.material.io/foundations/designing/structure), [Android accessibility](https://developer.android.com/guide/topics/ui/accessibility/apps).

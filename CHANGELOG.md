@@ -131,6 +131,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The .NET MAUI theme example in `ui/accessibility.md` names `Application.RequestedTheme` to read
+  the theme. `AppThemeBinding` only sets a value for each theme (#224).
 - The Release workflow fails early and cleans up on cancel (#180). `check-changelog` fails when
   CHANGELOG.md has no exact `## [Unreleased]` line or no `[Unreleased]:` compare link. A cancelled
   run closes the release pull request or tells how to finish the release, as a failed run does.
