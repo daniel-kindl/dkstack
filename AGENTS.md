@@ -1,6 +1,8 @@
 # AGENTS.md
 
-These are the dkstack guidelines for coding agents. dkstack is the repository
+Rules and skills for AI coding agents, in one place.
+
+These are the dkstack guidelines for AI coding agents. dkstack is the repository
 [daniel-kindl/dkstack](https://github.com/daniel-kindl/dkstack). Follow these guidelines in each
 project that points to this file.
 
