@@ -61,3 +61,10 @@ test("skills/index.md links the learning section next to learn, and bootstrap ma
   const description = /^description: "Use when [^.]*\. (Sets up [^"]*)\."$/m.exec(await read("skills/bootstrap/SKILL.md"))[1];
   assert.ok(bootstrap.includes(description.replace(/^Sets up/, "Set up")), bootstrap);
 });
+
+// The Low on #227: the description names the steps that #227 added.
+test("the bootstrap description names repository protection and the README check", async () => {
+  const description = /^description: "([^"]*)"$/m.exec(await read("skills/bootstrap/SKILL.md"))[1];
+  assert.ok(description.includes("repository protection"), description);
+  assert.ok(description.includes("a README check"), description);
+});
