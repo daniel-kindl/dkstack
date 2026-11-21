@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `npm test` fails when the tests cover less than 95% of the lines or 90% of the branches in
+  `scripts/` (#231). It uses the coverage flags of Node 24 and no new dependency. The coverage today
+  is 99.16% of lines and 93.51% of branches.
+- A contributor checklist in CONTRIBUTING.md (#230). "Run the checks" names `npm run check`, Node 24
+  and the separate title check. "Add a page or a skill" lists the index entry, the route from
+  triage, a test, the `[Unreleased]` line and raw `v1` links in skills. "Update bot pull requests"
+  says that the reviewer edits a title over 50 characters before the merge. The page says that each
+  rule has one owner page.
+- `setup-repo-protection` building block (#222). It lists the protection settings for the owner to
+  apply: a default branch rule (pull request, required checks, squash only, linear history, no
+  force-push, no deletion, no bypass for administrators), rules for release tags and release
+  branches, secret scanning with push protection, private vulnerability reporting, `SECURITY.md`
+  and `CODEOWNERS` for the CI workflow files. It links the CI workflow rules. An agent does not
+  change a setting without the owner's OK. Bootstrap step 6 runs it. Step 7 checks that the README
+  says what the project is, who it is for, how to install and run it and how to contribute.
 - `test/routes.test.mjs` checks that each skill and page can be found (#208). `skills/index.md`
   lists each skill. Triage reaches each skill, directly or through a skill that it links. Each
   section index lists each page of its section. AGENTS.md "Sections" lists each section index,
@@ -92,6 +107,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   announcements and emails. Nothing is out of scope. `writing-check` and
   `ui/content-and-localization.md` link it. Before, the UI page said that the writing rules did not
   apply to UI copy.
+- dkstack pins Node 24 and records its npm exception (#223). `package.json` has
+  `"engines": { "node": ">=24" }`, and a test checks that it matches the `node-version` in both
+  workflows. CONTRIBUTING.md has an Exceptions section: dkstack has no npm dependencies, so it has no
+  lockfile and no audit until the first dependency. A test fails if a dependency comes without
+  `package-lock.json`. A new `.editorconfig` sets UTF-8, LF and two-space indents.
+- The merge rule has one owner, the Rules of `workflow/review-and-merge.md` (#221).
+  `workflow/index.md`, `workflow/roles.md`, `workflow/safety.md` and `code-review` keep one short
+  sentence and link it. The tests check the key facts on the owner page and the links from the
+  other pages, not full sentences.
 - The release rule has one owner, `workflow/safety.md` (#205). No agent publishes or releases. No
   agent creates a release tag, pushes to a release branch or to `v1`, publishes a package, or
   starts a release or deploy workflow. A tag or branch push that starts such a workflow counts as
@@ -166,6 +190,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `check-links` closes five parser gaps (#232). It checks an HTML `<a href>`. It accepts `[self](./)`
+  in a skill and a target with balanced parentheses. It ignores links in an indented code block,
+  but not in an indented paragraph of a list. A repository URL on a ref with a slash, such as
+  `blob/release/v1.5.0/...`, resolves.
 - The scripts and tests work on a CRLF checkout, and each script can be imported (#206). A new
   `.gitattributes` checks out text with LF. `release.mjs` reads a CRLF CHANGELOG as LF, so
   `check-changelog` accepts a CRLF `## [Unreleased]` line again. The tests read files through one
