@@ -66,6 +66,14 @@ test("the skill pages call a building block a building block", async () => {
     assert.doesNotMatch(text, /\b(?:one|a|each|its) blocks? of\b|\bits blocks\b|\b(?:a|each|use a) block\b(?! the merge)/i, file);
   }
   assert.doesNotMatch(await read("CONTRIBUTING.md"), /\bits parent\b|\bparent skill\b/i);
+  assert.doesNotMatch(await read("test/skill-invocation.test.mjs"), /\b(?:review|setup) blocks?\b/i);
+});
+
+// The #191 entry is not released, and no release has safety.md#human-owner.
+test("CHANGELOG.md links the Owner anchor and no removed anchor", async () => {
+  const text = await read("CHANGELOG.md");
+  assert.doesNotMatch(text, /safety\.md#human-owner/);
+  assert.ok(text.includes("link `workflow/safety.md#owner`"));
 });
 
 test("quality-gates calls a switched-off diagnostic a suppression", async () => {
