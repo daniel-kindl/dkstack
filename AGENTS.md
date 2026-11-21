@@ -29,7 +29,14 @@ If your entry URL names a tag, read each dkstack raw URL on that tag in place of
 - A project can differ from a dkstack rule only through a documented exception. Record the
   exception in the project's `AGENTS.md` or `CONTRIBUTING.md`. The exception names the dkstack
   rule, the project rule and the reason. For example, a project can use a `dev` branch if it
-  records this exception.
+  records this exception:
+
+  ```markdown
+  - dkstack rule: version-control/feature-branches.md, branch from `main`.
+  - Project rule: branch from `dev`. Merge `dev` into `main` for a release.
+  - Reason: the host deploys `dev` to the test site.
+  ```
+
 - The rules in [workflow/safety.md](workflow/safety.md) have no exceptions.
   A rule that allows an action with the owner's OK is not an exception.
 - If two dkstack rules conflict, follow the more specific rule.
@@ -41,7 +48,7 @@ Every rule in [workflow/safety.md](workflow/safety.md) is a hard limit. For exam
 - Do not force-push.
 - Do not bypass branch protection or a ruleset.
 - Do not start a production deploy. Only the owner starts one.
-- Do not publish or release without the owner's explicit OK for that release.
+- Do not publish or release. Only the owner starts a release.
 
 ## Sections
 

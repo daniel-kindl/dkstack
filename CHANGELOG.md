@@ -83,6 +83,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The release rule has one owner, `workflow/safety.md` (#205). No agent publishes or releases. No
+  agent creates a release tag, pushes to a release branch or to `v1`, publishes a package, or
+  starts a release or deploy workflow. A tag or branch push that starts such a workflow counts as
+  starting it. Before, an agent could do these with the owner's OK for the version. The `release`
+  skill stops after it proposes the version and the changelog entry. AGENTS.md, CONTRIBUTING.md
+  and `versioning/index.md` link the rule. `safety.md` and `versioning/index.md` say that the rule
+  is an honor rule while dkstack agents use the owner's account. "Finish a release" is for Daniel
+  only.
+- Triage links the stewardship signals in `architecture/stewardship.md#analysis` and no longer
+  copies the list (#207). The stewardship test checks the link and bans the copy in triage too.
+- A project has one place for its exceptions to dkstack rules (#210). `sample-AGENTS.md` says
+  that dkstack owns all other rules, and has an Exceptions section with the fields dkstack rule,
+  project rule and reason, and a Project facts section. AGENTS.md "Precedence" has an example
+  record. `coding/quality-gates.md` says that a diagnostic exception is not a rule exception and
+  links Precedence. Bootstrap step 1 copies `sample-AGENTS.md` as `AGENTS.md`. The other steps
+  move down by one.
 - Pages link a rule's owner page and do not copy the rule (#211). `code-review` links the title
   rules. `coding/practices.md` links the quality gates. `coding/quality.md` links error handling.
   `coding/index.md` says that `testing.md` points to `tdd/`. `architecture/reversibility.md` links
@@ -141,6 +157,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   run closes the release pull request or tells how to finish the release, as a failed run does.
   The plan summary shows each commit title as code, so Markdown in a title has no effect. The
   approval message to Daniel has no semicolon.
+- README.md and SECURITY.md describe the releases that exist (#209). README "Release status" links
+  the latest release. README "Checks" lists each check of `validate`, says that only the release
+  job uses the release app secrets, and names Node 24 or later. The ADR line names ADR 0001.
+  SECURITY.md says that the latest release on `v1` is supported and that a fix ships as a PATCH
+  release on `v1`. A test fails if the text from before the first release comes back.
 - `check-links` checks anchors. A link to a Markdown file with `#anchor`, a pure `#anchor` and a
   repository URL with an anchor must match a heading or an HTML id in the target file. It also checks
   reference definitions, as in `[d]: file.md` (#154).

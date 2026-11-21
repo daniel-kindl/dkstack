@@ -17,5 +17,6 @@ Do not put a secret in the report. See [coding/security.md](coding/security.md).
 
 ## Versions
 
-Consumers follow the `v1` release branch after the first release. See
-[ADR 0001](docs/adr/0001-how-consumers-follow-versions.md). No release exists yet.
+Consumers follow the `v1` release branch. See
+[ADR 0001](docs/adr/0001-how-consumers-follow-versions.md). The latest release on `v1` is
+supported. A fix ships as a PATCH release on `v1`.
