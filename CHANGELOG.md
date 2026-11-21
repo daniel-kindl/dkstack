@@ -28,6 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ui/accessibility.md` says that each WCAG 2.2 A and AA criterion applies and links the quick
   reference. It adds 1.3.4, 2.5.1, 2.5.2 and 2.5.4, and defines a primary touch control. `ui/forms.md`
   states the AA rules of 3.3.8 and 3.3.4 and marks the stricter sign-in rule as a dkstack rule (#154).
+- `coding/dependencies.md` owns all supply chain rules in tool-neutral words, with four new rules: a
+  lockfile install that fails on a mismatch, an audit on each pull request, an update check at least
+  weekly and update titles that pass the title check. `bootstrap` step 7 links them, and step 1 adds
+  `.gitattributes` with LF line endings (#154).
 
 ### Fixed
 
