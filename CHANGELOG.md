@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `coding/security.md` has a "CI workflows" section. It owns the rules for untrusted triggers,
+  expression values in scripts, secrets, checkout tokens, permissions, timeouts and fork approval, and
+  it says what a safe release or deploy workflow is. `code-review` links it (#154).
+
 ### Changed
 
 - Dependabot commit and pull request titles in dkstack start with `ci:`, so a short update title
