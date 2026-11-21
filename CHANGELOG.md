@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `npm test` fails when the tests cover less than 95% of the lines or 90% of the branches in
+  `scripts/` (#231). It uses the coverage flags of Node 24 and no new dependency. The coverage today
+  is 99.16% of lines and 93.51% of branches.
 - A contributor checklist in CONTRIBUTING.md (#230). "Run the checks" names `npm run check`, Node 24
   and the separate title check. "Add a page or a skill" lists the index entry, the route from
   triage, a test, the `[Unreleased]` line and raw `v1` links in skills. "Update bot pull requests"

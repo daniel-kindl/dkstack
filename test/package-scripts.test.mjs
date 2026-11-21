@@ -96,3 +96,14 @@ test("the repository has an .editorconfig with LF line endings", async () => {
   assert.match(text, /^root = true$/m);
   assert.match(text, /^end_of_line = lf$/m);
 });
+
+// FRG-M6 in #154: npm test fails when the scripts lose coverage. Node reads
+// each threshold as a whole number.
+test("npm test gates the coverage of scripts/ at 95% of lines and 90% of branches", () => {
+  const command = pkg.scripts.test;
+  for (const flag of ["--experimental-test-coverage", "--test-coverage-include='scripts/**'",
+    "--test-coverage-lines=95", "--test-coverage-branches=90"]) {
+    assert.ok(command.includes(flag), flag);
+  }
+  assert.match(command, /test\/\*\.test\.mjs$/);
+});
