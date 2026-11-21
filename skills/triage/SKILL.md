@@ -38,6 +38,7 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 - Non-trivial change: [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md)
 - Design or structure: [apply-architecture](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/apply-architecture/SKILL.md)
 - Plan a feature: [plan-work](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/plan-work/SKILL.md)
+- Large, unclear effort that needs more than one session: [chart-route](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/chart-route/SKILL.md). It hands off to `plan-work`.
 - Implementation: [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md)
 - Pull request body: [write-pr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-pr/SKILL.md).
   Use it when you write or materially update the body. Do not use it for a review that leaves

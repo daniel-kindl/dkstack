@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `chart-route` skill (#175). It settles a large, unclear effort in a map in `docs/maps/<slug>.md`,
+  one question per session, and hands off to `plan-work`. It plans and never builds. A question is
+  owner, research, prototype or task. Each answer is recorded once: an ADR, a `CONTEXT.md` entry or
+  the Decisions line, with `Decided by:` and the date. Each session opens one docs-only pull request
+  that changes only `docs/maps/`, `docs/adr/` and `CONTEXT.md`. A prototype is text only on `main`,
+  on a tagged `prototype/<slug>-q<n>` branch that is never merged. A done map opens one issue for
+  each map task and stays in `docs/maps/`. `plan-work` step 1 takes the goal, the criteria, the
+  dependencies and the decisions from the map and invents none of them. Inspired by Matt Pocock's
+  grill-me, grill-with-docs and wayfinder skills (MIT). The text is new.
 - Format checks (#174). `scripts/check-maps.mjs` checks the maps in `docs/maps/`.
   `scripts/check-context.mjs` checks the `CONTEXT.md` format, duplicate terms and terms on an
   `_Avoid_:` line. `scripts/check-adrs.mjs` checks that each added ADR has a known `Status:`, an
