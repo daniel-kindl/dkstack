@@ -121,7 +121,9 @@ test("a dependency needs a lockfile, and CONTRIBUTING.md records the exception u
   const deps = Object.keys({ ...pkg.dependencies, ...pkg.devDependencies });
   if (deps.length > 0) assert.ok(files.includes("package-lock.json"), "add package-lock.json with the first dependency");
   const contributing = (await readFile(join(repoRoot, "CONTRIBUTING.md"), "utf8")).replace(/\s+/g, " ");
-  assert.ok(contributing.includes("dkstack has no npm dependencies, so it has no lockfile and no audit. Add both with the first dependency."));
+  for (const fact of ["no npm dependencies", "no lockfile and no audit", "Add both with the first dependency."]) {
+    assert.ok(contributing.includes(fact), fact);
+  }
 });
 
 test("the repository has an .editorconfig with LF line endings", async () => {

@@ -16,7 +16,7 @@ test("the user-facing copy page covers each kind of copy and keeps ASD-STE100", 
   for (const kind of ["product READMEs", "landing pages", "release notes", "announcements", "emails", "CLI messages", "app store text"]) {
     assert.ok(page.includes(kind), kind);
   }
-  for (const rule of ["first", "concrete words", "Do not invent numbers, quotes, customers or comparisons",
+  for (const rule of ["must do or know first", "apply to this text", "concrete words", "Do not invent numbers, quotes, customers or comparisons",
     "No hype", "fake urgency", "fake scarcity", "(../ui/principles.md#no-deceptive-patterns)", "breaking changes",
     "voice guide", "(index.md)", "ASD-STE100 still applies.", "It cannot turn off a rule on this page or a writing rule.",
     "(../AGENTS.md#precedence)"]) {
