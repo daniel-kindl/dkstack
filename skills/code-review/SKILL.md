@@ -27,13 +27,13 @@ If you can start subagents, use them for the independent checks. Do steps 1 to 3
 - What to report, and a word limit, for example 400 words.
 - This line: "Report to me only. Do not post, approve or merge."
 
-Do steps 7 and 8 yourself. Then collect the reports. A report from a subagent is level 1, Stated. Check each Blocking and High finding at its `file:line` before you report it. If you cannot locate a finding, drop it and say so. Do not change a severity. Report a disagreement as your own finding. Put each report in its own section of the output. Do not merge or re-rank findings across the reports.
-
 Start each subagent with the setting below. The [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md) maps each tier to a model.
 
 - Specification axis: tier large, effort high.
 - Standards axis: tier medium, effort high.
 - Blast radius: tier medium, effort high.
+
+Do steps 7 and 8 yourself. Then collect the reports. A report from a subagent is level 1, Stated. Check each Blocking and High finding at its `file:line` before you report it. If you cannot locate a finding, drop it and say so. Do not change a severity. Report a disagreement as your own finding. Put each report in its own section of the output. Do not merge or re-rank findings across the reports.
 
 If you cannot start subagents, do the steps one at a time in the order of this skill. Finish one axis before you start the other.
 

@@ -69,6 +69,8 @@ test("the client map gives a model for each tier and the date it was checked", a
   const rows = table(text, "## Client map");
   assert.deepEqual(rows.map((r) => r[0].replace(/`/g, "")), tiers);
   for (const row of rows) for (const cell of row) assert.notEqual(cell, "");
+  // The skill gives the effort. A map cell names only a model (review of #295, M1).
+  for (const row of rows) for (const cell of row.slice(1)) assert.doesNotMatch(cell, /effort/i);
   assert.match(text, /Last checked: \d{4}-\d{2}-\d{2}\./);
 });
 
@@ -94,6 +96,9 @@ test("each skill that starts subagents gives a tier and an effort", async () => 
     const text = await subagents(skill);
     assert.match(text, /^If you can start subagents, /m, skill);
     assert.match(text, setting, `${skill} must give a tier and an effort`);
+    // The settings come right after the brief (review of #295, L1).
+    assert.match(text, /- This line: "[^"]*"\n\nStart each subagent with the setting below\./,
+      `${skill} must give the settings right after the brief`);
   }
 });
 

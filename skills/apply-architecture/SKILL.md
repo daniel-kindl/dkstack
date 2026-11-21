@@ -27,11 +27,11 @@ If you can start subagents, use them when two or more designs are possible. Do s
 - A word limit, for example 400 words.
 - This line: "Report to me only. Do not change code, post, approve or merge."
 
-Then collect the reports. Do steps 4 and 5 yourself. A report from a subagent is a claim. Read each principle file that a report links before you use its result. Compare the designs yourself. Do not select a design only because a report prefers it.
-
 Start each subagent with the setting below. The [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md) maps each tier to a model.
 
 - Each design: tier large, effort high.
+
+Then collect the reports. Do steps 4 and 5 yourself. A report from a subagent is a claim. Read each principle file that a report links before you use its result. Compare the designs yourself. Do not select a design only because a report prefers it.
 
 If you cannot start subagents, do the steps one at a time in the order of this skill. For each design, do steps 2 and 3. Do steps 4 and 5 once, after you have checked every design.
 

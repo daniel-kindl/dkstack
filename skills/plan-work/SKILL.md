@@ -72,13 +72,13 @@ If you can start subagents, use them for the checks that do not depend on each o
 - What to report, and a word limit, for example 300 words.
 - This line: "Report to me only. Do not change the plan, commit, push, post, approve or merge."
 
-Collect the reports. Check each difference that a report gives against its source before you change the plan. If you cannot find the difference in the source, do not change the plan for it, and say so. Then update the plan yourself.
-
 Start each subagent with the setting below. The [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md) maps each tier to a model.
 
 - Plan against the issue: tier medium, effort medium.
 - Plan against the commits: tier small, effort low.
 - Plan against the check results: tier small, effort low.
+
+Collect the reports. Check each difference that a report gives against its source before you change the plan. If you cannot find the difference in the source, do not change the plan for it, and say so. Then update the plan yourself.
 
 If you cannot start subagents, do the steps one at a time in the order of this skill.
 

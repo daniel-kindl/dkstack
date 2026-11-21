@@ -27,11 +27,11 @@ If you can start subagents, use them for step 3 when the task spans more than on
 - What to report: the rules that apply to the task, each with its link, and a word limit, for example 300 words.
 - This line: "Report to me only. Do not change files, commit, push, post, approve or merge."
 
-Then do steps 4 and 5 yourself. A report from a subagent is a claim. Check each rule that you apply at its source.
-
 Start each subagent with the setting below. The [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md) maps each tier to a model.
 
 - Each reader: tier small, effort medium.
+
+Then do steps 4 and 5 yourself. A report from a subagent is a claim. Check each rule that you apply at its source.
 
 If you cannot start subagents, do the steps one at a time in the order of this skill.
 

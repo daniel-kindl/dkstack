@@ -90,8 +90,11 @@ available.
 | Tier | Claude Code | Codex | Grok |
 | --- | --- | --- | --- |
 | `large` | `opus` | `gpt-6.2-astra` | `grok-4.7` |
-| `medium` | `sonnet` | `gpt-6.2-sol` | `grok-4.7` at a lower effort |
-| `small` | `haiku` | `gpt-6-luna` | not checked, use the medium model at effort `low` |
+| `medium` | `sonnet` | `gpt-6.2-sol` | `grok-4.7` |
+| `small` | `haiku` | `gpt-6-luna` | `grok-4.7` |
+
+On Grok, all three tiers use `grok-4.7`, because no smaller Grok model was checked. The effort
+from the skill sets the difference.
 
 How to set the model and the effort:
 

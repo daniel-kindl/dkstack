@@ -28,12 +28,12 @@ If you can start subagents, use them to answer the open questions that the repos
 - A word limit, for example 400 words.
 - This line: "Report to me only. Do not change files, ask the owner, post, approve or merge."
 
-Then collect the reports. Read each answer at its file path and line yourself. If the code and the docs disagree, keep the question open. Do steps 3 to 5 yourself. Ask only the questions that are still open.
-
 Start each subagent with the setting below. The [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md) maps each tier to a model.
 
 - Code reader: tier medium, effort medium.
 - Docs reader: tier small, effort medium.
+
+Then collect the reports. Read each answer at its file path and line yourself. If the code and the docs disagree, keep the question open. Do steps 3 to 5 yourself. Ask only the questions that are still open.
 
 If you cannot start subagents, do the steps one at a time in the order of this skill. Before step 3, read the code and then the docs to answer the questions that they can answer.
 
