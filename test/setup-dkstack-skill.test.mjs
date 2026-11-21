@@ -48,3 +48,23 @@ test("bootstrap step 1, triage and the skill index use setup-dkstack", async () 
   assert.ok((await raw("skills/triage/SKILL.md")).includes(LINK), "triage");
   assert.match(await raw("skills/index.md"), /^- \[setup-dkstack\]\(setup-dkstack\/SKILL\.md\) \(both\):/m);
 });
+
+// The review of #291 (H1, M1): each acceptance criterion of #290 has a test.
+test("setup-dkstack pins a tag only when the owner asks", async () => {
+  const text = await flat("skills/setup-dkstack/SKILL.md");
+  assert.match(text, /Pin a `vX\.Y\.Z` tag only when the owner asks for it/);
+});
+
+test("setup-dkstack asks the owner which clients the project uses before it adds CLAUDE.md", async () => {
+  const text = await flat("skills/setup-dkstack/SKILL.md");
+  const ask = text.indexOf("Ask the owner which clients the project uses");
+  const create = text.indexOf("if `CLAUDE.md` does not exist, create it");
+  assert.ok(ask !== -1 && create !== -1 && ask < create);
+});
+
+test("setup-dkstack checks that the URL resolves and that a new agent session reads triage first", async () => {
+  const text = await flat("skills/setup-dkstack/SKILL.md");
+  assert.match(text, /The dkstack URL in `AGENTS\.md` resolves, for example with `curl -fsSI <url>`/);
+  assert.match(text, /Start a new agent session in the repository/);
+  assert.match(text, /names the triage skill/);
+});

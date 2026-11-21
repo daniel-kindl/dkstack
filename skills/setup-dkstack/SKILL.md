@@ -34,6 +34,7 @@ Use this skill to make a repository a consumer: a repository whose `AGENTS.md` p
    - Each file from step 5 points to `AGENTS.md`.
    - `AGENTS.md` keeps all project text from before. Compare it with `git diff`.
    - Each relative link in the changed files resolves.
+   - Start a new agent session in the repository. Ask it which file or skill it reads first for a task. The answer names the triage skill. If it does not, fix the pointer files and ask again. If you cannot start a session, tell the owner that this check did not run.
 8. Commit the change on a branch with the title `docs: set up dkstack`. Follow [start-issue](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/start-issue/SKILL.md) and [feature branches](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/version-control/feature-branches.md).
 9. Tell the owner the next step. A new repository often has no commit, version or quality rules. If the repository has none of these rules, continue with [bootstrap](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/bootstrap/SKILL.md) from its step 2.
 
