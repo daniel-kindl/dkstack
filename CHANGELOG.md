@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `scripts/check-writing.mjs` warns about a step with more than 20 words, a sentence with more than
+  25 words and a semicolon in Markdown (#244). It skips CHANGELOG.md, code, block quotes, tables,
+  headings and text in double quotes. It always exits 0 in this first stage. `npm run check` and
+  the validate workflow run it as `check:writing`. It gives 23 warnings on `main` today.
 - Visual baseline rules in `tdd/ui-testing.md` (#236). A pinned image has zero tolerance by
   default. A tolerance needs a reason beside the test. Each baseline is in the repository next to
   its test. A pull request that updates a baseline shows the before and after image, and the
