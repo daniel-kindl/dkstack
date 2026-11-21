@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `npm test` fails when the tests cover less than 95% of the lines or 90% of the branches in
+  `scripts/` (#231). It uses the coverage flags of Node 24 and no new dependency. The coverage today
+  is 99.16% of lines and 93.51% of branches.
 - `setup-repo-protection` building block (#222). It lists the protection settings for the owner to
   apply: a default branch rule (pull request, required checks, squash only, linear history, no
   force-push, no deletion, no bypass for administrators), rules for release tags and release
