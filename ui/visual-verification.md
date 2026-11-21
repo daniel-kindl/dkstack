@@ -23,6 +23,7 @@ Each changed surface needs this evidence. Mark an item NOT RUN or NOT APPLICABLE
 - A keyboard walk-through: focus order, visible focus, focus not hidden and no keyboard trap.
 - Text at 200% and the text spacing values. On native UI, use the largest system text size.
 - Reduced motion, when the change has motion.
+- A check in forced colors mode, when the project supports Windows. See [forced colors](colors-and-themes.md#forced-colors).
 - A screen reader or accessibility inspector pass of each changed control: its name, role, state and announcements. Record the tool and its version.
 - The automated checker output: the tool, its version, the number of violations and its limits.
 - The measured contrast ratio of each new or changed color pair.
