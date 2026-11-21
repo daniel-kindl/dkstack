@@ -87,6 +87,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- README.md says what dkstack is and who it is for (#235). The top says that dkstack is guidance
+  only and is for any team that uses AI coding agents, and a short "Start" list follows. README.md,
+  `package.json` and AGENTS.md use one tagline: "Rules and skills for AI coding agents, in one
+  place."
 - The release rule has one owner, `workflow/safety.md` (#205). No agent publishes or releases. No
   agent creates a release tag, pushes to a release branch or to `v1`, publishes a package, or
   starts a release or deploy workflow. A tag or branch push that starts such a workflow counts as
