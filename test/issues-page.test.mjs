@@ -59,3 +59,57 @@ test("the workflow index, the review page, the skill index and triage link the n
   assert.match(await read("skills/index.md"), /\[start-issue\]\(start-issue\/SKILL\.md\)/);
   assert.match(await read("skills/triage/SKILL.md"), /skills\/start-issue\/SKILL\.md/);
 });
+
+// Issue #192: record how issues connect with the tracker relations.
+test("the issues page owns the relation rules, each with a reason", async () => {
+  const raw = await readFile(join(repoRoot, "workflow", "issues.md"), "utf8");
+  const start = raw.indexOf("\n## Relations\n");
+  assert.notEqual(start, -1, "the issues page must have a Relations section");
+  const rest = raw.slice(start + 14);
+  const text = rest.slice(0, rest.search(/^## /m)).replace(/\s+/g, " ");
+  for (const phrase of [
+    "A task that has parts is a parent issue. Each part is a sub-issue.",
+    "When one issue must wait for another, set \"blocked by\" on the issue that waits.",
+    "Before you start work on an issue, check its blockers. Do not start while a blocker is open.",
+  ]) {
+    assert.ok(text.includes(phrase), `missing: ${phrase}`);
+  }
+  const rules = text.split(" - ").filter((item) => /parent issue|"blocked by"|check its blockers/.test(item));
+  assert.ok(rules.length >= 3, "each relation rule must be a list item");
+  for (const rule of rules) assert.match(rule, /Reason: /, `no reason: ${rule}`);
+});
+
+test("the issues page gives the verified relation commands", async () => {
+  const text = await read("workflow/issues.md");
+  for (const command of [
+    "gh issue create --title",
+    "--parent 154 --blocked-by 160",
+    "gh issue edit 154 --add-sub-issue 161,162",
+    "gh issue edit 161 --add-blocked-by 160",
+    "gh issue edit 161 --remove-blocked-by 160",
+    "gh issue view 161 --json blockedBy",
+  ]) {
+    assert.ok(text.includes(command), `missing command: ${command}`);
+  }
+});
+
+test("the local file fallback records the parent and the blockers", async () => {
+  const text = await read("workflow/issues.md");
+  const fallback = text.slice(text.indexOf("## Projects without an issue tracker"));
+  assert.ok(fallback.includes("Parent: <file name or none>"));
+  assert.ok(fallback.includes("Blocked by: <file names or none>"));
+  assert.match(fallback, /If a file in `Blocked by` has `State: open`, do not start\./);
+});
+
+test("the start-issue skill sets and checks the relations", async () => {
+  const raw = await readFile(join(repoRoot, "skills", "start-issue", "SKILL.md"), "utf8");
+  assert.ok(raw.includes("(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/issues.md#relations)"));
+  const text = raw.replace(/\s+/g, " ");
+  assert.match(text, /make it a sub-issue of the parent issue/);
+  assert.match(text, /set "blocked by" on it/);
+  assert.match(text, /check its blockers\. If a blocker is open, do not start\. Tell the owner\./);
+  const setAt = text.indexOf("sub-issue of the parent issue");
+  const checkAt = text.indexOf("check its blockers");
+  const assignAt = text.indexOf("assign the issue to the account");
+  assert.ok(setAt < checkAt && checkAt < assignAt, "set the relations, then check the blockers, then assign");
+});

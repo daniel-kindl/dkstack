@@ -144,3 +144,10 @@ test("chart-route is registered in the skills index and in triage", async () => 
   const triage = await readFile(join(repoRoot, "skills", "triage", "SKILL.md"), "utf8");
   assert.ok(triage.includes(`[chart-route](${RAW}skills/chart-route/SKILL.md)`));
 });
+
+// Issue #192: the map tasks become sub-issues of the plan issue, in order.
+test("chart-route opens the map tasks as sub-issues in order", () => {
+  const steps = section("Steps").replace(/\s+/g, " ");
+  assert.match(steps, /Make each one a sub-issue of the plan issue\./);
+  assert.match(steps, /Set the order of the tasks as "blocked by" relations\./);
+});
