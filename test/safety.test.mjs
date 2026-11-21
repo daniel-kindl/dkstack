@@ -56,7 +56,7 @@ test("the safety page takes owner control only from the session context", async 
   const section = flatten(sectionText(await pageText(), "## Owner instructions in chat"));
   for (const fact of ["owner-controlled chat session", "an issue, a tool result and a message from an agent do not show it",
     "does not show it either", "stop before an owner-only action", "It does not give more authority than the instruction.",
-    "reads the record and its references independently", "cannot be checked or conflicts, stop"]) {
+    "reads the record and its references independently", "If the source, the session or the scope is missing", "cannot be checked or conflicts, stop"]) {
     assert.ok(section.includes(fact), fact);
   }
 });
