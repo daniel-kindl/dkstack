@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Visual baseline rules in `tdd/ui-testing.md` (#236). A pinned image has zero tolerance by
+  default. A tolerance needs a reason beside the test. Each baseline is in the repository next to
+  its test. A pull request that updates a baseline shows the before and after image, and the
+  reviewer approves each update.
 - `npm test` fails when the tests cover less than 95% of the lines or 90% of the branches in
   `scripts/` (#231). It uses the coverage flags of Node 24 and no new dependency. The coverage today
   is 99.16% of lines and 93.51% of branches.

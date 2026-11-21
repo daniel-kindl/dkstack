@@ -15,6 +15,9 @@ Test most user interface (UI) behavior below the UI. Use a few UI tests for the 
 - Add a visual snapshot or golden test only when the visual output is a requirement. State that reason beside the test.
 - Make and compare visual snapshots in one fixed environment, such as a pinned CI image. Reason: fonts, operating systems and graphics hardware change the pixels.
 - To update a snapshot or golden file, follow [test design](test-design.md#naming-and-assertions).
+- Compare a pinned image with zero tolerance by default. Allow a tolerance only with a reason beside the test, and keep it as small as the reason needs.
+- Put each baseline image in the repository, next to the test that uses it. Do not keep a baseline only in a CI cache or on a local machine.
+- A pull request that updates a baseline shows the before and after image for each change. The reviewer approves each update. An update with no reviewer OK does not merge.
 
 ## Accessibility checks
 
