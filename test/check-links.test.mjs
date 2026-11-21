@@ -359,6 +359,15 @@ test("an HTML a href is checked like a link", async () => {
   assert.deepEqual(result.errors, ["README.md:3: broken link docs/missing.md"]);
 });
 
+// The Low on #233: an href in single quotes or with no quotes is checked too.
+test("an HTML a href in single quotes or with no quotes is checked", async () => {
+  const result = await linksFor({
+    "README.md": "# R\n\n<a href='docs/single.md'>x</a> <a href=docs/bare.md>y</a> <a href='LICENSE'>z</a>\n",
+    "LICENSE": "x\n",
+  });
+  assert.deepEqual(result.errors, ["README.md:3: broken link docs/single.md", "README.md:3: broken link docs/bare.md"]);
+});
+
 test("a skill can link its own folder with ./", async () => {
   const result = await linksFor({ "skills/s/SKILL.md": "# S\n\nSee [self](./) and [self](.).\n" });
   assert.deepEqual(result.errors, []);
