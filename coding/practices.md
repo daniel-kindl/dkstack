@@ -11,8 +11,7 @@ Write a failing test first. Write tests that prove behavior.
 - Prefer small, focused changes.
 - Use conventional commits. See [version control](../version-control/index.md).
 - Do not add unjustified dependencies.
-- Run all checks before you open a pull request.
-- Report a check that did not run as NOT RUN.
+- Before you open a pull request, follow the [quality gates](quality-gates.md).
 - Get the acceptance criteria before you start. Stop when the criteria are met and the gates pass. Do not polish past them. If the quality bar is not clear, ask the owner. Reason: work past the criteria adds cost and risk that nobody asked for.
 
 ## Do not program by coincidence

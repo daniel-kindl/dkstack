@@ -9,10 +9,9 @@ Update this repository once. Point agents at it so they follow the current rules
 Consumers follow the `v1` release branch. See
 [ADR 0001](docs/adr/0001-how-consumers-follow-versions.md).
 
-The owner creates the `v1` branch at the first release and moves it forward at each later
-compatible release. Each release also gets a fixed `vX.Y.Z` tag. Before the first release, the
-URLs and commands in this file that use `v1` fail. See [CHANGELOG.md](CHANGELOG.md) for the
-releases.
+Each compatible release moves `v1` forward. Each release also gets a fixed `vX.Y.Z` tag. The
+latest release is at <https://github.com/daniel-kindl/dkstack/releases/latest>. See
+[CHANGELOG.md](CHANGELOG.md) for all releases.
 
 ## How to use
 
@@ -58,14 +57,18 @@ semantic versioning.
 The `validate` workflow ([.github/workflows/validate.yml](.github/workflows/validate.yml)) runs on
 each pull request to `main` and on each push to `main`. It does these checks:
 
-- The pull request title, or the commit title on a push, is a conventional commit.
+- The pull request title, or each commit title on a push, is a conventional commit.
 - Each skill has the correct folder and frontmatter.
-- Relative links and links to this repository resolve.
+- Relative links and links to this repository resolve, including anchors.
 - Markdown files have no em dash or en dash.
-- Workflows pin actions, set permissions and use no secrets.
+- Workflows pin actions and set permissions. Only the release job uses the release app secrets.
+- actionlint and shellcheck find no fault in the workflows.
+- CHANGELOG.md has an entry for the version in `package.json`, an `## [Unreleased]` line and its
+  compare link.
+- The maps in `docs/maps/`, `CONTEXT.md` and new ADRs have the correct format.
 - The unit tests pass.
 
-To run the same checks locally, except the title check, use Node 20 or later:
+To run the same checks locally, except the title check and actionlint, use Node 24 or later:
 
 ```bash
 npm run check
@@ -87,7 +90,8 @@ The workflow does not tag, release or publish.
 - [writing/](writing/index.md): Writing style (ASD-STE100).
 - [skills/](skills/index.md): Skills for agents.
 - [workflow/](workflow/index.md): Roles, review and merge, and safety.
-- [docs/adr/](docs/adr/0001-how-consumers-follow-versions.md): Architecture decision records.
+- [ADR 0001](docs/adr/0001-how-consumers-follow-versions.md): How consumers follow versions. The ADRs
+  are in `docs/adr/`.
 
 ## Changes
 
