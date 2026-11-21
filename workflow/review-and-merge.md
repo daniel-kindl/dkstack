@@ -11,6 +11,9 @@ keeps the review and merge rules.
   review checks. The issue rules are in [issues.md](issues.md).
 - Use one issue, one branch and one pull request. Link the issue in the pull request. Reason: each
   change stays small and traceable.
+- The author must not review, approve or merge their own pull request. One agent can do many
+  tasks, but not the review of its own work. Reason: a second agent finds errors that the author
+  does not see.
 - The pull request body lists the tests that prove the behavior. It names each check that did not
   run as NOT RUN. Reason: the reviewer must know what was tested.
 - The review gives one verdict: APPROVE-RECOMMENDED, CHANGES-REQUESTED or BLOCKED. Reason: one
@@ -18,7 +21,7 @@ keeps the review and merge rules.
 - The reviewer merges only the head that they reviewed. The reviewer merges only when the review
   passes and all required checks are green. The reviewer also merges only when the code host shows
   the pull request as ready to merge with no rule bypassed. The author never merges. The
-  [human owner](roles.md#human-owner) may also merge, including a pull request that they
+  [human owner](safety.md#human-owner) may also merge, including a pull request that they
   authored, after the same checks pass. Reason: a later push, a failed check, an open finding or a bypassed rule
   must not reach `main`.
 - Use squash merge only and keep history linear. Reason: each pull request becomes one commit on
@@ -28,8 +31,6 @@ keeps the review and merge rules.
   commit title.
 - To update a branch, merge `main` into it. Do not rebase a pushed branch. Reason: a rebase of a
   pushed branch needs a force-push.
-
-The author and reviewer limits are in [roles.md](roles.md).
 
 ## Missing review evidence after merge
 
@@ -62,5 +63,5 @@ The pull request title is `docs(workflow): write the team operating rules`. The 
 
 The pull request title is `update docs`. The body does not link an issue.
 
-Related: [roles.md](roles.md), [safety.md](safety.md),
+Related: [issues.md](issues.md), [safety.md](safety.md),
 [version-control/index.md](../version-control/index.md).

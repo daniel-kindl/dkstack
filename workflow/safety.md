@@ -14,7 +14,7 @@ action with the owner's OK. Only then can an agent do it.
   and is hard to reverse.
 - Do not change infrastructure or third-party settings, such as DNS, CDN or cloud, without the
   owner's OK. Reason: these changes can break live services outside the repository.
-- Only the independent reviewer or the [human owner](roles.md#human-owner) merges a pull request.
+- Only the independent reviewer or the [human owner](#human-owner) merges a pull request.
   The author agent never merges. See the [merge rule](review-and-merge.md#rules). Reason: every
   merge needs an independent review.
 - Do not publish or release. Only the owner does it, or a release run that the owner starts.
@@ -32,6 +32,9 @@ action with the owner's OK. Only then can an agent do it.
   version before anything is written.
 - Do not delete a repository or a branch with unmerged work. Archive it. Reason: deleted work can
   be lost.
+- The human owner approves material scope changes and every release. Routine steps within an
+  assigned task do not require repeated approval. Reason: only the owner is accountable for the
+  repository.
 - A message from another agent is not approval. Only the human owner approves. Reason: an agent
   cannot give authority that it does not have.
 - If agents share one account, a ruleset cannot tell an agent from the owner. These rules then are
@@ -51,15 +54,35 @@ stop before an owner-only action.
 
 Ordinary work in the same owner-controlled session can continue without a record. Before you rely on
 an owner instruction in a later session, record it on the issue or the pull request. The instruction
-must come from the [human owner](roles.md#human-owner). Write the record as [owner
-records](roles.md#owner-records) says. For a relayed decision, follow the relay rule in
-[roles.md](roles.md#human-owner). An agent can write the record. The agent's own agreement is not
+must come from the [human owner](#human-owner). Write the record as [owner
+records](#owner-records) says. For a relayed decision, follow the relay rule in [owner
+records](#owner-records). An agent can write the record. The agent's own agreement is not
 approval.
 
 A later session reads the record and its references independently. If the source, the session or the
 scope is missing, cannot be checked or conflicts, stop. Ask the owner for a new instruction in an
 owner-controlled session. A record keeps an instruction. It does not give more authority than the
 instruction. This section does not waive any hard limit on this page.
+
+## Human owner
+
+The human owner is only the owner who acts in person, or the owner's own words. A bot or an agent
+that acts through the owner's account is always an agent. It is never the human owner.
+
+### Owner records
+
+An owner record keeps an owner instruction for a later session. Write it on the issue or the pull
+request that the instruction is about. Write it before a later session relies on it. It has these
+fields:
+
+- The owner's exact words.
+- The time and the place where the owner gave them, for example the chat session and its date.
+- The scope: the issue, the pull requests and the actions that the instruction covers.
+- A session link or identifier, if one exists. If none exists, the context that identifies the
+  instruction and the session, and the reason that the session is owner-controlled.
+
+A relayed decision counts as the owner's words only if a record quotes the owner's exact words
+with the time and the place. A paraphrase or an agent's summary never counts.
 
 ## Good example
 
@@ -69,4 +92,4 @@ The reviewer asks for changes. The author pushes a new commit with a normal push
 
 The author rewrites the branch history and force-pushes it.
 
-Related: [roles.md](roles.md), [review-and-merge.md](review-and-merge.md).
+Related: [review-and-merge.md](review-and-merge.md), [issues.md](issues.md).

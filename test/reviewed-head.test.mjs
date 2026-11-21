@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "./helpers.mjs";
+import { access, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -35,14 +36,12 @@ test("a broken build or a failing required check is in the High row only", async
 });
 
 test("owner and agent merge authority stays distinct", async () => {
-  const roles = (await readFile(join(repoRoot, "workflow/roles.md"), "utf8")).replace(/\s+/g, " ");
   const review = (await readFile(join(repoRoot, "workflow/review-and-merge.md"), "utf8")).replace(/\s+/g, " ");
   const skill = (await readFile(join(repoRoot, "skills/code-review/SKILL.md"), "utf8")).replace(/\s+/g, " ");
-  assert.match(roles, /The reviewer reviews pull requests and merges them\./);
-  assert.match(roles, /human owner may merge/i);
   assert.match(review, /The author never merges\./);
+  assert.match(review, /human owner\]\(safety\.md#human-owner\) may also merge/i);
   assert.match(skill, /author never gives the verdict on, approves or merges their own pull request/i);
-  for (const text of [roles, review, skill]) {
+  for (const text of [review, skill]) {
     assert.doesNotMatch(text, /agent may merge only with the owner's explicit authorization/i);
     assert.doesNotMatch(text, /any merge an agent performs/i);
   }
@@ -66,26 +65,38 @@ test("the code-review rules link the merge gate", async () => {
   assert.doesNotMatch(rules[1], /agent may merge only with the owner's explicit authorization/);
 });
 
-test("roles.md defines the human owner under its own heading", async () => {
-  const text = await readFile(join(repoRoot, "workflow/roles.md"), "utf8");
+test("safety.md defines the human owner under its own heading", async () => {
+  const text = await readFile(join(repoRoot, "workflow/safety.md"), "utf8");
   const section = /^## Human owner\r?\n([\s\S]*?)(?=^## )/m.exec(text);
-  assert.ok(section, "roles.md must have a Human owner section");
+  assert.ok(section, "safety.md must have a Human owner section");
   const flat = section[1].replace(/\s+/g, " ");
   assert.ok(flat.includes("A bot or an agent that acts through the owner's account is always an agent."));
   assert.ok(flat.includes("It is never the human owner."));
 });
-test("roles.md defines the generic roles and names no team", async () => {
-  const text = await readFile(join(repoRoot, "workflow/roles.md"), "utf8");
-  const section = /^## Role definitions\r?\n([\s\S]*?)(?=^## )/m.exec(text);
-  assert.ok(section, "roles.md must have a Role definitions section");
-  for (const role of ["implementer", "reviewer", "architect", "writer", "coordinator"]) {
-    assert.match(section[1], new RegExp(`^- The ${role} `, "m"), `missing role ${role}`);
+// #191: an agent does not get a role. The task and the skills tell it what to do.
+async function markdownFiles(dir) {
+  const found = [];
+  for (const entry of await readdir(join(repoRoot, dir), { withFileTypes: true })) {
+    const path = dir === "." ? entry.name : `${dir}/${entry.name}`;
+    if (entry.isDirectory()) {
+      if (![".git", "node_modules"].includes(entry.name) && !entry.name.startsWith("archive-")) {
+        found.push(...await markdownFiles(path));
+      }
+    } else if (path.endsWith(".md") && path !== "CHANGELOG.md") {
+      found.push(path);
+    }
   }
-  assert.match(section[1], /See \[Rules\]\(#rules\)\./);
-  for (const name of [/Forge/, /Sentinel/, /Atlas/, /Scribe/, /\bPip\b/, /Daniel/, /This team/i]) {
-    assert.doesNotMatch(text, name);
+  return found;
+}
+
+test("no page defines an agent role or links the removed roles page", async () => {
+  await assert.rejects(access(join(repoRoot, "workflow/roles.md")), "workflow/roles.md must not exist");
+  for (const file of await markdownFiles(".")) {
+    const text = (await readFile(join(repoRoot, file), "utf8")).replace(/\s+/g, " ");
+    assert.doesNotMatch(text, /\broles\.md\b/, `${file} links roles.md`);
+    assert.doesNotMatch(text, /\bthe (?:implementer|architect|writer|coordinator)\b/i, `${file} names an agent role`);
+    assert.doesNotMatch(text, /^#+ Role definitions/m, `${file} defines roles`);
   }
-  assert.doesNotMatch(text, /^## Role map$/m);
 });
 
 test("missing review evidence never counts as a review", async () => {
