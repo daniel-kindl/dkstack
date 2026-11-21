@@ -10,7 +10,15 @@ import { dirname, join } from "node:path";
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (file) => readFile(join(repoRoot, file), "utf8");
 const RAW = "https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/";
-const SECTIONS = ["architecture", "coding", "learning", "tdd", "tips", "ui", "version-control", "versioning", "workflow", "writing"];
+// A section is a top-level folder with an index.md. skills/ has its own
+// test below. M1 on #214: a new section folder is found here too.
+const SECTIONS = [];
+for (const entry of await readdir(repoRoot, { withFileTypes: true })) {
+  if (!entry.isDirectory() || entry.name.startsWith(".") || entry.name === "skills") continue;
+  const files = await readdir(join(repoRoot, entry.name));
+  if (files.includes("index.md")) SECTIONS.push(entry.name);
+}
+SECTIONS.sort();
 
 const skills = (await readdir(join(repoRoot, "skills"), { withFileTypes: true }))
   .filter((e) => e.isDirectory()).map((e) => e.name).sort();
@@ -45,14 +53,23 @@ test("triage reaches each skill, directly or through a skill that it links", () 
   assert.deepEqual(missing, []);
 });
 
-test("the reach test fails when triage drops a skill that only triage links", () => {
-  const saved = skillText.triage;
+// L1 on #214: the proof removes the link to learn from each skill, so it
+// does not depend on which skills link learn today.
+test("the reach test fails when no skill links a skill", () => {
+  const saved = { ...skillText };
   try {
-    skillText.triage = saved.split("\n").filter((l) => !l.includes(`${RAW}skills/learn/SKILL.md`)).join("\n");
+    for (const name of skills) {
+      skillText[name] = saved[name].split("\n").filter((l) => !l.includes(`${RAW}skills/learn/SKILL.md`)).join("\n");
+    }
     assert.equal(reachable("triage").has("learn"), false);
   } finally {
-    skillText.triage = saved;
+    Object.assign(skillText, saved);
   }
+});
+
+test("the sections come from the folder tree", () => {
+  for (const name of ["architecture", "learning", "tips", "ui", "workflow", "writing"]) assert.ok(SECTIONS.includes(name), name);
+  assert.ok(!SECTIONS.includes("skills") && !SECTIONS.includes("test") && !SECTIONS.includes("scripts"));
 });
 
 test("each section index lists each page of its section", async () => {
