@@ -41,9 +41,13 @@ merges, the owner can ask an agent to do these steps.
   merged state, and a fast-forward never makes a merge commit on `main`.
 - Remove the worktree of the merged branch. Then delete the local branch. Reason: a stale
   worktree or branch can make the next agent start on old code.
-- A local branch is stale only when its pull request is merged and its tip is the merged head or
-  an ancestor of it. Delete only stale branches. Reason: a squash merge does not make the branch
-  an ancestor of `main`, so `git branch -d` refuses it. The check on the merged head proves that
+- Remove a worktree only when it has the merged branch checked out and
+  `git status --short --ignored` shows no file that you cannot make again. If it shows such a
+  file, stop and tell the owner. A build output or `node_modules/` can be made again. Reason: `git worktree remove` also deletes ignored files, for example `.env`. A worktree
+  with no branch checked out can hold commits that are on no branch.
+- A branch is stale only when its pull request is merged into `main` and its tip is the
+  merged head or an ancestor of it. Delete only stale branches. Reason: a squash merge does not
+  make the branch an ancestor of `main`, so `git branch -d` refuses it. The check on the merged head proves that
   the branch has no commit that is not merged.
 - Keep each other branch and worktree, and name it in your report. Reason: it can hold work that
   is not merged, for example from a pull request that was closed without a merge.
@@ -61,20 +65,26 @@ git fetch --prune
 git switch main
 git pull --ff-only
 
-# Remove the worktree of the merged branch. This fails if the worktree has changes.
-# Then stop and tell the owner.
+# Remove the worktree of the merged branch. The first command must print the merged
+# branch. The second must print no file that you cannot make again. If not, stop and tell
+# the owner. The remove also fails for a tracked change or an untracked file.
 git worktree list
+git -C <path> branch --show-current
+git -C <path> status --short --ignored
 git worktree remove <path>
 git worktree prune
 
 # Delete each local branch whose remote branch is gone, but only when its pull request is
-# merged and its tip is the merged head or an ancestor of it. Report each kept branch.
+# merged into main and its tip is the merged head or an ancestor of it.
 for b in $(git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads \
     | awk '$2 == "[gone]" {print $1}'); do
-  merged=$(gh pr list --state merged --head "$b" --json headRefOid -q '.[0].headRefOid')
+  merged=$(gh pr list --state merged --base main --head "$b" --json headRefOid -q '.[0].headRefOid')
   [ -n "$merged" ] && git merge-base --is-ancestor "$b" "$merged" && git branch -D "$b" \
     || echo "kept: $b"
 done
+
+# Name each branch that is left in your report.
+git branch --format='%(refname:short)' | grep -vx main
 ```
 
 A branch that is checked out in a worktree is not deleted. Remove its worktree first.

@@ -32,7 +32,9 @@ test("the review page owns the clean-up rules, each with a reason", async () => 
     "The agent that merged cleans the local clone that it used for the merge.",
     "Switch to `main` and update it with a fast-forward only.",
     "Remove the worktree of the merged branch. Then delete the local branch.",
-    "A local branch is stale only when its pull request is merged and its tip is the merged head or an ancestor of it.",
+    "A branch is stale only when its pull request is merged into `main` and its tip is the merged head or an ancestor of it.",
+    "Remove a worktree only when it has the merged branch checked out and `git status --short --ignored` shows no file that you cannot make again.",
+    "`git worktree remove` also deletes ignored files, for example `.env`.",
     "Keep each other branch and worktree, and name it in your report.",
     "Never discard uncommitted changes or a commit that is not merged. Stop and tell the owner.",
     "Prune the stale remote-tracking refs and worktree records.",
@@ -58,7 +60,10 @@ test("the clean-up commands are safe and verified", async () => {
     "git switch main",
     "git pull --ff-only",
     "git worktree remove",
-    "gh pr list --state merged --head",
+    "gh pr list --state merged --base main --head",
+    "git -C <path> branch --show-current",
+    "git -C <path> status --short --ignored",
+    "git branch --format='%(refname:short)' | grep -vx main",
     "git merge-base --is-ancestor",
     "git branch -D",
     "git fetch --prune",
@@ -67,9 +72,10 @@ test("the clean-up commands are safe and verified", async () => {
     assert.ok(commands.includes(command), `missing command: ${command}`);
   }
   assert.doesNotMatch(commands, /--force|\s-f\b|reset --hard|clean -/, "no command may discard work");
-  assert.match(commands, /git merge-base --is-ancestor "\$b" "\$merged" && git branch -D "\$b"/,
+  assert.match(commands, /\[ -n "\$merged" \] && git merge-base --is-ancestor "\$b" "\$merged" && git branch -D "\$b"/,
     "delete a branch only when its tip is the merged head or an ancestor of it");
   assert.match(text, /verified with `git` 2\.\d+/);
+  assert.doesNotMatch(text, /fails if the worktree has changes/, "the comment must not promise that ignored files are safe");
 });
 
 test("feature-branches and code-review link the clean-up rules and do not copy them", async () => {
