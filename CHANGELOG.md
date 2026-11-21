@@ -27,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `version-control/feature-branches.md` says to merge `main` into a branch and links review and
   merge. It no longer says to rebase, which conflicted with the rule that forbids a rebase of a pushed
   branch (#154).
+- `check-workflows` fails on `secrets: inherit`, on the whole `secrets` context in an expression, on
+  the `pull_request_target` and `workflow_run` triggers, on `${{ github.event.* }}` or `${{ inputs.*
+  }}` in a `run:` script, and on a checkout step without `persist-credentials: false` (#154).
 
 ## [1.5.0] - 2026-11-19
 

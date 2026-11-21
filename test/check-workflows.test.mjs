@@ -29,6 +29,8 @@ const good = [
   "    runs-on: ubuntu-latest",
   "    steps:",
   `      - uses: actions/checkout@${SHA} # v7.0.1`,
+  "        with:",
+  "          persist-credentials: false",
   `      - name: Set up Node`,
   `        uses: "actions/setup-node@${SHA}" # v7.1.0`,
   "      - uses: ./.github/actions/local",
@@ -65,7 +67,9 @@ test("a tag, a branch or a short SHA fails, and a SHA with no version comment fa
       "",
     ].join("\n"),
   });
-  assert.deepEqual(result.errors, [
+  // This test checks the pins. The missing persist-credentials lines are tested below.
+  const pinErrors = result.errors.filter((e) => !e.includes("persist-credentials"));
+  assert.deepEqual(pinErrors, [
     '.github/workflows/a.yaml:5: pin "actions/checkout@v7" to a full 40-character commit SHA',
     '.github/workflows/a.yaml:6: pin "actions/checkout@main" to a full 40-character commit SHA',
     '.github/workflows/a.yaml:7: pin "actions/checkout@3d3c42e" to a full 40-character commit SHA',
@@ -93,8 +97,8 @@ test("a workflow that uses secrets fails", async () => {
     ".github/workflows/a.yml": good + "        env:\n          T: ${{ secrets.NPM_TOKEN }}\n          G: ${{secrets['X']}}\n",
   });
   assert.deepEqual(result.errors, [
-    ".github/workflows/a.yml:15: do not use secrets in a workflow",
-    ".github/workflows/a.yml:16: do not use secrets in a workflow",
+    ".github/workflows/a.yml:17: do not use secrets in a workflow",
+    ".github/workflows/a.yml:18: do not use secrets in a workflow",
   ]);
 });
 
@@ -173,7 +177,7 @@ const appStep = [
 // Return the line numbers with errors for a release.yml of these lines.
 const badLines = async (lines, file = "release.yml") => {
   const result = await workflowsFor({ [`.github/workflows/${file}`]: [...lines, ""].join("\n") });
-  return result.errors.map((e) => Number(/:(\d+): do not use secrets in a workflow$/.exec(e)?.[1] ?? NaN));
+  return result.errors.filter((e) => !e.includes("persist-credentials")).map((e) => Number(/:(\d+): do not use secrets in a workflow$/.exec(e)?.[1] ?? NaN));
 };
 
 test("the app secrets pass in the with block of the app step, with other inputs and steps", async () => {
@@ -255,7 +259,7 @@ test("the CLI exits 1 for a bad workflow and 0 for a clean tree", async () => {
     const passRun = spawnSync(process.execPath, [script, clean], { encoding: "utf8" });
     assert.equal(passRun.stderr, "");
     assert.equal(passRun.status, 0);
-    assert.equal(passRun.stdout, "1 workflow(s) pin actions to a SHA, set permissions and use no secrets.\n");
+    assert.equal(passRun.stdout, "1 workflow(s) pin actions to a SHA and set permissions. Only the release job uses the release app secrets.\n");
   } finally {
     await removeTree(bad);
     await removeTree(clean);
@@ -317,5 +321,116 @@ test("a top-level flow map with a write permission fails", async () => {
   });
   assert.deepEqual(result.errors, [
     '.github/workflows/a.yml:1: do not give "write" at the top level; give it to one job',
+  ]);
+});
+
+// FRG-1 and SEN-5 (#154): a secret can leak without "secrets." or "secrets[".
+test("secrets: inherit and the whole secrets context fail", async () => {
+  const lines = [
+    "permissions:",
+    "  contents: read",
+    "jobs:",
+    "  call:",
+    `    uses: someone/repo/.github/workflows/a.yml@${SHA} # v1.0.0`,
+    "    secrets: inherit",
+    "  a:",
+    "    runs-on: ubuntu-latest",
+    "    env:",
+    "      ALL: ${{ toJSON(secrets) }}",
+    "    steps:",
+    "      - run: echo '${{ toJson( secrets ) }}'",
+    "      - run: echo ok",
+    "",
+  ];
+  const result = await workflowsFor({ ".github/workflows/a.yml": lines.join("\n") });
+  assert.deepEqual(result.errors, [
+    '.github/workflows/a.yml:6: do not use "secrets: inherit". Pass only the secret that the job needs',
+    ".github/workflows/a.yml:10: do not use the whole secrets context. Name one secret",
+    ".github/workflows/a.yml:12: do not use the whole secrets context. Name one secret",
+  ]);
+});
+
+test("the pull_request_target and workflow_run triggers fail", async () => {
+  const block = good.replace("on: [pull_request]", "on:\n  pull_request_target:\n  workflow_run:\n    workflows: [a]");
+  const list = good.replace("on: [pull_request]", "on: [push, pull_request_target, workflow_run]");
+  const result = await workflowsFor({ ".github/workflows/a.yml": block, ".github/workflows/b.yml": list });
+  assert.deepEqual(result.errors, [
+    '.github/workflows/a.yml:3: do not use the "pull_request_target" trigger',
+    '.github/workflows/a.yml:4: do not use the "workflow_run" trigger',
+    '.github/workflows/b.yml:2: do not use the "pull_request_target" trigger',
+    '.github/workflows/b.yml:2: do not use the "workflow_run" trigger',
+  ]);
+});
+
+test("a trigger name in a comment or a quoted string passes", async () => {
+  const text = good.replace(
+    "      - run: npm test",
+    "      # Do not use pull_request_target.\n      - if: github.event_name != 'workflow_run'\n        run: npm test",
+  );
+  const result = await workflowsFor({ ".github/workflows/a.yml": text });
+  assert.deepEqual(result.errors, []);
+});
+
+const RUN_MESSAGE = 'do not put "${{ github.event.* }}" or "${{ inputs.* }}" in "run:". Pass the value through "env:"';
+
+test("github.event and inputs expressions in a run block fail", async () => {
+  const text = good.replace(
+    "      - run: npm test",
+    [
+      '      - run: echo "${{ github.event.pull_request.title }}"',
+      "      - run: |",
+      "          echo start",
+      "          ./x --bump ${{inputs.bump}}",
+      "      - run: >-",
+      "          echo ${{ github.event.inputs.bump }}",
+      "      - name: Safe",
+      "        env:",
+      "          TITLE: ${{ github.event.pull_request.title }}",
+      "          BUMP: ${{ inputs.bump }}",
+      '        run: echo "$TITLE $BUMP ${{ github.sha }} ${{ github.event_name }}"',
+    ].join("\n"),
+  );
+  const result = await workflowsFor({ ".github/workflows/a.yml": text });
+  assert.deepEqual(result.errors, [
+    `.github/workflows/a.yml:15: ${RUN_MESSAGE}`,
+    `.github/workflows/a.yml:18: ${RUN_MESSAGE}`,
+    `.github/workflows/a.yml:20: ${RUN_MESSAGE}`,
+  ]);
+});
+
+test("a checkout step without persist-credentials: false fails", async () => {
+  const lines = [
+    "permissions:",
+    "  contents: read",
+    "jobs:",
+    "  a:",
+    "    runs-on: ubuntu-latest",
+    "    steps:",
+    `      - uses: actions/checkout@${SHA} # v7.0.1`,
+    `      - uses: actions/checkout@${SHA} # v7.0.1`,
+    "        with:",
+    "          persist-credentials: true",
+    "      - name: Checkout",
+    `        uses: actions/checkout@${SHA} # v7.0.1`,
+    "        with:",
+    "          fetch-depth: 0",
+    "      - run: echo persist-credentials: false",
+    "  b:",
+    "    runs-on: ubuntu-latest",
+    "    steps:",
+    "      - name: Checkout",
+    "        with:",
+    "          persist-credentials: false",
+    `        uses: actions/checkout@${SHA} # v7.0.1`,
+    `      - uses: actions/checkout@${SHA} # v7.0.1`,
+    "",
+  ];
+  const result = await workflowsFor({ ".github/workflows/a.yml": lines.join("\n") });
+  const message = 'set "persist-credentials: false" in the "with:" block of the checkout step';
+  assert.deepEqual(result.errors, [
+    `.github/workflows/a.yml:7: ${message}`,
+    `.github/workflows/a.yml:8: ${message}`,
+    `.github/workflows/a.yml:12: ${message}`,
+    `.github/workflows/a.yml:23: ${message}`,
   ]);
 });
