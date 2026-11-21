@@ -21,14 +21,14 @@ export async function checkChangelog(root) {
     return ["CHANGELOG.md: the file does not exist"];
   }
   const errors = [];
-  if (!text.split("\n").includes("## [Unreleased]")) errors.push('CHANGELOG.md: add a "## [Unreleased]" heading line');
+  if (!text.split(/\r?\n/).includes("## [Unreleased]")) errors.push('CHANGELOG.md: add a "## [Unreleased]" heading line');
   if (!/^\[Unreleased\]: /m.test(text)) errors.push('CHANGELOG.md: add an "[Unreleased]:" compare link');
   const entry = new RegExp(`^## \\[${escape(version)}\\](?:\\s|$)`, "m");
   if (!entry.test(text)) errors.push(`CHANGELOG.md: add a "## [${version}]" entry for the package.json version ${version}`);
   return errors;
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const errors = await checkChangelog(resolve(process.argv[2] ?? "."));
   for (const e of errors) console.error(e);
   if (errors.length > 0) {

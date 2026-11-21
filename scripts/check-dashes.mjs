@@ -41,6 +41,6 @@ async function main() {
   console.log(`${checked} Markdown file(s) have no em dash or en dash.`);
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   await main();
 }
