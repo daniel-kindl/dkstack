@@ -65,4 +65,16 @@ A number in parentheses names a WCAG 2.2 criterion. "(dkstack rule)" marks a rul
 - Give a way to skip blocks that repeat on each page (2.4.1). On the web, use a skip link as the first focusable element (dkstack rule).
 - First rule of ARIA: use a native element if one exists. No ARIA is better than wrong ARIA.
 
+## Native equivalents
+
+Some rules on this page name a web feature. This table gives examples of the same feature on other platforms. The rows are examples, not requirements. Check the API in the version of the framework that the project uses. Test the result with the screen reader of the platform.
+
+| Need | Web | Avalonia | .NET MAUI | Android | iOS |
+| --- | --- | --- | --- | --- | --- |
+| Live announcement | `role="status"`, `aria-live` | `AutomationProperties.LiveSetting` | `SemanticScreenReader.Announce` | `accessibilityLiveRegion` (Views), `liveRegion` semantics (Compose) | `UIAccessibility.post(notification: .announcement)` (UIKit), `AccessibilityNotification.Announcement` (SwiftUI) |
+| Accessible name | `<label>`, `aria-label` | `AutomationProperties.Name` | `SemanticProperties.Description` | `contentDescription` | `accessibilityLabel` |
+| Heading | `<h1>` to `<h6>` | `AutomationProperties.HeadingLevel` | `SemanticProperties.HeadingLevel` | `accessibilityHeading` (Views), `heading()` semantics (Compose) | `.header` trait (UIKit), `.isHeader` trait (SwiftUI) |
+| Language | `lang` | the app culture | the app culture | `LocaleSpan` (Views), `localeList` in `SpanStyle` (Compose) | `accessibilityLanguage` |
+| Theme | `prefers-color-scheme`, `prefers-contrast` | `ActualThemeVariant` | `AppThemeBinding` | `Configuration.uiMode` (Views), `isSystemInDarkTheme()` (Compose) | `userInterfaceStyle` (UIKit), `colorScheme` environment value (SwiftUI) |
+
 References: [WCAG 2.2](https://www.w3.org/TR/WCAG22/), [WAI-ARIA APG](https://www.w3.org/WAI/ARIA/apg/), [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/accessibility), [Material Design](https://m3.material.io/foundations/designing/structure), [Android accessibility](https://developer.android.com/guide/topics/ui/accessibility/apps).
