@@ -21,9 +21,9 @@ A recorded difference from a dkstack rule. It names the dkstack rule, the projec
 reason.
 
 **Suppression**:
-A diagnostic that is switched off for one rule ID at the smallest scope. It states the reason
-that the cause cannot be fixed in the repository, and a reviewer who is not the author approves
-it.
+A recorded decision to switch off one diagnostic rule ID at the smallest scope. The record states
+the reason that the cause cannot be fixed in the repository. A reviewer who is not the author
+approves it.
 
 **Building block**:
 A skill that does one job. One or more larger skills run it, and a task can also use it alone.
