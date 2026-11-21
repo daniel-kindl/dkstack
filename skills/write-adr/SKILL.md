@@ -1,18 +1,19 @@
 ---
 name: write-adr
-description: "Use when you make a decision that is durable or hard to reverse, such as a framework, data store or public contract. Creates an Architecture Decision Record."
+description: "Use when you make a decision that is hard to reverse, surprising without its context and the result of a real trade-off, such as a framework, data store or public contract. Creates an Architecture Decision Record."
 ---
 
 # Write ADR
 
-Use when a design decision is durable or hard to reverse.
+Use when a design decision meets the ADR test.
 
 Create an Architecture Decision Record using [architecture/adrs.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/adrs.md).
 
 ## Steps
 
-1. Confirm the decision is worth recording (affects multiple components or is costly to change).
+1. Confirm that the decision meets the [ADR test](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/adrs.md#when-to-write-an-adr). If it does not, record it in the map or in the pull request body, and stop.
 2. Write a short ADR with:
+   - A `Status:` line and an `Affects:` line. See [Status and Affects](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/adrs.md#status-and-affects).
    - Context
    - Options considered
    - Decision
