@@ -133,6 +133,12 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Changed
 
+- The fix loop in `workflow/review-and-merge.md` (#279). After a verdict that is not
+  APPROVE-RECOMMENDED, the author fixes each finding of every severity with `tdd-loop` and gets a
+  new independent review. This repeats until APPROVE-RECOMMENDED. The author does not ask the
+  owner whether to fix a finding. In `code-review`, a Low finding now blocks the merge, and
+  APPROVE-RECOMMENDED means no open finding. The self-review fixes each finding. The workflow flow
+  links the loop.
 - Long sentences and semicolons on 11 pages are split, so `check-writing` gives no warning on them.
   Each rule keeps its conditions, its actor and its modality. `ui/typography.md` says "This fails
   Resize text (1.4.4)". `versioning/index.md` wraps at 100 characters in the release section.

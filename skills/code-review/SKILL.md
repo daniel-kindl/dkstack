@@ -96,7 +96,7 @@ Run [verify-claim](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/ski
 | Blocking | Security hole, data loss, a broken rule in `workflow/safety.md`, an agent can start a production deploy or a project's release workflow, or release without the owner's OK | Yes |
 | High | Wrong behavior, missing acceptance criterion, no test for a behavior change, broken build or failing required check, code that contradicts an Accepted ADR (see [ADR findings](#adr-findings)) | Yes |
 | Medium | Code smell (default), duplication, weak test, unproven required behavior, wrong or missing docs, two rules that conflict | Yes |
-| Low | Small clarity, naming or wording point, or a smell with small impact | No |
+| Low | Small clarity, naming or wording point, or a smell with small impact | Yes |
 
 ## ADR findings
 
@@ -112,8 +112,10 @@ Code that contradicts an Accepted ADR is High. The [ADR rules](https://raw.githu
 Give one verdict, as [workflow/review-and-merge.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md) requires. Use the most severe finding from either axis:
 
 - BLOCKED: one or more Blocking findings, or the change must not continue in this form. Examples are the wrong scope or a decision that only the owner can make.
-- CHANGES-REQUESTED: one or more High or Medium findings.
-- APPROVE-RECOMMENDED: only Low findings or none, and each required check is green on the reviewed head.
+- CHANGES-REQUESTED: one or more High, Medium or Low findings.
+- APPROVE-RECOMMENDED: no open finding, and each required check is green on the reviewed head.
+
+After CHANGES-REQUESTED or BLOCKED, the author fixes the findings and asks for a new review, as the [fix loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md#rules) says.
 
 If a required check is pending, give no verdict yet. Wait for the result, then give the verdict.
 
@@ -137,7 +139,7 @@ For a re-review, post a new comment at the new head. State each earlier finding 
 
 ## Self-review
 
-The author uses the same steps on their own change before they open the pull request. The author fixes the findings or lists them in the body. A self-review never replaces the review. The author never gives the verdict on, approves or merges their own pull request. Who may merge is in the [merge rule](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md#rules).
+The author uses the same steps on their own change before they open the pull request. The author fixes each finding. A self-review never replaces the review. The author never gives the verdict on, approves or merges their own pull request. Who may merge is in the [merge rule](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md#rules).
 
 ## Rules
 

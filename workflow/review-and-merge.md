@@ -18,6 +18,13 @@ keeps the review and merge rules.
   run as NOT RUN. Reason: the reviewer must know what was tested.
 - The review gives one verdict: APPROVE-RECOMMENDED, CHANGES-REQUESTED or BLOCKED. Reason: one
   verdict tells the author the next step.
+- After a verdict that is not APPROVE-RECOMMENDED, the author fixes each finding of every severity
+  with [tdd-loop](../skills/tdd-loop/SKILL.md). Then the author gets a new independent review of
+  the new head. Repeat until the verdict is APPROVE-RECOMMENDED. Do not ask the owner whether to
+  fix a finding. Ask the owner only for a decision that only the owner can make. If you think
+  that a finding is wrong, give the evidence on the pull request. The next review decides.
+  Reason: a finding that is not fixed reaches `main`, and a question about each fix stops the
+  work.
 - The reviewer merges only the head that they reviewed. The reviewer merges only when the review
   passes and all required checks are green. The reviewer also merges only when the code host shows
   the pull request as ready to merge with no rule bypassed. The author never merges. The
