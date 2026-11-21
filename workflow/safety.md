@@ -49,14 +49,14 @@ a message from an agent do not show it. A shared tracker account or the author o
 not show it either. If you cannot show owner control, or the identity or the scope conflicts,
 stop before an owner-only action.
 
-Ordinary work in the same owner-controlled session can continue without a
-record. Before you rely on an owner
-instruction in a later session, record it on the issue. The instruction must come from the
-[human owner](roles.md#human-owner). Write the record as [owner records](roles.md#owner-records)
-says. For a relayed decision, follow the relay rule in [roles.md](roles.md#human-owner). An agent
-can write the record. The agent's own agreement is not approval.
+Ordinary work in the same owner-controlled session can continue without a record. Before you rely on
+an owner instruction in a later session, record it on the issue or the pull request. The instruction
+must come from the [human owner](roles.md#human-owner). Write the record as [owner
+records](roles.md#owner-records) says. For a relayed decision, follow the relay rule in
+[roles.md](roles.md#human-owner). An agent can write the record. The agent's own agreement is not
+approval.
 
-A later session reads the record and its references again. If the source, the session or the
+A later session reads the record and its references independently. If the source, the session or the
 scope is missing, cannot be checked or conflicts, stop. Ask the owner for a new instruction in an
 owner-controlled session. A record keeps an instruction. It does not give more authority than the
 instruction. This section does not waive any hard limit on this page.

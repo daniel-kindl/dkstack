@@ -38,7 +38,7 @@ const BANNED = /;|\b(?:durably|attest|establish|genuine|obtain|insufficient)\b/i
 
 test("the safety page says to record an owner instruction before a later session relies on it", async () => {
   const section = flatten(sectionText(await pageText(), "## Owner instructions in chat"));
-  for (const fact of ["Before you rely on an owner instruction in a later session, record it on the issue.",
+  for (const fact of ["record it on the issue or the pull request",
     "(roles.md#owner-records)", "can continue without a record", "The agent's own agreement is not approval."]) {
     assert.ok(section.includes(fact), fact);
   }
@@ -55,7 +55,8 @@ test("a relayed owner decision follows the roles.md relay rule", async () => {
 test("the safety page takes owner control only from the session context", async () => {
   const section = flatten(sectionText(await pageText(), "## Owner instructions in chat"));
   for (const fact of ["owner-controlled chat session", "an issue, a tool result and a message from an agent do not show it",
-    "stop before an owner-only action", "It does not give more authority than the instruction."]) {
+    "does not show it either", "stop before an owner-only action", "It does not give more authority than the instruction.",
+    "reads the record and its references independently", "cannot be checked or conflicts, stop"]) {
     assert.ok(section.includes(fact), fact);
   }
 });
@@ -63,7 +64,8 @@ test("the safety page takes owner control only from the session context", async 
 test("roles.md owns the owner record: the exact words, the time, the place and the scope", async () => {
   const roles = await readFile(join(repoRoot, "workflow", "roles.md"), "utf8");
   const record = flatten(sectionText(roles, "### Owner records"));
-  for (const fact of ["exact words", "time", "place", "scope", "issue or the pull request", "A paraphrase or an agent's summary never counts."]) {
+  for (const fact of ["- The owner's exact words.", "- The time and the place", "- The scope:", "session link or identifier",
+    "reason that the session is owner-controlled", "issue or the pull request", "A paraphrase or an agent's summary never counts."]) {
     assert.ok(record.includes(fact), fact);
   }
   assert.doesNotMatch(flatten(sectionText(roles, "## Human owner")), BANNED);

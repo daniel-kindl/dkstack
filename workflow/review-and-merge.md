@@ -40,7 +40,7 @@ an independent review took place. Record the confirmation on that pull request o
 issue. The record names the pull request, the full reviewed head commit, the reviewer, the verdict
 and the owner's words that the independent review took place. Check the owner's authority as
 [owner instructions in chat](safety.md#owner-instructions-in-chat) says. Check that the reviewer
-was not the author, and that the passing verdict covered the head that was merged. If a fact is
+was independent of the author, and that the passing verdict covered the head that was merged. If a fact is
 missing, cannot be checked or conflicts, do not treat the pull request as reviewed.
 
 If the owner cannot confirm that a review took place, get a new independent review of the merged

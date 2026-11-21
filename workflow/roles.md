@@ -29,7 +29,7 @@ fields:
 - The time and the place where the owner gave them, for example the chat session and its date.
 - The scope: the issue, the pull requests and the actions that the instruction covers.
 - A session link or identifier, if one exists. If none exists, the context that identifies the
-  session, and the reason that the session is owner-controlled.
+  instruction and the session, and the reason that the session is owner-controlled.
 
 A relayed decision counts as the owner's words only if a record quotes the owner's exact words
 with the time and the place. A paraphrase or an agent's summary never counts.

@@ -94,6 +94,8 @@ test("missing review evidence never counts as a review", async () => {
   assert.ok(evidence.includes("do not treat the pull request as reviewed"));
   assert.ok(evidence.includes("Never backdate or invent review evidence."));
   assert.ok(evidence.includes("It never allows a self-review."));
+  assert.ok(evidence.includes("independent of the author"));
+  assert.ok(evidence.includes("It never removes the need for an independent review."));
   assert.doesNotMatch(evidence, /;|\b(?:durably|attest|establish|genuine|obtain|insufficient)\b/i);
 });
 
