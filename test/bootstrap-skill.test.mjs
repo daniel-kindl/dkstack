@@ -27,18 +27,18 @@ test("the bootstrap skill names no code host, package manager or update bot", as
 });
 
 // The supply chain rules have one owner page. Bootstrap links it (#154).
-test("bootstrap step 4 and setup-supply-chain link the supply chain rules and do not copy them", async () => {
+test("bootstrap step 5 and setup-supply-chain link the supply chain rules and do not copy them", async () => {
   const link = "(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/dependencies.md#supply-chain-rules)";
-  const four = await step(4);
-  assert.ok(four.includes(link));
-  assert.ok(four.includes("(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-supply-chain/SKILL.md)"));
+  const five = await step(5);
+  assert.ok(five.includes(link));
+  assert.ok(five.includes("(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-supply-chain/SKILL.md)"));
   const block = await step(1, "setup-supply-chain");
   assert.ok(block.includes(link));
-  for (const text of [four, block]) {
+  for (const text of [five, block]) {
     assert.doesNotMatch(text, /full commit SHA|lockfile|vulnerability audit/);
   }
   const text = await readFile(skillFile, "utf8");
-  assert.doesNotMatch(text, /^[5-9]\. /m, "bootstrap has four steps, one for each building block");
+  assert.doesNotMatch(text, /^[6-9]\. /m, "bootstrap has the copy step and one step for each building block");
 });
 
 test("the supply chain rules cover each rule that bootstrap applies", async () => {
@@ -80,6 +80,25 @@ test("setup-quality-gates copies the three format checks from a pinned tag and m
   assert.match(four, /The checks are required\. A failed check blocks the merge\./);
   assert.match(four, /A missing `docs\/maps\/` folder or a missing `CONTEXT\.md` is a pass\./);
   assert.match(four, /Do not change the copied scripts\./);
-  const two = await step(2);
-  assert.match(two, /copy the dkstack format checks/);
+  const three = await step(3);
+  assert.match(three, /copy the dkstack format checks/);
+});
+
+// ATL-9, IRIS-6, REED-4 and SCR-M7 in #154: a project has one place for its
+// exceptions to dkstack rules.
+test("bootstrap step 1 copies sample-AGENTS.md, which has an Exceptions section", async () => {
+  assert.ok((await step(1)).includes("(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/sample-AGENTS.md)"));
+  const sample = await readFile(join(repoRoot, "sample-AGENTS.md"), "utf8");
+  assert.ok(sample.includes("dkstack owns all other rules. Record project exceptions and project facts below."));
+  const exceptions = sample.slice(sample.indexOf("## Exceptions\n"));
+  assert.ok(sample.includes("## Exceptions\n"));
+  for (const field of ["dkstack rule:", "Project rule:", "Reason:"]) assert.ok(exceptions.includes(field), field);
+});
+
+test("AGENTS.md Precedence has an example exception record, and quality gates link it", async () => {
+  const agents = await readFile(join(repoRoot, "AGENTS.md"), "utf8");
+  const precedence = agents.slice(agents.indexOf("## Precedence\n"), agents.indexOf("## Hard limits\n"));
+  for (const field of ["- dkstack rule:", "- Project rule:", "- Reason:"]) assert.ok(precedence.includes(field), field);
+  const gates = await readFile(join(repoRoot, "coding", "quality-gates.md"), "utf8");
+  assert.ok(gates.includes("(../AGENTS.md#precedence)"));
 });

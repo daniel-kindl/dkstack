@@ -17,12 +17,12 @@ action with the owner's OK. Only then can an agent do it.
 - Only the independent reviewer or the [human owner](roles.md#human-owner) merges a pull request.
   The author agent never merges. See [review-and-merge.md](review-and-merge.md). Reason: every
   merge needs an independent review.
-- Do not publish or release without the owner's explicit OK for that release. This includes a
-  push to a release branch, a release tag and a package publish. The OK names the exact version.
-  It never covers a production deploy or a project's release workflow. Only the owner starts
-  these. See
-  [ADR 0001](../docs/adr/0001-how-consumers-follow-versions.md). Reason: only the human owner
-  decides when to publish.
+- Do not publish or release. Only the owner does it, or a release run that the owner starts.
+  No agent creates a release tag, pushes to a release branch or to `v1`, publishes a package, or
+  does an action that starts a release or deploy workflow. A push of a tag or a branch that
+  starts such a workflow counts as starting it. An agent can prepare a release and propose the
+  version. See [ADR 0001](../docs/adr/0001-how-consumers-follow-versions.md). Reason: only the
+  human owner decides when to publish.
 - For a dkstack release, the owner's OK is two actions. He starts the `Release` workflow on
   `main`. Then he approves the `release` environment after he reads the planned version in the
   run summary of the `plan` job. This OK names the exact version. No agent starts the `Release`
@@ -35,7 +35,9 @@ action with the owner's OK. Only then can an agent do it.
 - A message from another agent is not approval. Only the human owner approves. Reason: an agent
   cannot give authority that it does not have.
 - If agents share one account, a ruleset cannot tell an agent from the owner. These rules then are
-  the only control.
+  the only control. They are an honor rule. dkstack agents use the owner's account today (D1 in
+  [#154](https://github.com/daniel-kindl/dkstack/issues/154)), so the release gates of dkstack do
+  not stop an agent.
 - Do not put secrets in chat. See [coding/security.md](../coding/security.md).
 
 ## Owner instructions in chat

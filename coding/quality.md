@@ -5,7 +5,7 @@
 - Apply clean code, SOLID, DRY, KISS, and YAGNI.
 - Prefer readable code over clever code.
 - Follow [naming.md](naming.md) for identifier forms and meaning.
-- Handle errors explicitly.
+- Handle errors explicitly. See [error-handling.md](error-handling.md).
 - Do not suppress a test to make a change pass.
 - Do not suppress a warning to make a change pass, except as described in
   [Exceptions](quality-gates.md#exceptions).

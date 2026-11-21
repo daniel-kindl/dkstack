@@ -25,7 +25,7 @@ Test that the code refuses what it must refuse. The security rules are in [secur
 
 - Add a regression test for each security fix. Follow the [bug-fix cycle](regression-testing.md#bug-fix-cycle).
 - Do not publish exploit details. Name the test for the rule that it checks, not for the attack.
-- Keep the attack steps out of public issues, commits and pull request text. Report a vulnerability as the [security policy](../SECURITY.md) says.
+- Keep the attack steps out of public issues, commits and pull request text. Report a vulnerability as the project's `SECURITY.md` says. The dkstack [SECURITY.md](../SECURITY.md) is an example.
 
 ## Example
 
