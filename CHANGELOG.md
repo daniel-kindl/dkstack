@@ -123,6 +123,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Changed
 
+- The tests share one `sectionText` and one `flatten` from `test/helpers.mjs` (#250). Three test
+  files had their own copies. The test count stays the same.
 - One word for each meaning (#247). The rule text in `versioning/index.md` and `workflow/safety.md`
   says "the owner", not "Daniel" or "he". AGENTS.md names Daniel once, in "Owner". The quoted
   message of the Release workflow does not change. Prose says "pull request", not "PR". `plan-work`

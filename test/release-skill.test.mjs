@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "./helpers.mjs";
+import { readFile, sectionText } from "./helpers.mjs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -13,16 +13,6 @@ async function skillText() {
 
 async function read(path) {
   return readFile(join(repoRoot, path), "utf8");
-}
-
-// Return the text of one "## " section, without its heading.
-function sectionText(text, heading) {
-  const lines = text.split(/\r?\n/);
-  const start = lines.indexOf(heading);
-  assert.notEqual(start, -1, `missing section ${heading}`);
-  let end = lines.findIndex((line, i) => i > start && /^## /.test(line));
-  if (end === -1) end = lines.length;
-  return lines.slice(start + 1, end);
 }
 
 // SEN-4 and D2 in #154: no agent publishes or releases. The skill links the
@@ -74,20 +64,20 @@ test("triage routes a release and keeps the ladder small", async () => {
 });
 
 test("the release skill stops after it proposes the version and the changelog entry", async () => {
-  const steps = sectionText(await read("skills/release/SKILL.md"), "## Steps")
+  const steps = sectionText(await read("skills/release/SKILL.md"), "## Steps").split("\n")
     .filter((line) => /^\d+\. /.test(line));
   assert.deepEqual(steps.map((line) => line.split(".")[0]), ["1", "2", "3", "4", "5"]);
   assert.match(steps[4], /^5\. Propose the version and the changelog entry to the owner\. Then stop\./);
 });
 
 test("the release skill stops at the right step when a piece is missing", async () => {
-  const text = sectionText(await read("skills/release/SKILL.md"), "## When a piece is missing").join(" ");
+  const text = sectionText(await read("skills/release/SKILL.md"), "## When a piece is missing").split("\n").join(" ");
   assert.match(text, /No changelog entry for this release: stop at step 3\./);
   assert.doesNotMatch(text, /rights to create a tag/);
 });
 
 test("the release skill Rules section links the release rule and does not restate it", async () => {
-  const rules = sectionText(await read("skills/release/SKILL.md"), "## Rules").join(" ");
+  const rules = sectionText(await read("skills/release/SKILL.md"), "## Rules").split("\n").join(" ");
   assert.ok(rules.includes("An agent does not publish or release."));
   assert.ok(rules.includes("(https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md)"));
 });
