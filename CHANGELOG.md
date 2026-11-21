@@ -10,6 +10,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-11-21
+
 ### Added
 
 - `workflow/subagents.md` (#294). It says when a subagent helps and when it does not, what the
@@ -755,7 +757,8 @@ This minor release removes pages, skills and scripts by the owner's decision on 
 - The `validate` workflow. It checks the PR or commit title, the skills, the links, the dashes,
   the workflows, the CHANGELOG entry for the version and the unit tests.
 
-[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/daniel-kindl/dkstack/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/daniel-kindl/dkstack/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/daniel-kindl/dkstack/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/daniel-kindl/dkstack/compare/v1.3.0...v1.3.1
