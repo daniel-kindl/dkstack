@@ -16,7 +16,7 @@ test("the release rule text says the owner, not Daniel or he", async () => {
   for (const file of ["versioning/index.md", "workflow/safety.md"]) {
     const text = (await read(file)).replaceAll(QUOTE, "");
     assert.doesNotMatch(text, /\bDaniel\b/, file);
-    assert.doesNotMatch(text, /\b[Hh]e (starts|approves|reads|must)\b/, file);
+    assert.doesNotMatch(text, /\b[Hh](?:e|is|im)\b/, file);
   }
   const agents = await read("AGENTS.md");
   assert.equal(agents.split("Daniel").length - 1, 1, "AGENTS.md names Daniel once");
@@ -29,6 +29,8 @@ test("prose says pull request, not PR, outside trigger words", async () => {
   for (const dir of await readdir(join(repoRoot, "skills"), { withFileTypes: true })) {
     if (dir.isDirectory()) files.push(`skills/${dir.name}/SKILL.md`);
   }
+  // The Low on #256: the top-level pages too. An ADR is a record, so docs/adr/ is not changed.
+  files.push("README.md", "CONTRIBUTING.md", "SECURITY.md", "AGENTS.md", "sample-AGENTS.md");
   for (const file of files) {
     const text = (await read(file)).replace(/Triggers:[^"\n]*/g, "").replace(/`[^`]*`/g, "");
     assert.doesNotMatch(text, /\bPRs?\b/, file);
