@@ -1,6 +1,6 @@
 ---
 name: setup-versioning
-description: "Use when a repository has no commit, branch or version rules. One block of bootstrap. Documents conventional commits and short-lived branches, and sets up semantic versioning and a changelog."
+description: "Use when a repository has no commit, branch or version rules. One building block of bootstrap. Documents conventional commits and short-lived branches, and sets up semantic versioning and a changelog."
 user-invocable: false
 ---
 

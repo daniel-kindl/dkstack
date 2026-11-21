@@ -20,7 +20,7 @@ A description can end with `Triggers:` and the words that a person uses to ask f
 
 ## Building blocks
 
-A building block does one job. A larger skill, such as `code-review` or `bootstrap`, runs its blocks in order. Use a block alone when the task needs only that job. A block links the rule pages and does not copy them.
+A building block does one job. A larger skill, such as `code-review` or `bootstrap`, runs its building blocks in order. Use a building block alone when the task needs only that job. A building block links the rule pages and does not copy them.
 
 ## Current skills
 

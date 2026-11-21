@@ -1,6 +1,6 @@
 ---
 name: review-spec
-description: "Use when a review must check if a change does what its issue or specification asked for. One block of code-review. Finds the specification and reports missing, unasked-for and wrong work."
+description: "Use when a review must check if a change does what its issue or specification asked for. One building block of code-review. Finds the specification and reports missing, unasked-for and wrong work."
 user-invocable: false
 ---
 

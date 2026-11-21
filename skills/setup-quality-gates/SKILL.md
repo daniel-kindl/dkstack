@@ -1,6 +1,6 @@
 ---
 name: setup-quality-gates
-description: "Use when a repository lets warnings pass, has no CI or has checks that are not deterministic. One block of bootstrap. Makes warnings errors, sets up CI on every push and pull request, makes the checks deterministic and copies the dkstack format checks."
+description: "Use when a repository lets warnings pass, has no CI or has checks that are not deterministic. One building block of bootstrap. Makes warnings errors, sets up CI on every push and pull request, makes the checks deterministic and copies the dkstack format checks."
 user-invocable: false
 ---
 

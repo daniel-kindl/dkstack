@@ -1,6 +1,6 @@
 # Workflow
 
-How agents and the human owner work together, from an issue to a merged pull request.
+How agents and the owner work together, from an issue to a merged pull request.
 
 These rules prevent real damage in a shared repository. Read them before you change any repository.
 
@@ -8,7 +8,7 @@ These rules prevent real damage in a shared repository. Read them before you cha
 
 - [issues.md](issues.md): One issue for each task, its labels and its assignee.
 - [review-and-merge.md](review-and-merge.md): The issue to merge flow, review and merge.
-- [safety.md](safety.md): Actions that no agent does, what counts as approval, and the human owner.
+- [safety.md](safety.md): Actions that no agent does, what counts as approval, and the owner.
 
 ## Flow
 
@@ -21,7 +21,7 @@ These rules prevent real damage in a shared repository. Read them before you cha
    APPROVE-RECOMMENDED, the author fixes each finding and gets a new review. See the
    [fix loop](review-and-merge.md#rules).
 4. The reviewer merges as the [merge rule](review-and-merge.md#rules) says. The author never
-   merges. The [human owner](safety.md#human-owner) may also merge.
+   merges. The [owner](safety.md#owner) may also merge.
 
 Related: [version-control/index.md](../version-control/index.md),
 [CONTRIBUTING.md](../CONTRIBUTING.md).

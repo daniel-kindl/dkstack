@@ -4,7 +4,7 @@ Rules and skills for AI coding agents, in one place.
 
 These are the dkstack guidelines for AI coding agents. dkstack is the repository
 [daniel-kindl/dkstack](https://github.com/daniel-kindl/dkstack). Follow these guidelines in each
-project that points to this file.
+consumer. A consumer is a repository whose `AGENTS.md` points to this file.
 
 ## Start here
 

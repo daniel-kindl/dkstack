@@ -36,7 +36,7 @@ After `v2` is released, `v1` gets no fixes. See [SECURITY.md](../SECURITY.md#ver
 
 ## Release dkstack
 
-These steps are for the dkstack repository only. A consumer repository does not use them.
+These steps are for the dkstack repository only. A consumer does not use them.
 
 dkstack releases follow [ADR 0001](../docs/adr/0001-how-consumers-follow-versions.md), option C2.
 The `Release` workflow ([release.yml](../.github/workflows/release.yml)) does the full release.

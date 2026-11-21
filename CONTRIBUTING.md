@@ -34,8 +34,8 @@ checks, the title check and actionlint.
 ## Add a page or a skill
 
 - Add the page to the `index.md` of its section, or the skill to `skills/index.md`.
-- Make the page or the skill reachable from triage. A building block is linked from its parent
-  skill.
+- Make the page or the skill reachable from triage. A building block is linked from each larger
+  skill that runs it.
 - Add a test that pins the key phrases of each new rule.
 - Add one line under `## [Unreleased]` in `CHANGELOG.md`.
 - In a skill, link each other dkstack file with its raw URL on `v1`, for example

@@ -8,7 +8,7 @@
 - Handle errors explicitly. See [error-handling.md](error-handling.md).
 - Do not suppress a test to make a change pass.
 - Do not suppress a warning to make a change pass, except as described in
-  [Exceptions](quality-gates.md#exceptions).
+  [Suppressions](quality-gates.md#suppressions).
 
 ## Broken windows
 

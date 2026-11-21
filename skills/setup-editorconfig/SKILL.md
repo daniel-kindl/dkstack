@@ -1,6 +1,6 @@
 ---
 name: setup-editorconfig
-description: "Use when a repository has no .editorconfig or .gitattributes, or has loose settings. One block of bootstrap. Sets strict editor settings, the brace style and LF line endings."
+description: "Use when a repository has no .editorconfig or .gitattributes, or has loose settings. One building block of bootstrap. Sets strict editor settings, the brace style and LF line endings."
 user-invocable: false
 ---
 

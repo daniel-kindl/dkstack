@@ -31,7 +31,7 @@ test("release is user-only, because only the owner releases", async () => {
   assert.equal(classOf(await front("release")), "user");
 });
 
-test("code-review runs each review block and bootstrap runs each setup block", async () => {
+test("code-review runs each review building block and bootstrap runs each setup building block", async () => {
   const review = await raw("skills/code-review/SKILL.md");
   for (const name of REVIEW_ATOMS) assert.ok(review.includes(`(${RAW}${name}/SKILL.md)`), name);
   const bootstrap = await raw("skills/bootstrap/SKILL.md");
@@ -46,7 +46,7 @@ test("code-review keeps the anchors that other skills link", async () => {
   }
 });
 
-test("the review blocks use the code-review severities and do not copy the table", async () => {
+test("the review building blocks use the code-review severities and do not copy the table", async () => {
   for (const name of ["review-spec", "review-standards", "review-blast-radius"]) {
     const text = await raw(`skills/${name}/SKILL.md`);
     assert.ok(text.includes(`(${RAW}code-review/SKILL.md#severity)`), name);
@@ -62,7 +62,7 @@ test("verify-claim owns the five evidence levels", async () => {
   assert.ok(text.includes("A required behavior below level 4 is unproven."));
 });
 
-test("the setup blocks name no code host, package manager or update bot", async () => {
+test("the setup building blocks name no code host, package manager or update bot", async () => {
   for (const name of SETUP_ATOMS) {
     const text = (await raw(`skills/${name}/SKILL.md`)).replace(/https:\/\/\S+/g, "");
     for (const word of [/github/i, /\bgh\b/, /\bnpm\b/, /dependabot/i, /```ya?ml/]) {
