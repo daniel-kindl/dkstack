@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   passes the title check (#154).
 - `version-control/index.md` lists all 11 commit types that the title check allows and says that
   other types fail. A test compares the list with the title check (#154).
+- `AGENTS.md` has one version rule: if your entry URL names a tag, read each dkstack raw URL on that
+  tag in place of `v1`. `README.md` and `versioning/index.md` link the rule. `README.md` tells a
+  consumer to run `npx skills update` after a release (#154).
 
 ### Fixed
 
