@@ -8,6 +8,7 @@ Skills are specific capabilities agents should apply when relevant.
 - [bootstrap](bootstrap/SKILL.md): Set up conventional commits, branches, semver, strict editorconfig, warnings-as-errors, and deterministic checks.
 - [start-issue](start-issue/SKILL.md): Find or open one issue for the task and set the labels. Assign it and start the branch when the work on the issue starts.
 - [clarify-intent](clarify-intent/SKILL.md): Clarify requirements and domain language before coding.
+- [domain-glossary](domain-glossary/SKILL.md): Read `CONTEXT.md`, flag a word that conflicts with it, and record a resolved domain term.
 - [apply-architecture](apply-architecture/SKILL.md): Check design changes against architecture principles.
 - [tdd-loop](tdd-loop/SKILL.md): Enforce the red-green-refactor cycle.
 - [code-review](code-review/SKILL.md): Review a change on two axes (standards and specification) and give one verdict.

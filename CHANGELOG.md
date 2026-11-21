@@ -17,6 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The `start-issue` skill applies the rules. `workflow/index.md`, `workflow/review-and-merge.md`,
   `skills/index.md` and `triage` link them. The removed `status:`, `agent:` and `needs:` labels and
   the claims do not come back (#166).
+- `architecture/domain-languages.md` has a Glossary section. It owns `CONTEXT.md` at the
+  repository root in folium's format: an H1, a `## Language` heading and `**Term**:` entries with an
+  optional `_Avoid_:` line. The file holds only domain terms and no implementation details. The new
+  `domain-glossary` skill reads the file, flags a conflicting word and records a resolved term.
+  `triage` reads `CONTEXT.md` before a task. `clarify-intent` writes new terms to it. The
+  `code-review` standards axis has a Domain language line. This lands the Glossary part of #153
+  (#168).
 - `coding/security.md` has a "CI workflows" section. It owns the rules for untrusted triggers,
   expression values in scripts, secrets, checkout tokens, permissions, timeouts and fork approval, and
   it says what a safe release or deploy workflow is. `code-review` links it (#154).
