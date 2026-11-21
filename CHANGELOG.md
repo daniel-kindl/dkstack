@@ -4,11 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The classes for dkstack are in
+[breaking changes in dkstack](versioning/index.md#breaking-changes-in-dkstack). An entry for a
+change that a consumer must act on has a "Consumer action:" line.
 
 ## [Unreleased]
 
 ### Added
 
+- A rule for breaking changes in dkstack (#246). MAJOR: remove or rename a skill, a page or a linked
+  anchor, or add a hard limit. MINOR: a new skill, page or duty, or a renamed anchor that keeps the
+  old anchor as a redirect. PATCH: wording only. Each class has an example. A MAJOR change has `!`
+  in its title. A release that needs a consumer to act has a "Consumer action:" line. SECURITY.md
+  says that `v1` gets no fixes after `v2` is released.
 - `scripts/check-writing.mjs` warns about a step with more than 20 words, a sentence with more than
   25 words and a semicolon in Markdown (#244). It skips CHANGELOG.md, code, block quotes, tables,
   headings and text in double quotes. It always exits 0 in this first stage. `npm run check` and
