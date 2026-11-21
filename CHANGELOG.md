@@ -94,6 +94,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- dkstack pins Node 24 and records its npm exception (#223). `package.json` has
+  `"engines": { "node": ">=24" }`, and a test checks that it matches the `node-version` in both
+  workflows. CONTRIBUTING.md has an Exceptions section: dkstack has no npm dependencies, so it has no
+  lockfile and no audit until the first dependency. A test fails if a dependency comes without
+  `package-lock.json`. A new `.editorconfig` sets UTF-8, LF and two-space indents.
 - The merge rule has one owner, the Rules of `workflow/review-and-merge.md` (#221).
   `workflow/index.md`, `workflow/roles.md`, `workflow/safety.md` and `code-review` keep one short
   sentence and link it. The tests check the key facts on the owner page and the links from the
