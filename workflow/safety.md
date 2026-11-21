@@ -23,9 +23,9 @@ action with the owner's OK. Only then can an agent do it.
   starts such a workflow counts as starting it. An agent can prepare a release and propose the
   version. See [ADR 0001](../docs/adr/0001-how-consumers-follow-versions.md). Reason: only the
   human owner decides when to publish.
-- For a dkstack release, the owner's OK is two actions. He starts the `Release` workflow on
-  `main`. Then he approves the `release` environment after he reads the planned version in the
-  run summary of the `plan` job. This OK names the exact version. No agent starts the `Release`
+- For a dkstack release, the owner's OK is two actions. The owner starts the `Release` workflow
+  on `main`. Then the owner reads the planned version in the run summary of the `plan` job and
+  approves the `release` environment. This OK names the exact version. No agent starts the `Release`
   workflow or approves the `release` environment. If the `validate` run of the release pull
   request waits for approval, only the owner approves it. No agent and no job approves it. See
   [Release dkstack](../versioning/index.md#release-dkstack). Reason: the owner must see the

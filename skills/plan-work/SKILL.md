@@ -68,7 +68,7 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 The steps expect an issue, automated checks and a place for the plan. If a piece is missing, use its fallback below. In the plan or in your report, say which fallback you used and why.
 
 - No issue: write `none` in the `Issue` field. In step 1, take the goal and the acceptance criteria from the person who asked for the plan. If you cannot find them, ask. Do not invent them.
-- No automated checks: run the project checks locally if you can, and record the real result. If you cannot run a check, record it as not run. A check that did not run is not a pass.
+- No automated checks: run the project checks locally if you can, and record the real result. If you cannot run a check, record it as NOT RUN. A check that did not run is not a pass.
 - You cannot write the plan where the task asks: give the plan in your report, say why you could not write it, and ask where to put it.
 
 ## Boundaries
