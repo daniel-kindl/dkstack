@@ -3,6 +3,9 @@ import assert from "node:assert/strict";
 import { readFile } from "./helpers.mjs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { spawnSync } from "node:child_process";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const pkg = JSON.parse(await readFile(join(repoRoot, "package.json"), "utf8"));
@@ -70,6 +73,36 @@ test("validate checks the pull request title and each pushed commit title", () =
   assert.match(push, /node scripts\/check-title\.mjs "\$title"/);
 });
 
+// The Low on #190: a git log error must fail the push title step.
+function runPushStep(gitScript) {
+  const step = validateSteps.find((s) => /github\.event_name == 'push'/.test(s) && /check-title/.test(s));
+  const script = step.slice(step.indexOf("run: |") + "run: |".length)
+    .split("\n").map((l) => l.replace(/^ {10}/, "")).join("\n");
+  const bin = mkdtempSync(join(tmpdir(), "fake-git-"));
+  writeFileSync(join(bin, "git"), `#!/bin/sh\n${gitScript}\n`, { mode: 0o755 });
+  try {
+    return spawnSync("bash", ["-c", script], {
+      cwd: repoRoot,
+      encoding: "utf8",
+      env: { ...process.env, PATH: `${bin}:${process.env.PATH}`, BEFORE: "a", GITHUB_SHA: "b" },
+    });
+  } finally {
+    rmSync(bin, { recursive: true, force: true });
+  }
+}
+
+test("the push title step fails when git log fails", { skip: process.platform === "win32" }, () => {
+  const result = runPushStep('[ "$1" = log ] && { echo "fatal: bad range" >&2; exit 128; }\nexit 0');
+  assert.notEqual(result.status, 0);
+});
+
+test("the push title step checks each title that git log gives", { skip: process.platform === "win32" }, () => {
+  const good = runPushStep('[ "$1" = log ] && printf "docs: one\\nfix: two\\n"\nexit 0');
+  assert.equal(good.status, 0, good.stderr);
+  const bad = runPushStep('[ "$1" = log ] && printf "docs: one\\nnot a title\\n"\nexit 0');
+  assert.equal(bad.status, 1);
+});
+
 // FRG-11, SEN-19 and SCR-16 in #154: one Node version in package.json and in
 // each workflow, and no dependency without a lockfile.
 test("engines.node matches the node-version of each workflow", async () => {
@@ -103,9 +136,11 @@ test("the repository has an .editorconfig with LF line endings", async () => {
 // each threshold as a whole number.
 test("npm test gates the coverage of scripts/ at 95% of lines and 90% of branches", () => {
   const command = pkg.scripts.test;
-  for (const flag of ["--experimental-test-coverage", "--test-coverage-include='scripts/**'",
+  for (const flag of ["--experimental-test-coverage", "--test-coverage-include=scripts/**",
     "--test-coverage-lines=95", "--test-coverage-branches=90"]) {
     assert.ok(command.includes(flag), flag);
   }
   assert.match(command, /test\/\*\.test\.mjs$/);
+  // The Low on #242: cmd.exe passes quotes on as text, and then no file matches.
+  assert.doesNotMatch(command, /['"]/);
 });

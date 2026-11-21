@@ -35,8 +35,8 @@ change that a consumer must act on has a "Consumer action:" line.
   its test. A pull request that updates a baseline shows the before and after image, and the
   reviewer approves each update.
 - `npm test` fails when the tests cover less than 95% of the lines or 90% of the branches in
-  `scripts/` (#231). It uses the coverage flags of Node 24 and no new dependency. The coverage today
-  is 99.16% of lines and 93.51% of branches.
+  `scripts/` (#231). It uses the coverage flags of Node 24 and no new dependency. The coverage at merge
+  time was 99.16% of lines and 93.51% of branches.
 - A contributor checklist in CONTRIBUTING.md (#230). "Run the checks" names `npm run check`, Node 24
   and the separate title check. "Add a page or a skill" lists the index entry, the route from
   triage, a test, the `[Unreleased]` line and raw `v1` links in skills. "Update bot pull requests"
@@ -237,6 +237,14 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Fixed
 
+- The coverage glob in `npm test` has no quotes. In `cmd.exe` the quotes stayed in the value, so
+  no file matched and the coverage gate passed with no check (the Low on #242).
+- `check-links` checks an HTML `href` in single quotes or with no quotes, not only one in double
+  quotes (the Low on #233).
+- The push title step in the validate workflow fails when `git log` fails. Before, the process
+  substitution hid the error, and the step passed with no title checked (the Low on #190).
+- The .NET MAUI theme example in `ui/accessibility.md` names `Application.RequestedTheme` to read
+  the theme. `AppThemeBinding` only sets a value for each theme (#224).
 - `check-links` closes five parser gaps (#232). It checks an HTML `<a href>`. It accepts `[self](./)`
   in a skill and a target with balanced parentheses. It ignores links in an indented code block,
   but not in an indented paragraph of a list. A repository URL on a ref with a slash, such as
