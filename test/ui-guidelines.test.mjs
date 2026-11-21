@@ -74,7 +74,7 @@ test("UI findings use the code-review severities and no P scale", async () => {
   const uiLine = line(section(review, "## Checklist"), "- Rendered UI:");
   assert.ok(uiLine.includes(`[ui-review](${raw}/skills/ui-review/SKILL.md)`));
   assert.ok(uiLine.includes("A failed WCAG 2.2 A or AA criterion on a changed surface is High."));
-  assert.ok(uiLine.includes("A missing or wrong `Visual verification:` line in the PR body is Medium."));
+  assert.ok(uiLine.includes("A missing or wrong `Visual verification:` line in the pull request body is Medium."));
   const pages = ["ui/index.md", "ui/visual-verification.md", "skills/ui-review/SKILL.md", "skills/ui-design/SKILL.md"];
   for (const path of pages) {
     assert.doesNotMatch(await document(path), /\bP[0-2]\b/, `${path} has a P severity`);

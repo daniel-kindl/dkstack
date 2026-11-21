@@ -4,7 +4,7 @@ Architecture principles and design rules.
 
 ## Easier to change
 
-When two designs both work, select the design that is easier to change. Say why in the PR. Reason: requirements change, and a design that is easy to change costs less each time they do.
+When two designs both work, select the design that is easier to change. Say why in the pull request. Reason: requirements change, and a design that is easy to change costs less each time they do.
 
 Use this rule as the tie-breaker when other principles do not decide between two designs.
 
