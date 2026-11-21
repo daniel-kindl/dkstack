@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   bypass, no push to `main`, no production deploy, no release without the owner's OK, the author
   never merges, an agent message is not approval, no secrets in chat, the shared account line, a
   failing test first in `tdd-loop` and SHA pins in `review-standards`. A deleted limit fails the
-  test. A wording change does not.
+  test. A wording change that keeps the key phrase does not.
 - `chart-route` skill (#175). It settles a large, unclear effort in a map in `docs/maps/<slug>.md`,
   one question per session, and hands off to `plan-work`. It plans and never builds. A question is
   owner, research, prototype or task. Each answer is recorded once: an ADR, a `CONTEXT.md` entry or

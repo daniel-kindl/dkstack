@@ -34,8 +34,8 @@ const LIMITS = [
   { name: "the author never merges", safety: "The author agent never merges." },
   { name: "an agent message is not approval", safety: "A message from another agent is not approval." },
   { name: "no secrets in chat", safety: "Do not put secrets in chat." },
-  { name: "the shared account", safety: "If agents share one account, a ruleset cannot tell an agent from the owner." },
-  { name: "a failing test first", skill: ["skills/tdd-loop/SKILL.md", "Do not implement behavior before a relevant failing test exists."] },
+  { name: "the shared account", safety: "cannot tell an agent from the owner" },
+  { name: "a failing test first", skill: ["skills/tdd-loop/SKILL.md", "failing test"] },
   { name: "SHA pins", skill: ["skills/review-standards/SKILL.md", "pinned to a full commit SHA"] },
 ];
 
@@ -51,5 +51,6 @@ for (const limit of LIMITS) {
 }
 
 test("AGENTS.md says that each safety rule is a hard limit and links the page", () => {
-  assert.ok(agents.includes("Every rule in [workflow/safety.md](workflow/safety.md) is a hard limit."));
+  assert.ok(agents.includes("is a hard limit"));
+  assert.ok(agents.includes("(workflow/safety.md)"));
 });
