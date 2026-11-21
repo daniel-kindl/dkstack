@@ -94,6 +94,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The merge rule has one owner, the Rules of `workflow/review-and-merge.md` (#221).
+  `workflow/index.md`, `workflow/roles.md`, `workflow/safety.md` and `code-review` keep one short
+  sentence and link it. The tests check the key facts on the owner page and the links from the
+  other pages, not full sentences.
 - The release rule has one owner, `workflow/safety.md` (#205). No agent publishes or releases. No
   agent creates a release tag, pushes to a release branch or to `v1`, publishes a package, or
   starts a release or deploy workflow. A tag or branch push that starts such a workflow counts as
@@ -168,6 +172,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The scripts and tests work on a CRLF checkout, and each script can be imported (#206). A new
+  `.gitattributes` checks out text with LF. `release.mjs` reads a CRLF CHANGELOG as LF, so
+  `check-changelog` accepts a CRLF `## [Unreleased]` line again. The tests read files through one
+  `readFile` helper that gives LF. Each script runs its main code only when `process.argv[1]` is
+  the script, so an import from `node -e` no longer throws.
 - The Release workflow fails early and cleans up on cancel (#180). `check-changelog` fails when
   CHANGELOG.md has no exact `## [Unreleased]` line or no `[Unreleased]:` compare link. A cancelled
   run closes the release pull request or tells how to finish the release, as a failed run does.

@@ -1,7 +1,8 @@
 import { test } from "node:test";
+import { makeTree, readFile, removeTree } from "./helpers.mjs";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFile, writeFile } from "node:fs/promises";
+import { writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import {
@@ -14,7 +15,6 @@ import {
   planSummary,
   checkEnvironment,
 } from "../scripts/release.mjs";
-import { makeTree, removeTree } from "./helpers.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const script = join(repoRoot, "scripts", "release.mjs");
@@ -156,6 +156,14 @@ test("a CHANGELOG with no Unreleased section or an existing version fails", () =
 test("the release notes are the body of one version section", () => {
   assert.equal(releaseNotes(CHANGELOG, "1.3.0"), "### Removed\n\n- Old pages.\n");
   assert.throws(() => releaseNotes(CHANGELOG, "9.9.9"), /no "## \[9\.9\.9\]" section/);
+});
+
+// FRG-3 in #154: a CRLF checkout gives the same release text as LF.
+test("a CRLF CHANGELOG gives the same changelog and notes as LF", () => {
+  const crlf = CHANGELOG.replace(/\n/g, "\r\n");
+  const input = { version: "1.4.0", previous: "1.3.0", date: "2026-11-12", commits: [c("feat: two (#136)")] };
+  assert.equal(releaseChangelog(crlf, input), releaseChangelog(CHANGELOG, input));
+  assert.equal(releaseNotes(crlf, "1.3.0"), releaseNotes(CHANGELOG, "1.3.0"));
 });
 
 test("the package version changes and the rest of package.json stays", () => {
