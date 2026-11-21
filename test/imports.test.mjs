@@ -19,3 +19,14 @@ for (const script of scripts) {
     assert.equal(r.stdout, "ok\n");
   });
 }
+
+// L1 on #218: a test that reads a repository file with fs.readFile fails on
+// a CRLF checkout when it splits on "\n". Each test uses the helper.
+test("each test reads files through the readFile helper in test/helpers.mjs", async () => {
+  const { readFile } = await import("./helpers.mjs");
+  const tests = (await readdir(join(repoRoot, "test"))).filter((f) => f.endsWith(".test.mjs"));
+  for (const file of tests) {
+    const text = await readFile(join(repoRoot, "test", file), "utf8");
+    assert.doesNotMatch(text, /import \{[^}]*\breadFile\b[^}]*\} from "node:fs(?:\/promises)?"/, file);
+  }
+});
