@@ -106,6 +106,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The owner record has one owner, `workflow/roles.md` "Owner records" (#229). It names the fields
+  (the owner's exact words, the time, the place, the scope and a session link) and where the record
+  goes. `workflow/safety.md` "Owner instructions in chat" keeps one rule and links it. That section
+  and "Missing review evidence after merge" are rewritten in the writing rules, with the same
+  meaning: no semicolons, and no "durably", "attest", "establish", "genuine", "obtain" or
+  "insufficient". `review-and-merge.md` no longer says "The review does not require a feature plan."
 - README.md says what dkstack is and who it is for (#235). The top says that dkstack is guidance
   only and is for any team that uses AI coding agents, and a short "Start" list follows. README.md,
   `package.json` and AGENTS.md use one tagline: "Rules and skills for AI coding agents, in one
