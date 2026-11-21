@@ -17,7 +17,9 @@ These rules prevent real damage in a shared repository. Read them before you cha
    [issues.md](issues.md).
 2. The author does the work on one branch and opens one pull request. The task and the skills that
    [triage](../skills/triage/SKILL.md) selects tell the author what to do.
-3. An agent that is not the author reviews the pull request.
+3. An agent that is not the author reviews the pull request. If the verdict is not
+   APPROVE-RECOMMENDED, the author fixes each finding and gets a new review. See the
+   [fix loop](review-and-merge.md#rules).
 4. The reviewer merges as the [merge rule](review-and-merge.md#rules) says. The author never
    merges. The [human owner](safety.md#human-owner) may also merge.
 
