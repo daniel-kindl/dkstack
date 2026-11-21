@@ -62,11 +62,11 @@ function between(body, start, end) {
 
 // ATL-6 in #154: the signals have one owner. Triage links the Analysis
 // section and does not copy the list.
-test("triage reads stewardship only for a signal or a human request, and links the signals", async () => {
+test("triage reads stewardship only for a signal or a person's request, and links the signals", async () => {
   const triage = await text("skills/triage/SKILL.md");
   const page = await text("architecture/stewardship.md");
   assert.match(triage, /Routine work does not read/);
-  assert.match(triage, /human asks/);
+  assert.match(triage, /person asks/);
   assert.ok(triage.includes(`${raw}#analysis`), "triage links the Analysis section");
   const pageSignals = between(page, "A signal is one of these:", "Examine the consequences");
   for (const signal of [

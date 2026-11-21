@@ -148,6 +148,10 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Changed
 
+- ADR 0001 records the owner's decision to release 1.6.0 on `v1`. This release removes the
+  agent roles page (see Removed), renames the anchor `coding/quality-gates.md#exceptions` and adds a hard
+  limit. Under the breaking change rule, each of these is MAJOR. The exception is for this release
+  only. Each later breaking release starts `v2`. Read each "Consumer action:" line below.
 - The pages use the terms of `CONTEXT.md` (#285): "owner", "consumer", "suppression", "building
   block" and, for the checks that you run locally, "quality gates". `workflow/safety.md` defines
   the owner under `## Owner`. The heading `## Exceptions` in `coding/quality-gates.md` is now
@@ -181,7 +185,7 @@ change that a consumer must act on has a "Consumer action:" line.
   sentence in a description has at most 25 words. Do not use a semicolon. A new "AI prose patterns"
   section gives six examples. The scope includes the text that an agent writes to a person, such as
   the learn tutor. `writing-check` step 2 checks each rule in `writing/index.md` and lists no subset.
-- The owner record has one owner, `workflow/roles.md` "Owner records" (#229). It names the fields
+- The owner record has one owner, `workflow/safety.md` "Owner records" (#229). It names the fields
   (the owner's exact words, the time, the place, the scope and a session link) and where the record
   goes. `workflow/safety.md` "Owner instructions in chat" keeps one rule and links it. That section
   and "Missing review evidence after merge" are rewritten in the writing rules, with the same
@@ -202,7 +206,7 @@ change that a consumer must act on has a "Consumer action:" line.
   lockfile and no audit until the first dependency. A test fails if a dependency comes without
   `package-lock.json`. A new `.editorconfig` sets UTF-8, LF and two-space indents.
 - The merge rule has one owner, the Rules of `workflow/review-and-merge.md` (#221).
-  `workflow/index.md`, `workflow/roles.md`, `workflow/safety.md` and `code-review` keep one short
+  `workflow/index.md`, `workflow/safety.md` and `code-review` keep one short
   sentence and link it. The tests check the key facts on the owner page and the links from the
   other pages, not full sentences.
 - The release rule has one owner, `workflow/safety.md` (#205). No agent publishes or releases. No
@@ -291,6 +295,13 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Fixed
 
+- Text from the pre-release audit of 1.6.0. `architecture/dry.md` links the stewardship
+  trade-off and no longer says to extract each repeated idea. `coding/security.md` defines a secret
+  once. `versioning/index.md` names the commit step as the last step that runs repository code, and
+  links the release OK in `workflow/safety.md` and does not copy it. `code-review` links the
+  unproven rule in `verify-claim` and does not copy it. `architecture/small-steps.md` no longer
+  says that AGENTS.md asks for small commits. The Release workflow comment says that the app token
+  does the writes. `triage`, `writing-check` and `stewardship.md` say "person" or "people", not "human".
 - The coverage glob in `npm test` has no quotes. In `cmd.exe` the quotes stayed in the value, so
   no file matched and the coverage gate passed with no check (the Low on #242).
 - `check-links` checks an HTML `href` in single quotes or with no quotes, not only one in double

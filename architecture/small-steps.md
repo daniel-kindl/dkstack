@@ -16,7 +16,7 @@ Reason: feedback shows you where you are. A large step goes past what you can ch
 
 - The TDD loop gives feedback after each small step: [tdd/index.md](../tdd/index.md).
 - Small commits and short-lived branches give feedback through review: [version-control/feature-branches.md](../version-control/feature-branches.md).
-- The general rules in [AGENTS.md](../AGENTS.md) say to prefer the smallest change and to make small commits.
+- The [key rules](../AGENTS.md#key-rules) in AGENTS.md say to select the smallest design that works.
 - YAGNI says not to build for future requirements: [yagni.md](yagni.md).
 
 ## Good example

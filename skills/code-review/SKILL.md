@@ -87,7 +87,7 @@ Check against [coding/testing.md](https://raw.githubusercontent.com/daniel-kindl
 
 ## 8. Verify
 
-Run [verify-claim](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/verify-claim/SKILL.md) for each key claim and for the one safety fact. It has the five evidence levels. State the level that each claim reached. A required behavior below level 4 is unproven. It is at least Medium until a test or CI proves it.
+Run [verify-claim](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/verify-claim/SKILL.md) for each key claim and for the one safety fact. It has the five evidence levels. State the level that each claim reached. An unproven required behavior gets the severity that verify-claim gives it.
 
 ## Severity
 

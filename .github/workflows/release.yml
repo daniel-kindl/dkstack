@@ -15,7 +15,8 @@ name: Release
 # 4. It tags the merge commit, publishes the GitHub release and
 #    fast-forwards v1 to the merge commit.
 # Nothing reaches main, no tag is made and v1 does not move unless validate
-# passes. The workflow never force-pushes. It uses only GITHUB_TOKEN.
+# passes. The workflow never force-pushes. GITHUB_TOKEN only reads. A token
+# from the release app does all the writes.
 # For recovery after a failed run, see versioning/index.md.
 
 on:

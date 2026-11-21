@@ -43,10 +43,8 @@ The `Release` workflow ([release.yml](../.github/workflows/release.yml)) does th
 
 Only the owner starts the `Release` workflow. The workflow has two jobs. The `plan` job is
 read-only. It works out the version and shows it in the run summary. The `release` job does all the
-writes. It runs in the `release` environment, so it waits until the owner approves it. The owner's
-OK for a release is two actions. The owner starts `Release`. Then the owner reads the planned
-version in the run summary and approves the `release` environment. No bot starts the workflow or
-approves the environment. [Safety](../workflow/safety.md) owns the release rule.
+writes. It runs in the `release` environment, so it waits until the owner approves it.
+[Safety](../workflow/safety.md) owns the release rule and says what counts as the owner's OK.
 
 dkstack agents use the owner's account today (D1 in
 [#154](https://github.com/daniel-kindl/dkstack/issues/154)). The rulesets and the `release`
@@ -117,8 +115,8 @@ The `release` job starts only after the owner approves the environment. Its step
    version.
 2. It moves the `[Unreleased]` notes in `CHANGELOG.md` to `## [X.Y.Z] - YYYY-MM-DD`, with the date
    in Prague. If `[Unreleased]` is empty, it writes entries from the commit titles. It sets
-   `version` in `package.json`. Then it runs `npm run check`. This is the last step that runs
-   repository code.
+   `version` in `package.json`. Then it runs `npm run check`. It commits the release and writes the
+   notes. This is the last step that runs repository code.
 3. It gets a token from the release app. The steps that write use this token. They run only
    `git` and `gh`.
 4. It pushes the branch `release/vX.Y.Z` with the commit `chore(release): prepare vX.Y.Z`. It opens
