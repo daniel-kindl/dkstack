@@ -21,8 +21,9 @@ import { markdownFiles } from "./markdown-files.mjs";
 // [text](target) and ![alt](target). The target is <...> or has no spaces,
 // and an optional "title" can follow.
 const LINK_PATTERN = /!?\[[^\]]*\]\(\s*(<[^>]*>|(?:[^\s()]|\([^\s()]*\))+)(?:\s+"[^"]*")?\s*\)/g;
-// <a href="target"> in HTML.
-const HTML_HREF_PATTERN = /<a\s[^>]*\bhref\s*=\s*"([^"]+)"/gi;
+// <a href="target"> in HTML. The value is in double quotes, in single quotes
+// or has no quotes.
+const HTML_HREF_PATTERN = /<a\s[^>]*\bhref\s*=\s*(?:"([^"]+)"|'([^']+)'|([^\s"'>]+))/gi;
 const SCHEME_PATTERN = /^[a-z][a-z0-9+.-]*:/i;
 // A bare URL in prose. Trailing punctuation is not part of the URL.
 const BARE_URL_PATTERN = /https?:\/\/[^\s<>()[\]"'`]+/g;
@@ -123,7 +124,9 @@ function* linksIn(text) {
       if (target.startsWith("<")) target = target.slice(1, -1);
       yield { line: i + 1, target };
     }
-    for (const match of prose.matchAll(HTML_HREF_PATTERN)) yield { line: i + 1, target: match[1] };
+    for (const match of prose.matchAll(HTML_HREF_PATTERN)) {
+      yield { line: i + 1, target: match[1] ?? match[2] ?? match[3] };
+    }
     for (const match of prose.replace(LINK_PATTERN, "").replace(HTML_HREF_PATTERN, "").matchAll(BARE_URL_PATTERN)) {
       yield { line: i + 1, target: match[0].replace(TRAILING_PUNCTUATION, "") };
     }
