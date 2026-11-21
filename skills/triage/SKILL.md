@@ -33,6 +33,7 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 ## Skills
 
 - New or non-compliant repository: [bootstrap](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/bootstrap/SKILL.md)
+- Start of a task, or a request to open or track an issue: [start-issue](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/start-issue/SKILL.md)
 - Non-trivial change: [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md)
 - Design or structure: [apply-architecture](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/apply-architecture/SKILL.md)
 - Plan a feature: [plan-work](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/plan-work/SKILL.md)
@@ -51,6 +52,8 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 ## Scale
 
 The ladder is a guide, not a gate. Use the smallest set of skills. A small task uses one or two skills. It does not go through every step.
+
+Each task in the ladder starts with [start-issue](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/start-issue/SKILL.md): one issue, one branch, one pull request.
 
 - Bug fix: [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md), then [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md).
 - Feature: start with [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md)

@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `workflow/issues.md`: one task, one issue. Search for an open issue before you open one. Set
+  exactly one `type:` label and an optional `priority:` label. Do not create a label without the
+  owner's OK. Assign the issue to the logged-in account when the work starts. An assignment is a
+  marker only. A project with no issue tracker keeps one file for each task in `docs/issues/`.
+  The `start-issue` skill applies the rules. `workflow/index.md`, `workflow/review-and-merge.md`,
+  `skills/index.md` and `triage` link them. The removed `status:`, `agent:` and `needs:` labels and
+  the claims do not come back (#166).
 - `coding/security.md` has a "CI workflows" section. It owns the rules for untrusted triggers,
   expression values in scripts, secrets, checkout tokens, permissions, timeouts and fork approval, and
   it says what a safe release or deploy workflow is. `code-review` links it (#154).
