@@ -14,16 +14,17 @@ change that a consumer must act on has a "Consumer action:" line.
 
 - Clean-up rules after a merge in `workflow/review-and-merge.md` (#277). The agent that merged
   switches to `main` and updates it with a fast-forward only. It removes the worktree and the
-  local branch of the merged pull request. It deletes only stale branches: the pull request is
-  merged, and the tip is the merged head or an ancestor of it. It never discards uncommitted
-  changes or unmerged commits. The page gives the `git` and `gh` commands. `feature-branches.md`
-  and `code-review` link the rules.
+  local branch of the merged pull request. It removes a worktree only when the worktree has the
+  merged branch and no ignored file that cannot be made again. It deletes only stale branches:
+  the pull request is merged into `main`, and the tip is the merged head or an ancestor of it.
+  It never discards uncommitted changes or unmerged commits. The page gives the `git` and `gh`
+  commands. `feature-branches.md` and `code-review` link the rules.
 - Issue relations in `workflow/issues.md` (#192). A task that has parts is a parent issue, and
   each part is a sub-issue. An issue that must wait for another is "blocked by" it. Do not start
   work while a blocker is open. The page gives the `gh` commands. The local files get `Parent:`
-  and `Blocked by:` lines. `start-issue` sets and checks the relations. In `plan-work`, each task issue is a
-  sub-issue of the plan issue, if one exists, and the order is set as "blocked by" relations.
-  `chart-route` uses the `plan-work` rule for the map tasks.
+  and `Blocked by:` lines. `start-issue` sets and checks the relations. In `plan-work`, each
+  task issue is a sub-issue of the plan issue, if one exists, and the order is set as "blocked
+  by" relations. `chart-route` uses the `plan-work` rule for the map tasks.
 - Forced colors rules in `ui/colors-and-themes.md` (#248). When the project supports Windows, test
   each changed surface in forced colors mode. Use system colors there. Do not show a state with a
   background color only. On the web, use `@media (forced-colors: active)`. The minimum evidence in

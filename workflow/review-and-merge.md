@@ -50,12 +50,13 @@ merges, the owner can ask an agent to do these steps.
   worktree or branch can make the next agent start on old code.
 - Remove a worktree only when it has the merged branch checked out and
   `git status --short --ignored` shows no file that you cannot make again. If it shows such a
-  file, stop and tell the owner. A build output or `node_modules/` can be made again. Reason: `git worktree remove` also deletes ignored files, for example `.env`. A worktree
-  with no branch checked out can hold commits that are on no branch.
+  file, stop and tell the owner. A build output or `node_modules/` can be made again. Reason:
+  `git worktree remove` also deletes ignored files, for example `.env`. A worktree with no
+  branch checked out can hold commits that are on no branch.
 - A branch is stale only when its pull request is merged into `main` and its tip is the
   merged head or an ancestor of it. Delete only stale branches. Reason: a squash merge does not
-  make the branch an ancestor of `main`, so `git branch -d` refuses it. The check on the merged head proves that
-  the branch has no commit that is not merged.
+  make the branch an ancestor of `main`, so `git branch -d` refuses it. The check on the merged
+  head proves that the branch has no commit that is not merged.
 - Keep each other branch and worktree, and name it in your report. Reason: it can hold work that
   is not merged, for example from a pull request that was closed without a merge.
 - Never discard uncommitted changes or a commit that is not merged. Stop and tell the owner.
