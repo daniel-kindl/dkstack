@@ -46,6 +46,14 @@ jobs:
           TITLE: ${{ github.event.pull_request.title }}
         run: node scripts/check-title.mjs "$TITLE"
 
+      # The body goes in through env, never as an expression inside run.
+      - name: Check that the PR body links an issue and has the evidence lines
+        if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: node scripts/check-pr-body.mjs
+
       - name: Check that the commit titles of the push are conventional commits
         if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'push' }}
         env:
@@ -110,8 +118,8 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:adrs
 
-      # This check only warns. It always exits 0.
-      - name: Warn about long sentences and semicolons in Markdown
+      # This check fails when it finds a long step, a long sentence or a semicolon.
+      - name: Check for long steps, long sentences and semicolons in Markdown
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:writing
 
