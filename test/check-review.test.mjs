@@ -241,6 +241,41 @@ test("the real review file of #322 passes", async () => {
   assert.deepEqual(checkReview(text), []);
 });
 
+test("a status line of an earlier finding needs no file:line", () => {
+  const body = "- H1, a title: **fixed**. The code changed.\n- L1, other: fixed.\n- L2 (`a.mjs:1`): Open. x\n";
+  assert.deepEqual(checkReview(review("CHANGES-REQUESTED", body)), []);
+});
+
+test("an open status line is an open finding for APPROVE-RECOMMENDED", () => {
+  const body = "- H1, a title: **fixed**. x\n- L3, a title: **open**. It is fixed in part.\n";
+  const problems = checkReview(review("APPROVE-RECOMMENDED", body));
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /L3.*not marked fixed/);
+});
+
+test("a status line with only fixed statuses passes APPROVE-RECOMMENDED", () => {
+  const body = "- H1, a title: **fixed**. x\n- M1, a title: fixed. y\n";
+  assert.deepEqual(checkReview(review("APPROVE-RECOMMENDED", body)), []);
+});
+
+test("a status word after the first sentence does not make a status line", () => {
+  const body = "- H1, a problem. The old code was fixed once.\n";
+  assert.match(checkReview(review("CHANGES-REQUESTED", body)).join(), /H1.*file:line/);
+});
+
+test("a table status row needs no file:line, and an open row is open", () => {
+  const body = "| ID | Status | Note |\n| --- | --- | --- |\n| H1 | Fixed | x |\n| L1 | **open** | y |\n";
+  assert.deepEqual(checkReview(review("CHANGES-REQUESTED", body)), []);
+  const problems = checkReview(review("APPROVE-RECOMMENDED", body));
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /L1.*not marked fixed/);
+});
+
+test("the real review file of #320 round 2 passes", async () => {
+  const text = await readFile(join(repoRoot, "test", "fixtures", "review-320-r2.txt"), "utf8");
+  assert.deepEqual(checkReview(text), []);
+});
+
 test("check-review is not an npm check script", async () => {
   const pkg = JSON.parse(await readFile(join(repoRoot, "package.json"), "utf8"));
   assert.equal(pkg.scripts["check:review"], undefined);

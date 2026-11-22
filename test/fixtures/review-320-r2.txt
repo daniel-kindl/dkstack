@@ -1,0 +1,69 @@
+# Re-review of PR #320: feat(scripts): check ADR names and amendments
+
+**Verdict: CHANGES-REQUESTED**
+
+Head SHA: `ba711bf813d800119b275de7e761ddbad0391b08`. Earlier reviewed head: `3ea696b743a42c1dd3ff606d81ac0edadb2d939f`. Delta: one commit, `ba711bf fix: address the review of check-adrs`. It changes `scripts/check-adrs.mjs` and `test/check-adrs.test.mjs`.
+
+Fallback: I did not post this review. The requester told me to report to them only. I did not start subagents.
+
+## Summary
+
+- Earlier findings: 6 fixed (H1, M1, M2, M3, L1, L2). 1 open (L3).
+- New findings: 1 Medium (M4), 1 Low (L4).
+- Open total: 0 Blocking, 0 High, 1 Medium, 2 Low.
+- Specification axis: 0 findings. Each acceptance criterion of #307 is still met.
+- Required check `validate` is green on the new head.
+
+## Earlier findings
+
+- H1, `--review --diff` lists only the ADRs for added files: **fixed**. In review mode, the file list now has each entry of the diff. My probe with a changed `src/a.js` printed `docs/adr/0001-x.md: Accepted. Affects matches src/a.js.` The new test "review mode with --diff uses all changed files of the diff" fails when I put the old filter back.
+- M1, each deleted or renamed ADR fails: **fixed**. The code reads the old Status from the removed lines. A deleted Proposed ADR passed with exit 0. A deleted Accepted ADR failed with exit 1. The comment and the message now say "Accepted". The mutation "each deletion fails" makes 1 test fail.
+- M2, no "Consumer action:" line for the number check: **fixed**. The author took the second fix: only a new ADR can fail the shared-number check. Two old ADRs with the number 0001 on `main` passed for an unrelated change. A new ADR with a used number failed. The mutation "check all ADRs" makes 1 test fail. No consumer action is necessary now.
+- M3, two mutations survive: **fixed**. Without `--no-renames` in the `-U0` diff, 1 test fails ("with git, renaming an Accepted ADR fails"). Without the removed-lines guard in `statusOnly`, 1 test fails ("a status-only change must not remove other lines").
+- L1, content lines that start with "-- " or "++ " are not seen: **fixed**. `parseDiff` now counts the lines of each hunk from the hunk header. My probe that removed `-- note` failed with exit 1.
+- L2, the amendment check does not run with `--` and says nothing: **fixed**. The CLI now prints "Amendment check NOT RUN. Give the diff with --diff <file>." Two tests fail when I remove the line.
+- L3, the red step failed at import: **open**. The body still says the tests failed at import and the code came first. The body does not say whether the seven new tests were red before the fix.
+
+## New findings
+
+### M4. `--no-renames` in the name list has no test
+
+- `scripts/check-adrs.mjs:255`
+- Problem: the delta adds `--no-renames` to `git diff --name-only`. Now the new path of a renamed ADR counts as an added file, so the name check runs on it. My probe renamed a Proposed ADR to `0001_Bad.md`. It failed with the file name error. I removed the flag and ran `test/check-adrs.test.mjs`. All 31 tests passed.
+- Rule: [coding/testing.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/testing.md) and [code-review step 7](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#7-tests). Each behavior change has a test that fails when the behavior is wrong.
+- Why: a later edit can remove the flag, and the gate stays green. A renamed Proposed ADR with a bad name then passes.
+- Fix: add a git mode test that renames a Proposed ADR to a bad name and expects the file name error.
+
+### L4. A blank context line without its space breaks the rest of a `--diff` file
+
+- `scripts/check-adrs.mjs:159` to `163`
+- Problem: in a hunk, the parser counts only lines that start with "+", "-" or a space. Some tools and editors remove the trailing space of a blank context line. Then the hunk count never reaches 0. The parser reads the next `diff --git` block as part of the first file. My probe with such a diff gave 6 errors on `docs/adr/0001-x.md`. Three errors quoted lines of `docs/adr/0002-y.md` and its header `-- a/docs/adr/0002-y.md`. Git itself always writes the space, so git mode and CI are not affected.
+- Rule: [code-review severity](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#severity). Low, because only a hand-made `--diff` file can have this form.
+- Why: the errors name the wrong file and the wrong lines. The old parser was not affected in this way.
+- Fix: in a hunk, count an empty line as a context line. Also end the hunk at a line that starts with `diff --git `. Add a test.
+
+## Blast radius
+
+- The one safety fact: the CLI keeps each old option and each old exit code. A consumer CI call with `--base <ref>` still works. Level 4, Run. A repository with no `docs/adr/` folder passed with exit 0. An unrelated change in a repository with old ADRs passed with exit 0.
+- Cleared risks: old ADRs that share a number no longer fail a consumer pull request (M2). Deleted and renamed Proposed ADRs follow the documented rule (M1). Git mode is not affected by L4.
+- Remaining risk: a consumer that renames a Proposed ADR now gets the name check on the new name. That is the rule in [architecture/adrs.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/adrs.md#place-and-name), but no test holds it (M4).
+
+## Tests
+
+Mutations at the new head, on `test/check-adrs.test.mjs` (31 tests):
+
+- Remove `--no-renames` from the `-U0` diff: 1 test failed. Caught.
+- Remove the removed-lines guard in `statusOnly`: 1 test failed. Caught.
+- Each deletion fails: 1 test failed. Caught.
+- Check all ADRs for a shared number: 1 test failed. Caught.
+- Review mode uses only added files: 1 test failed. Caught.
+- No "Amendment check NOT RUN" line: 2 tests failed. Caught.
+- Remove `--no-renames` from `--name-only`: 0 tests failed. Survived (M4).
+
+## Verification
+
+- `npm run check` at the new head, in a temporary worktree on Linux 7.3.4 (Fedora) with Node.js v24.19.0: pass, exit 0. 554 tests passed, 0 failed. Coverage of all files: 99.22% lines, 94.10% branches. `check-adrs.mjs`: 98.82% lines. Level 4, Run, for Linux only. I removed the worktree.
+- Scratch git repositories for H1, M1, M2, L1, L2, M4, L4 and a missing `docs/adr/` folder. Level 4, Run.
+- Required check `validate` on `ba711bf813d800119b275de7e761ddbad0391b08`: pass.
+- NOT RUN: macOS and Windows. Reason: I had only a Linux host.
+- NOT RUN: a real consumer CI run with the copied script. Reason: no consumer repository was in scope.
