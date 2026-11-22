@@ -51,7 +51,7 @@ async function addedPages(root, added) {
   const sections = new Map();
   const isSection = async (dir) => {
     if (!sections.has(dir)) {
-      sections.set(dir, dir !== "skills" && (await readFile(join(root, dir, "index.md"), "utf8").then(() => true, () => false)));
+      sections.set(dir, dir !== "skills" && !dir.startsWith(".") && (await readFile(join(root, dir, "index.md"), "utf8").then(() => true, () => false)));
     }
     return sections.get(dir);
   };
@@ -97,9 +97,9 @@ function parseArgs(args) {
 
 // Return the added files and the base CHANGELOG text. Throw if git fails.
 function gitChange(root, base) {
-  const git = (...args) => execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  const git = (...args) => execFileSync("git", ["-c", "core.quotePath=false", ...args], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
   const mergeBase = git("merge-base", base, "HEAD").trim();
-  const added = [...git("diff", "--name-only", "--diff-filter=A", mergeBase).split("\n"), ...git("ls-files", "--others", "--exclude-standard").split("\n")].filter(Boolean);
+  const added = [...git("diff", "--no-renames", "--name-only", "--diff-filter=A", mergeBase).split("\n"), ...git("ls-files", "--others", "--exclude-standard").split("\n")].filter(Boolean);
   let baseText = null;
   try {
     baseText = git("show", `${mergeBase}:CHANGELOG.md`);

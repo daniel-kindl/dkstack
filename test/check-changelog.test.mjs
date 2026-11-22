@@ -194,3 +194,50 @@ test("diff mode: a missing base CHANGELOG counts as empty, and a bad option is a
     await removeTree(root);
   }
 });
+
+// Review of #324. A rename counts as an added page, with any diff.renames value.
+test("diff mode: a renamed page fails, with diff.renames true or false", async () => {
+  for (const setting of ["true", "false"]) {
+    const root = await makeTree({});
+    try {
+      git(root, "init", "-q", "-b", "main");
+      await put(root, BASE);
+      git(root, "add", ".");
+      git(root, "commit", "-q", "-m", "base");
+      git(root, "switch", "-q", "-c", "topic");
+      git(root, "mv", "coding/old.md", "coding/renamed.md");
+      git(root, "commit", "-q", "-m", "rename");
+      const env = { ...process.env, GIT_CONFIG_COUNT: "1", GIT_CONFIG_KEY_0: "diff.renames", GIT_CONFIG_VALUE_0: setting };
+      const r = spawnSync("node", [SCRIPT, "--diff", "--base", "main", root], { encoding: "utf8", env });
+      assert.equal(r.status, 1, `diff.renames=${setting}: ${r.stderr}`);
+      assert.match(r.stderr, /coding\/renamed\.md/);
+    } finally {
+      await removeTree(root);
+    }
+  }
+});
+
+test("diff mode: a dot folder with an index.md is not a section", async () => {
+  const r = await diff({ ".hidden/index.md": "# H\n", ".hidden/new.md": "n\n" });
+  assert.equal(r.code, 0, r.err);
+});
+
+test("diff mode: a page with a non-ASCII name fails and is named in clear text", async () => {
+  const r = await diff({ "coding/příběh.md": "n\n" });
+  assert.equal(r.code, 1);
+  assert.match(r.err, /coding\/příběh\.md/);
+});
+
+test("the default mode fails on a bad CHANGELOG through the command line", async () => {
+  const root = await makeTree({ "package.json": pkg("1.0.0"), "CHANGELOG.md": "## [0.9.0]\n" });
+  const ok = await makeTree({ "package.json": pkg("1.0.0"), "CHANGELOG.md": `${HEAD}## [1.0.0]\n${LINK}` });
+  try {
+    const r = spawnSync("node", [SCRIPT, root], { encoding: "utf8" });
+    assert.equal(r.status, 1);
+    assert.match(r.stderr, /Unreleased/);
+    assert.equal(spawnSync("node", [SCRIPT, ok], { encoding: "utf8" }).status, 0);
+  } finally {
+    await removeTree(root);
+    await removeTree(ok);
+  }
+});
