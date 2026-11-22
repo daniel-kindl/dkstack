@@ -13,7 +13,7 @@ The [issue rules](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/work
 ## Steps
 
 1. Find out if the project uses an issue tracker that has labels. If it does not, skip this skill. The [local files](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/issues.md#projects-without-an-issue-tracker) use the `Type` and `Priority` lines in place of labels.
-2. Read the labels that the project has. If the tool supports the code host of the project, the owner can run the [audit tool](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/scripts/audit-issues.mjs). It lists the missing labels.
+2. Read the labels that the project has. If the tool supports the code host of the project, the owner can run the [audit tool](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/scripts/audit-issues.mjs). It lists the missing labels. It needs Node.js, the command line tool of the code host and the `<owner/repo>` argument.
 3. List each label below that the project does not have:
    - Type: `type:bug`, `type:feature`, `type:chore`, `type:refactor`, `type:docs` and `type:research`.
    - Priority: `priority:p0`, `priority:p1`, `priority:p2` and `priority:p3`. `priority:p0` is the most urgent.

@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import {
-  typeFindings, headingFindings, textRelations, relationFindings, missingLabels, audit,
+  typeFindings, headingFindings, TYPE_LABELS, PRIORITY_LABELS, textRelations, relationFindings, missingLabels, audit,
 } from "../scripts/audit-issues.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -71,6 +71,13 @@ test("missingLabels lists each type and priority label that the repository lacks
     "type:research", "priority:p0", "priority:p1", "priority:p2", "priority:p3"]).length, 0);
 });
 
+// The kind of a gh call: the issues list, the labels list or an issue view.
+const kind = (args) => {
+  const key = Array.isArray(args) ? args.join(" ") : args;
+  if (key.startsWith("issue view")) return "view";
+  return key.includes("/issues") ? "issues" : "labels";
+};
+
 function fakeGh(responses) {
   const calls = [];
   const gh = (args) => {
@@ -89,8 +96,8 @@ function fakeGh(responses) {
 
 test("audit reads the tracker only for an issue that has a text relation", () => {
   const { gh, calls } = fakeGh({
-    "issue list": JSON.stringify(issues),
-    "label list": JSON.stringify(fixture("labels")),
+    "api --paginate --slurp repos/o/r/issues": JSON.stringify([issues]),
+    "api --paginate --slurp repos/o/r/labels": JSON.stringify([fixture("labels")]),
     "issue view 5": JSON.stringify(fixture("relations-5")),
     "issue view 6": JSON.stringify(fixture("relations-6")),
   });
@@ -98,28 +105,26 @@ test("audit reads the tracker only for an issue that has a text relation", () =>
   assert.deepEqual(items.map((i) => [i.name, i.status]), [
     ["type labels", "FAIL"], ["headings", "FAIL"], ["relations", "FAIL"], ["labels", "FAIL"],
   ]);
-  assert.deepEqual(calls.map((c) => c.slice(0, 2).join(" ")).sort(), [
-    "issue list", "issue view", "issue view", "label list",
-  ]);
+  assert.deepEqual(calls.map(kind).sort(), ["issues", "labels", "view", "view"]);
 });
 
 test("audit prints NOT RUN, never PASS, for a response it cannot read", () => {
-  const bad = fakeGh({ "issue list": "not json", "label list": new Error("boom") });
+  const bad = fakeGh({ "api --paginate --slurp repos/o/r/issues": "not json", "api --paginate --slurp repos/o/r/labels": new Error("boom") });
   assert.deepEqual(audit("o/r", bad.gh).map((i) => i.status), ["NOT RUN", "NOT RUN", "NOT RUN", "NOT RUN"]);
   const ok = fakeGh({
-    "issue list": JSON.stringify(issues),
-    "label list": JSON.stringify([{ name: "type:bug" }]),
+    "api --paginate --slurp repos/o/r/issues": JSON.stringify([issues]),
+    "api --paginate --slurp repos/o/r/labels": JSON.stringify([[{ name: "type:bug" }]]),
     "issue view 5": "{",
     "issue view 6": JSON.stringify(fixture("relations-6")),
   });
   const items = audit("o/r", ok.gh);
   assert.equal(items.find((i) => i.name === "relations").status, "NOT RUN");
-  const shape = fakeGh({ "issue list": "{}", "label list": "[1]" });
+  const shape = fakeGh({ "api --paginate --slurp repos/o/r/issues": "{}", "api --paginate --slurp repos/o/r/labels": "[[1]]" });
   assert.equal(audit("o/r", shape.gh)[0].status, "NOT RUN");
   const clean = fakeGh({
-    "issue list": JSON.stringify([issue(1)]),
-    "label list": JSON.stringify(["type:bug", "type:feature", "type:chore", "type:refactor", "type:docs",
-      "type:research", "priority:p0", "priority:p1", "priority:p2", "priority:p3"].map((name) => ({ name }))),
+    "api --paginate --slurp repos/o/r/issues": JSON.stringify([[issue(1)]]),
+    "api --paginate --slurp repos/o/r/labels": JSON.stringify([["type:bug", "type:feature", "type:chore", "type:refactor", "type:docs",
+      "type:research", "priority:p0", "priority:p1", "priority:p2", "priority:p3"].map((name) => ({ name }))]),
   });
   assert.deepEqual(audit("o/r", clean.gh).map((i) => i.status), ["PASS", "PASS", "PASS", "PASS"]);
 });
@@ -150,12 +155,11 @@ test("the tool lists the findings, exits 1 and sends only read commands", { skip
   assert.match(result.stdout, /#4 has no Goal heading/);
   assert.match(result.stdout, /#5 writes Parent: #200 in text/);
   assert.match(result.stdout, /type:refactor/);
-  assert.deepEqual(result.calls.map((c) => c.split(" ").slice(0, 2).join(" ")).sort(), [
-    "issue list", "issue view", "issue view", "label list",
-  ]);
+  assert.deepEqual(result.calls.map(kind).sort(), ["issues", "labels", "view", "view"]);
   for (const call of result.calls) {
-    assert.doesNotMatch(call, /\b(create|edit|close|reopen|delete|comment|transfer|pin|lock|develop|api)\b/);
-    assert.match(call, /^(issue list|label list|issue view)\b/);
+    assert.doesNotMatch(call, /\b(create|edit|close|reopen|delete|comment|transfer|pin|lock|develop)\b/);
+    assert.doesNotMatch(call, /(^| )(-X|--method|-f|-F|--field|--raw-field|--input)\b/);
+    assert.match(call, /^(api --paginate --slurp repos\/o\/r\/(issues|labels)\?|issue view \d+ )/);
   }
 });
 
@@ -190,6 +194,51 @@ test("code spans, fenced blocks and comments do not count as text", () => {
   assert.equal(textRelations("```\nx\n```\nOrder: after\n").orderAfter, true);
   assert.equal(headingFindings({ number: 3, body: "```md\n## Goal\n\n## Acceptance criteria\n```\n" }).length, 2);
   assert.equal(headingFindings({ number: 3, body: "<!--\n## Goal\n-->\n## Acceptance criteria\n" }).length, 1);
+});
+
+const PAGES = (items) => JSON.stringify([items]);
+const ALL_LABELS = ["type:bug", "type:feature", "type:chore", "type:refactor", "type:docs",
+  "type:research", "priority:p0", "priority:p1", "priority:p2", "priority:p3"].map((name) => ({ name }));
+const ISSUES_KEY = "api --paginate --slurp repos/o/r/issues";
+const LABELS_KEY = "api --paginate --slurp repos/o/r/labels";
+
+test("a type: label that dkstack does not name is a finding (M1)", () => {
+  assert.deepEqual(typeFindings({ number: 9, labels: [{ name: "type:question" }] }), [
+    "#9 has type:question, which is not a dkstack type label",
+    "#9 has no type: label",
+  ]);
+  assert.deepEqual(typeFindings({ number: 9, labels: [{ name: "type:bug" }, { name: "type:question" }] }), [
+    "#9 has type:question, which is not a dkstack type label",
+  ]);
+});
+
+test("audit reads every page and skips pull requests (H1)", () => {
+  const good = { number: 1, labels: [{ name: "type:bug" }], body: "## Goal\n## Acceptance criteria\n" };
+  const pr = { number: 2, labels: [], body: "", pull_request: {} };
+  const { gh } = fakeGh({ [ISSUES_KEY]: JSON.stringify([[good], [pr]]), [LABELS_KEY]: JSON.stringify([ALL_LABELS.slice(0, 5), ALL_LABELS.slice(5)]) });
+  assert.deepEqual(audit("o/r", gh).map((i) => i.status), ["PASS", "PASS", "PASS", "PASS"]);
+  const bad = fakeGh({ [ISSUES_KEY]: JSON.stringify([good]), [LABELS_KEY]: PAGES([1]) });
+  assert.equal(audit("o/r", bad.gh)[0].status, "NOT RUN");
+  assert.equal(audit("o/r", bad.gh)[3].status, "NOT RUN");
+});
+
+test("a tracker response that is not an object is NOT RUN, not PASS (L1)", () => {
+  const { gh } = fakeGh({ [ISSUES_KEY]: PAGES([issue(5)]), [LABELS_KEY]: PAGES(ALL_LABELS), "issue view 5": "5" });
+  const items = audit("o/r", gh);
+  assert.equal(items[2].status, "NOT RUN");
+  assert.match(items[2].lines.join("\n"), /unexpected response shape/);
+});
+
+test("the label lists match skills/setup-labels/SKILL.md and workflow/issues.md (M2)", () => {
+  const skill = readFileSync(join(repoRoot, "skills/setup-labels/SKILL.md"), "utf8");
+  const labelsIn = (text) => [...new Set([...text.matchAll(/`((?:type|priority):[a-z0-9]+)`/g)].map((m) => m[1]))];
+  const typeLine = /^\s*- Type: (.*)$/m.exec(skill)[1];
+  const priorityLine = /^\s*- Priority: (.*)$/m.exec(skill)[1];
+  assert.deepEqual(TYPE_LABELS, labelsIn(typeLine));
+  assert.deepEqual(PRIORITY_LABELS, labelsIn(priorityLine));
+  const rules = readFileSync(join(repoRoot, "workflow/issues.md"), "utf8").replace(/\s+/g, " ");
+  const sentence = /Set exactly one type label: (.*?)\. Reason/.exec(rules)[1];
+  assert.deepEqual(TYPE_LABELS, labelsIn(sentence));
 });
 
 test("npm has audit:issues, and it is not a check script or part of validate", async () => {

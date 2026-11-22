@@ -12,7 +12,7 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
-- `scripts/audit-issues.mjs` and `npm run audit:issues` (#308). The tool reads the open issues and the labels of a repository with `gh`. It lists a missing or extra type label, a missing Goal or Acceptance criteria heading, a relation in text that the tracker does not have, and a missing type or priority label. It writes nothing.
+- `scripts/audit-issues.mjs` and `npm run audit:issues` (#308). The tool reads the open issues and the labels of a repository with `gh`. It lists an issue with no type label, more than one, or one that dkstack does not name. It lists an issue with no Goal or Acceptance criteria heading. It lists a relation in text that the tracker does not have. It lists a missing type or priority label. It writes nothing.
 
 ## [1.6.0] - 2026-11-21
 

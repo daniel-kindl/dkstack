@@ -2,9 +2,11 @@
 // Audit the open issues and the labels of a GitHub repository against the issue rules.
 // It reads with gh and never writes. It is not a check:* script, because the result depends
 // on the live tracker and not on the files.
-// Findings: an issue without exactly one type: label, an issue without a Goal or an Acceptance
-// criteria heading, a relation that the body writes in text and the tracker does not have,
-// and a type or priority label that the repository does not have.
+// It reports four findings. An issue has no type label or more than one. An issue has no Goal
+// or Acceptance criteria heading. A relation is in the body text and the tracker does not have
+// it. The repository lacks a type or priority label.
+// It reads each page of the open issues and of the labels, so no list is cut off.
+// The tool needs Node.js 24 or later and an authenticated gh (GitHub CLI).
 // Usage: node scripts/audit-issues.mjs <owner/repo>
 // Exit code: 0 no finding, 1 findings, 2 usage error or a response that gh could not give.
 
@@ -21,9 +23,14 @@ const labelNames = (issue) => (issue.labels ?? []).map((l) => l.name);
 
 export function typeFindings(issue) {
   const types = labelNames(issue).filter((n) => n.startsWith("type:"));
-  if (types.length === 0) return [`#${issue.number} has no type: label`];
-  if (types.length > 1) return [`#${issue.number} has ${types.length} type: labels (${types.join(", ")})`];
-  return [];
+  const unknown = types.filter((n) => !TYPE_LABELS.includes(n));
+  const known = types.filter((n) => TYPE_LABELS.includes(n));
+  const findings = unknown.map((n) => `#${issue.number} has ${n}, which is not a dkstack type label`);
+  if (known.length === 0) findings.push(`#${issue.number} has no type: label`);
+  if (known.length > 1) {
+    findings.push(`#${issue.number} has ${known.length} type: labels (${known.join(", ")})`);
+  }
+  return findings;
 }
 
 // Remove HTML comments, fenced code blocks and inline code spans. Text in them is an example.
@@ -92,10 +99,14 @@ export function missingLabels(names) {
   return [...TYPE_LABELS, ...PRIORITY_LABELS].filter((l) => !names.includes(l));
 }
 
-function parseList(text, valid) {
-  const data = JSON.parse(text);
-  if (!Array.isArray(data) || !data.every(valid)) throw new Error("unexpected response shape");
-  return data;
+// The text is the output of gh api --paginate --slurp: a list of pages, each page a list.
+// A pull request is also in the issues endpoint. Skip it.
+function parsePages(text, valid) {
+  const pages = JSON.parse(text);
+  if (!Array.isArray(pages) || !pages.every(Array.isArray)) throw new Error("unexpected response shape");
+  const items = pages.flat().filter((item) => !(isObject(item) && "pull_request" in item));
+  if (!items.every(valid)) throw new Error("unexpected response shape");
+  return items;
 }
 
 const isObject = (v) => typeof v === "object" && v !== null;
@@ -113,9 +124,8 @@ export function audit(repo, gh) {
   let issues = null;
   let issueError = null;
   try {
-    issues = parseList(
-      gh(["issue", "list", "--repo", repo, "--state", "open", "--limit", "500",
-        "--json", "number,title,labels,body"]),
+    issues = parsePages(
+      gh(["api", "--paginate", "--slurp", `repos/${repo}/issues?state=open&per_page=100`]),
       isIssue,
     );
   } catch (error) {
@@ -143,8 +153,8 @@ export function audit(repo, gh) {
   items.push(result("relations", relationFindingsAll, relationProblems));
 
   try {
-    const labels = parseList(
-      gh(["label", "list", "--repo", repo, "--limit", "200", "--json", "name"]), isLabel,
+    const labels = parsePages(
+      gh(["api", "--paginate", "--slurp", `repos/${repo}/labels?per_page=100`]), isLabel,
     );
     const missing = missingLabels(labels.map((l) => l.name));
     items.push(result("labels", missing.map((l) => `the repository has no label ${l}`), []));
@@ -154,7 +164,7 @@ export function audit(repo, gh) {
   return items;
 }
 
-// The thin part: run the real gh. gh writes nothing with these arguments.
+// The thin part: run the real gh. Each call is a GET, so gh writes nothing.
 function realGh(args) {
   const out = spawnSync("gh", args, { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
   if (out.error) throw out.error;
