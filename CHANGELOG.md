@@ -10,6 +10,10 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ## [Unreleased]
 
+### Added
+
+- `check-adrs` checks the ADR file names and amendments (#307). A new ADR is named `NNNN-short-title.md`, and no two ADRs share a number. A change to an Accepted ADR only adds lines under a `### Amendment YYYY-MM-DD` heading. A new `--diff <file>` option gives the diff without git.
+
 ## [1.6.0] - 2026-11-21
 
 ### Added

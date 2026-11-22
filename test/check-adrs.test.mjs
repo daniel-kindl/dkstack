@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { checkNewAdrs, adrsToRead } from "../scripts/check-adrs.mjs";
+import { checkNewAdrs, checkAdrChanges, adrsToRead } from "../scripts/check-adrs.mjs";
 import { makeTree, removeTree } from "./helpers.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -162,6 +162,135 @@ test("with no file list, the CLI checks the ADRs added since the base ref", asyn
     const badRef = run(["--base", "no-such-ref", root]);
     assert.equal(badRef.status, 2);
     assert.match(badRef.stderr, /^cannot list the changed files: /);
+  } finally {
+    await removeTree(root);
+  }
+});
+
+const diffOf = (path, hunks) => `diff --git a/${path} b/${path}\n--- a/${path}\n+++ b/${path}\n${hunks}`;
+const HEAD = "# ADR 0001\n\nStatus: Accepted\n\n## Decision\n\nKeep it.\n";
+
+async function changeErrors(content, diff) {
+  const root = await makeTree({ [OLD]: content });
+  try {
+    return (await checkAdrChanges(root, diff)).errors;
+  } finally {
+    await removeTree(root);
+  }
+}
+
+test("a new ADR file name must be NNNN-short-title.md", async () => {
+  for (const name of ["2-x.md", "0002-Use-Messages.md", "0002_use.md", "0002-.md", "0002-a--b.md"]) {
+    const path = `docs/adr/${name}`;
+    const root = await makeTree({ [path]: adr("Accepted", "src/**"), "src/a.js": "" });
+    try {
+      assert.match((await checkNewAdrs(root, [path])).errors[0], /file name must be NNNN-short-title\.md/, name);
+    } finally {
+      await removeTree(root);
+    }
+  }
+  assert.deepEqual(await newErrors(adr("Accepted", "src/**")), []);
+});
+
+test("two ADRs must not share a number", async () => {
+  const errors = await newErrors(adr("Accepted", "src/**"), { "docs/adr/0002-other.md": adr("Accepted", "src/**") });
+  assert.deepEqual(errors, ["docs/adr: ADRs 0002-other.md and 0002-use-messages.md share the number 0002"]);
+});
+
+test("a change to an Accepted ADR may add lines under an amendment heading", async () => {
+  const content = `${HEAD}\n### Amendment 2026-01-02\n\nNew text.\n`;
+  assert.deepEqual(await changeErrors(content, diffOf(OLD, "@@ -7,0 +8,4 @@\n+\n+### Amendment 2026-01-02\n+\n+New text.\n")), []);
+});
+
+test("an ADR with no Status line counts as Accepted", async () => {
+  const diff = diffOf(OLD, "@@ -4,0 +5,1 @@\n+More.\n");
+  assert.deepEqual(await changeErrors("# ADR 0001\n\n## Decision\n\nKeep it.\nMore.\n", diff), [
+    `${OLD}:5: an added line of an Accepted ADR must be under a "### Amendment YYYY-MM-DD" heading`,
+  ]);
+});
+
+test("a deeper heading inside an amendment stays in the amendment", async () => {
+  const content = "# A\n\n### Amendment 2026-01-02\n\n#### Why\n\nText.\n";
+  assert.deepEqual(await changeErrors(content, diffOf(OLD, "@@ -4,0 +5,3 @@\n+#### Why\n+\n+Text.\n")), []);
+});
+
+test("a removed or changed line of an Accepted ADR fails", async () => {
+  const errors = await changeErrors(HEAD.replace("Keep it.", "Drop it."), diffOf(OLD, "@@ -7 +7 @@\n-Keep it.\n+Drop it.\n"));
+  assert.equal(errors.length, 2);
+  assert.match(errors[0], /do not remove or change the line "Keep it\."/);
+});
+
+test("a context line moves the line count in a diff with context", async () => {
+  const diff = diffOf(OLD, "@@ -1,2 +1,3 @@\n # ADR 0001\n \n+Extra.\n\\ No newline at end of file\n");
+  assert.deepEqual(await changeErrors("# ADR 0001\n\nExtra.\n", diff), [
+    `${OLD}:3: an added line of an Accepted ADR must be under a "### Amendment YYYY-MM-DD" heading`,
+  ]);
+});
+
+test("a Proposed ADR changes freely, also when the change removes lines", async () => {
+  assert.deepEqual(await changeErrors("# A\n\nStatus: Proposed\n\nExtra.\n", diffOf(OLD, "@@ -4 +4 @@\n-Old.\n+Extra.\n")), []);
+  const toAccepted = diffOf(OLD, "@@ -3 +3 @@\n-Status: Proposed\n+Status: Accepted\n");
+  assert.deepEqual(await changeErrors("# A\n\nStatus: Accepted\n", toAccepted), []);
+});
+
+test("changing only the Status line to Superseded by NNNN passes", async () => {
+  const content = "# A\n\nStatus: Superseded by 0002\n";
+  assert.deepEqual(await changeErrors(content, diffOf(OLD, "@@ -3 +3 @@\n-Status: Accepted\n+Status: Superseded by 0002\n")), []);
+  assert.deepEqual(await changeErrors(content, diffOf(OLD, "@@ -2,0 +3 @@\n+Status: Superseded by 0002\n")), []);
+  const mixed = diffOf(OLD, "@@ -3 +3,2 @@\n-Status: Accepted\n+Status: Superseded by 0002\n+Text.\n");
+  assert.equal((await changeErrors(`${content}Text.\n`, mixed)).length, 3);
+});
+
+test("deleting an ADR fails and adding one is not an amendment", async () => {
+  const deleted = `diff --git a/${OLD} b/${OLD}\ndeleted file mode 100644\n--- a/${OLD}\n+++ /dev/null\n@@ -1 +0,0 @@\n-x\n`;
+  assert.deepEqual(await changeErrors("", deleted), [`${OLD}:1: do not delete an ADR. Set it to "Superseded by NNNN" in place of this`]);
+  const added = `diff --git a/${OLD} b/${OLD}\nnew file mode 100644\n--- /dev/null\n+++ b/${OLD}\n@@ -0,0 +1 @@\n+x\n`;
+  assert.deepEqual(await changeErrors("x\n", added), []);
+  assert.deepEqual(await changeErrors("x\n", diffOf("README.md", "@@ -1 +1 @@\n-a\n+b\n")), []);
+  assert.deepEqual(await changeErrors("x\n", "stray line\n"), []);
+});
+
+test("the CLI reads the diff from --diff and takes the added ADRs from it", async () => {
+  const { writeFile } = await import("node:fs/promises");
+  const root = await makeTree({ ...TREE, [OLD]: "# A\n\nStatus: Accepted\n\nText.\n" });
+  try {
+    const file = join(root, "change.diff");
+    await writeFile(file, diffOf(OLD, "@@ -4 +5 @@\n-Old.\n+Text.\n"));
+    const fail = run(["--diff", file, root]);
+    assert.equal(fail.status, 1);
+    assert.match(fail.stderr, /do not remove or change the line "Old\."/);
+    await writeFile(file, `diff --git a/${NEW} b/${NEW}\nnew file mode 100644\n--- /dev/null\n+++ b/${NEW}\n@@ -0,0 +1 @@\n+x\n`);
+    await writeFile(join(root, NEW), adr("Accepted", "src/**"));
+    const pass = run(["--diff", file, root]);
+    assert.equal(pass.status, 0);
+    assert.equal(pass.stdout, "1 new ADR(s) have Status and Affects.\n");
+    const missing = run(["--diff", join(root, "none.diff"), root]);
+    assert.equal(missing.status, 2);
+    assert.match(missing.stderr, /^cannot read the diff: /);
+  } finally {
+    await removeTree(root);
+  }
+});
+
+test("with git, an edit of an Accepted ADR fails and an amendment passes", async () => {
+  const { writeFile } = await import("node:fs/promises");
+  const base = "# A\n\nStatus: Accepted\n\n## Decision\n\nKeep it.\n";
+  const root = await makeTree({ ...TREE, [OLD]: base });
+  const git = (...args) => spawnSync("git", ["-c", "user.name=t", "-c", "user.email=t@t", ...args],
+    { cwd: root, encoding: "utf8" });
+  try {
+    git("init", "-q", "-b", "main");
+    git("add", ".");
+    git("commit", "-q", "-m", "base");
+    git("switch", "-q", "-c", "work");
+    await writeFile(join(root, OLD), base.replace("Keep it.", "Drop it."));
+    const fail = run(["--base", "main", root]);
+    assert.equal(fail.status, 1);
+    assert.match(fail.stderr, /do not remove or change the line "Keep it\."/);
+    await writeFile(join(root, OLD), `${base}\n### Amendment 2026-01-02\n\nMore.\n`);
+    const pass = run(["--base", "main", root]);
+    assert.equal(pass.stderr, "");
+    assert.equal(pass.stdout, "1 changed ADR(s) only add amendments.\nNo new ADR. Nothing to check.\n");
   } finally {
     await removeTree(root);
   }
