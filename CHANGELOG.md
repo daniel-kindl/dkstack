@@ -13,8 +13,10 @@ change that a consumer must act on has a "Consumer action:" line.
 ### Added
 
 - `scripts/check-suppressions.mjs` (#306). It reads the added lines of the diff against the
-  merge base. It fails on a blanket suppression, on a suppression with a rule ID but no reason,
-  and on a lowered coverage or threshold number. `npm run check` and `validate` run it.
+  merge base. It fails on a blanket suppression and on a suppression with a rule ID but no
+  reason. A `NoWarn` in one project file needs rule IDs and a reason. It gives a warning, not a
+  failure, for a lowered number after a known coverage gate key or a raised `max-warnings`
+  number. `npm run check` and `validate` run it.
 
 ## [1.6.0] - 2026-11-21
 

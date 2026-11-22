@@ -2,15 +2,24 @@
 // Check the added lines of a change for suppressions and weakened gates. The
 // rules are in coding/quality-gates.md, sections "Rules" and "Suppressions".
 //
-// It finds three things:
+// These findings fail the check:
 // - A blanket suppression: an ESLint directive with no rule, a bare noqa, a
 //   ts-ignore or ts-nocheck, a type ignore with no code, pylint disable=all, a
-//   NoWarn in a .NET project file, or a C# pragma warning disable with no ID.
+//   C# pragma warning disable with no ID, or a NoWarn with no rule ID. A NoWarn
+//   in Directory.Build.props or Directory.Build.targets is global, so it is
+//   always blanket.
 // - A suppression with a rule ID but no reason. The reason is text after the
-//   rule list on the same line, or a comment on the line above.
-// - A weakened gate: in one hunk, a removed line and an added line where the
-//   number next to coverage or threshold gets smaller, or the number next to
-//   max-warnings gets larger.
+//   rule list on the same line, or a comment on the line above. A shebang or a
+//   preprocessor line is not a comment.
+//
+// A possible weaker gate is only a warning, because a reviewer decides. It is a
+// removed line and an added line in one hunk where the number after a known
+// gate key gets smaller, or the number after max-warnings gets larger. The keys
+// are --test-coverage-lines, -branches and -functions, --cov-fail-under,
+// fail_under, fail-under and max-warnings in each file. The keys lines,
+// branches, functions and statements count only in package.json, a Jest, Vitest
+// or Vite config, and an nyc or c8 config. A gate that the change removes, or a
+// number that is not directly after its key, gives no warning.
 //
 // It does not check this file, its test file or Markdown files. These files
 // contain the patterns as examples, and a suppression in Markdown has no effect.
@@ -31,6 +40,8 @@ import { pathToFileURL } from "node:url";
 const SKIP = new Set(["scripts/check-suppressions.mjs", "test/check-suppressions.test.mjs"]);
 const MARKDOWN = /\.(?:md|markdown)$/i;
 const PROJECT_FILE = /\.(?:csproj|vbproj|fsproj|props|targets)$/i;
+const GLOBAL_PROJECT_FILE = /(?:^|\/)Directory\.Build\.(?:props|targets)$/i;
+const COVERAGE_CONFIG = /(?:^|\/)(?:package\.json|(?:jest|vitest|vite)\.config\.[cm]?[jt]s|\.nycrc(?:\.json|\.ya?ml)?|\.c8rc(?:\.json)?)$/i;
 const HAS_TEXT = /[A-Za-z]/;
 
 // Each rule returns null, or { name, blanket, reason } for a suppression on the line.
@@ -38,10 +49,12 @@ const RULES = [
   (line) => {
     const m = /(?:\/\/|\/\*)\s*eslint-disable(?:-next-line|-line)?(?=\s|\*\/|$)(.*)$/.exec(line);
     if (!m) return null;
-    const rest = m[1].replace(/\*\/.*$/, "");
+    const close = m[1].indexOf("*/");
+    const rest = close === -1 ? m[1] : m[1].slice(0, close);
+    const after = close === -1 ? "" : m[1].slice(close + 2);
     const split = rest.indexOf("--");
     const rules = split === -1 ? rest : rest.slice(0, split);
-    const reason = split === -1 ? "" : rest.slice(split + 2);
+    const reason = (split === -1 ? "" : rest.slice(split + 2)) + (/\/\/|\/\*/.test(after) ? after : "");
     return { name: "eslint-disable", blanket: rules.trim() === "", reason };
   },
   (line) => {
@@ -70,8 +83,21 @@ const RULES = [
   },
 ];
 
+// A NoWarn in one project file is allowed with rule IDs and a reason. The
+// reason is an XML comment after the element.
+function noWarn(path, line) {
+  const m = /<NoWarn>(.*?)(?:<\/NoWarn>(.*))?$/.exec(line);
+  if (!m) return null;
+  const ids = m[1].replace(/\$\(NoWarn\)/g, "").split(/[;,\s]+/).filter(Boolean);
+  const reason = /<!--/.test(m[2] ?? "") ? m[2] : "";
+  return { name: "NoWarn", blanket: ids.length === 0 || GLOBAL_PROJECT_FILE.test(path), reason };
+}
+
 function suppression(path, line) {
-  if (PROJECT_FILE.test(path) && /<NoWarn>/.test(line)) return { name: "NoWarn", blanket: true, reason: "" };
+  if (PROJECT_FILE.test(path)) {
+    const found = noWarn(path, line);
+    if (found) return found;
+  }
   for (const rule of RULES) {
     const found = rule(line);
     if (found) return found;
@@ -79,25 +105,52 @@ function suppression(path, line) {
   return null;
 }
 
+const PREPROCESSOR = /^#\s*(?:if|ifdef|ifndef|elif|else|endif|define|undef|include|pragma|region|endregion|line|error|warning|nullable)\b/;
+
 // A reason on the line above is a comment that is not itself a suppression.
 function isReason(path, line) {
   if (line === null) return false;
   const text = line.trim();
-  return /^(?:\/\/|#|\/\*|\*|<!--|--)/.test(text) && HAS_TEXT.test(text) && suppression(path, text) === null;
+  return /^(?:\/\/|#\s|\/\*|\*|<!--|--)/.test(text) && !PREPROCESSOR.test(text) && HAS_TEXT.test(text) &&
+    suppression(path, text) === null;
 }
 
-const THRESHOLD = /([\w.-]*(?:coverage|threshold|max-warnings)[\w.-]*)["']?\s*[:=]?\s*["']?(\d+(?:\.\d+)?)/gi;
+const NUMBER = `["']?\\s*[:=]?\\s*["']?(\\d+(?:\\.\\d+)?)`;
+const GATE = new RegExp(`(?<![\\w-])(--test-coverage-(?:lines|branches|functions)|--cov-fail-under|--fail-under|fail[_-]under|--max-warnings|max-warnings)(?![\\w-])${NUMBER}`, "g");
+const COVERAGE_GATE = new RegExp(`(?<![\\w-])["']?(--lines|--branches|--functions|--statements|lines|branches|functions|statements)(?![\\w-])${NUMBER}`, "g");
 
-// Return a map of key to { value, n } for the first number of each key in `lines`.
-function thresholds(lines) {
+// Return a map of key to { key, value, n } for the first number of each gate key in `lines`.
+function thresholds(path, lines) {
   const found = new Map();
+  const patterns = COVERAGE_CONFIG.test(path) ? [GATE, COVERAGE_GATE] : [GATE];
   for (const line of lines) {
-    for (const m of line.text.matchAll(THRESHOLD)) {
+    for (const m of patterns.flatMap((pattern) => [...line.text.matchAll(pattern)])) {
       const key = m[1];
       if (!found.has(key.toLowerCase())) found.set(key.toLowerCase(), { key, value: Number(m[2]), n: line.n });
     }
   }
   return found;
+}
+
+const ESCAPES = { a: 7, b: 8, t: 9, n: 10, v: 11, f: 12, r: 13 };
+
+// Undo the C-style quotes that git puts around a path with special characters.
+function unquote(path) {
+  if (!path.startsWith('"') || !path.endsWith('"')) return path;
+  const bytes = [];
+  const body = path.slice(1, -1);
+  for (let i = 0; i < body.length; i++) {
+    if (body[i] !== "\\") {
+      bytes.push(...Buffer.from(body[i]));
+      continue;
+    }
+    const next = body[++i];
+    if (/[0-7]/.test(next)) {
+      bytes.push(parseInt(body.slice(i, i + 3), 8));
+      i += 2;
+    } else bytes.push(ESCAPES[next] ?? next.charCodeAt(0));
+  }
+  return Buffer.from(bytes).toString("utf8");
 }
 
 // Parse a unified diff. Return [{ path, hunks }]. Each hunk is a list of
@@ -107,24 +160,34 @@ export function parseDiff(text) {
   let file = null;
   let hunk = null;
   let n = 0;
+  let oldLeft = 0;
+  let newLeft = 0;
   for (const line of text.split(/\r?\n/)) {
-    if (line.startsWith("diff --git ")) {
+    if (hunk && (oldLeft > 0 || newLeft > 0)) {
+      if (line[0] === "+" || line[0] === " ") {
+        hunk.push({ kind: line[0], text: line.slice(1), n: n++ });
+        newLeft--;
+        if (line[0] === " ") oldLeft--;
+      } else if (line[0] === "-") {
+        hunk.push({ kind: "-", text: line.slice(1), n: null });
+        oldLeft--;
+      }
+    } else if (line.startsWith("diff --git ")) {
       file = null;
       hunk = null;
     } else if (line.startsWith("+++ ")) {
-      const path = line.slice(4).replace(/\t.*$/, "");
+      const path = unquote(line.slice(4).replace(/\t.*$/, ""));
       file = path === "/dev/null" ? null : { path: path.replace(/^b\//, ""), hunks: [] };
       if (file) files.push(file);
       hunk = null;
     } else if (line.startsWith("@@ ") && file) {
-      const m = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/.exec(line);
+      const m = /^@@ -\d+(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/.exec(line);
+      if (!m) continue;
       hunk = [];
       file.hunks.push(hunk);
-      n = m ? Number(m[1]) : 1;
-    } else if (hunk && (line[0] === "+" || line[0] === " ")) {
-      hunk.push({ kind: line[0], text: line.slice(1), n: n++ });
-    } else if (hunk && line[0] === "-") {
-      hunk.push({ kind: "-", text: line.slice(1), n: null });
+      oldLeft = Number(m[1] ?? 1);
+      n = Number(m[2]);
+      newLeft = Number(m[3] ?? 1);
     }
   }
   return files;
@@ -132,11 +195,12 @@ export function parseDiff(text) {
 
 const skipped = (path) => SKIP.has(path) || MARKDOWN.test(path);
 
-// Return the findings of one hunk. `lineAt(n)` returns new line n or null.
-function checkHunk(path, hunk, lineAt) {
-  const errors = [];
+// Add the findings and the warnings of one hunk to `result`. `lineAt(n)` returns new line n or null.
+function checkHunk(result, path, hunk, lineAt) {
+  const { errors, warnings } = result;
   const above = (n) => hunk.find((l) => l.kind !== "-" && l.n === n - 1)?.text ?? (n > 1 ? lineAt(n - 1) : null);
   for (const line of hunk.filter((l) => l.kind === "+")) {
+    result.lines++;
     const found = suppression(path, line.text);
     if (!found) continue;
     if (found.blanket) errors.push(`${path}:${line.n}: blanket suppression "${found.name}". Name the rule ID`);
@@ -144,18 +208,19 @@ function checkHunk(path, hunk, lineAt) {
       errors.push(`${path}:${line.n}: suppression "${found.name}" has no reason. Add it on the same line or the line above`);
     }
   }
-  const before = thresholds(hunk.filter((l) => l.kind === "-"));
-  for (const [id, now] of thresholds(hunk.filter((l) => l.kind === "+"))) {
+  const before = thresholds(path, hunk.filter((l) => l.kind === "-"));
+  for (const [id, now] of thresholds(path, hunk.filter((l) => l.kind === "+"))) {
     const old = before.get(id);
     if (!old || old.value === now.value) continue;
     const higherIsWeaker = id.includes("max-warnings");
     if (higherIsWeaker === now.value > old.value) {
       const verb = higherIsWeaker ? "raised" : "lowered";
-      errors.push(`${path}:${now.n}: "${now.key}" is ${verb} from ${old.value} to ${now.value}`);
+      warnings.push(`${path}:${now.n}: "${now.key}" is ${verb} from ${old.value} to ${now.value}`);
     }
   }
-  return errors;
 }
+
+const emptyResult = () => ({ errors: [], warnings: [], lines: 0, files: 0 });
 
 function fileLines(root, path) {
   try {
@@ -166,43 +231,45 @@ function fileLines(root, path) {
   }
 }
 
-// Return the findings for the added lines of a unified diff. The line above an
-// added line comes from the diff, or from the file under `root` (null: no file).
-export function checkDiff(text, root) {
-  const errors = [];
+// Return { errors, warnings, lines, files } for the added lines of a unified
+// diff. `lines` and `files` count what the check read. The line above an added
+// line comes from the diff, or from the file under `root` (null: no file).
+export function checkDiff(text, root, result = emptyResult()) {
   for (const { path, hunks } of parseDiff(text)) {
     if (skipped(path)) continue;
+    result.files++;
     let lines;
     const lineAt = (n) => {
       if (root === null) return null;
       lines ??= fileLines(root, path) ?? [];
       return lines[n - 1] ?? null;
     };
-    for (const hunk of hunks) errors.push(...checkHunk(path, hunk, lineAt));
+    for (const hunk of hunks) checkHunk(result, path, hunk, lineAt);
   }
-  return errors;
+  return result;
 }
 
-// Return the findings for each line of each file. A file that cannot be read is skipped.
-export function checkFiles(root, paths) {
-  const errors = [];
+// Return { errors, warnings, lines, files } for each line of each file. A file
+// that cannot be read, or a binary file, is skipped.
+export function checkFiles(root, paths, result = emptyResult()) {
   for (const path of paths) {
     if (skipped(path)) continue;
     const lines = fileLines(root, path);
     if (lines === null) continue;
+    result.files++;
     const hunk = lines.map((text, i) => ({ kind: "+", text, n: i + 1 }));
-    errors.push(...checkHunk(path, hunk, () => null));
+    checkHunk(result, path, hunk, () => null);
   }
-  return errors;
+  return result;
 }
 
 // Return the findings for the change from the merge base of `base` to the working tree.
 function checkGit(root, base) {
-  const git = (...args) => execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], maxBuffer: 256 * 1024 * 1024 });
+  const git = (...args) => execFileSync("git", ["-c", "core.quotePath=false", ...args], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], maxBuffer: 256 * 1024 * 1024 });
   const mergeBase = git("merge-base", base, "HEAD").trim();
   const diff = git("diff", "-U0", "--no-color", "--no-ext-diff", "--relative", mergeBase);
   const untracked = git("ls-files", "--others", "--exclude-standard").split("\n").filter(Boolean);
-  return [...checkDiff(diff, root), ...checkFiles(root, untracked)];
+  return checkFiles(root, untracked, checkDiff(diff, root));
 }
 
 function parseArgs(args) {
@@ -230,20 +297,24 @@ function main(args) {
     return 2;
   }
   const root = resolve(options.root);
-  let errors;
+  let result;
   try {
-    if (options.files !== null) errors = checkFiles(root, options.files);
-    else if (options.diff !== null) errors = checkDiff(readFileSync(options.diff, "utf8"), root);
-    else errors = checkGit(root, options.base);
+    if (options.files !== null) result = checkFiles(root, options.files);
+    else if (options.diff !== null) result = checkDiff(readFileSync(options.diff, "utf8"), root);
+    else result = checkGit(root, options.base);
   } catch (err) {
     console.error(`cannot read the diff: ${(err.stderr || err.message).toString().trim()}`);
     return 2;
   }
-  if (errors.length > 0) {
-    for (const message of errors) console.error(message);
+  if (result.warnings.length > 0) console.log(["Review these possible weaker gates:", ...result.warnings].join("\n"));
+  if (result.errors.length > 0) {
+    for (const message of result.errors) console.error(message);
     return 1;
   }
-  console.log("No blanket suppression, suppression without a reason or weakened gate.");
+  if (result.lines === 0) console.log("No added lines. Nothing to check.");
+  else {
+    console.log(`${result.lines} added line(s) in ${result.files} file(s) have no blanket suppression and no suppression without a reason.`);
+  }
   return 0;
 }
 

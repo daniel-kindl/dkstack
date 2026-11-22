@@ -110,7 +110,7 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:adrs
 
-      - name: Check that the change adds no blanket suppression, no suppression without a reason and no weakened gate
+      - name: Check that the change adds no blanket suppression and no suppression without a reason, and warn about weaker gates
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:suppressions
 
