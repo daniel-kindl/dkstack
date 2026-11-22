@@ -387,7 +387,10 @@ test("a blank context line without its space does not hide the next file", async
 
 test("a diff header starts a new file even inside an unfinished hunk", async () => {
   const diff = `${diffOf(OLD, "@@ -1,5 +1,5 @@\n x\n")}${diffOf("docs/adr/0003-other.md", "@@ -1 +1 @@\n-a\n+b\n")}`;
-  assert.equal(parseDiff(diff).length, 2);
+  const entries = parseDiff(diff);
+  assert.equal(entries.length, 2);
+  assert.deepEqual(entries[1].removed, ["a"]);
+  assert.deepEqual(entries[1].added, [{ line: 1, text: "b" }]);
 });
 
 test("with git, a renamed ADR with a bad name is still a new ADR", async () => {
