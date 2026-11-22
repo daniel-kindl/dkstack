@@ -34,6 +34,10 @@ change that a consumer must act on has a "Consumer action:" line.
   `jobs:` with its keys at 4 spaces, and each trigger on the `on:` line or at 2 spaces under it.
 - A `--diff` mode in `scripts/check-changelog.mjs`. A change that adds a page or a skill must also change `## [Unreleased]`. The validate workflow runs it (#310).
 - `scripts/audit-issues.mjs` and `npm run audit:issues` (#308). The tool reads the open issues and the labels of a repository with `gh`. It lists an issue with no type label, more than one, or one that dkstack does not name. It lists an issue with no Goal or Acceptance criteria heading. It lists a relation in text that the tracker does not have. It lists a missing type or priority label. It writes nothing.
+- `scripts/check-breaking.mjs` (#300). On a pull request, it lists each removed page, removed
+  skill and removed anchor that a skill or `AGENTS.md` links. If it finds one, the title must
+  have `!` and `## [Unreleased]` must have a new "Consumer action:" line. An anchor that the
+  page keeps as a heading, or as an HTML id or name attribute, is not removed.
 
 ### Changed
 

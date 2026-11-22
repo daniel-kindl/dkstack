@@ -71,6 +71,8 @@ The `validate` workflow ([.github/workflows/validate.yml](.github/workflows/vali
 each pull request to `main` and on each push to `main`. It does these checks:
 
 - The pull request title, or each commit title on a push, is a conventional commit.
+- On a pull request, a removed page, skill or linked anchor needs `!` in the title and a
+  "Consumer action:" line under `## [Unreleased]` in CHANGELOG.md.
 - The pull request body links an issue and has an Evidence section, one Observability line and a
   valid Visual verification line. A bot author is skipped.
 - Each skill has the correct folder and frontmatter.
@@ -96,7 +98,7 @@ each pull request to `main` and on each push to `main`. It does these checks:
   `scripts/`.
 - A long sentence, a long step or a semicolon in Markdown fails the check.
 
-To run the same checks locally, except the title check, the body check and actionlint, use Node 24 or later:
+To run the same checks locally, except the title check, the body check, the breaking change check and actionlint, use Node 24 or later:
 
 ```bash
 npm run check

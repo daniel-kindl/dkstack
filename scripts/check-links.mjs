@@ -33,7 +33,7 @@ const REFERENCE_PATTERN = /^ {0,3}\[[^\]]+\]:\s*(<[^>]*>|\S+)/;
 const HEADING_PATTERN = /^ {0,3}#{1,6}\s+(.*?)(?:\s+#+)?\s*$/;
 const HTML_ANCHOR_PATTERN = /<a\s[^>]*\b(?:id|name)\s*=\s*"([^"]+)"/gi;
 // A file or folder in this repository on GitHub. Group 1 is the path.
-const REPO_URL_PATTERN =
+export const REPO_URL_PATTERN =
   /^https?:\/\/(?:raw\.githubusercontent\.com\/daniel-kindl\/dkstack\/[^/?#]+|github\.com\/daniel-kindl\/dkstack\/(?:blob|tree)\/[^/?#]+)(\/[^?#]*)?/i;
 
 // The skills CLI copies only a skill folder. A file in a skill folder can link
@@ -109,7 +109,7 @@ export function anchorsIn(text) {
 }
 
 // Yield { line, target } for each link outside code.
-function* linksIn(text) {
+export function* linksIn(text) {
   for (const { index: i, line } of proseLines(text)) {
     const prose = line.replace(/`[^`]*`/g, "");
     const reference = REFERENCE_PATTERN.exec(prose);
@@ -143,7 +143,7 @@ async function exists(path) {
 }
 
 // Return the fragment of a target, decoded, or null when it has none.
-function fragmentOf(target) {
+export function fragmentOf(target) {
   const at = target.indexOf("#");
   if (at === -1 || at === target.length - 1) return null;
   try {

@@ -31,7 +31,16 @@ npm run check
 pull request title with `npm run check:title -- "<title>"`. Check the body with
 `node scripts/check-pr-body.mjs <file>`, where the file holds the body. The body needs an issue
 link, an Evidence section and one Observability line. The `validate` workflow runs the same
-checks, the title check, the body check and actionlint.
+checks, the title check, the body check, the breaking change check and actionlint.
+
+A removed page, skill or linked anchor is a breaking change. Commit your change, then check it
+with the title:
+
+```bash
+TITLE="<title>" node scripts/check-breaking.mjs
+```
+
+The check compares HEAD with its merge base on `origin/main`. Use `--base <ref>` for another base.
 
 To read the repository settings, the owner runs `npm run audit:settings -- <owner/repo>`. The
 tool only reads. A CI token cannot read the bypass list, so `validate` does not run it.
