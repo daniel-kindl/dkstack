@@ -9,7 +9,8 @@ import { makeTree, removeTree } from "./helpers.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const script = join(repoRoot, "scripts", "check-suppressions.mjs");
-const run = (args, cwd) => spawnSync(process.execPath, [script, ...args], { encoding: "utf8", cwd });
+const run = (args, cwd, env = {}) => spawnSync(process.execPath, [script, ...args],
+  { encoding: "utf8", cwd, env: { ...process.env, GITHUB_ACTIONS: "", ...env } });
 
 // Return a unified diff for one file. Each line starts with "+", "-" or " ".
 // The hunk starts at new line `start`.
@@ -103,8 +104,16 @@ test("a suppression with a rule ID but no reason is a finding", () => {
 test("a shebang or a preprocessor line above is not a reason", () => {
   assert.deepEqual(added("a.py", "#!/usr/bin/env python3", "import os  # noqa: E402"), [noReason("a.py", 2, "noqa")]);
   assert.deepEqual(added("src/A.cs", "#if DEBUG", "#pragma warning disable CS0618"), [noReason("src/A.cs", 2, "#pragma warning disable")]);
-  assert.deepEqual(added("src/A.cs", "# region Legacy", "#pragma warning disable CS0618"), [noReason("src/A.cs", 2, "#pragma warning disable")]);
+  assert.deepEqual(added("src/A.cs", "#region Legacy", "#pragma warning disable CS0618"), [noReason("src/A.cs", 2, "#pragma warning disable")]);
   assert.deepEqual(added("a.py", "# The module must load first.", "import os  # noqa: E402"), []);
+});
+
+// N1 in the second review of #321: a directive has no space after "#".
+test("a comment that starts with a directive word is a reason", () => {
+  assert.deepEqual(added("a.py", "# if the stub changes, remove this", "x = f()  # type: ignore[attr-defined]"), []);
+  assert.deepEqual(added("a.py", "# error codes come from the vendor API", "import os  # noqa: F401"), []);
+  assert.deepEqual(added("a.py", "#the vendor stub is wrong", "import os  # noqa: F401"), []);
+  assert.deepEqual(added("src/A.cs", "#define LEGACY", "#pragma warning disable CS0618"), [noReason("src/A.cs", 2, "#pragma warning disable")]);
 });
 
 test("Python: a bare noqa, a type ignore with no code and pylint disable=all are blanket", () => {
@@ -139,6 +148,19 @@ test(".NET: NoWarn in one project file needs rule IDs and a reason", () => {
     assert.deepEqual(added(path, "<!-- note -->", "<NoWarn></NoWarn>"), [blanket(path, 2, "NoWarn")], path);
   }
   assert.deepEqual(added("src/notes.cs", "// <NoWarn> is not used here."), []);
+  // N3 in the second review of #321: only an XML comment after the element is a reason.
+  assert.deepEqual(added("src/App.csproj", "<NoWarn>CS1591</NoWarn></PropertyGroup>"), [noReason("src/App.csproj", 1, "NoWarn")]);
+});
+
+// N2 in the second review of #321.
+test(".NET: a NoWarn over several lines is read up to its end tag", () => {
+  const path = "src/App.csproj";
+  assert.deepEqual(added(path, "<!-- The platform API is obsolete. -->", "<NoWarn>", "  $(NoWarn);CS0618", "</NoWarn>"), []);
+  assert.deepEqual(added(path, "<NoWarn>", "  CS0618", "</NoWarn> <!-- generated code -->"), []);
+  assert.deepEqual(added(path, "<NoWarn>", "  CS0618", "</NoWarn>"), [noReason(path, 1, "NoWarn")]);
+  assert.deepEqual(added(path, "<!-- note -->", "<NoWarn>", "  $(NoWarn)", "</NoWarn>"), [blanket(path, 2, "NoWarn")]);
+  // With no end tag in the hunk, only the first line counts.
+  assert.deepEqual(added(path, "<!-- note -->", "<NoWarn>", "  CS0618"), [blanket(path, 2, "NoWarn")]);
 });
 
 test(".NET: NoWarn in Directory.Build.props or Directory.Build.targets is blanket", () => {
@@ -175,6 +197,26 @@ test("a lowered coverage gate in a real form is a possible weaker gate", () => {
   for (const [path, before, after, message] of cases) {
     assert.deepEqual(gates(path, [`-${before}`, `+${after}`]), [`${path}:1: ${message}`], path);
     assert.deepEqual(checkDiff(diff(path, [`-${before}`, `+${after}`]), null).errors, [], path);
+  }
+});
+
+// N4 in the second review of #321: a CI annotation shows the warning on the change.
+test("in GitHub Actions, the CLI also prints each weaker gate as a warning annotation", async () => {
+  const root = await makeTree({ "gate.diff": diff("a,b/.coveragerc", ["-fail_under = 90", "+fail_under = 80"], 3) });
+  try {
+    const result = run(["--diff", join(root, "gate.diff"), root], undefined, { GITHUB_ACTIONS: "true" });
+    assert.equal(result.status, 0);
+    assert.deepEqual(result.stdout.split("\n"), [
+      "Review these possible weaker gates:",
+      'a,b/.coveragerc:3: "fail_under" is lowered from 90 to 80',
+      '::warning file=a%2Cb/.coveragerc,line=3::"fail_under" is lowered from 90 to 80',
+      "1 added line(s) in 1 file(s) have no blanket suppression and no suppression without a reason.",
+      "",
+    ]);
+    const plain = run(["--diff", join(root, "gate.diff"), root]);
+    assert.doesNotMatch(plain.stdout, /::warning/);
+  } finally {
+    await removeTree(root);
   }
 });
 

@@ -12,7 +12,8 @@
 //   rule list on the same line, or a comment on the line above. A shebang or a
 //   preprocessor line is not a comment.
 //
-// A possible weaker gate is only a warning, because a reviewer decides. It is a
+// A possible weaker gate is only a warning, because a reviewer decides. In
+// GitHub Actions, each warning is also a warning annotation. It is a
 // removed line and an added line in one hunk where the number after a known
 // gate key gets smaller, or the number after max-warnings gets larger. The keys
 // are --test-coverage-lines, -branches and -functions, --cov-fail-under,
@@ -105,13 +106,14 @@ function suppression(path, line) {
   return null;
 }
 
-const PREPROCESSOR = /^#\s*(?:if|ifdef|ifndef|elif|else|endif|define|undef|include|pragma|region|endregion|line|error|warning|nullable)\b/;
+// A directive has no space after "#". A comment such as "# if the stub changes" is a reason.
+const PREPROCESSOR = /^#(?:if|ifdef|ifndef|elif|else|endif|define|undef|include|pragma|region|endregion|line|error|warning|nullable)\b/;
 
 // A reason on the line above is a comment that is not itself a suppression.
 function isReason(path, line) {
   if (line === null) return false;
   const text = line.trim();
-  return /^(?:\/\/|#\s|\/\*|\*|<!--|--)/.test(text) && !PREPROCESSOR.test(text) && HAS_TEXT.test(text) &&
+  return /^(?:\/\/|#(?!!)|\/\*|\*|<!--|--)/.test(text) && !PREPROCESSOR.test(text) && HAS_TEXT.test(text) &&
     suppression(path, text) === null;
 }
 
@@ -195,13 +197,24 @@ export function parseDiff(text) {
 
 const skipped = (path) => SKIP.has(path) || MARKDOWN.test(path);
 
+// Return line i, joined with the next lines up to "</NoWarn>" when the line
+// opens a NoWarn element and does not close it. With no end tag, return line i.
+function withEndTag(lines, i) {
+  const text = lines[i].text;
+  if (!/<NoWarn>/.test(text) || /<\/NoWarn>/.test(text)) return text;
+  const end = lines.findIndex((l, j) => j > i && /<\/NoWarn>/.test(l.text));
+  return end === -1 ? text : lines.slice(i, end + 1).map((l) => l.text).join(" ");
+}
+
 // Add the findings and the warnings of one hunk to `result`. `lineAt(n)` returns new line n or null.
 function checkHunk(result, path, hunk, lineAt) {
   const { errors, warnings } = result;
   const above = (n) => hunk.find((l) => l.kind !== "-" && l.n === n - 1)?.text ?? (n > 1 ? lineAt(n - 1) : null);
-  for (const line of hunk.filter((l) => l.kind === "+")) {
+  const lines = hunk.filter((l) => l.kind !== "-");
+  for (const [i, line] of lines.entries()) {
+    if (line.kind !== "+") continue;
     result.lines++;
-    const found = suppression(path, line.text);
+    const found = suppression(path, PROJECT_FILE.test(path) ? withEndTag(lines, i) : line.text);
     if (!found) continue;
     if (found.blanket) errors.push(`${path}:${line.n}: blanket suppression "${found.name}". Name the rule ID`);
     else if (!HAS_TEXT.test(found.reason) && !isReason(path, above(line.n))) {
@@ -215,12 +228,18 @@ function checkHunk(result, path, hunk, lineAt) {
     const higherIsWeaker = id.includes("max-warnings");
     if (higherIsWeaker === now.value > old.value) {
       const verb = higherIsWeaker ? "raised" : "lowered";
-      warnings.push(`${path}:${now.n}: "${now.key}" is ${verb} from ${old.value} to ${now.value}`);
+      const message = `"${now.key}" is ${verb} from ${old.value} to ${now.value}`;
+      warnings.push(`${path}:${now.n}: ${message}`);
+      result.gates.push({ path, n: now.n, message });
     }
   }
 }
 
-const emptyResult = () => ({ errors: [], warnings: [], lines: 0, files: 0 });
+const emptyResult = () => ({ errors: [], warnings: [], gates: [], lines: 0, files: 0 });
+
+// Escape a value for a CI workflow command, as GitHub Actions reads it.
+const escapeData = (text) => text.replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
+const escapeProperty = (text) => escapeData(text).replace(/:/g, "%3A").replace(/,/g, "%2C");
 
 function fileLines(root, path) {
   try {
@@ -307,6 +326,12 @@ function main(args) {
     return 2;
   }
   if (result.warnings.length > 0) console.log(["Review these possible weaker gates:", ...result.warnings].join("\n"));
+  // In GitHub Actions, an annotation shows each warning on the change. Other systems print the text only.
+  if (process.env.GITHUB_ACTIONS === "true") {
+    for (const { path, n, message } of result.gates) {
+      console.log(`::warning file=${escapeProperty(path)},line=${n}::${escapeData(message)}`);
+    }
+  }
   if (result.errors.length > 0) {
     for (const message of result.errors) console.error(message);
     return 1;
