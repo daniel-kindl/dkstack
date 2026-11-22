@@ -27,9 +27,11 @@ Use Node 24 or later. Run all checks before you open a pull request:
 npm run check
 ```
 
-`npm run check` does not check the title, because the title is not in the files. Check the pull
-request title with `npm run check:title -- "<title>"`. The `validate` workflow runs the same
-checks, the title check and actionlint.
+`npm run check` does not check the title or the body, because they are not in the files. Check the
+pull request title with `npm run check:title -- "<title>"`. Check the body with
+`node scripts/check-pr-body.mjs <file>`, where the file holds the body. The body needs an issue
+link, an Evidence section and one Observability line. The `validate` workflow runs the same
+checks, the title check, the body check and actionlint.
 
 To read the repository settings, the owner runs `npm run audit:settings -- <owner/repo>`. The
 tool only reads. A CI token cannot read the bypass list, so `validate` does not run it.
