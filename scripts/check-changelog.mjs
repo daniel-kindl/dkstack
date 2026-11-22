@@ -5,7 +5,8 @@
 //
 // Diff mode (--diff) checks the change. A change that adds a page in a section
 // folder or a skills/<name>/SKILL.md must also change the "## [Unreleased]"
-// text. The base is the merge base of --base (default origin/main) and HEAD.
+// text. A renamed page counts as an added page. The base is the merge base
+// of --base (default origin/main) and HEAD.
 // A section is a top-level folder with an index.md. skills/ is not a section.
 // Usage: node scripts/check-changelog.mjs [--diff [--base <ref>]] [root]
 // Exit 0: pass. Exit 1: findings. Exit 2: usage or git error.
