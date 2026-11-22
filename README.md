@@ -74,7 +74,10 @@ each pull request to `main` and on each push to `main`. It does these checks:
 - Each skill has the correct folder and frontmatter.
 - Relative links and links to this repository resolve, including anchors.
 - Markdown files have no em dash or en dash.
-- Workflows pin actions and set permissions. Only the release job uses the release app secrets.
+- Workflows pin actions, set permissions and set `timeout-minutes` on each job. A release or deploy
+  workflow starts only by `workflow_dispatch`, checks that the ref is `main`, uses an environment
+  and sets `concurrency`. Only the release job uses the release app secrets. The allowed secrets
+  are in [.github/check-workflows.json](.github/check-workflows.json).
 - actionlint and shellcheck find no fault in the workflows.
 - CHANGELOG.md has an entry for the version in `package.json`, an `## [Unreleased]` line and its
   compare link.

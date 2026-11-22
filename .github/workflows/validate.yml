@@ -76,7 +76,7 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:dashes
 
-      - name: Check that workflows pin actions and set permissions, and only the release job uses the release app secrets
+      - name: Check the workflow pins, permissions, timeouts, release rules and allowed secrets
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:workflows
 

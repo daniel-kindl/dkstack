@@ -4,7 +4,7 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { checkWorkflows } from "../scripts/check-workflows.mjs";
-import { makeTree, removeTree } from "./helpers.mjs";
+import { makeTree, readFile, removeTree } from "./helpers.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const script = join(repoRoot, "scripts", "check-workflows.mjs");
@@ -19,6 +19,9 @@ async function workflowsFor(files) {
   }
 }
 
+// Some tests check one rule with short jobs. The timeout rule is tested below.
+const withoutTimeouts = (errors) => errors.filter((e) => !e.includes('"timeout-minutes"'));
+
 const good = [
   "name: validate",
   "on: [pull_request]",
@@ -27,6 +30,7 @@ const good = [
   "jobs:",
   "  validate:",
   "    runs-on: ubuntu-latest",
+  "    timeout-minutes: 10",
   "    steps:",
   `      - uses: actions/checkout@${SHA} # v7.0.1`,
   "        with:",
@@ -68,7 +72,7 @@ test("a tag, a branch or a short SHA fails, and a SHA with no version comment fa
     ].join("\n"),
   });
   // This test checks the pins. The missing persist-credentials lines are tested below.
-  const pinErrors = result.errors.filter((e) => !e.includes("persist-credentials"));
+  const pinErrors = withoutTimeouts(result.errors).filter((e) => !e.includes("persist-credentials"));
   assert.deepEqual(pinErrors, [
     '.github/workflows/a.yaml:5: pin "actions/checkout@v7" to a full 40-character commit SHA',
     '.github/workflows/a.yaml:6: pin "actions/checkout@main" to a full 40-character commit SHA',
@@ -97,8 +101,8 @@ test("a workflow that uses secrets fails", async () => {
     ".github/workflows/a.yml": good + "        env:\n          T: ${{ secrets.NPM_TOKEN }}\n          G: ${{secrets['X']}}\n",
   });
   assert.deepEqual(result.errors, [
-    ".github/workflows/a.yml:17: do not use secrets in a workflow",
     ".github/workflows/a.yml:18: do not use secrets in a workflow",
+    ".github/workflows/a.yml:19: do not use secrets in a workflow",
   ]);
 });
 
@@ -120,44 +124,58 @@ const appJob = (environment, appId, key, action = "actions/create-github-app-tok
   "",
 ].join("\n");
 const ID = "${{ secrets.RELEASE_APP_ID }}";
+// The settings file that allows the two app secrets, as dkstack has it.
+const SETTINGS = JSON.stringify({
+  allowedSecrets: [
+    {
+      file: "release.yml",
+      environment: "release",
+      action: "actions/create-github-app-token",
+      with: { "app-id": "RELEASE_APP_ID", "private-key": "RELEASE_APP_PRIVATE_KEY" },
+    },
+  ],
+});
+// These tests check the secret rule only. The release rules are tested below.
+const secretErrors = (result) => result.errors.filter((e) => e.endsWith("do not use secrets in a workflow"));
+const withSettings = (files) => workflowsFor({ ".github/check-workflows.json": SETTINGS, ...files });
 const KEY = "${{ secrets.RELEASE_APP_PRIVATE_KEY }}";
 
 test("the release job may pass the two app secrets to the token action", async () => {
-  const result = await workflowsFor({ ".github/workflows/release.yml": appJob("release", ID, KEY) });
-  assert.deepEqual(result, { checked: 1, errors: [] });
+  const result = await withSettings({ ".github/workflows/release.yml": appJob("release", ID, KEY) });
+  assert.deepEqual(secretErrors(result), []);
 });
 
 test("the app secrets fail in another file, another job or another place", async () => {
-  const other = await workflowsFor({ ".github/workflows/other.yml": appJob("release", ID, KEY) });
-  assert.deepEqual(other.errors, [
+  const other = await withSettings({ ".github/workflows/other.yml": appJob("release", ID, KEY) });
+  assert.deepEqual(secretErrors(other), [
     ".github/workflows/other.yml:10: do not use secrets in a workflow",
     ".github/workflows/other.yml:11: do not use secrets in a workflow",
   ]);
-  const noEnv = await workflowsFor({ ".github/workflows/release.yml": appJob(null, ID, KEY) });
-  assert.deepEqual(noEnv.errors, [
+  const noEnv = await withSettings({ ".github/workflows/release.yml": appJob(null, ID, KEY) });
+  assert.deepEqual(secretErrors(noEnv), [
     ".github/workflows/release.yml:9: do not use secrets in a workflow",
     ".github/workflows/release.yml:10: do not use secrets in a workflow",
   ]);
-  const prod = await workflowsFor({ ".github/workflows/release.yml": appJob("production", ID, KEY) });
-  assert.equal(prod.errors.length, 2);
-  const otherAction = await workflowsFor({
+  const prod = await withSettings({ ".github/workflows/release.yml": appJob("production", ID, KEY) });
+  assert.equal(secretErrors(prod).length, 2);
+  const otherAction = await withSettings({
     ".github/workflows/release.yml": appJob("release", ID, KEY, "someone/token-action"),
   });
-  assert.equal(otherAction.errors.length, 2);
-  const swapped = await workflowsFor({ ".github/workflows/release.yml": appJob("release", KEY, ID) });
-  assert.equal(swapped.errors.length, 2);
-  const otherName = await workflowsFor({
+  assert.equal(secretErrors(otherAction).length, 2);
+  const swapped = await withSettings({ ".github/workflows/release.yml": appJob("release", KEY, ID) });
+  assert.equal(secretErrors(swapped).length, 2);
+  const otherName = await withSettings({
     ".github/workflows/release.yml": appJob("release", "${{ secrets.NPM_TOKEN }}", KEY),
   });
-  assert.deepEqual(otherName.errors, [".github/workflows/release.yml:10: do not use secrets in a workflow"]);
-  const inEnv = await workflowsFor({
+  assert.deepEqual(secretErrors(otherName), [".github/workflows/release.yml:10: do not use secrets in a workflow"]);
+  const inEnv = await withSettings({
     ".github/workflows/release.yml": appJob("release", ID, KEY) + "        env:\n          K: " + KEY + "\n",
   });
-  assert.deepEqual(inEnv.errors, [".github/workflows/release.yml:13: do not use secrets in a workflow"]);
-  const twoJobs = await workflowsFor({
+  assert.deepEqual(secretErrors(inEnv), [".github/workflows/release.yml:13: do not use secrets in a workflow"]);
+  const twoJobs = await withSettings({
     ".github/workflows/release.yml": appJob("release", ID, KEY) + appJob(null, ID, KEY).split("\n").slice(3).join("\n"),
   });
-  assert.deepEqual(twoJobs.errors, [
+  assert.deepEqual(secretErrors(twoJobs), [
     ".github/workflows/release.yml:17: do not use secrets in a workflow",
     ".github/workflows/release.yml:18: do not use secrets in a workflow",
   ]);
@@ -176,8 +194,8 @@ const appStep = [
 ];
 // Return the line numbers with errors for a release.yml of these lines.
 const badLines = async (lines, file = "release.yml") => {
-  const result = await workflowsFor({ [`.github/workflows/${file}`]: [...lines, ""].join("\n") });
-  return result.errors.filter((e) => !e.includes("persist-credentials")).map((e) => Number(/:(\d+): do not use secrets in a workflow$/.exec(e)?.[1] ?? NaN));
+  const result = await withSettings({ [`.github/workflows/${file}`]: [...lines, ""].join("\n") });
+  return secretErrors(result).map((e) => Number(/:(\d+): do not use secrets in a workflow$/.exec(e)[1]));
 };
 
 test("the app secrets pass in the with block of the app step, with other inputs and steps", async () => {
@@ -254,12 +272,12 @@ test("the CLI exits 1 for a bad workflow and 0 for a clean tree", async () => {
     assert.equal(failRun.status, 1);
     assert.equal(
       failRun.stderr,
-      '.github/workflows/a.yml:9: pin "actions/checkout@v7" to a full 40-character commit SHA\n',
+      '.github/workflows/a.yml:10: pin "actions/checkout@v7" to a full 40-character commit SHA\n',
     );
     const passRun = spawnSync(process.execPath, [script, clean], { encoding: "utf8" });
     assert.equal(passRun.stderr, "");
     assert.equal(passRun.status, 0);
-    assert.equal(passRun.stdout, "1 workflow(s) pin actions to a SHA and set permissions. Only the release job uses the release app secrets.\n");
+    assert.equal(passRun.stdout, "1 workflow(s) pass the CI workflow rules. Only the steps that .github/check-workflows.json allows use secrets.\n");
   } finally {
     await removeTree(bad);
     await removeTree(clean);
@@ -289,7 +307,7 @@ test("permissions: write-all fails at the top level and in a job", async () => {
       "",
     ].join("\n"),
   });
-  assert.deepEqual(result.errors, [
+  assert.deepEqual(withoutTimeouts(result.errors), [
     '.github/workflows/a.yml:1: do not use "permissions: write-all"',
     '.github/workflows/a.yml:4: do not use "permissions: write-all"',
   ]);
@@ -310,7 +328,7 @@ test("a top-level write permission fails, and a job-level write permission passe
       "",
     ].join("\n"),
   });
-  assert.deepEqual(result.errors, [
+  assert.deepEqual(withoutTimeouts(result.errors), [
     '.github/workflows/a.yml:3: do not give "write" at the top level; give it to one job',
   ]);
 });
@@ -343,7 +361,7 @@ test("secrets: inherit and the whole secrets context fail", async () => {
     "",
   ];
   const result = await workflowsFor({ ".github/workflows/a.yml": lines.join("\n") });
-  assert.deepEqual(result.errors, [
+  assert.deepEqual(withoutTimeouts(result.errors), [
     '.github/workflows/a.yml:6: do not use "secrets: inherit". Pass only the secret that the job needs',
     ".github/workflows/a.yml:10: do not use the whole secrets context. Name one secret",
     ".github/workflows/a.yml:12: do not use the whole secrets context. Name one secret",
@@ -392,9 +410,9 @@ test("github.event and inputs expressions in a run block fail", async () => {
   );
   const result = await workflowsFor({ ".github/workflows/a.yml": text });
   assert.deepEqual(result.errors, [
-    `.github/workflows/a.yml:15: ${RUN_MESSAGE}`,
-    `.github/workflows/a.yml:18: ${RUN_MESSAGE}`,
-    `.github/workflows/a.yml:20: ${RUN_MESSAGE}`,
+    `.github/workflows/a.yml:16: ${RUN_MESSAGE}`,
+    `.github/workflows/a.yml:19: ${RUN_MESSAGE}`,
+    `.github/workflows/a.yml:21: ${RUN_MESSAGE}`,
   ]);
 });
 
@@ -427,10 +445,162 @@ test("a checkout step without persist-credentials: false fails", async () => {
   ];
   const result = await workflowsFor({ ".github/workflows/a.yml": lines.join("\n") });
   const message = 'set "persist-credentials: false" in the "with:" block of the checkout step';
-  assert.deepEqual(result.errors, [
+  assert.deepEqual(withoutTimeouts(result.errors), [
     `.github/workflows/a.yml:7: ${message}`,
     `.github/workflows/a.yml:8: ${message}`,
     `.github/workflows/a.yml:12: ${message}`,
     `.github/workflows/a.yml:23: ${message}`,
   ]);
+});
+
+// #303: each job sets timeout-minutes. A job that calls a reusable workflow
+// with "uses:" cannot set it, so the rule skips that job.
+test("a job without timeout-minutes fails, and a reusable workflow call passes", async () => {
+  const lines = [
+    "permissions:",
+    "  contents: read",
+    "jobs:",
+    "  a:",
+    "    runs-on: ubuntu-latest",
+    "    steps:",
+    "      - run: echo timeout-minutes: 5",
+    "  b:",
+    "    runs-on: ubuntu-latest",
+    "    timeout-minutes: 5",
+    "    steps:",
+    "      - run: echo",
+    "  call:",
+    `    uses: someone/repo/.github/workflows/a.yml@${SHA} # v1.0.0`,
+    "  c:",
+    "    runs-on: ubuntu-latest",
+    "",
+  ];
+  const result = await workflowsFor({ ".github/workflows/a.yml": lines.join("\n") });
+  assert.deepEqual(result.errors, [
+    '.github/workflows/a.yml:4: set "timeout-minutes" on the job "a"',
+    '.github/workflows/a.yml:15: set "timeout-minutes" on the job "c"',
+  ]);
+});
+
+// #303: the release and deploy rules in coding/security.md.
+const releaseWorkflow = (on, job, { concurrency = true, refCheck = true } = {}) => [
+  ...on,
+  "permissions:",
+  "  contents: read",
+  ...(concurrency ? ["concurrency:", "  group: release"] : []),
+  "jobs:",
+  "  plan:",
+  "    runs-on: ubuntu-latest",
+  "    timeout-minutes: 5",
+  "    steps:",
+  ...(refCheck ? ['      - run: test "$GITHUB_REF" = "refs/heads/main"'] : ["      - run: echo"]),
+  ...job,
+  "",
+].join("\n");
+const publishJob = (environment, run) => [
+  "  publish:",
+  ...(environment ? [`    environment: ${environment}`] : []),
+  "    runs-on: ubuntu-latest",
+  "    timeout-minutes: 5",
+  "    steps:",
+  `      - run: ${run}`,
+];
+const dispatch = ["on:", "  workflow_dispatch:", "    inputs:", "      bump:", "        type: string"];
+const RELEASE = {
+  on: '.github/workflows/a.yml: start a release or deploy workflow only by "workflow_dispatch"',
+  concurrency: '.github/workflows/a.yml: set "concurrency" in a release or deploy workflow, so that two runs do not overlap',
+  ref: '.github/workflows/a.yml: check that the ref is "refs/heads/main" in a release or deploy workflow, and stop on a different ref',
+};
+const errorsOf = async (text) => (await workflowsFor({ ".github/workflows/a.yml": text })).errors;
+
+test("a release workflow with dispatch, an environment, concurrency and a ref check passes", async () => {
+  for (const run of ['gh release create "v$V"', "npm publish", 'git push origin "refs/tags/v$V"', "git push --tags"]) {
+    assert.deepEqual(await errorsOf(releaseWorkflow(dispatch, publishJob("release", run))), [], run);
+  }
+  assert.deepEqual(await errorsOf(releaseWorkflow(["on: [workflow_dispatch]"], publishJob("production", "echo deploy"))), []);
+  const ifRef = [...publishJob("release", "npm publish"), "        if: github.ref == 'refs/heads/main'"];
+  assert.deepEqual(await errorsOf(releaseWorkflow(["on: workflow_dispatch # by hand"], ifRef, { refCheck: false })), []);
+});
+
+test("a release workflow with another trigger fails", async () => {
+  const triggers = [
+    ["on: [push, workflow_dispatch]"],
+    ["on:", "  workflow_dispatch:", "  push:", "    tags: ['v*']"],
+    ["on:", "  schedule:", "    - cron: '0 0 * * *'"],
+    ["on: pull_request"],
+    ["on:", "  - workflow_dispatch", "  - push"],
+    [],
+  ];
+  for (const on of triggers) {
+    assert.deepEqual(await errorsOf(releaseWorkflow(on, publishJob("release", "npm publish"))), [RELEASE.on], on.join(" "));
+  }
+});
+
+test("a job that releases, publishes or pushes a tag needs an environment", async () => {
+  for (const run of ["gh release upload v1 x", "npm publish --access public", "git push origin refs/tags/v1"]) {
+    assert.deepEqual(await errorsOf(releaseWorkflow(dispatch, publishJob(null, run))), [
+      '.github/workflows/a.yml:16: give the release or deploy job "publish" an "environment:"',
+    ]);
+  }
+});
+
+test("a release workflow without concurrency or a ref check fails", async () => {
+  const noConcurrency = releaseWorkflow(dispatch, publishJob("release", "npm publish"), { concurrency: false });
+  assert.deepEqual(await errorsOf(noConcurrency), [RELEASE.concurrency]);
+  const jobConcurrency = noConcurrency.replace("    environment: release", "    environment: release\n    concurrency: release");
+  assert.deepEqual(await errorsOf(jobConcurrency), []);
+  const noRef = releaseWorkflow(dispatch, publishJob("release", "npm publish"), { refCheck: false });
+  assert.deepEqual(await errorsOf(noRef), [RELEASE.ref]);
+  const refName = noRef.replace("      - run: echo", '      - run: test "$GITHUB_REF_NAME" = main\n      # GITHUB_REF must be refs/heads/main');
+  assert.deepEqual(await errorsOf(refName), [RELEASE.ref]);
+  const all = releaseWorkflow(["on: push"], publishJob("release", "echo"), { concurrency: false, refCheck: false });
+  assert.deepEqual(await errorsOf(all), [RELEASE.on, RELEASE.concurrency, RELEASE.ref]);
+});
+
+test("a workflow that does not release needs no dispatch, concurrency or ref check", async () => {
+  const lines = releaseWorkflow(["on: [push]"], publishJob(null, "gh release view v1"), { concurrency: false, refCheck: false });
+  const text = lines.replace("      - run: echo", "      # npm publish\n      - run: git push origin HEAD\n      - run: gh release list");
+  assert.deepEqual(await errorsOf(text), []);
+});
+
+// #303: the secret exception comes from .github/check-workflows.json. With
+// no settings file, no secret is allowed.
+test("the app secrets fail when the settings file does not allow them", async () => {
+  const result = await workflowsFor({ ".github/workflows/release.yml": appJob("release", ID, KEY) });
+  assert.deepEqual(secretErrors(result), [
+    ".github/workflows/release.yml:10: do not use secrets in a workflow",
+    ".github/workflows/release.yml:11: do not use secrets in a workflow",
+  ]);
+  const otherKey = JSON.parse(SETTINGS);
+  otherKey.allowedSecrets[0].with = { "app-id": "RELEASE_APP_ID" };
+  const one = await workflowsFor({
+    ".github/workflows/release.yml": appJob("release", ID, KEY),
+    ".github/check-workflows.json": JSON.stringify(otherKey),
+  });
+  assert.deepEqual(secretErrors(one), [".github/workflows/release.yml:11: do not use secrets in a workflow"]);
+});
+
+test("a settings file that is not valid fails", async () => {
+  const bad = [
+    "{",
+    "[]",
+    '{"allowedSecrets": {}}',
+    '{"allowedSecrets": [null]}',
+    '{"allowedSecrets": [{"file": "release.yml", "environment": "release", "action": "a/b"}]}',
+    '{"allowedSecrets": [{"file": "release.yml", "environment": "release", "action": "a/b", "with": {"k": 1}}]}',
+    '{"allowedSecrets": [{"file": 1, "environment": "release", "action": "a/b", "with": {}}]}',
+  ];
+  for (const text of bad) {
+    const result = await workflowsFor({ ".github/workflows/a.yml": good, ".github/check-workflows.json": text });
+    assert.equal(result.errors.length, 1, text);
+    assert.match(result.errors[0], /^\.github\/check-workflows\.json: /, text);
+  }
+  const empty = await workflowsFor({ ".github/workflows/a.yml": good, ".github/check-workflows.json": "{}" });
+  assert.deepEqual(empty.errors, []);
+});
+
+test("the dkstack settings file keeps the release app exception of #135", async () => {
+  const text = await readFile(join(repoRoot, ".github", "check-workflows.json"), "utf8");
+  assert.deepEqual(JSON.parse(text).allowedSecrets.map(({ decision, ...rest }) => rest), JSON.parse(SETTINGS).allowedSecrets);
+  assert.match(JSON.parse(text).allowedSecrets[0].decision, /2026-11-11.*#135/);
 });

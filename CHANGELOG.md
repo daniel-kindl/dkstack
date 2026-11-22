@@ -10,6 +10,13 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ## [Unreleased]
 
+### Added
+
+- `check-workflows` checks more CI workflow rules (#303). Each job sets `timeout-minutes`. A
+  release or deploy job needs an `environment:`, and its workflow starts only by
+  `workflow_dispatch`, sets `concurrency` and checks that the ref is `main`. The allowed secrets
+  are in `.github/check-workflows.json`, not in the code. dkstack keeps the release app exception.
+
 ## [1.6.0] - 2026-11-21
 
 ### Added
