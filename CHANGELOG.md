@@ -12,7 +12,33 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `scripts/check-pr-body.mjs` and a `validate` step (#301). The step checks the PR body for an
+  issue link, an Evidence section, one Observability line and a valid Visual verification line.
+- `check-adrs` checks the ADR file names and amendments (#307). A new ADR is named `NNNN-short-title.md`, and no two ADRs share a number. A change to an Accepted ADR only adds lines under a `### Amendment YYYY-MM-DD` heading. A new `--diff <file>` option gives the diff without git.
+- `scripts/check-suppressions.mjs` (#306). It reads the added lines of the diff against the
+  merge base. It fails on a blanket suppression and on a suppression with a rule ID but no
+  reason. A `NoWarn` in one project file needs rule IDs and a reason. It gives a warning, not a
+  failure, for a lowered number after a known coverage gate key or a raised `max-warnings`
+  number. `npm run check` and `validate` run it.
+- `scripts/audit-settings.mjs` and `npm run audit:settings` (#302). It reads the settings of a
+  repository with `gh api` and compares them with `setup-repo-protection`. It changes nothing.
+  The owner runs it. `validate` does not run it.
+- `check-workflows` checks more CI workflow rules (#303). Each job sets `timeout-minutes`. A
+  release or deploy job needs an `environment:`, and its workflow starts only by
+  `workflow_dispatch`, sets `concurrency` and checks that the ref is `main`. The allowed secrets
+  are in `.github/check-workflows.json`, not in the code. dkstack keeps the release app exception.
+  The check now fails closed. Jobs must be at 2 spaces under `jobs:`, and job keys at 4 spaces.
+  Triggers must be on the `on:` line or at 2 spaces under it. Another form fails, also when the
+  workflow does not release.
+  Consumer action: before you copy the new `check-workflows.mjs`, write each job at 2 spaces under
+  `jobs:` with its keys at 4 spaces, and each trigger on the `on:` line or at 2 spaces under it.
+- A `--diff` mode in `scripts/check-changelog.mjs`. A change that adds a page or a skill must also change `## [Unreleased]`. The validate workflow runs it (#310).
 - `scripts/audit-issues.mjs` and `npm run audit:issues` (#308). The tool reads the open issues and the labels of a repository with `gh`. It lists an issue with no type label, more than one, or one that dkstack does not name. It lists an issue with no Goal or Acceptance criteria heading. It lists a relation in text that the tracker does not have. It lists a missing type or priority label. It writes nothing.
+
+### Changed
+
+- `check-writing` now exits 1 when it finds a long sentence, a long step or a semicolon (#299).
+  Before, it only warned.
 
 ## [1.6.0] - 2026-11-21
 
