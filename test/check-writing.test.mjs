@@ -6,9 +6,9 @@ import { dirname, join } from "node:path";
 import { checkWriting, writingWarnings } from "../scripts/check-writing.mjs";
 import { makeTree, removeTree } from "./helpers.mjs";
 
-// SCR-M8 in #154, after the D3 sub-choices: warn on a step (numbered or a
-// checklist item) over 20 words, a
-// sentence over 25 words and a semicolon. The check fails when it finds a problem (#299).
+// SCR-M8 in #154, after the D3 sub-choices: find a step (numbered or a
+// checklist item) over 20 words, a sentence over 25 words and a semicolon.
+// The check fails when it finds a problem (#299).
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const script = join(repoRoot, "scripts", "check-writing.mjs");
