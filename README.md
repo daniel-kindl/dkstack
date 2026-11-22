@@ -78,7 +78,9 @@ each pull request to `main` and on each push to `main`. It does these checks:
   workflow starts only by `workflow_dispatch`, checks that the ref is `main`, uses an environment
   and sets `concurrency`. The check finds a release job from a list of commands and actions, so a
   deploy job must set `environment:` to be checked. Only the release job uses the release app secrets. The allowed secrets
-  are in [.github/check-workflows.json](.github/check-workflows.json).
+  are in [.github/check-workflows.json](.github/check-workflows.json). A trigger or a job that is not
+  at 2 spaces under `on:` or `jobs:` fails the check, so the check never passes a form that it
+  cannot read.
 - actionlint and shellcheck find no fault in the workflows.
 - CHANGELOG.md has an entry for the version in `package.json`, an `## [Unreleased]` line and its
   compare link.
