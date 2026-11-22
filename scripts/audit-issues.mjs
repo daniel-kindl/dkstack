@@ -2,9 +2,10 @@
 // Audit the open issues and the labels of a GitHub repository against the issue rules.
 // It reads with gh and never writes. It is not a check:* script, because the result depends
 // on the live tracker and not on the files.
-// It reports four findings. An issue has no type label or more than one. An issue has no Goal
-// or Acceptance criteria heading. A relation is in the body text and the tracker does not have
-// it. The repository lacks a type or priority label.
+// It reports four findings. An issue has no type label, more than one, or one that the
+// issue rules do not name. An issue has no Goal or Acceptance criteria heading. A relation
+// is in the body text and the tracker does not have it. The repository lacks a type or
+// priority label.
 // It reads each page of the open issues and of the labels, so no list is cut off.
 // The tool needs Node.js 24 or later and an authenticated gh (GitHub CLI).
 // Usage: node scripts/audit-issues.mjs <owner/repo>
@@ -25,8 +26,8 @@ export function typeFindings(issue) {
   const types = labelNames(issue).filter((n) => n.startsWith("type:"));
   const unknown = types.filter((n) => !TYPE_LABELS.includes(n));
   const known = types.filter((n) => TYPE_LABELS.includes(n));
-  const findings = unknown.map((n) => `#${issue.number} has ${n}, which is not a dkstack type label`);
-  if (known.length === 0) findings.push(`#${issue.number} has no type: label`);
+  const findings = unknown.map((n) => `#${issue.number} has ${n}, which is not a type label from the issue rules`);
+  if (known.length === 0 && unknown.length === 0) findings.push(`#${issue.number} has no type: label`);
   if (known.length > 1) {
     findings.push(`#${issue.number} has ${known.length} type: labels (${known.join(", ")})`);
   }

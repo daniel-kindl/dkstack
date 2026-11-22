@@ -202,17 +202,16 @@ const ALL_LABELS = ["type:bug", "type:feature", "type:chore", "type:refactor", "
 const ISSUES_KEY = "api --paginate --slurp repos/o/r/issues";
 const LABELS_KEY = "api --paginate --slurp repos/o/r/labels";
 
-test("a type: label that dkstack does not name is a finding (M1)", () => {
+test("a type: label that the issue rules do not name is a finding", () => {
   assert.deepEqual(typeFindings({ number: 9, labels: [{ name: "type:question" }] }), [
-    "#9 has type:question, which is not a dkstack type label",
-    "#9 has no type: label",
+    "#9 has type:question, which is not a type label from the issue rules",
   ]);
   assert.deepEqual(typeFindings({ number: 9, labels: [{ name: "type:bug" }, { name: "type:question" }] }), [
-    "#9 has type:question, which is not a dkstack type label",
+    "#9 has type:question, which is not a type label from the issue rules",
   ]);
 });
 
-test("audit reads every page and skips pull requests (H1)", () => {
+test("audit reads every page and skips pull requests", () => {
   const good = { number: 1, labels: [{ name: "type:bug" }], body: "## Goal\n## Acceptance criteria\n" };
   const pr = { number: 2, labels: [], body: "", pull_request: {} };
   const { gh } = fakeGh({ [ISSUES_KEY]: JSON.stringify([[good], [pr]]), [LABELS_KEY]: JSON.stringify([ALL_LABELS.slice(0, 5), ALL_LABELS.slice(5)]) });
@@ -222,14 +221,14 @@ test("audit reads every page and skips pull requests (H1)", () => {
   assert.equal(audit("o/r", bad.gh)[3].status, "NOT RUN");
 });
 
-test("a tracker response that is not an object is NOT RUN, not PASS (L1)", () => {
+test("a tracker response that is not an object is NOT RUN, not PASS", () => {
   const { gh } = fakeGh({ [ISSUES_KEY]: PAGES([issue(5)]), [LABELS_KEY]: PAGES(ALL_LABELS), "issue view 5": "5" });
   const items = audit("o/r", gh);
   assert.equal(items[2].status, "NOT RUN");
   assert.match(items[2].lines.join("\n"), /unexpected response shape/);
 });
 
-test("the label lists match skills/setup-labels/SKILL.md and workflow/issues.md (M2)", () => {
+test("the label lists match skills/setup-labels/SKILL.md and workflow/issues.md", () => {
   const skill = readFileSync(join(repoRoot, "skills/setup-labels/SKILL.md"), "utf8");
   const labelsIn = (text) => [...new Set([...text.matchAll(/`((?:type|priority):[a-z0-9]+)`/g)].map((m) => m[1]))];
   const typeLine = /^\s*- Type: (.*)$/m.exec(skill)[1];
