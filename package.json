@@ -21,8 +21,10 @@
     "check:maps": "node scripts/check-maps.mjs",
     "check:context": "node scripts/check-context.mjs",
     "check:adrs": "node scripts/check-adrs.mjs",
+    "check:suppressions": "node scripts/check-suppressions.mjs",
     "check:writing": "node scripts/check-writing.mjs",
+    "audit:settings": "node scripts/audit-settings.mjs",
     "test": "node --test --experimental-test-coverage --test-coverage-include=scripts/** --test-coverage-lines=95 --test-coverage-branches=90 test/*.test.mjs",
-    "check": "npm run check:skills && npm run check:links && npm run check:dashes && npm run check:workflows && npm run check:changelog && npm run check:maps && npm run check:context && npm run check:adrs && npm run check:writing && npm test"
+    "check": "npm run check:skills && npm run check:links && npm run check:dashes && npm run check:workflows && npm run check:changelog && npm run check:maps && npm run check:context && npm run check:adrs && npm run check:suppressions && npm run check:writing && npm test"
   }
 }
