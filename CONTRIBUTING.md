@@ -31,6 +31,8 @@ npm run check
 request title with `npm run check:title -- "<title>"`. The `validate` workflow runs the same
 checks, the title check and actionlint.
 
+To audit the open issues and the labels of a repository, run `npm run audit:issues -- <owner/repo>`. The tool only reads, and the `validate` workflow does not run it.
+
 ## Add a page or a skill
 
 - Add the page to the `index.md` of its section, or the skill to `skills/index.md`.

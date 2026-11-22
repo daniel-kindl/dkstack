@@ -1,0 +1,12 @@
+#!/bin/sh
+# A fake gh for the audit-issues tests. It logs each call and answers from recorded JSON.
+# FAKE_GH_SRC holds the fixtures. FAKE_GH_LOG is the call log. FAKE_GH_FAIL names fixtures that fail.
+printf '%s\n' "$*" >> "$FAKE_GH_LOG"
+case "$1 $2" in
+  "issue list") name=issues ;;
+  "label list") name=labels ;;
+  "issue view") name="relations-$3" ;;
+  *) echo "unexpected gh command: $*" >&2; exit 1 ;;
+esac
+case " $FAKE_GH_FAIL " in *" $name "*) echo "gh: HTTP 500" >&2; exit 1 ;; esac
+cat "$FAKE_GH_SRC/$name.json"

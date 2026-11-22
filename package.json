@@ -12,6 +12,7 @@
     "node": ">=24"
   },
   "scripts": {
+    "audit:issues": "node scripts/audit-issues.mjs",
     "check:skills": "node scripts/check-skills.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check:dashes": "node scripts/check-dashes.mjs",

@@ -89,6 +89,8 @@ To run the same checks locally, except the title check and actionlint, use Node 
 npm run check
 ```
 
+To audit the open issues and the labels of a repository, run `npm run audit:issues -- <owner/repo>`. The tool reads with `gh` and writes nothing.
+
 The workflow does not tag, release or publish.
 
 ## What is in each section
