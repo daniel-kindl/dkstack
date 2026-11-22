@@ -10,6 +10,11 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ## [Unreleased]
 
+### Changed
+
+- `check-writing` now exits 1 when it finds a long sentence, a long step or a semicolon (#299).
+  Before, it only warned.
+
 ## [1.6.0] - 2026-11-21
 
 ### Added
