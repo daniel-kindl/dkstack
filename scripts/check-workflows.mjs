@@ -21,13 +21,19 @@
 //   token is not left in .git/config for later steps.
 // - Each job sets "timeout-minutes". A job that calls a reusable workflow
 //   with "uses:" cannot set it, so the check skips that job.
-// - A release or deploy job has an "environment:" key, or it runs
-//   "gh release" (not view, list or download), "npm publish" or a tag push.
-//   That job needs an "environment:". Its workflow starts only by
-//   "workflow_dispatch" and sets "concurrency" at the top level or on each
-//   such job. A line of the workflow compares "github.ref" or "GITHUB_REF"
-//   with "refs/heads/main", as in a step that stops on a different ref.
-// The check reads lines. It does not parse YAML.
+// - A release or deploy job has an "environment:" key, or a line that
+//   RELEASE_MARKERS names, such as "npm publish", a tag push or a release
+//   action. That job needs an "environment:". RELEASE_MARKERS is a list, so a
+//   deploy job that it does not name must set "environment:" to be checked.
+//   The workflow starts only by "workflow_dispatch" and sets "concurrency"
+//   at the top level or on each such job. An "if:" expression or a "run:"
+//   script line compares "github.ref" or "GITHUB_REF" with
+//   "refs/heads/main". The check cannot prove that the comparison stops
+//   the run.
+// The check reads lines. It does not parse YAML. Job names must be at 2
+// spaces under "jobs:" and job keys at 4 spaces. Triggers must be on the
+// "on:" line or at 2 spaces under it. Another form fails, so that no job or
+// trigger is missed.
 
 import { readdir, readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
@@ -56,15 +62,27 @@ const CHECKOUT_ACTION = "actions/checkout@";
 const PERSIST_FALSE = /^\s+persist-credentials\s*:\s*(["']?)false\1\s*(#.*)?$/;
 const PERSIST_MESSAGE = 'set "persist-credentials: false" in the "with:" block of the checkout step';
 const TOP_KEY = /^(["']?)([^"':\s]+)\1\s*:\s*(.*)$/;
-const TRIGGER_ITEM = /^ {2}(?:-\s+)?([A-Za-z_]+)/;
-const JOB = /^ {2}([^\s#:][^:]*?)\s*:/;
+const TRIGGER_ITEM = /^ {2}(?:-\s+)?(["']?)([A-Za-z_]+)\1\s*(?::|$)/;
+const ON_MESSAGE = 'write "on:" on one line, or as a block with one trigger at 2 spaces on each line';
+const JOB = /^ {2}(["']?)([A-Za-z_][\w-]*)\1\s*:\s*(?:#.*)?$/;
+const JOB_MESSAGE = 'write each job as "name:" at 2 spaces under "jobs:", with its keys at 4 spaces';
 const JOB_KEY = /^ {4}(timeout-minutes|environment|uses|concurrency)\s*:\s*(["']?)([^"'\s#]*)\2/;
-const RELEASE_COMMAND =
-  /\bgh\s+release\s+(?!view\b|list\b|download\b)\S|\bnpm\s+publish\b|\bgit\s+push\b.*(?:--tags\b|--follow-tags\b|refs\/tags\/)/;
+// The commands and actions that mark a release or deploy job.
+const RELEASE_MARKERS = [
+  /\bgh\s+release\s+(?!view\b|list\b|download\b)\S/,
+  /\b(?:npm|pnpm|cargo)\s+publish\b/,
+  /\byarn\s+(?:npm\s+)?publish\b/,
+  /\bgit\s+push\b.*(?:--tags\b|--follow-tags\b|refs\/tags\/|\s["']?v[\d$])/,
+  /\bdocker\s+push\b/,
+  /\buses\s*:\s*["']?(?:softprops\/action-gh-release|ncipollo\/release-action)@/,
+];
+const IF_KEY = /^\s*(?:-\s+)?if\s*:/;
 const REF = /\bgithub\.ref\b|\bGITHUB_REF\b/;
-const MAIN_REF = /\brefs\/heads\/main\b/;
+const MAIN_REF = /refs\/heads\/main(?![\w/.-])/;
+const COMPARE = /==|!=|\s=\s/;
 
 const isMap = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+const isText = (value) => typeof value === "string" && value !== "";
 const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 // Return the allowed secrets of the settings file, as { allowed, error }.
@@ -89,9 +107,10 @@ async function readSettings(root) {
     list.every(
       (entry) =>
         isMap(entry) &&
-        ["file", "environment", "action"].every((key) => typeof entry[key] === "string") &&
+        ["file", "environment", "action"].every((key) => isText(entry[key])) &&
         isMap(entry.with) &&
-        Object.values(entry.with).every((secret) => typeof secret === "string"),
+        Object.keys(entry.with).length > 0 &&
+        Object.entries(entry.with).every(([key, secret]) => isText(key) && isText(secret)),
     );
   if (!valid) return { allowed: [], error: `${SETTINGS}: ${SETTINGS_MESSAGE}` };
   const allowed = list.map((entry) => ({
@@ -132,6 +151,10 @@ export async function checkWorkflows(root) {
     let refCheck = false;
     const jobs = [];
     let job = null;
+    // The indent of the first trigger under "on:", or -1.
+    let onIndent = -1;
+    // True when the check reported a line under "jobs:" that is not in a job.
+    let jobReported = false;
     // The environment name of the current job, for the allowed secrets.
     let jobEnvironment = "";
     // The state of the current step: its action and its "with:" block.
@@ -158,12 +181,15 @@ export async function checkWorkflows(root) {
     text.split(/\r?\n/).forEach((line, i) => {
       const where = `${rel}:${i + 1}`;
       const lineIndent = line.search(/\S/);
-      if (!line.trimStart().startsWith("#")) {
-        if (job && RELEASE_COMMAND.test(line)) job.releases = true;
-        if (REF.test(line) && MAIN_REF.test(line)) refCheck = true;
-      }
+      const comment = line.trimStart().startsWith("#");
       // A line in a block script ("run: |" or "run: >") is shell code, not YAML.
-      if (runIndent !== -1 && (lineIndent === -1 || lineIndent > runIndent)) {
+      const inRunBlock = runIndent !== -1 && (lineIndent === -1 || lineIndent > runIndent);
+      if (!comment) {
+        if (job && RELEASE_MARKERS.some((re) => re.test(line))) job.releases = true;
+        const refLine = inRunBlock || RUN_KEY.test(line) || IF_KEY.test(line);
+        if (refLine && REF.test(line) && MAIN_REF.test(line) && COMPARE.test(line)) refCheck = true;
+      }
+      if (inRunBlock) {
         if (UNSAFE_IN_RUN.test(line)) errors.push(`${where}: ${RUN_MESSAGE}`);
         if (SECRETS.test(line)) errors.push(`${where}: do not use secrets in a workflow`);
         checkWholeSecrets(line, where);
@@ -204,20 +230,56 @@ export async function checkWorkflows(root) {
         topKey = top?.[2] ?? "";
         job = null;
         jobEnvironment = "";
+        onIndent = -1;
+        const value = (top?.[3] ?? "").replace(/(^|\s)#.*$/, "").trim();
         if (topKey === "concurrency") topConcurrency = true;
         if (topKey === "on") {
-          const value = top[3].replace(/(^|\s)#.*$/, "");
+          // A flow list or map that goes on to the next line can hide a trigger.
+          if (/^[[{]/.test(value) && !/[\]}]$/.test(value)) {
+            errors.push(`${where}: ${ON_MESSAGE}`);
+            triggers.push("?");
+          }
           for (const m of value.matchAll(/[A-Za-z_]+/g)) triggers.push(m[0]);
         }
-      }
-      const item = topKey === "on" ? TRIGGER_ITEM.exec(line) : null;
-      if (item) triggers.push(item[1]);
-      const jobStart = topKey === "jobs" ? JOB.exec(line) : null;
-      if (jobStart) {
-        job = { name: jobStart[1], line: i + 1, timeout: false, environment: false, calls: false };
-        job.concurrency = job.releases = false;
-        jobs.push(job);
-        jobEnvironment = "";
+        if (topKey === "jobs" && value !== "" && value !== "{}") errors.push(`${where}: ${JOB_MESSAGE}`);
+      } else if (lineIndent > 0 && !comment && topKey === "on") {
+        if (onIndent === -1) onIndent = lineIndent;
+        const item = lineIndent === 2 ? TRIGGER_ITEM.exec(line) : null;
+        if (item) triggers.push(item[2]);
+        else if (lineIndent <= onIndent) {
+          errors.push(`${where}: ${ON_MESSAGE}`);
+          triggers.push("?");
+        }
+      } else if (lineIndent > 0 && !comment && topKey === "jobs") {
+        // Each line at job indent ends the job before it. A line there that
+        // is not a job start fails, so that it cannot keep the job state.
+        if (lineIndent <= 2) {
+          job = null;
+          jobEnvironment = "";
+          const jobStart = lineIndent === 2 ? JOB.exec(line) : null;
+          if (jobStart) {
+            job = {
+              name: jobStart[2],
+              line: i + 1,
+              keyIndent: -1,
+              timeout: false,
+              environment: false,
+              calls: false,
+              concurrency: false,
+              releases: false,
+            };
+            jobs.push(job);
+          } else {
+            errors.push(`${where}: ${JOB_MESSAGE}`);
+          }
+          jobReported = !jobStart;
+        } else if (!job) {
+          if (!jobReported) errors.push(`${where}: ${JOB_MESSAGE}`);
+          jobReported = true;
+        } else if (job.keyIndent === -1) {
+          job.keyIndent = lineIndent;
+          if (lineIndent !== 4) errors.push(`${where}: ${JOB_MESSAGE}`);
+        }
       }
       const jobKey = job ? JOB_KEY.exec(line) : null;
       if (jobKey) {

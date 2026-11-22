@@ -589,6 +589,13 @@ test("a settings file that is not valid fails", async () => {
     '{"allowedSecrets": [{"file": "release.yml", "environment": "release", "action": "a/b"}]}',
     '{"allowedSecrets": [{"file": "release.yml", "environment": "release", "action": "a/b", "with": {"k": 1}}]}',
     '{"allowedSecrets": [{"file": 1, "environment": "release", "action": "a/b", "with": {}}]}',
+    // L1 in the review of #323: an empty string or an empty "with" map.
+    '{"allowedSecrets": [{"file": "release.yml", "environment": "", "action": "a/b", "with": {"k": "S"}}]}',
+    '{"allowedSecrets": [{"file": "", "environment": "release", "action": "a/b", "with": {"k": "S"}}]}',
+    '{"allowedSecrets": [{"file": "release.yml", "environment": "release", "action": "", "with": {"k": "S"}}]}',
+    '{"allowedSecrets": [{"file": "release.yml", "environment": "release", "action": "a/b", "with": {}}]}',
+    '{"allowedSecrets": [{"file": "release.yml", "environment": "release", "action": "a/b", "with": {"k": ""}}]}',
+    '{"allowedSecrets": [{"file": "release.yml", "environment": "release", "action": "a/b", "with": {"": "S"}}]}',
   ];
   for (const text of bad) {
     const result = await workflowsFor({ ".github/workflows/a.yml": good, ".github/check-workflows.json": text });
@@ -603,4 +610,74 @@ test("the dkstack settings file keeps the release app exception of #135", async 
   const text = await readFile(join(repoRoot, ".github", "check-workflows.json"), "utf8");
   assert.deepEqual(JSON.parse(text).allowedSecrets.map(({ decision, ...rest }) => rest), JSON.parse(SETTINGS).allowedSecrets);
   assert.match(JSON.parse(text).allowedSecrets[0].decision, /2026-11-11.*#135/);
+});
+
+// The review of #323 found these gaps. The check fails closed on each one.
+const JOB_INDENT = 'write each job as "name:" at 2 spaces under "jobs:", with its keys at 4 spaces';
+const ON_FORM = 'write "on:" on one line, or as a block with one trigger at 2 spaces on each line';
+
+test("H1: a line at job indent that is not a job start fails and ends the job", async () => {
+  const later = ["  ? other", "  :", "    runs-on: ubuntu-latest", "    timeout-minutes: 5", "    steps:", ...appStep];
+  const result = await withSettings({ ".github/workflows/release.yml": [...header, ...appStep, ...later, ""].join("\n") });
+  assert.deepEqual(secretErrors(result), [
+    ".github/workflows/release.yml:22: do not use secrets in a workflow",
+    ".github/workflows/release.yml:23: do not use secrets in a workflow",
+  ]);
+  assert.ok(result.errors.includes(`.github/workflows/release.yml:14: ${JOB_INDENT}`), result.errors.join("\n"));
+  assert.ok(result.errors.includes(`.github/workflows/release.yml:15: ${JOB_INDENT}`), result.errors.join("\n"));
+});
+
+test("H2: jobs or job keys at another indent fail", async () => {
+  const top = ["on: push", "permissions:", "  contents: read", "jobs:"];
+  const jobs4 = [...top, "    pub:", "      runs-on: ubuntu-latest", "      steps:", "        - run: npm publish"];
+  assert.deepEqual(await errorsOf(jobs4.join("\n") + "\n"), [`.github/workflows/a.yml:5: ${JOB_INDENT}`]);
+  const keys6 = [...top, "  pub:", "      environment: production", "      timeout-minutes: 5", "      runs-on: x"];
+  assert.ok((await errorsOf(keys6.join("\n") + "\n")).includes(`.github/workflows/a.yml:6: ${JOB_INDENT}`));
+  const flow = ["on: push", "permissions:", "  contents: read", "jobs: { pub: { runs-on: x } }"];
+  assert.deepEqual(await errorsOf(flow.join("\n") + "\n"), [`.github/workflows/a.yml:4: ${JOB_INDENT}`]);
+});
+
+test("M1: the ref check counts only in an if: expression or a run: script", async () => {
+  const noRef = releaseWorkflow(dispatch, publishJob("release", "npm publish"), { refCheck: false });
+  const cases = [
+    "      - name: we skip github.ref and refs/heads/main\n        run: echo",
+    "      - if: github.ref == 'refs/heads/main-old'\n        run: echo",
+    "      - env:\n          R: ${{ github.ref == 'refs/heads/main' }}\n        run: echo",
+    '      - run: echo "$GITHUB_REF refs/heads/main"',
+  ];
+  for (const step of cases) {
+    assert.deepEqual(await errorsOf(noRef.replace("      - run: echo", step)), [RELEASE.ref], step);
+  }
+  const block = '      - run: |\n          if [ "$GITHUB_REF" != "refs/heads/main" ]; then\n            exit 1\n          fi';
+  assert.deepEqual(await errorsOf(noRef.replace("      - run: echo", block)), []);
+});
+
+test("M2: more release commands and the release actions need an environment", async () => {
+  const runs = [
+    "pnpm publish",
+    "yarn npm publish",
+    "yarn publish",
+    "git push origin v1.2.3",
+    'git push origin "v$VERSION"',
+    "docker push x/y",
+    "cargo publish",
+  ];
+  const message = '.github/workflows/a.yml:16: give the release or deploy job "publish" an "environment:"';
+  for (const run of runs) {
+    assert.deepEqual(await errorsOf(releaseWorkflow(dispatch, publishJob(null, run))), [message], run);
+  }
+  for (const action of ["softprops/action-gh-release", "ncipollo/release-action"]) {
+    const text = releaseWorkflow(dispatch, publishJob(null, "echo")).replace(/ {6}- run: echo\n$/, `      - uses: ${action}@${SHA} # v2.0.0\n`);
+    assert.deepEqual(await errorsOf(text), [message], action);
+  }
+});
+
+test("M3: an on: form that the check cannot read fails", async () => {
+  const multi = releaseWorkflow(["on: [workflow_dispatch,", "    push]"], publishJob("release", "npm publish"));
+  const both = [`.github/workflows/a.yml:1: ${ON_FORM}`, `.github/workflows/a.yml:2: ${ON_FORM}`, RELEASE.on];
+  assert.deepEqual(await errorsOf(multi), both);
+  const flowBlock = releaseWorkflow(["on:", "  [workflow_dispatch, push]"], publishJob("release", "npm publish"));
+  assert.deepEqual(await errorsOf(flowBlock), [`.github/workflows/a.yml:2: ${ON_FORM}`, RELEASE.on]);
+  const oneLine = releaseWorkflow(["on: { workflow_dispatch: {} }"], publishJob("release", "npm publish"));
+  assert.deepEqual(await errorsOf(oneLine), []);
 });

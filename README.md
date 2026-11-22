@@ -76,7 +76,8 @@ each pull request to `main` and on each push to `main`. It does these checks:
 - Markdown files have no em dash or en dash.
 - Workflows pin actions, set permissions and set `timeout-minutes` on each job. A release or deploy
   workflow starts only by `workflow_dispatch`, checks that the ref is `main`, uses an environment
-  and sets `concurrency`. Only the release job uses the release app secrets. The allowed secrets
+  and sets `concurrency`. The check finds a release job from a list of commands and actions, so a
+  deploy job must set `environment:` to be checked. Only the release job uses the release app secrets. The allowed secrets
   are in [.github/check-workflows.json](.github/check-workflows.json).
 - actionlint and shellcheck find no fault in the workflows.
 - CHANGELOG.md has an entry for the version in `package.json`, an `## [Unreleased]` line and its
