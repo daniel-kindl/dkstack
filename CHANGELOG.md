@@ -14,8 +14,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 - `scripts/check-breaking.mjs` (#300). On a pull request, it lists each removed page, removed
   skill and removed anchor that a skill or `AGENTS.md` links. If it finds one, the title must
-  have `!` and `## [Unreleased]` must have a "Consumer action:" line. An anchor that the page
-  keeps as a heading or an HTML id is not removed.
+  have `!` and `## [Unreleased]` must have a new "Consumer action:" line. An anchor that the
+  page keeps as a heading, or as an HTML id or name attribute, is not removed.
 
 ## [1.6.0] - 2026-11-21
 

@@ -24,7 +24,7 @@ const LINK_PATTERN = /!?\[[^\]]*\]\(\s*(<[^>]*>|(?:[^\s()]|\([^\s()]*\))+)(?:\s+
 // <a href="target"> in HTML. The value is in double quotes, in single quotes
 // or has no quotes.
 const HTML_HREF_PATTERN = /<a\s[^>]*\bhref\s*=\s*(?:"([^"]+)"|'([^']+)'|([^\s"'>]+))/gi;
-export const SCHEME_PATTERN = /^[a-z][a-z0-9+.-]*:/i;
+const SCHEME_PATTERN = /^[a-z][a-z0-9+.-]*:/i;
 // A bare URL in prose. Trailing punctuation is not part of the URL.
 const BARE_URL_PATTERN = /https?:\/\/[^\s<>()[\]"'`]+/g;
 const TRAILING_PUNCTUATION = /[.,;:!?]+$/;

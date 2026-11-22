@@ -130,17 +130,65 @@ test("a link that was already broken at the base is not an item", () => {
   assert.deepEqual(breakingItems(tree(base), tree(base)), []);
 });
 
+// L1 on #326: a line from an earlier pull request does not cover a new breaking change.
+test("a Consumer action line that [Unreleased] had at the merge base does not count", () => {
+  const earlier = CHANGELOG("- Consumer action: earlier change.\n");
+  const missing = ['the ## [Unreleased] section of CHANGELOG.md has no new line that starts with "Consumer action:"'];
+  assert.deepEqual(missingPieces("docs!: remove kiss", earlier, earlier), missing);
+  assert.deepEqual(missingPieces("docs!: remove kiss",
+    CHANGELOG("- Consumer action: earlier change.\n- Consumer action: stop reading kiss.md.\n"), earlier), []);
+});
+
+test("the CLI fails when only an earlier Consumer action line is in [Unreleased]", async () => {
+  const root = await makeTree({ ...BASE, "CHANGELOG.md": CHANGELOG("- Consumer action: earlier change.\n") });
+  try {
+    git(root, "init", "-q", "-b", "main");
+    git(root, "add", ".");
+    git(root, "commit", "-q", "-m", "base");
+    git(root, "switch", "-q", "-c", "work");
+    await rm(join(root, "guide/other.md"));
+    git(root, "commit", "-q", "-am", "remove other");
+    const r = run(root, "docs!: remove other");
+    assert.equal(r.status, 1);
+    assert.match(r.stderr, /^missing: the ## \[Unreleased\] section of CHANGELOG\.md has no new line/m);
+  } finally {
+    await removeTree(root);
+  }
+});
+
+// L2 on #326: a map in docs/maps/ is planning state that chart-route owns. No consumer links it.
+test("a removed map in docs/maps is not breaking", () => {
+  assert.deepEqual(breakingItems(tree(BASE), tree(without(BASE, "docs/maps/flow.md"))), []);
+});
+
+// L3 on #326: each guard of the anchor search has a case that needs it.
+test("two links to one removed anchor give one item", () => {
+  const base = { ...BASE, "AGENTS.md": "[a](guide/rules.md#keep-it)\n\n[b](guide/rules.md#keep-it)\n" };
+  const head = { ...base, "guide/rules.md": "# Rules\n\n## Old name\n" };
+  assert.deepEqual(breakingItems(tree(base), tree(head)), ["removed anchor guide/rules.md#keep-it (linked from AGENTS.md:1)"]);
+});
+
+test("a link to a page that only HEAD has, or outside the repository, is not an item", () => {
+  const base = { ...BASE, "AGENTS.md": "[a](guide/new.md#x) [b](../outside.md#x) [c](https://example.com/guide/rules.md#keep-it)\n" };
+  const head = { ...base, "guide/new.md": "# New\n", "guide/rules.md": "# Rules\n\n## Old name\n" };
+  const strict = (files) => ({ paths: Object.keys(files), read: (path) => {
+    if (!(path in files)) throw new Error(`no file ${path}`);
+    return files[path];
+  } });
+  assert.deepEqual(breakingItems(strict(base), strict(head)), []);
+});
+
 test("the title needs ! and [Unreleased] needs a Consumer action line when there is an item", () => {
   const good = CHANGELOG("### Removed\n\n- Consumer action: change `x` to `y`.\n");
   assert.deepEqual(missingPieces("feat(skills)!: rename x", good), []);
   assert.deepEqual(missingPieces("feat!: rename x", CHANGELOG("Consumer action: do it.\n")), []);
   assert.deepEqual(missingPieces("feat(skills): rename x", CHANGELOG("- Old line.\n")), [
     'the pull request title has no "!" before the colon: feat(skills): rename x',
-    'the ## [Unreleased] section of CHANGELOG.md has no line that starts with "Consumer action:"',
+    'the ## [Unreleased] section of CHANGELOG.md has no new line that starts with "Consumer action:"',
   ]);
   assert.deepEqual(missingPieces("feat: x!: y", good), ['the pull request title has no "!" before the colon: feat: x!: y']);
   assert.deepEqual(missingPieces("feat!: x", null), [
-    'the ## [Unreleased] section of CHANGELOG.md has no line that starts with "Consumer action:"',
+    'the ## [Unreleased] section of CHANGELOG.md has no new line that starts with "Consumer action:"',
   ]);
 });
 
@@ -164,7 +212,7 @@ test("the CLI fails for a removed page without ! and Consumer action, and names 
     assert.equal(r.stderr, [
       "breaking: removed page guide/other.md",
       'missing: the pull request title has no "!" before the colon: docs: remove other',
-      'missing: the ## [Unreleased] section of CHANGELOG.md has no line that starts with "Consumer action:"',
+      'missing: the ## [Unreleased] section of CHANGELOG.md has no new line that starts with "Consumer action:"',
       "",
     ].join("\n"));
   } finally {
@@ -222,4 +270,10 @@ test("validate runs check-breaking on pull_request with the title through env", 
   assert.ok(step.includes("if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}"));
   assert.match(step, /TITLE: \$\{\{ github\.event\.pull_request\.title \}\}/);
   assert.match(step, /^\s+run: node scripts\/check-breaking\.mjs$/m);
+});
+
+test("an anchor in a file that is not Markdown is not an item", () => {
+  const base = { ...BASE, "AGENTS.md": "[a](notes.txt#top)\n", "notes.txt": "# Top\n" };
+  const head = { ...base, "notes.txt": "# Other\n" };
+  assert.deepEqual(breakingItems(tree(base), tree(head)), []);
 });

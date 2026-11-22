@@ -7,7 +7,9 @@
 // with git ls-tree and git show, so it does not see uncommitted changes. These
 // are breaking items:
 //
-// - A removed .md page. Pages under docs/maps/ and test/ do not count.
+// - A removed .md page. Pages under test/ are fixtures, and a map under
+//   docs/maps/ is planning state that the chart-route skill owns. No consumer
+//   links them, so they do not count.
 // - A removed skill folder: skills/<name>/SKILL.md is gone at HEAD.
 // - A removed anchor that a skill (skills/**) or AGENTS.md links at the base,
 //   with a relative link, a "#anchor" link or a repository URL. The anchor is
@@ -16,7 +18,8 @@
 // A renamed file counts as removed. If there is an item, the pull request
 // title in the TITLE environment variable must have "!" before the colon, and
 // the "## [Unreleased]" section of CHANGELOG.md at HEAD must have a line that
-// starts with "Consumer action:" (after an optional "- ").
+// starts with "Consumer action:" (after an optional "- "). The line must be
+// new: a line that [Unreleased] had at the merge base does not count.
 //
 // The validate workflow runs this check only on pull_request, because a push
 // to main has no pull request title. The title check ran on the pull request.
@@ -26,7 +29,7 @@
 import { execFileSync } from "node:child_process";
 import { posix, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { REPO_URL_PATTERN, SCHEME_PATTERN, anchorsIn, fragmentOf, linksIn } from "./check-links.mjs";
+import { REPO_URL_PATTERN, anchorsIn, fragmentOf, linksIn } from "./check-links.mjs";
 
 const NOT_A_PAGE = /^(?:docs\/maps|test)\//;
 const SKILL = /^skills\/([^/]+)\/SKILL\.md$/;
@@ -41,7 +44,6 @@ function anchorTarget(file, target) {
   if (fragment === null) return null;
   const repoUrl = REPO_URL_PATTERN.exec(target);
   if (target.startsWith("#")) return { page: file, anchor: fragment };
-  if (!repoUrl && SCHEME_PATTERN.test(target)) return null;
   let path;
   try {
     path = decodeURI(repoUrl ? (repoUrl[1] ?? "").replace(/^\//, "") : target.split("#")[0]);
@@ -49,7 +51,9 @@ function anchorTarget(file, target) {
     return null;
   }
   const page = posix.normalize(repoUrl ? path : posix.join(posix.dirname(file), path));
-  if (!/\.md$/i.test(page) || page.startsWith("../")) return null;
+  // A URL to another site or a path outside the repository is not in the
+  // base tree, so breakingItems skips it.
+  if (!/\.md$/i.test(page)) return null;
   return { page, anchor: fragment };
 }
 
@@ -101,14 +105,18 @@ function unreleased(changelog) {
   return lines.slice(start + 1, end === -1 ? undefined : end);
 }
 
+// Return the "Consumer action:" lines under [Unreleased].
+const consumerActions = (changelog) =>
+  (unreleased(changelog) ?? []).map((line) => line.trimStart()).filter((line) => CONSUMER_ACTION.test(line));
+
 // Return what a breaking change still needs: "!" in the title and a
-// "Consumer action:" line under [Unreleased].
-export function missingPieces(title, changelog) {
+// "Consumer action:" line under [Unreleased] that the base did not have.
+export function missingPieces(title, changelog, baseChangelog = null) {
   const missing = [];
   if (!MAJOR_TITLE.test(title)) missing.push(`the pull request title has no "!" before the colon: ${title}`);
-  const section = unreleased(changelog) ?? [];
-  if (!section.some((line) => CONSUMER_ACTION.test(line.trimStart()))) {
-    missing.push('the ## [Unreleased] section of CHANGELOG.md has no line that starts with "Consumer action:"');
+  const earlier = new Set(consumerActions(baseChangelog));
+  if (!consumerActions(changelog).some((line) => !earlier.has(line))) {
+    missing.push('the ## [Unreleased] section of CHANGELOG.md has no new line that starts with "Consumer action:"');
   }
   return missing;
 }
@@ -147,10 +155,12 @@ async function main(args, title) {
   }
   let items;
   let changelog;
+  let baseChangelog;
   try {
     const { base, head } = gitTrees(resolve(options.root), options.base);
     items = breakingItems(base, head);
     changelog = head.paths.includes("CHANGELOG.md") ? head.read("CHANGELOG.md") : null;
+    baseChangelog = base.paths.includes("CHANGELOG.md") ? base.read("CHANGELOG.md") : null;
   } catch (err) {
     console.error(`cannot read the git trees: ${(err.stderr || err.message).toString().trim()}`);
     return 2;
@@ -159,7 +169,7 @@ async function main(args, title) {
     console.log("No breaking change.");
     return 0;
   }
-  const missing = missingPieces(title, changelog);
+  const missing = missingPieces(title, changelog, baseChangelog);
   const report = missing.length > 0 ? console.error : console.log;
   for (const item of items) report(`breaking: ${item}`);
   if (missing.length > 0) {
