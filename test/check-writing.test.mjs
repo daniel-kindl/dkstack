@@ -8,7 +8,7 @@ import { makeTree, removeTree } from "./helpers.mjs";
 
 // SCR-M8 in #154, after the D3 sub-choices: warn on a step (numbered or a
 // checklist item) over 20 words, a
-// sentence over 25 words and a semicolon. The first stage only warns.
+// sentence over 25 words and a semicolon. The check fails when it finds a problem (#299).
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const script = join(repoRoot, "scripts", "check-writing.mjs");
@@ -45,15 +45,27 @@ test("a link counts as the words of its text, not of its URL", () => {
   assert.deepEqual(writingWarnings("a.md", `${words(24)} [one](https://example.com/a/b/c).\n`), []);
 });
 
-test("checkWriting skips CHANGELOG.md, and the CLI only warns", async () => {
+test("checkWriting skips CHANGELOG.md, and the CLI exits 1 for a problem", async () => {
   const root = await makeTree({ "CHANGELOG.md": `${words(40)}; x.\n`, "docs/a.md": `${words(30)}.\n` });
   try {
     const { checked, warnings } = await checkWriting(root);
     assert.equal(checked, 1);
     assert.deepEqual(warnings, ["docs/a.md:1: a sentence has 30 words, more than 25"]);
     const r = spawnSync(process.execPath, [script, root], { encoding: "utf8" });
-    assert.equal(r.status, 0);
+    assert.equal(r.status, 1);
     assert.match(r.stderr, /docs\/a\.md:1: a sentence has 30 words/);
+  } finally {
+    await removeTree(root);
+  }
+});
+
+test("the CLI exits 0 for a clean file", async () => {
+  const root = await makeTree({ "docs/a.md": `${words(10)}.\n` });
+  try {
+    const r = spawnSync(process.execPath, [script, root], { encoding: "utf8" });
+    assert.equal(r.status, 0);
+    assert.equal(r.stderr, "");
+    assert.match(r.stdout, /^1 Markdown file\(s\) checked\. 0 writing problem\(s\)\.\n$/);
   } finally {
     await removeTree(root);
   }

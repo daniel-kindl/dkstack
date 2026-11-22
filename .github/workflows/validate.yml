@@ -110,8 +110,8 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:adrs
 
-      # This check only warns. It always exits 0.
-      - name: Warn about long sentences and semicolons in Markdown
+      # This check fails when it finds a long sentence or a semicolon.
+      - name: Check for long sentences and semicolons in Markdown
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:writing
 
