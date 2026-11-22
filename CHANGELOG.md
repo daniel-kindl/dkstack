@@ -10,6 +10,11 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ## [Unreleased]
 
+### Added
+
+- `scripts/check-pr-body.mjs` and a `validate` step (#301). The step checks the PR body for an
+  issue link, an Evidence section, one Observability line and a valid Visual verification line.
+
 ## [1.6.0] - 2026-11-21
 
 ### Added
