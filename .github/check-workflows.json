@@ -1,0 +1,14 @@
+{
+  "allowedSecrets": [
+    {
+      "decision": "Daniel decided on 2026-11-11 that dkstack releases use a GitHub App (#135). Its two secrets are in the release environment. Only the release job of release.yml may pass them, and only to the token action.",
+      "file": "release.yml",
+      "environment": "release",
+      "action": "actions/create-github-app-token",
+      "with": {
+        "app-id": "RELEASE_APP_ID",
+        "private-key": "RELEASE_APP_PRIVATE_KEY"
+      }
+    }
+  ]
+}

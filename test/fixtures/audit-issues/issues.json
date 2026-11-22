@@ -1,0 +1,14 @@
+[
+  {"number": 1, "title": "feat: good issue", "labels": [{"name": "type:feature"}, {"name": "priority:p2"}],
+   "body": "## Goal\n\nDo it.\n\n### Acceptance criteria\n\n- Done.\n"},
+  {"number": 2, "title": "fix: no type", "labels": [{"name": "priority:p1"}],
+   "body": "## Goal\n\nx\n\n## Acceptance criteria\n\ny\n"},
+  {"number": 3, "title": "fix: two types", "labels": [{"name": "type:bug"}, {"name": "type:chore"}],
+   "body": "## goal\n\nx\n\n## ACCEPTANCE CRITERIA\n\ny\n"},
+  {"number": 4, "title": "docs: no headings", "labels": [{"name": "type:docs"}, {"name": "needs:decision"}],
+   "body": "Just text. # Goal in a line is not a heading.\n"},
+  {"number": 5, "title": "chore: text relations", "labels": [{"name": "type:chore"}],
+   "body": "Parent: #200\nBlocked by: #1\nOrder: after P02\n\n## Goal\n\nx\n\n## Acceptance criteria\n\ny\n"},
+  {"number": 6, "title": "chore: relations in tracker", "labels": [{"name": "type:chore"}],
+   "body": "Parent: #200\nBlocked by: #1\nPlan item P3 of #200\n\n## Goal\n\nx\n\n## Acceptance criteria\n\ny\n"}
+]

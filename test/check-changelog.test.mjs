@@ -94,3 +94,150 @@ test("a CRLF Unreleased heading line passes, and release.mjs accepts the same te
   const { releaseChangelog } = await import("../scripts/release.mjs");
   assert.doesNotThrow(() => releaseChangelog(text, { version: "1.0.1", previous: "1.0.0", date: "2026-11-21", commits: [] }));
 });
+
+// C12 in #200 and #310: a change that adds a page or a skill also changes the
+// Unreleased notes. These tests use a temporary git repository.
+const { execFileSync, spawnSync } = await import("node:child_process");
+const { mkdir, writeFile } = await import("node:fs/promises");
+const { dirname, join } = await import("node:path");
+const { checkChangelogDiff } = await import("../scripts/check-changelog.mjs");
+const SCRIPT = new URL("../scripts/check-changelog.mjs", import.meta.url).pathname;
+
+const git = (root, ...args) => execFileSync("git", ["-c", "user.name=t", "-c", "user.email=t@example.com", ...args], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+const put = async (root, files) => {
+  for (const [path, content] of Object.entries(files)) {
+    await mkdir(dirname(join(root, path)), { recursive: true });
+    await writeFile(join(root, path), content);
+  }
+};
+const BASE = { "CHANGELOG.md": `${HEAD}## [1.0.0]\n${LINK}`, "coding/index.md": "# Coding\n", "coding/old.md": "old\n", "docs/adr/0001-x.md": "x\n", "skills/index.md": "# Skills\n", "skills/old/SKILL.md": "old\n" };
+const ENTRY = { "CHANGELOG.md": `## [Unreleased]\n\n### Added\n\n- A new page (#1).\n\n## [1.0.0]\n${LINK}` };
+
+// Make a repository with a base commit, apply `changes`, and run the diff mode.
+async function diff(changes) {
+  const root = await makeTree({});
+  try {
+    git(root, "init", "-q", "-b", "main");
+    await put(root, BASE);
+    git(root, "add", ".");
+    git(root, "commit", "-q", "-m", "base");
+    git(root, "switch", "-q", "-c", "topic");
+    await put(root, changes);
+    git(root, "add", ".");
+    git(root, "commit", "-q", "-m", "change");
+    const out = spawnSync("node", [SCRIPT, "--diff", "--base", "main", root], { encoding: "utf8" });
+    return { code: out.status, out: out.stdout, err: out.stderr };
+  } finally {
+    await removeTree(root);
+  }
+}
+
+test("diff mode: an added page with no Unreleased change fails and names the page", async () => {
+  const r = await diff({ "coding/new.md": "new\n" });
+  assert.equal(r.code, 1);
+  assert.match(r.err, /coding\/new\.md/);
+  assert.match(r.err, /\[Unreleased\]/);
+});
+
+test("diff mode: an added page with an Unreleased change passes", async () => {
+  const r = await diff({ "coding/new.md": "new\n", ...ENTRY });
+  assert.equal(r.code, 0, r.err);
+});
+
+test("diff mode: an added skill with no Unreleased change fails, and with one passes", async () => {
+  const r = await diff({ "skills/new/SKILL.md": "new\n" });
+  assert.equal(r.code, 1);
+  assert.match(r.err, /skills\/new\/SKILL\.md/);
+  assert.equal((await diff({ "skills/new/SKILL.md": "new\n", ...ENTRY })).code, 0);
+});
+
+test("diff mode: a changed page, a docs page, a test file and a CHANGELOG-only change pass", async () => {
+  for (const changes of [{ "coding/old.md": "changed\n" }, { "docs/adr/0002-y.md": "y\n" }, { "test/new.test.mjs": "z\n" }, { "skills/old/extra.md": "e\n" }, { "other/new.md": "n\n" }, ENTRY]) {
+    const r = await diff(changes);
+    assert.equal(r.code, 0, `${Object.keys(changes)}: ${r.err}`);
+  }
+});
+
+test("diff mode: the release change passes, because it adds no page", async () => {
+  const r = await diff({ "CHANGELOG.md": `${HEAD}## [1.0.1] - 2026-11-22\n\n- moved\n\n## [1.0.0]\n${LINK}` });
+  assert.equal(r.code, 0, r.err);
+});
+
+test("diff mode: a change in another part of the CHANGELOG does not count", async () => {
+  const r = await diff({ "coding/new.md": "new\n", "CHANGELOG.md": `${HEAD}## [1.0.0]\n\n- late note\n${LINK}` });
+  assert.equal(r.code, 1);
+});
+
+test("diff mode: an untracked page counts, and a bad base is a usage error", async () => {
+  const root = await makeTree({});
+  try {
+    git(root, "init", "-q", "-b", "main");
+    await put(root, BASE);
+    git(root, "add", ".");
+    git(root, "commit", "-q", "-m", "base");
+    await put(root, { "coding/new.md": "new\n" });
+    assert.equal(spawnSync("node", [SCRIPT, "--diff", "--base", "main", root], { encoding: "utf8" }).status, 1);
+    assert.equal(spawnSync("node", [SCRIPT, "--diff", "--base", "nope", root], { encoding: "utf8" }).status, 2);
+  } finally {
+    await removeTree(root);
+  }
+});
+
+test("diff mode: a missing base CHANGELOG counts as empty, and a bad option is a usage error", async () => {
+  const root = await makeTree({ "coding/index.md": "# C\n", "coding/new.md": "n\n", "CHANGELOG.md": "## [Unreleased]\n- a\n" });
+  try {
+    assert.deepEqual(await checkChangelogDiff(root, ["coding/new.md"], null), []);
+    assert.equal((await checkChangelogDiff(root, ["coding/new.md"], "## [Unreleased]\n- a\n")).length, 1);
+    assert.deepEqual(await checkChangelogDiff(root, [], "x"), []);
+    assert.equal(spawnSync("node", [SCRIPT, "--bogus"], { encoding: "utf8" }).status, 2);
+  } finally {
+    await removeTree(root);
+  }
+});
+
+// Review of #324. A rename counts as an added page, with any diff.renames value.
+test("diff mode: a renamed page fails, with diff.renames true or false", async () => {
+  for (const setting of ["true", "false"]) {
+    const root = await makeTree({});
+    try {
+      git(root, "init", "-q", "-b", "main");
+      await put(root, BASE);
+      git(root, "add", ".");
+      git(root, "commit", "-q", "-m", "base");
+      git(root, "switch", "-q", "-c", "topic");
+      git(root, "mv", "coding/old.md", "coding/renamed.md");
+      git(root, "commit", "-q", "-m", "rename");
+      const env = { ...process.env, GIT_CONFIG_COUNT: "1", GIT_CONFIG_KEY_0: "diff.renames", GIT_CONFIG_VALUE_0: setting };
+      const r = spawnSync("node", [SCRIPT, "--diff", "--base", "main", root], { encoding: "utf8", env });
+      assert.equal(r.status, 1, `diff.renames=${setting}: ${r.stderr}`);
+      assert.match(r.stderr, /coding\/renamed\.md/);
+    } finally {
+      await removeTree(root);
+    }
+  }
+});
+
+test("diff mode: a dot folder with an index.md is not a section", async () => {
+  const r = await diff({ ".hidden/index.md": "# H\n", ".hidden/new.md": "n\n" });
+  assert.equal(r.code, 0, r.err);
+});
+
+test("diff mode: a page with a non-ASCII name fails and is named in clear text", async () => {
+  const r = await diff({ "coding/příběh.md": "n\n" });
+  assert.equal(r.code, 1);
+  assert.match(r.err, /coding\/příběh\.md/);
+});
+
+test("the default mode fails on a bad CHANGELOG through the command line", async () => {
+  const root = await makeTree({ "package.json": pkg("1.0.0"), "CHANGELOG.md": "## [0.9.0]\n" });
+  const ok = await makeTree({ "package.json": pkg("1.0.0"), "CHANGELOG.md": `${HEAD}## [1.0.0]\n${LINK}` });
+  try {
+    const r = spawnSync("node", [SCRIPT, root], { encoding: "utf8" });
+    assert.equal(r.status, 1);
+    assert.match(r.stderr, /Unreleased/);
+    assert.equal(spawnSync("node", [SCRIPT, ok], { encoding: "utf8" }).status, 0);
+  } finally {
+    await removeTree(root);
+    await removeTree(ok);
+  }
+});

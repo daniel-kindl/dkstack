@@ -27,9 +27,25 @@ Use Node 24 or later. Run all checks before you open a pull request:
 npm run check
 ```
 
-`npm run check` does not check the title, because the title is not in the files. Check the pull
-request title with `npm run check:title -- "<title>"`. The `validate` workflow runs the same
-checks, the title check and actionlint.
+`npm run check` does not check the title or the body, because they are not in the files. Check the
+pull request title with `npm run check:title -- "<title>"`. Check the body with
+`node scripts/check-pr-body.mjs <file>`, where the file holds the body. The body needs an issue
+link, an Evidence section and one Observability line. The `validate` workflow runs the same
+checks, the title check, the body check, the breaking change check and actionlint.
+
+A removed page, skill or linked anchor is a breaking change. Commit your change, then check it
+with the title:
+
+```bash
+TITLE="<title>" node scripts/check-breaking.mjs
+```
+
+The check compares HEAD with its merge base on `origin/main`. Use `--base <ref>` for another base.
+
+To read the repository settings, the owner runs `npm run audit:settings -- <owner/repo>`. The
+tool only reads. A CI token cannot read the bypass list, so `validate` does not run it.
+
+To audit the open issues and the labels of a repository, run `npm run audit:issues -- <owner/repo>`. The tool only reads, and the `validate` workflow does not run it.
 
 A reviewer checks the review file with `node scripts/check-review.mjs <file>` before the review is
 posted. The file is not in the repository, so `npm run check` does not run this check.

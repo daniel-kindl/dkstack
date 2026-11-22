@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          # check-adrs compares the change with origin/main, so it needs the history.
+          # check-adrs, check-suppressions and check-breaking compare the change with origin/main, so they need the history.
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -45,6 +45,21 @@ jobs:
         env:
           TITLE: ${{ github.event.pull_request.title }}
         run: node scripts/check-title.mjs "$TITLE"
+
+      # A push to main has no pull request title, so this check runs only on a pull request.
+      - name: Check that a breaking change has "!" in the title and a Consumer action line
+        if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: node scripts/check-breaking.mjs
+
+      # The body goes in through env, never as an expression inside run.
+      - name: Check that the PR body links an issue and has the evidence lines
+        if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: node scripts/check-pr-body.mjs
 
       - name: Check that the commit titles of the push are conventional commits
         if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'push' }}
@@ -76,7 +91,7 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:dashes
 
-      - name: Check that workflows pin actions and set permissions, and only the release job uses the release app secrets
+      - name: Check the workflow pins, permissions, timeouts, release rules and allowed secrets
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:workflows
 
@@ -98,6 +113,11 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:changelog
 
+      # check-changelog --diff compares the change with origin/main, so it needs the history.
+      - name: Check that a new page or skill changes CHANGELOG.md under Unreleased
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: node scripts/check-changelog.mjs --diff
+
       - name: Check the format of the maps in docs/maps
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:maps
@@ -110,8 +130,12 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:adrs
 
-      # This check only warns. It always exits 0.
-      - name: Warn about long sentences and semicolons in Markdown
+      - name: Check that the change adds no blanket suppression and no suppression without a reason, and warn about weaker gates
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:suppressions
+
+      # This check fails when it finds a long step, a long sentence or a semicolon.
+      - name: Check for long steps, long sentences and semicolons in Markdown
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:writing
 
