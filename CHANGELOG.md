@@ -20,6 +20,9 @@ change that a consumer must act on has a "Consumer action:" line.
   reason. A `NoWarn` in one project file needs rule IDs and a reason. It gives a warning, not a
   failure, for a lowered number after a known coverage gate key or a raised `max-warnings`
   number. `npm run check` and `validate` run it.
+- `scripts/audit-settings.mjs` and `npm run audit:settings` (#302). It reads the settings of a
+  repository with `gh api` and compares them with `setup-repo-protection`. It changes nothing.
+  The owner runs it. `validate` does not run it.
 
 ### Changed
 

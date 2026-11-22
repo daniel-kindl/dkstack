@@ -33,6 +33,9 @@ pull request title with `npm run check:title -- "<title>"`. Check the body with
 link, an Evidence section and one Observability line. The `validate` workflow runs the same
 checks, the title check, the body check and actionlint.
 
+To read the repository settings, the owner runs `npm run audit:settings -- <owner/repo>`. The
+tool only reads. A CI token cannot read the bypass list, so `validate` does not run it.
+
 ## Add a page or a skill
 
 - Add the page to the `index.md` of its section, or the skill to `skills/index.md`.

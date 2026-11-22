@@ -97,6 +97,10 @@ npm run check
 
 The workflow does not tag, release or publish.
 
+The owner can run `npm run audit:settings -- <owner/repo>` to compare the repository settings
+with [setup-repo-protection](skills/setup-repo-protection/SKILL.md). It only reads, and the
+workflow does not run it.
+
 ## What is in each section
 
 - [AGENTS.md](AGENTS.md): The entry point for agents.
