@@ -10,6 +10,10 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ## [Unreleased]
 
+### Added
+
+- A `--diff` mode in `scripts/check-changelog.mjs`. A change that adds a page or a skill must also change `## [Unreleased]`. The validate workflow runs it (#310).
+
 ## [1.6.0] - 2026-11-21
 
 ### Added

@@ -77,7 +77,7 @@ each pull request to `main` and on each push to `main`. It does these checks:
 - Workflows pin actions and set permissions. Only the release job uses the release app secrets.
 - actionlint and shellcheck find no fault in the workflows.
 - CHANGELOG.md has an entry for the version in `package.json`, an `## [Unreleased]` line and its
-  compare link.
+  compare link. A pull request that adds a page or a skill also changes `## [Unreleased]`.
 - The maps in `docs/maps/`, `CONTEXT.md` and new ADRs have the correct format.
 - The unit tests pass, and they cover at least 95% of the lines and 90% of the branches in
   `scripts/`.

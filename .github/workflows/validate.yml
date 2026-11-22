@@ -98,6 +98,11 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:changelog
 
+      # check-changelog --diff compares the change with origin/main, so it needs the history.
+      - name: Check that a new page or skill changes CHANGELOG.md under Unreleased
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: node scripts/check-changelog.mjs --diff
+
       - name: Check the format of the maps in docs/maps
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:maps

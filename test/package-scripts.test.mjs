@@ -20,6 +20,10 @@ test("the validate workflow runs the CHANGELOG check", () => {
   assert.match(workflow, /^\s+run: npm run check:changelog\s*$/m);
 });
 
+test("the validate workflow runs the CHANGELOG diff mode", () => {
+  assert.match(workflow, /^\s+run: node scripts\/check-changelog\.mjs --diff\s*$/m);
+});
+
 test("no script only prints text", () => {
   for (const [name, command] of Object.entries(pkg.scripts)) {
     assert.doesNotMatch(command, /^\s*echo\b/, `script "${name}" only prints text`);
