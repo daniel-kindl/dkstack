@@ -16,10 +16,11 @@ change that a consumer must act on has a "Consumer action:" line.
   release or deploy job needs an `environment:`, and its workflow starts only by
   `workflow_dispatch`, sets `concurrency` and checks that the ref is `main`. The allowed secrets
   are in `.github/check-workflows.json`, not in the code. dkstack keeps the release app exception.
-  The check now fails closed: a workflow that writes its triggers or jobs at another indent, or
-  as a flow map, fails, also when it does not release.
-  Consumer action: before you copy the new `check-workflows.mjs`, write each trigger and each job
-  at 2 spaces under `on:` and `jobs:`.
+  The check now fails closed. Jobs must be at 2 spaces under `jobs:`, and job keys at 4 spaces.
+  Triggers must be on the `on:` line or at 2 spaces under it. Another form fails, also when the
+  workflow does not release.
+  Consumer action: before you copy the new `check-workflows.mjs`, write each job at 2 spaces under
+  `jobs:` with its keys at 4 spaces, and each trigger on the `on:` line or at 2 spaces under it.
 
 ## [1.6.0] - 2026-11-21
 
