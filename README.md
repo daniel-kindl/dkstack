@@ -102,6 +102,8 @@ To run the same checks locally, except the title check, the body check and actio
 npm run check
 ```
 
+To audit the open issues and the labels of a repository, run `npm run audit:issues -- <owner/repo>`. The tool reads with `gh` and writes nothing.
+
 The workflow does not tag, release or publish.
 
 The owner can run `npm run audit:settings -- <owner/repo>` to compare the repository settings

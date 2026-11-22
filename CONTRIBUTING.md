@@ -36,6 +36,8 @@ checks, the title check, the body check and actionlint.
 To read the repository settings, the owner runs `npm run audit:settings -- <owner/repo>`. The
 tool only reads. A CI token cannot read the bypass list, so `validate` does not run it.
 
+To audit the open issues and the labels of a repository, run `npm run audit:issues -- <owner/repo>`. The tool only reads, and the `validate` workflow does not run it.
+
 ## Add a page or a skill
 
 - Add the page to the `index.md` of its section, or the skill to `skills/index.md`.
