@@ -7,7 +7,7 @@ import { checkReview } from "../scripts/check-review.mjs";
 import { makeTree, removeTree, readFile } from "./helpers.mjs";
 
 // Rules for the review file that the code-review skill writes before it posts (#309).
-// test/fixtures has three real review files from this project.
+// test/fixtures has real review files from this project.
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const script = join(repoRoot, "scripts", "check-review.mjs");
 const SHA = "97acdd5831126ff91e710fc1db616039a87d1c62";
@@ -21,7 +21,7 @@ test("a review with one verdict, a head SHA and no finding passes as APPROVE-REC
 });
 
 test("a plain verdict with no bold passes", () => {
-  const text = `Verdict: CHANGES-REQUESTED\n${SHA}\n\n### L1. x\n\n- \`a.mjs:1\`\n`;
+  const text = `Verdict: CHANGES-REQUESTED\nHead: ${SHA}\n\n### L1. x\n\n- \`a.mjs:1\`\n`;
   assert.deepEqual(checkReview(text), []);
 });
 
@@ -36,8 +36,9 @@ test("a verdict that is not one of the three fails", () => {
   assert.match(checkReview(review("LGTM")).join(), /verdict/);
 });
 
-test("the first verdict wins when the head names two", () => {
-  assert.deepEqual(checkReview(`APPROVE-RECOMMENDED\nBLOCKED\n${SHA}\n`), []);
+test("two different verdicts in the head fail, and the same verdict twice passes", () => {
+  assert.match(checkReview(`APPROVE-RECOMMENDED\nBLOCKED\nHead SHA: ${SHA}\n`).join(), /one verdict/);
+  assert.deepEqual(checkReview(`Verdict: BLOCKED\nBLOCKED again\nHead SHA: ${SHA}\nQuestion: why?\n`), []);
 });
 
 test("a missing head SHA fails", () => {
@@ -52,7 +53,7 @@ test("a SHA that is longer or not hex does not count", () => {
 });
 
 test("a SHA after line 10 does not count", () => {
-  const text = `Verdict: APPROVE-RECOMMENDED\n${"\n".repeat(10)}${SHA}\n`;
+  const text = `Verdict: APPROVE-RECOMMENDED\n${"\n".repeat(10)}Head SHA: ${SHA}\n`;
   assert.match(checkReview(text).join(), /40-character/);
 });
 
@@ -122,7 +123,7 @@ test("BLOCKED with a Blocking finding passes", () => {
 
 test("BLOCKED with a stated question passes", () => {
   assert.deepEqual(checkReview(review("BLOCKED", "Question: the owner decides the scope.\n")), []);
-  assert.deepEqual(checkReview(review("BLOCKED", "Which scope does the owner want?\n")), []);
+  assert.deepEqual(checkReview(review("BLOCKED", "- **Question:** which scope does the owner want?\n")), []);
 });
 
 test("BLOCKED with no Blocking finding and no question fails", () => {
@@ -182,9 +183,11 @@ test("code-review tells the reviewer to run the check before it posts", async ()
   const text = await readFile(join(repoRoot, "skills", "code-review", "SKILL.md"), "utf8");
   assert.match(
     text,
-    /Before you post, run \[check-review\]\(https:\/\/raw\.githubusercontent\.com\/daniel-kindl\/dkstack\/v1\/scripts\/check-review\.mjs\)/,
+    /\[check-review\]\(https:\/\/raw\.githubusercontent\.com\/daniel-kindl\/dkstack\/v1\/scripts\/check-review\.mjs\)/,
   );
   assert.match(text, /node scripts\/check-review\.mjs <file>/);
+  assert.match(text, /If the repository has a copy of \[check-review\]\([^)]*\), run it on the file/);
+  assert.match(text, /write NOT RUN for this step in the verification item/);
 });
 
 test("the merge rule names the head-commit match", async () => {
@@ -274,6 +277,83 @@ test("a table status row needs no file:line, and an open row is open", () => {
 test("the real review file of #320 round 2 passes", async () => {
   const text = await readFile(join(repoRoot, "test", "fixtures", "review-320-r2.txt"), "utf8");
   assert.deepEqual(checkReview(text), []);
+});
+
+test("free text with the word fixed does not mark a finding as fixed", () => {
+  for (const text of [
+    "- L1 `a.mjs:1` Small point, to be fixed in a follow-up.",
+    "- M1 `a.mjs:1` The fixed-width parser drops a byte.",
+    "- H1 `a.mjs:1`: fixed-size buffer overflows.",
+    "- M1 `a.mjs:1` The test is weak. It will be fixed in a later PR.",
+  ]) {
+    const problems = checkReview(review("APPROVE-RECOMMENDED", `${text}\n`));
+    assert.equal(problems.length, 1, text);
+    assert.match(problems[0], /not marked fixed/);
+  }
+});
+
+test("the status forms mark a finding as fixed", () => {
+  const body = "- H1 (`a.mjs:1`): **fixed**.\n- M1, title **fixed**. x\n- L1: Fixed\n| L2 | Fixed | x |\n";
+  assert.deepEqual(checkReview(review("APPROVE-RECOMMENDED", body)), []);
+});
+
+test("a finding in another form is still a finding", () => {
+  for (const text of [
+    "M1. `a.mjs:1` The code is wrong.",
+    "**M1** `a.mjs:1` The code is wrong.",
+    "- [M1] `a.mjs:1` Wrong.",
+    "- Medium M1 `a.mjs:1` Wrong.",
+    "- **High H1** `a.mjs:1` Wrong.",
+  ]) {
+    const problems = checkReview(review("APPROVE-RECOMMENDED", `${text}\n`));
+    assert.equal(problems.length, 1, text);
+    assert.match(problems[0], /not marked fixed/);
+    assert.match(checkReview(review("CHANGES-REQUESTED", `${text.replace("`a.mjs:1` ", "")}\n`)).join(), /file:line/, text);
+  }
+});
+
+test("a paragraph line that is a finding needs the line to start a paragraph", () => {
+  assert.equal(checkReview(review("APPROVE-RECOMMENDED", "Text\nM1. `a.mjs:1` x\n")).length, 0);
+  assert.equal(checkReview(review("APPROVE-RECOMMENDED", "### Finding M1: wrong\n\n`a.mjs:1`\n")).length, 1);
+});
+
+test("only a head line gives the head SHA", () => {
+  const other = "0d206c627eb93ec2a388d0c02ae9a8902244b59b";
+  const text = `Verdict: APPROVE-RECOMMENDED\nMerge-base: ${other}\n`;
+  assert.match(checkReview(text).join(), /40-character/);
+  assert.match(checkReview(`${text}Earlier head: ${other}\n`).join(), /40-character/);
+  assert.deepEqual(checkReview(`${text}Head SHA: ${SHA}\n`), []);
+  assert.deepEqual(checkReview(`Verdict: APPROVE-RECOMMENDED ${SHA}\n`), []);
+});
+
+test("a question mark inside a finding does not make a BLOCKED question", () => {
+  const problems = checkReview(review("BLOCKED", "- H1 `a.mjs:1` Is this right?\n"));
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /BLOCKED needs/);
+});
+
+test("CHANGES-REQUESTED with only fixed findings fails", () => {
+  const problems = checkReview(review("CHANGES-REQUESTED", "- H1, x: **fixed**.\n"));
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /not marked fixed/);
+});
+
+test("a table status cell can have words after the status", () => {
+  const body = "| M1 title | Fixed (round 2) | x |\n| L1 title | Fixed-size note | x |\n";
+  const problems = checkReview(review("CHANGES-REQUESTED", body));
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /L1.*file:line/);
+});
+
+test("a new finding can reuse the ID of a status line, and N IDs count", () => {
+  const body = "| M1 | Fixed | x |\n\n### M1. New\n\n- `a.mjs:1`\n\n### N2. Other\n\n- `b.mjs:2`\n";
+  assert.deepEqual(checkReview(review("CHANGES-REQUESTED", body)), []);
+  assert.equal(checkReview(review("APPROVE-RECOMMENDED", body)).length, 2);
+});
+
+test("a list item after a status line with the same ID is a reference", () => {
+  const body = "- L5, title: **fixed**. x\n- L5 mutation (no reset): 1 test failed.\n";
+  assert.deepEqual(checkReview(review("APPROVE-RECOMMENDED", body)), []);
 });
 
 test("check-review is not an npm check script", async () => {

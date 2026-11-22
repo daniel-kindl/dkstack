@@ -129,7 +129,9 @@ If a required check is pending, give no verdict yet. Wait for the result, then g
 
 Post the review as one comment on the pull request. Write it in a file first, then post it. If you cannot post it, see [When a piece is missing](#when-a-piece-is-missing).
 
-Before you post, run [check-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/scripts/check-review.mjs) on the file with `node scripts/check-review.mjs <file>`. Fix each problem that it prints. If you cannot run it, write NOT RUN in the verification item.
+If the repository has a copy of [check-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/scripts/check-review.mjs), run it on the file before you post, with `node scripts/check-review.mjs <file>`. Fix each problem that it prints. If the repository has none, write NOT RUN for this step in the verification item.
+
+Start each finding line with its ID. The ID can follow a list marker, a heading marker or a severity word. A table row can also start with the ID.
 
 Use this order:
 
