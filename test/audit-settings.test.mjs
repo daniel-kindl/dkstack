@@ -71,6 +71,10 @@ function dkstackToday() {
     repo: ok(structuredClone(DKSTACK_REPO)),
     rulesets: ok(structuredClone([PROTECT_MAIN, PROTECT_TAGS, PROTECT_V1])),
     classic: NOT_PROTECTED,
+    workflows: ok([
+      { path: ".github/workflows/release.yml", type: "file" },
+      { path: ".github/workflows/validate.yml", type: "file" },
+    ]),
     privateReporting: ok({ enabled: true }),
     files: {
       "SECURITY.md": ok("# Security policy\n"),
@@ -294,7 +298,8 @@ test("fetchSettings reads each endpoint with GET and decodes the files", () => {
   assert.deepEqual(data.files["SECURITY.md"], ok("policy"));
   assert.deepEqual(data.files.CODEOWNERS, NOT_FOUND);
   assert.deepEqual(data.classic, ok({ enforce_admins: { enabled: true } }));
-  assert.equal(calls.length, 12);
+  assert.ok(calls.includes(`${r}/contents/.github/workflows`));
+  assert.equal(calls.length, 13);
 });
 
 test("fetchSettings gives the error when one ruleset is not readable", () => {
@@ -347,10 +352,10 @@ function runCli(args, files = {}) {
 const skipWin = { skip: process.platform === "win32" };
 
 test("the CLI exits 2 with the usage when the repository argument is wrong", () => {
-  for (const args of [[], ["dkstack"], ["a/b/c"], ["a/b", "extra"]]) {
+  for (const args of [[], ["dkstack"], ["a/b/c"], ["a/b", "extra"], ["a/b", "--tag-pattern"], ["--tag-pattern", "x", "a/b", "c"]]) {
     const run = spawnSync(process.execPath, [script, ...args], { encoding: "utf8" });
     assert.equal(run.status, 2, JSON.stringify(args));
-    assert.equal(run.stderr, "usage: node scripts/audit-settings.mjs <owner/repo>\n");
+    assert.equal(run.stderr, "usage: node scripts/audit-settings.mjs <owner/repo> [--tag-pattern <glob>]\n");
   }
 });
 
@@ -371,7 +376,7 @@ test("the CLI exits 1 for dkstack today and calls gh api with GET only", skipWin
   assert.match(run.stdout, /^FAIL {5}No bypass for administrators$/m);
   assert.match(run.stdout, /^12 pass, 3 fail, 0 not run\.$/m);
   const calls = run.calls.trim().split("\n");
-  assert.equal(calls.length, 13);
+  assert.equal(calls.length, 14);
   for (const call of calls) assert.match(call, /^api --method GET repos\/daniel-kindl\/dkstack(\/|$)/);
 });
 
@@ -549,4 +554,57 @@ test("fetchSettings encodes the default branch name and skips classic protection
   const other = fakeGh({});
   assert.deepEqual(fetchSettings("o/r", other.get).classic, NOT_FOUND);
   assert.ok(!other.calls.some((c) => c.includes("/branches/")));
+});
+
+// Fixes for the second review of #322.
+test("r2 M1: readable classic protection with no enforce_admins gives NOT RUN for the bypass item", () => {
+  const data = allGood();
+  data.classic = ok({});
+  const item = byName(auditSettings(data))["No bypass for administrators"];
+  assert.equal(item.status, "NOT RUN");
+  assert.match(item.found, /classic branch protection enforce_admins is not in the response/);
+});
+
+test("r2 L1: --tag-pattern sets the release tag pattern", () => {
+  const data = allGood();
+  data.rulesets.body[1].conditions.ref_name.include = ["refs/tags/release-*"];
+  const name = "Release tags blocked from update and deletion";
+  assert.equal(byName(auditSettings(data))[name].status, "FAIL");
+  const named = byName(auditSettings(data, { tagPattern: "release-*" }));
+  assert.equal(named[name].status, "PASS");
+  assert.equal(named[name].expected, "an active tag ruleset on refs/tags/release-* with update and deletion rules");
+  data.rulesets.body[1].conditions.ref_name.include = ["refs/tags/v*"];
+  assert.equal(byName(auditSettings(data, { tagPattern: "release-*" }))[name].status, "FAIL");
+  data.rulesets.body[1].conditions.ref_name.include = ["refs/tags/*"];
+  assert.equal(byName(auditSettings(data, { tagPattern: "release-*" }))[name].status, "PASS");
+});
+
+test("r2 L1: the CLI passes --tag-pattern on, before or after the repository", skipWin, () => {
+  for (const args of [["o/r", "--tag-pattern", "rel-*"], ["--tag-pattern", "rel-*", "o/r"]]) {
+    const run = runCli(args);
+    assert.equal(run.status, 2, JSON.stringify(args));
+    assert.match(run.stdout, /expected: an active tag ruleset on refs\/tags\/rel-\* with update/);
+  }
+});
+
+test("r2 L2: a later CODEOWNERS line with no owner for one workflow file fails", () => {
+  const data = allGood();
+  data.files[".github/CODEOWNERS"] = ok("/.github/workflows/ @o\n/.github/workflows/release.yml\n");
+  const item = byName(auditSettings(data))["CODEOWNERS covers .github/workflows/"];
+  assert.equal(item.status, "FAIL");
+  assert.equal(item.found, ".github/CODEOWNERS: no rule with an owner covers .github/workflows/release.yml");
+  data.files[".github/CODEOWNERS"] = ok("/.github/workflows/ @o\n/.github/workflows/old.yml\n");
+  assert.equal(byName(auditSettings(data))["CODEOWNERS covers .github/workflows/"].status, "PASS");
+});
+
+test("r2 L2: the workflows folder listing decides which files to check", () => {
+  const data = allGood();
+  data.workflows = NOT_FOUND;
+  assert.equal(byName(auditSettings(data))["CODEOWNERS covers .github/workflows/"].status, "PASS");
+  data.workflows = FORBIDDEN;
+  const item = byName(auditSettings(data))["CODEOWNERS covers .github/workflows/"];
+  assert.equal(item.status, "NOT RUN");
+  assert.match(item.found, /\.github\/workflows: HTTP 403/);
+  data.workflows = ok({ type: "file" });
+  assert.equal(byName(auditSettings(data))["CODEOWNERS covers .github/workflows/"].status, "PASS");
 });

@@ -7,7 +7,8 @@
 // It needs Node.js, gh signed in, and a token with admin read rights.
 // The owner runs it. A CI token cannot read the bypass list, so it is not a
 // check:* script and the validate workflow does not run it.
-// Usage: node scripts/audit-settings.mjs <owner/repo>
+// Usage: node scripts/audit-settings.mjs <owner/repo> [--tag-pattern <glob>]
+// --tag-pattern names the release tags below refs/tags/. The default is v*.
 // Exit 0: each item passes. Exit 1: an item fails.
 // Exit 2: a usage error, or an item is NOT RUN because a response is not readable.
 
@@ -20,8 +21,10 @@ export const CODEOWNERS_PATHS = [".github/CODEOWNERS", "CODEOWNERS", "docs/CODEO
 // A file name that no real CODEOWNERS rule names. Only a rule for the folder,
 // or for a parent folder, matches it (L1 on #322).
 const FOLDER_PROBE = ".github/workflows/\u0001";
-// A tag ruleset protects the release tags only if it covers refs/tags/v*.
-const RELEASE_TAG_REFS = ["~ALL", "refs/tags/*", "refs/tags/**", "refs/tags/v*"];
+// A tag ruleset protects the release tags only if it covers refs/tags/<pattern>.
+export const DEFAULT_TAG_PATTERN = "v*";
+const releaseTagRefs = (pattern) => ["~ALL", "refs/tags/*", "refs/tags/**", `refs/tags/${pattern}`];
+const WORKFLOWS_DIR = ".github/workflows";
 const NO_PROTECTION = "no active ruleset and no classic protection on the default branch";
 const CLASSIC = "classic branch protection";
 const ADMIN_HINT = "The token needs admin rights on the repository";
@@ -148,21 +151,22 @@ function bypassItem(src) {
   return item(BYPASS, BYPASS_EXPECTED, !src.none, src.none ? NO_PROTECTION : "none");
 }
 
-const coversReleaseTags = (s) => {
+const coversReleaseTags = (s, accepted) => {
   const refs = s.conditions?.ref_name ?? {};
-  return (refs.include ?? []).some((r) => RELEASE_TAG_REFS.includes(r))
-    && !(refs.exclude ?? []).some((r) => RELEASE_TAG_REFS.includes(r));
+  return (refs.include ?? []).some((r) => accepted.includes(r))
+    && !(refs.exclude ?? []).some((r) => accepted.includes(r));
 };
 
-function tagItem(rulesets) {
+function tagItem(rulesets, tagPattern) {
   const name = "Release tags blocked from update and deletion";
-  const expected = "an active tag ruleset on refs/tags/v* with update and deletion rules";
+  const expected = `an active tag ruleset on refs/tags/${tagPattern} with update and deletion rules`;
+  const accepted = releaseTagRefs(tagPattern);
   if (!readable(rulesets)) return notRun(name, expected, unreadable(rulesets));
   const tagSets = rulesets.body.filter((s) => s.target === "tag" && s.enforcement === "active");
   if (tagSets.length === 0) return item(name, expected, false, "no active tag ruleset");
   const good = tagSets.find((s) => {
     const types = (s.rules ?? []).map((r) => r.type);
-    return coversReleaseTags(s) && types.includes("update") && types.includes("deletion");
+    return coversReleaseTags(s, accepted) && types.includes("update") && types.includes("deletion");
   });
   const found = (good ? [good] : tagSets).map((s) => {
     const refs = (s.conditions?.ref_name?.include ?? []).join(", ") || "no refs";
@@ -207,8 +211,19 @@ function joinPaths(paths) {
   return `${paths.slice(0, -1).join(", ")} or ${paths.at(-1)}`;
 }
 
+// Return the paths to test against CODEOWNERS: the folder probe and each
+// workflow file in the listing. A 404 means that the folder does not exist.
+function workflowPaths(workflows) {
+  if (readable(workflows)) {
+    const entries = Array.isArray(workflows.body) ? workflows.body : [];
+    return { paths: [FOLDER_PROBE, ...entries.filter((e) => e.type === "file").map((e) => e.path)] };
+  }
+  if (workflows?.status === 404) return { paths: [FOLDER_PROBE] };
+  return { error: `${WORKFLOWS_DIR}: ${unreadable(workflows)}` };
+}
+
 // A 404 for a file means a missing file only if the repository is readable.
-function fileItems(files, repo) {
+function fileItems(files, repo, workflows) {
   const items = [];
   const secName = "SECURITY.md";
   const secExpected = `a file at ${joinPaths(SECURITY_PATHS)}`;
@@ -227,9 +242,17 @@ function fileItems(files, repo) {
   } else if (own.missing) {
     items.push(item(ownName, ownExpected, false, `no CODEOWNERS file at ${joinPaths(CODEOWNERS_PATHS)}`));
   } else {
-    const rule = codeownersRule(own.text);
-    items.push(item(ownName, ownExpected, rule !== undefined,
-      rule !== undefined ? `${own.path}: ${rule}` : `${own.path}: no rule with an owner covers .github/workflows/`));
+    // CODEOWNERS uses the last matching line for each file (L2 on the second review of #322).
+    const { paths, error } = workflowPaths(workflows);
+    if (error) {
+      items.push(notRun(ownName, ownExpected, error));
+    } else {
+      const bare = paths.find((path) => codeownersRule(own.text, path) === undefined);
+      const shown = bare === FOLDER_PROBE ? `${WORKFLOWS_DIR}/` : bare;
+      items.push(item(ownName, ownExpected, bare === undefined, bare === undefined
+        ? `${own.path}: ${codeownersRule(own.text)}`
+        : `${own.path}: no rule with an owner covers ${shown}`));
+    }
   }
   return items;
 }
@@ -268,16 +291,17 @@ export function codeownersRule(text, file = FOLDER_PROBE) {
 
 // Compare the API responses with the list in setup-repo-protection. Return one
 // item for each setting: { name, status: PASS | FAIL | NOT RUN, expected, found }.
-export function auditSettings({ repo, rulesets, classic, privateReporting, files }) {
+export function auditSettings({ repo, rulesets, classic, privateReporting, files, workflows },
+  { tagPattern = DEFAULT_TAG_PATTERN } = {}) {
   const defaultBranch = readable(repo) ? repo.body.default_branch : undefined;
   const src = branchSources(rulesets, classic, defaultBranch);
   return [
     ...repoItems(repo),
     ...BRANCH_RULES.map((rule) => branchItem(src, rule)),
     bypassItem(src),
-    tagItem(rulesets),
+    tagItem(rulesets, tagPattern),
     ...securityItems(repo, privateReporting),
-    ...fileItems(files, repo),
+    ...fileItems(files, repo, workflows),
     branchItem(src, CODE_OWNER_RULE),
   ];
 }
@@ -329,17 +353,33 @@ export function fetchSettings(repoName, get = ghGet) {
       ? { status: 200, body: Buffer.from(response.body?.content ?? "", "base64").toString("utf8") }
       : response;
   }
-  return { repo, rulesets, classic, privateReporting, files };
+  const workflows = get(`${base}/contents/${WORKFLOWS_DIR}`);
+  return { repo, rulesets, classic, privateReporting, files, workflows };
+}
+
+// Return { repo, tagPattern }, or undefined for a usage error.
+function parseArgs(args) {
+  const rest = [...args];
+  let tagPattern = DEFAULT_TAG_PATTERN;
+  const at = rest.indexOf("--tag-pattern");
+  if (at !== -1) {
+    tagPattern = rest[at + 1];
+    if (!tagPattern || tagPattern.startsWith("--")) return undefined;
+    rest.splice(at, 2);
+  }
+  if (rest.length !== 1 || !/^[\w.-]+\/[\w.-]+$/.test(rest[0])) return undefined;
+  return { repo: rest[0], tagPattern };
 }
 
 function main(args) {
-  if (args.length !== 1 || !/^[\w.-]+\/[\w.-]+$/.test(args[0])) {
-    console.error("usage: node scripts/audit-settings.mjs <owner/repo>");
+  const options = parseArgs(args);
+  if (!options) {
+    console.error("usage: node scripts/audit-settings.mjs <owner/repo> [--tag-pattern <glob>]");
     process.exitCode = 2;
     return;
   }
-  const items = auditSettings(fetchSettings(args[0]));
-  process.stdout.write(`Audit of ${args[0]}\n${formatReport(items)}`);
+  const items = auditSettings(fetchSettings(options.repo), { tagPattern: options.tagPattern });
+  process.stdout.write(`Audit of ${options.repo}\n${formatReport(items)}`);
   if (items.some((i) => i.status === "FAIL")) process.exitCode = 1;
   else if (items.some((i) => i.status === "NOT RUN")) process.exitCode = 2;
 }

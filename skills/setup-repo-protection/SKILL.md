@@ -12,7 +12,7 @@ These are settings of the code host. An agent does not change a protection rule 
 
 ## Steps
 
-1. Read the current settings, if you can. List each setting below that is missing or weaker. If [audit-settings.mjs](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/scripts/audit-settings.mjs) supports the code host of the project, the owner can run it to read the settings. The tool changes nothing. It needs Node.js, the command line tool of the code host and a token with admin read rights. Run `node audit-settings.mjs <owner/repo>`.
+1. Read the current settings, if you can. List each setting below that is missing or weaker. If [audit-settings.mjs](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/scripts/audit-settings.mjs) supports the code host of the project, the owner can run it to read the settings. The tool changes nothing. It needs Node.js, the command line tool of the code host and a token with admin read rights. Run `node audit-settings.mjs <owner/repo>`. If the release tags do not match `v*`, add `--tag-pattern <glob>`.
 2. Default branch rule:
    - A pull request is required for each change.
    - The required checks must pass before a merge.
