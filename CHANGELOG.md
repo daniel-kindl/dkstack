@@ -32,6 +32,7 @@ change that a consumer must act on has a "Consumer action:" line.
   workflow does not release.
   Consumer action: before you copy the new `check-workflows.mjs`, write each job at 2 spaces under
   `jobs:` with its keys at 4 spaces, and each trigger on the `on:` line or at 2 spaces under it.
+- A `--diff` mode in `scripts/check-changelog.mjs`. A change that adds a page or a skill must also change `## [Unreleased]`. The validate workflow runs it (#310).
 
 ### Changed
 

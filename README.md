@@ -85,7 +85,8 @@ each pull request to `main` and on each push to `main`. It does these checks:
   Another form fails, so the check never passes a form that it cannot read.
 - actionlint and shellcheck find no fault in the workflows.
 - CHANGELOG.md has an entry for the version in `package.json`, an `## [Unreleased]` line and its
-  compare link.
+  compare link. A pull request that adds or renames a page, or adds a skill, also changes
+  `## [Unreleased]`.
 - The maps in `docs/maps/`, `CONTEXT.md` and new ADRs have the correct format.
 - The change adds no blanket suppression and no suppression without a reason. A lowered number
   directly after a known coverage gate key, or a raised `max-warnings` number, gives a warning
