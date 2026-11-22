@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          # check-adrs compares the change with origin/main, so it needs the history.
+          # check-adrs and check-breaking compare the change with origin/main, so they need the history.
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -45,6 +45,13 @@ jobs:
         env:
           TITLE: ${{ github.event.pull_request.title }}
         run: node scripts/check-title.mjs "$TITLE"
+
+      # A push to main has no pull request title, so this check runs only on a pull request.
+      - name: Check that a breaking change has "!" in the title and a Consumer action line
+        if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: node scripts/check-breaking.mjs
 
       - name: Check that the commit titles of the push are conventional commits
         if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'push' }}

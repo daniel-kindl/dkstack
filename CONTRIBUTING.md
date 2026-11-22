@@ -28,8 +28,18 @@ npm run check
 ```
 
 `npm run check` does not check the title, because the title is not in the files. Check the pull
-request title with `npm run check:title -- "<title>"`. The `validate` workflow runs the same
-checks, the title check and actionlint.
+request title with `npm run check:title -- "<title>"`.
+
+A removed page, skill or linked anchor is a breaking change. Commit your change, then check it
+with the title:
+
+```bash
+TITLE="<title>" node scripts/check-breaking.mjs
+```
+
+The check compares HEAD with its merge base on `origin/main`. Use `--base <ref>` for another base.
+The `validate` workflow runs the same checks, the title check, the breaking change check and
+actionlint.
 
 ## Add a page or a skill
 
