@@ -127,7 +127,13 @@ If a required check is pending, give no verdict yet. Wait for the result, then g
 
 ## Output
 
-Post the review as one comment on the pull request. Write it in a file first, then post it. If you cannot post it, see [When a piece is missing](#when-a-piece-is-missing). Use this order:
+Post the review as one comment on the pull request. Write it in a file first, then post it. If you cannot post it, see [When a piece is missing](#when-a-piece-is-missing).
+
+If the repository has a copy of [check-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/scripts/check-review.mjs), run it on the file before you post, with `node scripts/check-review.mjs <file>`. Fix each problem that it prints. If the repository has none, write NOT RUN for this step in the verification item.
+
+Start each finding line with its ID. The ID can follow a list marker, a heading marker or a severity word. A table row can also start with the ID.
+
+Use this order:
 
 1. The verdict and the head SHA, or what you reviewed (see [When a piece is missing](#when-a-piece-is-missing)).
 2. A short summary: the number of findings on each axis and the worst finding on each axis.
@@ -141,7 +147,7 @@ Each finding has an ID (B1, H1, M1, L1), `file:line`, the problem, the rule it b
 
 Send the verdict and the comment link, or the place of the review, to the person who asked for the review.
 
-For a re-review, post a new comment at the new head. State each earlier finding as fixed or open. Check the delta and the code it touches.
+For a re-review, post a new comment at the new head. State each earlier finding as fixed or open. Write it as `- <ID>, <short title>: **fixed**.` or `**open**.`, or as a table row with a Fixed or Open cell. Check the delta and the code it touches.
 
 ## Self-review
 

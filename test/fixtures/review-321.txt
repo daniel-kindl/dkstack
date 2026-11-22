@@ -1,0 +1,167 @@
+# Review of PR #321: feat(scripts): add check-suppressions
+
+**Verdict: CHANGES-REQUESTED**
+
+Head SHA: `f9932d983e45596fdc5ba63bb9914251fce50772`
+
+Base: `main`. Merge base: `0d206c6`. Commits: `f9932d9 feat(scripts): add check-suppressions` (one commit).
+
+The reviewer did not write this change. No subagents were used. The steps ran in order, one axis at a time. The review is in this file, because the requester asked for a report only and no post.
+
+## Summary
+
+- Standards axis: 9 findings (2 Medium, 7 Low). The worst is M3: the Jest test uses a form that Jest does not accept.
+- Specification axis: 2 findings (2 Medium). The worst is M1: a "weakened gate" hit is a hard failure with no review path, and the `threshold` direction is not always "lower is weaker".
+- Pull request text: no finding.
+- Required check `validate`: SUCCESS on the head SHA.
+
+## Pull request text
+
+- Title `feat(scripts): add check-suppressions` is a conventional commit of 37 characters. Pass.
+- The body has `Closes #306`. Pass.
+- The body says the tests failed first and names the result of `npm run check`. It names actionlint as NOT RUN with a reason. It has an `Observability:` line. Pass.
+- One logical change from one issue. Pass.
+
+## Standards
+
+### M3. The Jest test proves a form that Jest does not accept
+
+- `test/check-suppressions.test.mjs:115`
+- Problem: the test uses `coverageThreshold: 90`. In Jest, `coverageThreshold` is an object, for example `{ global: { lines: 90 } }`. I ran the real forms against the head. None of them gives a finding: the Jest object, Vitest `thresholds: { lines: 90 }`, pytest `--cov-fail-under=90`, coverage.py `fail_under = 90`, c8 `--lines 95` and nyc `"lines": 95`.
+- Rule: [coding/testing.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/testing.md) and the weak test row in the [severity table](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md#severity).
+- Why: the test name and the test data suggest Jest support. A reader can think that a lowered Jest gate fails. It passes.
+- Fix: use the real Jest form in the test. Then support it, or state the limit in the script header and in the pull request "Known limit" line.
+
+### M4. No test proves "against the merge base"
+
+- `test/check-suppressions.test.mjs:188`
+- Problem: the git test does not move `main` after the branch starts. I changed `git diff ... mergeBase` to `git diff ... base` at `scripts/check-suppressions.mjs:203`. All tests still passed.
+- Rule: [coding/testing.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/testing.md). Each behavior change has a test that fails when the behavior is wrong.
+- Why: the first acceptance criterion of #306 is this behavior. A later change can break it with no failing test. I ran the behavior by hand and it is correct now (level 4, see Verification).
+- Fix: in the git test, commit a bare `# noqa` on `main` after `work` starts. Expect no finding for that line.
+
+### L1. The docs do not match the behavior
+
+- `CHANGELOG.md:15`, `README.md:82`
+- Problem: the CHANGELOG entry does not name the raised `max-warnings` case. The README says the change "does not lower a coverage gate or a threshold". The check finds only a number directly after the key (see M3). The README also says `validate` does each check on each push to `main`. On a push, this check compares HEAD with HEAD (see L2).
+- Rule: the Docs item of [review-standards](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-standards/SKILL.md#checklist).
+- Why: a reader expects a wider gate than the check gives.
+- Fix: add the `max-warnings` case to the CHANGELOG entry. In the README, say "a lowered number directly after a coverage or threshold key". Name the push case.
+
+### L2. The pass message is the same when nothing was checked
+
+- `scripts/check-suppressions.mjs:246`
+- Problem: on a push to `main`, the merge base is HEAD. The diff is empty, and the script prints "No blanket suppression, suppression without a reason or weakened gate." I reproduced this with a committed bare `# noqa` on `main`.
+- Rule: [fail fast](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/fail-fast.md). `check-adrs` prints "No new ADR. Nothing to check." in the same case.
+- Why: a log reader cannot see the difference between a real pass and a no-op, for example after a wrong `--base`.
+- Fix: count the added lines and the files. Print "No added lines. Nothing to check." when the count is 0.
+
+### L3. A preprocessor line or a shebang counts as a reason
+
+- `scripts/check-suppressions.mjs:86`
+- Problem: `isReason` accepts each line that starts with `#` and has a letter. `#if DEBUG` above `#pragma warning disable CS0618` passes. `#!/usr/bin/env python3` above `# noqa: E402` passes.
+- Rule: the reason part of [Suppressions](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality-gates.md#suppressions).
+- Why: a suppression with no reason passes the check.
+- Fix: for `#`, require `#` and a space, and exclude `#!` and C# or C preprocessor keywords.
+
+### L4. A reason after `*/` on the same line is dropped
+
+- `scripts/check-suppressions.mjs:41`
+- Problem: `/* eslint-disable no-console */ // generated by protoc` gives "has no reason". The code removes all text after `*/`.
+- Rule: the reason part of [Suppressions](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality-gates.md#suppressions). The script header says a reason on the same line is enough.
+- Why: a correct suppression fails, and the author must move the reason.
+- Fix: treat a comment after `*/` on the same line as a reason.
+
+### L5. An added line that starts with "++ " ends the hunk
+
+- `scripts/check-suppressions.mjs:114`
+- Problem: an added line `++ x` appears in the diff as `+++ x`. `parseDiff` reads it as a new file header. The added lines after it in the same hunk are lost. I reproduced this: a `# noqa` on the next line gave no finding.
+- Rule: the Correctness item of [review-standards](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-standards/SKILL.md#checklist).
+- Why: a blanket suppression can pass. The case is rare.
+- Fix: read `+++ ` as a header only when it follows a `--- ` line and no hunk is open. Or count the lines from the `@@` header.
+
+### L6. A quoted path is not unquoted
+
+- `scripts/check-suppressions.mjs:115`
+- Problem: git quotes a path with special characters, for example `+++ "b/caf\303\251.md"`. The finding then shows `"b/caf...":1`. The `b/` prefix stays. `MARKDOWN` does not match, because the path ends with a quote. The line above cannot be read from disk.
+- Rule: the Correctness item of [review-standards](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-standards/SKILL.md#checklist).
+- Why: a Markdown file with a non-ASCII name is checked, and a reason on the line above is not found.
+- Fix: run git with `-c core.quotePath=false` and unquote a C-style quoted path in `parseDiff`.
+
+### L7. Some guards have no test
+
+- `scripts/check-suppressions.mjs:39`, `:66`, `:86`, `:163`, `:203`
+- Problem: five mutations passed all tests. They are listed under Tests: the ESLint lookahead, the pragma anchor, `HAS_TEXT` in `isReason`, the NUL byte check and `--relative`.
+- Rule: [coding/testing.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/testing.md).
+- Why: a later change can remove a guard with no failing test. Each guard is small.
+- Fix: add one case for each guard, for example `// eslint-disabled` (no finding) and an untracked binary file.
+
+## Specification
+
+Specification: issue #306. Parent: audit item C8 and the plan in #200.
+
+### M1. A weakened-gate hit is a hard failure with no review path
+
+- `scripts/check-suppressions.mjs:89`, `:151`
+- Specification: #306 says "It flags a weaker gate". The C8 row in #200 says "flag a diff that lowers a number next to `coverage`, `threshold` or `max-warnings`. A reviewer decides."
+- Problem: each hit gives exit 1, and `validate` fails. The key regex matches each name that contains `threshold`, in any file. I ran these lines against the head:
+  - jscpd `"threshold": 5` to `2` fails. In jscpd, a lower value is stricter.
+  - Playwright `threshold: 0.2` to `0.1` fails. A lower value is stricter.
+  - Application code `const retryThreshold = 5` to `3` fails. It is not a gate.
+  - jscpd `"threshold": 2` to `5` passes. That change is the weaker gate.
+- Why: a correct change cannot merge, and the script has no override. The audit asked for a signal to a reviewer, not a hard failure.
+- Fix: pick one. Limit the keys to known gate keys, for example `--test-coverage-*`, `coverage` and `max-warnings`, in configuration files only. Or print a weakened-gate hit as a warning that the reviewer reads, and keep exit 1 for the suppression findings. Record the choice in the pull request body.
+
+### M2. NoWarn in one project file is reported as blanket
+
+- `scripts/check-suppressions.mjs:74`
+- Specification: #306 says "or a global `NoWarn`". [Suppressions](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality-gates.md#suppressions) allows the scope "one project" and forbids "a global `NoWarn`".
+- Problem: each `<NoWarn>` in a `.csproj` is blanket. `<NoWarn>$(NoWarn);CS0618</NoWarn>` in one project, with a reason comment above, fails. The test at `test/check-suppressions.test.mjs:98` fixes this behavior for `src/App.csproj`.
+- Why: a suppression that the rule allows cannot merge. A consumer with a .NET project cannot record a project-scope suppression.
+- Fix: report `<NoWarn>` as blanket only in `Directory.Build.props` or `Directory.Build.targets`, or when it has no rule ID. In a single project file, treat it as a suppression that needs a reason. Change the test to match.
+
+### Criteria check
+
+- "It reads the added lines of the diff against the merge base." Done. Level 4 by my run. No test (M4).
+- "It fails on a blanket form". Done for each named example. Wrong for a project-scope `NoWarn` (M2).
+- "It fails on a new suppression with no reason on the same line or the line above." Done, with the gaps in L3 and L4.
+- "It flags a weaker gate". Done for the direct forms. Hard failure and wrong direction for some `threshold` keys (M1). Most real coverage forms are not found (M3).
+- "`validate` runs it. A consumer can copy it. Tests cover each form, and the coverage gate passes." Done. The script has no dependency. Coverage of the script is 100% lines and 96.64% branches.
+
+## Blast radius
+
+The one safety fact: the check reads only added lines since the merge base. Each tracked file at the head passes the check as a whole file. So no file now in the repository can fail a later pull request, unless that pull request adds a matching line. Level 4: I ran `node scripts/check-suppressions.mjs -- $(git ls-files)` at the head. Exit 0.
+
+Confirmed risks:
+
+- M1. A future pull request that changes a name with `threshold` or `coverage` to a lower number fails, in any file type. Likely for consumers, low for dkstack now.
+- A future test file in `test/` that has suppression examples in strings fails. Only `scripts/check-suppressions.mjs` and `test/check-suppressions.test.mjs` are skipped. I copied the test file to `tools/`. The check gave 23 findings. Likely for later checker tests, for example a consumer check. A fix is part of M1 (a review path) or a skip list.
+- A string literal such as `'// eslint-disable is forbidden'` gives "has no reason". Low likelihood. I accept it as a regex limit.
+
+Cleared risks:
+
+- Push to `main`: the merge base is HEAD, so the check is a no-op (level 4, my run). This is safe, because the ruleset requires `validate` with `strict_required_status_checks_policy: true`. The pull_request run checks the merge ref, and suppression findings are local to one line. Only the log is unclear (L2).
+- Release workflow: `release.yml:130` runs `npm run check` on `main` after `prepare`. The diff is then the working tree change to `CHANGELOG.md` (skipped) and the `package.json` version. No key matches. Level 3.
+- Untracked files: they are checked as whole files (test at `test/check-suppressions.test.mjs:199`). A nested git worktree is listed as a directory. The read fails and the entry is skipped. Level 4: I ran the head script in `/workspace/dkstack`, which has untracked `.claude/worktrees/*/` entries. Exit 0.
+- A missing base ref, for example a shallow clone: `git merge-base` fails and the script exits 2. The gate fails closed. Level 4 (test at line 207).
+- Consumer copy: `setup-quality-gates` copies scripts to `scripts/`, so the `SKIP` path matches. The script passes its own check at another path too. Level 4.
+- `npm run check` order: the new step runs before `check:writing` and `npm test`. In `validate`, each step has `!cancelled()`, so a failure does not hide later steps.
+- ADRs: ADR 0001 has no `Affects:` line. Its decision is about how consumers follow versions. The change does not contradict it.
+
+## Tests
+
+The tests prove diff parsing, each blanket form named in #306 and the reason rule on the same line and the line above. They also prove the `max-warnings` direction, the skip list and whole-file mode. They prove exit codes 0, 1 and 2, and git mode with an untracked file.
+
+Mutations that I tried (10):
+
+- Killed: drop the untracked files, set `higherIsWeaker` to false, remove the null check on the line above.
+- Survived (6): diff against the base and not the merge base (M4). Remove the NUL byte check, `HAS_TEXT` in `isReason`, the ESLint lookahead, the pragma anchor or `--relative` (L7).
+- One mutation did not match the source and did not run.
+
+## Verification
+
+- `npm run check` at the head, in a temporary worktree, on Linux with Node.js v24.19.0. Exit 0. 553 tests, 0 failures. `scripts/` coverage 99.32% lines and 94.10% branches. This matches the pull request body. Level 4.
+- Required check `validate` on `f9932d983e45596fdc5ba63bb9914251fce50772`: SUCCESS (run 45037359020). The log shows the new step ran and printed the pass message.
+- Real-world lines: I ran 31 suppression lines and 17 gate changes through `checkDiff`. The results are in M1, M2, M3, L3 and L4. Other results: `/* eslint no-console: off */`, `# flake8: noqa`, `# ruff: noqa`, `# pylint: skip-file`, `# pragma: no cover`, `# pyright: ignore`, `# mypy: ignore-errors`, `//nolint`, `# rubocop:disable all`, `#pragma warning(disable: 4996)`, `#pragma GCC diagnostic ignored`, `[SuppressMessage(...)]`, `NoWarn="NU1701"`, `<TreatWarningsAsErrors>false` and `dotnet_diagnostic.*.severity = none` all pass with no finding. #306 does not ask for these forms. They are not findings. The pull request body can name them as known limits.
+- Merge base: a temporary repository where `main` gets a bare `# noqa` after the branch starts. The branch run gave exit 0. Level 4.
+- NOT RUN: actionlint, because it is not installed here. The `validate` run covers it.

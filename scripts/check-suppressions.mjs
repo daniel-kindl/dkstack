@@ -22,8 +22,9 @@
 // or Vite config, and an nyc or c8 config. A gate that the change removes, or a
 // number that is not directly after its key, gives no warning.
 //
-// It does not check this file, its test file or Markdown files. These files
-// contain the patterns as examples, and a suppression in Markdown has no effect.
+// It does not check this file, its test file, Markdown files or plain text
+// (.txt) files. These files contain the patterns as examples, and no tool reads
+// a suppression in Markdown or plain text.
 //
 // The diff comes from git: "git diff -U0" against the merge base of --base
 // (default origin/main) and HEAD, plus each line of each untracked file. Give
@@ -39,7 +40,7 @@ import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 const SKIP = new Set(["scripts/check-suppressions.mjs", "test/check-suppressions.test.mjs"]);
-const MARKDOWN = /\.(?:md|markdown)$/i;
+const PROSE = /\.(?:md|markdown|txt)$/i;
 const PROJECT_FILE = /\.(?:csproj|vbproj|fsproj|props|targets)$/i;
 const GLOBAL_PROJECT_FILE = /(?:^|\/)Directory\.Build\.(?:props|targets)$/i;
 const COVERAGE_CONFIG = /(?:^|\/)(?:package\.json|(?:jest|vitest|vite)\.config\.[cm]?[jt]s|\.nycrc(?:\.json|\.ya?ml)?|\.c8rc(?:\.json)?)$/i;
@@ -195,7 +196,7 @@ export function parseDiff(text) {
   return files;
 }
 
-const skipped = (path) => SKIP.has(path) || MARKDOWN.test(path);
+const skipped = (path) => SKIP.has(path) || PROSE.test(path);
 
 // Return line i, joined with the next lines up to "</NoWarn>" when the line
 // opens a NoWarn element and does not close it. With no end tag, return line i.

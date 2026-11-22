@@ -47,6 +47,9 @@ tool only reads. A CI token cannot read the bypass list, so `validate` does not 
 
 To audit the open issues and the labels of a repository, run `npm run audit:issues -- <owner/repo>`. The tool only reads, and the `validate` workflow does not run it.
 
+A reviewer checks the review file with `node scripts/check-review.mjs <file>` before the review is
+posted. The file is not in the repository, so `npm run check` does not run this check.
+
 ## Add a page or a skill
 
 - Add the page to the `index.md` of its section, or the skill to `skills/index.md`.

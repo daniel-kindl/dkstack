@@ -112,6 +112,9 @@ The owner can run `npm run audit:settings -- <owner/repo>` to compare the reposi
 with [setup-repo-protection](skills/setup-repo-protection/SKILL.md). It only reads, and the
 workflow does not run it.
 
+A reviewer runs `node scripts/check-review.mjs <file>` on the review file before posting it. The
+script checks the verdict, the head SHA and each finding.
+
 ## What is in each section
 
 - [AGENTS.md](AGENTS.md): The entry point for agents.
