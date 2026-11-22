@@ -155,13 +155,14 @@ export function parseDiff(text) {
   let oldLeft = 0;
   let newLeft = 0;
   for (const raw of text.split(/\r?\n/)) {
-    if (oldLeft > 0 || newLeft > 0) {
+    if ((oldLeft > 0 || newLeft > 0) && !raw.startsWith("diff --git ")) {
       if (raw.startsWith("+")) entry.added.push({ line: line++, text: raw.slice(1) }), newLeft--;
       else if (raw.startsWith("-")) entry.removed.push(raw.slice(1)), oldLeft--;
-      else if (raw.startsWith(" ")) line++, oldLeft--, newLeft--;
+      else if (raw === "" || raw.startsWith(" ")) line++, oldLeft--, newLeft--;
       continue;
     }
     if (raw.startsWith("diff --git ")) {
+      oldLeft = newLeft = 0;
       entry = { path: raw.slice(raw.lastIndexOf(" b/") + 3), kind: "modified", added: [], removed: [] };
       entries.push(entry);
     } else if (!entry) continue;

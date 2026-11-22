@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { checkNewAdrs, checkAdrChanges, adrsToRead } from "../scripts/check-adrs.mjs";
+import { checkNewAdrs, checkAdrChanges, parseDiff, adrsToRead } from "../scripts/check-adrs.mjs";
 import { makeTree, removeTree } from "./helpers.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -372,6 +372,36 @@ test("with git, renaming an Accepted ADR fails", async () => {
     const fail = run(["--base", "main", root]);
     assert.equal(fail.status, 1);
     assert.match(fail.stderr, /do not delete an Accepted ADR/);
+  } finally {
+    await removeTree(root);
+  }
+});
+
+test("a blank context line without its space does not hide the next file", async () => {
+  const other = "docs/adr/0003-other.md";
+  const diff = `${diffOf(OLD, "@@ -1,2 +1,3 @@\n # A\n\n+Extra.\n")}${diffOf(other, "@@ -1 +1,2 @@\n x\n+y\n")}`;
+  const entries = parseDiff(diff);
+  assert.deepEqual(entries.map((e) => e.path), [OLD, other]);
+  assert.deepEqual(entries[0].added, [{ line: 3, text: "Extra." }]);
+});
+
+test("a diff header starts a new file even inside an unfinished hunk", async () => {
+  const diff = `${diffOf(OLD, "@@ -1,5 +1,5 @@\n x\n")}${diffOf("docs/adr/0003-other.md", "@@ -1 +1 @@\n-a\n+b\n")}`;
+  assert.equal(parseDiff(diff).length, 2);
+});
+
+test("with git, a renamed ADR with a bad name is still a new ADR", async () => {
+  const root = await makeTree({ ...TREE, [OLD]: "# A\n\nStatus: Proposed\n\nKeep it.\n" });
+  const git = (...args) => spawnSync("git", ["-c", "user.name=t", "-c", "user.email=t@t", ...args],
+    { cwd: root, encoding: "utf8" });
+  try {
+    git("init", "-q", "-b", "main");
+    git("add", ".");
+    git("commit", "-q", "-m", "base");
+    git("switch", "-q", "-c", "work");
+    git("mv", OLD, "docs/adr/0001-Bad_Name.md");
+    const fail = run(["--base", "main", root]);
+    assert.match(fail.stderr, /file name must be NNNN-short-title\.md/);
   } finally {
     await removeTree(root);
   }
