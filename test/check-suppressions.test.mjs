@@ -247,6 +247,14 @@ test("the checker skips its own files and Markdown", () => {
   }
 });
 
+test("the checker skips plain text files", () => {
+  for (const path of ["test/fixtures/review.txt", "NOTES.TXT"]) {
+    assert.deepEqual(added(path, "# noqa"), [], path);
+    assert.deepEqual(added(path, "// eslint-disable"), [], path);
+  }
+  assert.equal(added("src/a.txt.js", "// eslint-disable").length, 1);
+});
+
 test("the line above comes from a context line or from the file on disk", async () => {
   const withContext = diff("src/a.js", [" // The API names this field.", "+// eslint-disable-next-line camelcase"]);
   assert.deepEqual(checkDiff(withContext, null).errors, []);
