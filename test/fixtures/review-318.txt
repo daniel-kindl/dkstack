@@ -1,0 +1,108 @@
+# Review of PR #318: feat(scripts): make check-writing fail
+
+**Verdict: CHANGES-REQUESTED**
+
+Head SHA: `97acdd5831126ff91e710fc1db616039a87d1c62`
+
+Base: `main`. Merge-base: `0d206c627eb93ec2a388d0c02ae9a8902244b59b`. Commits: one, `97acdd5 feat(scripts): make check-writing fail`.
+
+Fallback used: the reviewer did not post this review. The requester said to report to the requester only. The review is in this file.
+
+## Summary
+
+- Standards: 2 findings. The worst finding is Low (L1).
+- Specification: 0 findings. All four acceptance criteria of #299 are met.
+- Blast radius: 0 confirmed risks. The safety fact reached level 4, Run.
+- Tests: the two exit-code tests kill all three mutations that the reviewer tried.
+- The required check `validate` is green on the head SHA.
+
+The two Low findings are wording points. Each is a small fix. The verdict rules give CHANGES-REQUESTED for a Low finding.
+
+## Pull request text
+
+- Title: `feat(scripts): make check-writing fail` is a conventional commit of 38 characters. It passes.
+- The body has `Closes #299`. It passes.
+- The body names the test that failed first (exit code actual 0, expected 1). It gives the `npm run check` result. It names actionlint as NOT RUN with a reason. It passes.
+- The body has an `Observability:` line. It passes.
+- The change is one logical change from one issue. It passes.
+- Note: the body lists the `validate` run as Unverified. That run is now green. See Verification.
+
+## Standards
+
+### L1. The workflow comment and step name omit the long step
+
+- `file:line`: `.github/workflows/validate.yml:113` and `.github/workflows/validate.yml:114`.
+- Problem: the comment says "This check fails when it finds a long sentence or a semicolon." The step name says "long sentences and semicolons". The check also fails on a step over 20 words. `README.md:84`, `CHANGELOG.md:15` and the script header name all three problems.
+- Rule: [coding/quality.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality.md) and the Docs item of [review-standards](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-standards/SKILL.md#checklist).
+- Why: a reader of the workflow can think that a long step does not fail the job. The four places that describe the check do not agree.
+- Fix: change the comment to "This check fails when it finds a long step, a long sentence or a semicolon." Optionally change the step name to "Check for long steps, long sentences and semicolons in Markdown".
+
+### L2. The test file comment still says that the check warns
+
+- `file:line`: `test/check-writing.test.mjs:9`.
+- Problem: the comment starts "warn on a step (numbered or a checklist item) over 20 words". Line 11 of the same comment now says "The check fails when it finds a problem (#299)." One comment gives two behaviors.
+- Rule: [coding/quality.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality.md) (comments match the code) and the issue criterion that no text says the check only warns.
+- Why: the old word "warn" can make a reader think that the check is still advisory.
+- Fix: change "warn on a step" to "find a step". Join the broken lines 9 to 11 into one wrapped comment.
+
+### Checked with no finding
+
+- Safety: no change touches a release, a deploy, branch protection or a ruleset. Pass.
+- Quality gates: the change makes a gate stronger. No gate is lowered. Pass.
+- Security and dependencies: no new dependency. No change to CI triggers, tokens or pinned actions. Pass.
+- Architecture: the only ADR is `docs/adr/0001-how-consumers-follow-versions.md`. Its `Affects:` line does not match a changed file. No ADR finding.
+- Naming: the identifiers `warnings` and `writingWarnings` keep the word "warning" while the output says "problem". A rename would touch `test/writing-scope.test.mjs`. This is outside the issue. The reviewer does not report it as a finding.
+- Version: a new duty for authors is MINOR under [breaking changes in dkstack](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/versioning/index.md#breaking-changes-in-dkstack). The `feat` type matches. No consumer runs this script, so no "Consumer action:" line is necessary.
+- Docs: `README.md:84` and the `CHANGELOG.md` Unreleased entry match the change.
+- Writing: the new text has no sentence over 25 words and no semicolon. `npm run check:writing` and `check:dashes` pass.
+
+## Specification
+
+Source: issue #299 (`Closes #299` in the body). Parent: #200, item C1 and finding F2.
+
+- "`npm run check:writing` exits 1 when it finds a problem, and 0 when it finds none." Met. `scripts/check-writing.mjs:96` sets `process.exitCode = 1` when `warnings.length > 0`. Level 4: two tests run the CLI.
+- "The `validate` step comment and the script header no longer say that the check only warns." Met. See `.github/workflows/validate.yml:113` and `scripts/check-writing.mjs:2-7`. L2 is a related leftover in a test comment.
+- "A test proves the exit code for a file with a long sentence and for a clean file." Met. `test/check-writing.test.mjs:48` expects status 1 for a 30-word sentence. `test/check-writing.test.mjs:62` expects status 0, an empty stderr and the exact summary line for a clean file.
+- "`npm run check` passes on the branch." Met. Level 4, see Verification.
+
+Not asked for: the change to `test/pre-release-audit.test.mjs`. It is a necessary result of the new Unreleased `### Changed` section. The test now reads the 1.6.0 section, where the checked entry is now. The assertions did not change. No finding.
+
+Wrong: none found.
+
+## Blast radius
+
+Safety fact: `main` has 0 writing problems, so the stricter check does not make `validate` fail on `main` or on clean pull requests. Level 4, Run. At the head, `npm run check:writing` printed "126 Markdown file(s) checked. 0 writing problem(s)." and exited 0. The CI log of run 45037096210 shows the same line.
+
+Confirmed risks: none.
+
+Cleared risks:
+
+- Callers of `checkWriting` and `writingWarnings`: only `test/check-writing.test.mjs` and `test/writing-scope.test.mjs` import them. The change touches only `main()`. The exported functions did not change.
+- The required check: the ruleset requires the context `validate`. That is the job name. The step name change does not change the context.
+- `continue-on-error`: the workflow has none. A nonzero exit now fails the job, as intended.
+- The step name: no script or test checks the old name "Warn about long sentences". A search found no match.
+- `npm run check`: `check:writing` already ran before `npm test` in the chain. A writing problem now stops the chain locally too. This is the intended behavior.
+- Consumers: no consumer page links `scripts/check-writing.mjs`. The script checks only this repository.
+
+## Tests
+
+- The test at `test/check-writing.test.mjs:48` proves exit 1 and the stderr message for a 30-word sentence. It also proves that `CHANGELOG.md` is skipped.
+- The test at `test/check-writing.test.mjs:62` proves exit 0, an empty stderr and the exact stdout for a clean file.
+- The body says the exit-code test failed first with actual 0, expected 1.
+
+Mutations that the reviewer tried in a temporary worktree, then reverted:
+
+1. Remove `if (warnings.length > 0) process.exitCode = 1;`. The exit-1 test failed. Killed.
+2. Always set `process.exitCode = 1`. The clean-file test failed. Killed.
+3. Change the condition to `warnings.length > 1`. The exit-1 test failed. Killed.
+
+No test that cannot fail was found.
+
+## Verification
+
+- `npm run check` at the head in a temporary worktree: pass. 536 tests, 0 failures. Coverage of `scripts/`: 99.22% lines, 93.69% branches. `check-writing.mjs`: 100% lines, 94.12% branches. Level 4 on Fedora Linux (kernel 7.3.4, x86_64).
+- `npm run check:writing` at the head: exit 0, 0 problems. Level 4.
+- Required check `validate` on `97acdd5831126ff91e710fc1db616039a87d1c62`: completed, success. Run: https://github.com/daniel-kindl/dkstack/actions/runs/45037096210/job/137253147978
+- actionlint: NOT RUN locally by the reviewer. The `validate` job runs actionlint and shellcheck, and that job passed. This covers the PR's NOT RUN item.
+- Title check: covered by the `validate` job, which passed.
+- The temporary worktree was removed after the run.

@@ -31,6 +31,9 @@ npm run check
 request title with `npm run check:title -- "<title>"`. The `validate` workflow runs the same
 checks, the title check and actionlint.
 
+A reviewer checks the review file with `node scripts/check-review.mjs <file>` before the review is
+posted. The file is not in the repository, so `npm run check` does not run this check.
+
 ## Add a page or a skill
 
 - Add the page to the `index.md` of its section, or the skill to `skills/index.md`.

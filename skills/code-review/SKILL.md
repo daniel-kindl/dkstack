@@ -127,7 +127,11 @@ If a required check is pending, give no verdict yet. Wait for the result, then g
 
 ## Output
 
-Post the review as one comment on the pull request. Write it in a file first, then post it. If you cannot post it, see [When a piece is missing](#when-a-piece-is-missing). Use this order:
+Post the review as one comment on the pull request. Write it in a file first, then post it. If you cannot post it, see [When a piece is missing](#when-a-piece-is-missing).
+
+Before you post, run [check-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/scripts/check-review.mjs) on the file with `node scripts/check-review.mjs <file>`. Fix each problem that it prints. If you cannot run it, write NOT RUN in the verification item.
+
+Use this order:
 
 1. The verdict and the head SHA, or what you reviewed (see [When a piece is missing](#when-a-piece-is-missing)).
 2. A short summary: the number of findings on each axis and the worst finding on each axis.

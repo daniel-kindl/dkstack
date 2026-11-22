@@ -1,0 +1,158 @@
+# Review of PR #322: feat(scripts): audit the repository settings
+
+Verdict: CHANGES-REQUESTED
+
+Head SHA: `c79a455819256dce29a6b014c071de6a820b4b0a`
+
+Base: `main`. Merge-base: `0d206c627eb93ec2a388d0c02ae9a8902244b59b`. Commits: one, `c79a455 feat(scripts): audit the repository settings`. Diff: 7 files, 715 insertions, 1 deletion.
+
+Fallback used: I could not post. The requester told me to report only to them. This review is in a file.
+
+## Summary
+
+- Standards axis: 4 findings (1 High, 0 Medium, 3 Low). Worst: H1. A response with no merge fields gives a false FAIL in place of NOT RUN.
+- Specification axis: 3 findings (0 High, 2 Medium, 1 Low). Worst: M1. Classic branch protection is not read, so a protected consumer gets FAIL on each branch item.
+- Blast radius: no confirmed risk outside the findings. The safety fact reached level 4.
+- The tool only reads. NOT RUN never becomes PASS in each path that I tested. The expected values match the skill, except M2 and L4.
+
+## Pull request text (step 3)
+
+- Title: `feat(scripts): audit the repository settings`. It is a conventional commit of 44 characters. Pass.
+- The body has `Closes #302`. Pass.
+- The body lists the tests that came first and what they prove. Pass.
+- One logical change from one issue. Pass.
+- See L3 for the check that did not run.
+
+## Standards
+
+### H1. A missing merge field gives FAIL with a false value, not NOT RUN
+
+- `scripts/audit-settings.mjs:53-58`
+- Problem: `repoItems` reads `allow_squash_merge`, `allow_merge_commit`, `allow_rebase_merge` and `delete_branch_on_merge`. GitHub leaves out these fields when the token has no admin right. `onOff(undefined)` gives `"off"`. The report then says "squash off, merge commit off, rebase off" and "Delete branch on merge: off". Both items are FAIL, and the exit code is 1.
+- Evidence: a live GET of `repos/cli/cli`, where I am not admin, gave `has("allow_squash_merge") == false` and `has("delete_branch_on_merge") == false`. I ran `auditSettings` with a body that has only `default_branch`. It gave FAIL with "squash off, merge commit off, rebase off" and FAIL with "off". Level 4.
+- Rule: [coding/error-handling.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/error-handling.md) and [fail fast](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/fail-fast.md). The pull request body also says "A response that it cannot read gives NOT RUN".
+- Why: the report states a fact that the tool did not read. The owner can act on a false value. The same file treats a missing `security_and_analysis` field as NOT RUN (line 133), so the two paths do not agree.
+- Fix: if a merge field or `delete_branch_on_merge` is not a boolean, give NOT RUN with `ADMIN_HINT`. Add a test with a repository body that has no merge fields. The test must expect NOT RUN and exit 2.
+
+### L1. The CODEOWNERS check tests one dkstack file name
+
+- `scripts/audit-settings.mjs:17`
+- Problem: `WORKFLOW_FILE` is `.github/workflows/validate.yml`. A consumer rule `/.github/workflows/ci.yml @o` gives FAIL. A rule `/.github/workflows/validate.yml @o` gives PASS, but it does not cover other workflow files.
+- Rule: code smell "Magic value" in [review-standards](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-standards/SKILL.md#code-smells). Low, because the item name and the expected text say `.github/workflows/`, and most rules use a folder pattern.
+- Why: the item name promises the folder, but the code tests one file.
+- Fix: test a path that no real rule names, for example `.github/workflows/<any>.yml`, or require a rule whose pattern covers the folder. Add a test for a rule that names only one file.
+
+### L2. Step 1 of the skill does not say what the tool needs
+
+- `skills/setup-repo-protection/SKILL.md:15`
+- Problem: the step links the raw script. It does not say that the tool needs Node.js, an authenticated `gh` and a token with admin rights. It also does not give the command for a consumer, who has no `npm run audit:settings`.
+- Rule: Docs item in [review-standards](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-standards/SKILL.md#checklist).
+- Why: without admin rights, the bypass and security items are NOT RUN, and H1 gives false FAIL items. A consumer must know this before the run.
+- Fix: add one sentence, for example "Run `node audit-settings.mjs <owner/repo>` with `gh` signed in as a repository admin." Keep the code host neutral if `test/bootstrap-skill.test.mjs` requires it.
+
+### L3. The body names the open check as Unverified, not as NOT RUN
+
+- Pull request body, Evidence section.
+- Problem: the body says "Unverified: the `validate` run on this pull request." It has no NOT RUN line. The template has a `- NOT RUN:` line.
+- Rule: [workflow/review-and-merge.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md) says to name each required check that did not run as NOT RUN.
+- Why: the reviewer must see each check that did not run in one known form.
+- Fix: `validate` is now green on the head. Change the line to "Verified: `validate` passed on c79a455." Use NOT RUN for a check that did not run.
+
+## Specification
+
+Specification: issue #302, acceptance criteria. Parent context: #200, item C4 and finding F1.
+
+### M1. Classic branch protection is not read, so a protected consumer fails each branch item
+
+- `scripts/audit-settings.mjs:82-87` and `scripts/audit-settings.mjs:262`
+- Spec line: "It takes the repository as an argument, so that a consumer can use it."
+- Problem: the tool reads only rulesets. A consumer that protects the default branch with classic branch protection gets FAIL on six items with "no active ruleset on the default branch". The script header, the README, `CONTRIBUTING.md` and the skill do not state this limit. The skill says "Default branch rule" and names no mechanism.
+- Rule: missing or partial work, [review-spec](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-spec/SKILL.md#findings).
+- Why: the owner of such a consumer sees six FAIL items for rules that are in force. The result is safe in direction, because it is not PASS, but it is wrong. Level 3, Reasoned. I did not run it against a repository with classic protection.
+- Fix: read `GET repos/<r>/branches/<default>/protection` and count its rules. Or, if no ruleset is on the default branch, give NOT RUN "classic branch protection is not checked" and state the limit in the script header and in step 1 of the skill. Add a test for the path that you select.
+
+### M2. CODEOWNERS gives PASS when no code owner review is required
+
+- `scripts/audit-settings.mjs:166-183`
+- Spec line, from `skills/setup-repo-protection/SKILL.md` step 4: "Add a `CODEOWNERS` entry that requires the owner's review for the CI workflow files."
+- Problem: the item gives PASS when a rule with an owner covers the workflow file. It does not check the `pull_request` rule parameter `require_code_owner_review`. Finding F7 in #200 says: "The ruleset has `require_code_owner_review: false`, so a file alone would not enforce a review." With today's dkstack ruleset, a new CODEOWNERS file would turn this item to PASS, but no review would be required.
+- Rule: wrong result, [review-spec](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-spec/SKILL.md#findings).
+- Why: the task is to compare with the skill. This is a PASS for a requirement that the skill states and that is not met. Level 3, Reasoned from lines 181-183 and the `allGood` fixture, whose `pull_request` rule has no `require_code_owner_review`.
+- Fix: give PASS only if an active default branch ruleset has a `pull_request` rule with `require_code_owner_review: true`. Else FAIL, with the found value. Add a test with a CODEOWNERS file and `require_code_owner_review: false`. Update `allGood` to set it to `true`.
+
+### L4. The tag item does not check that the ruleset targets release tags
+
+- `scripts/audit-settings.mjs:115-120`
+- Spec line, from the skill step 3: "Protect release tags from update and deletion. Only the release process creates them."
+- Problem: any active tag ruleset with `update` and `deletion` gives PASS, for example one that includes only `refs/tags/tmp`. The item does not read `conditions.ref_name`. It also does not check the bypass list of the tag ruleset.
+- Rule: wrong result, [review-spec](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/review-spec/SKILL.md#findings). Low, because no general rule names the release tag pattern, and a narrow tag ruleset is rare.
+- Why: a PASS can show a protection that does not cover the release tags.
+- Fix: show the `include` patterns in the found value, so that the owner sees what the ruleset covers. Optionally give FAIL when a tag ruleset has a bypass actor with `always`.
+
+### Cleared on the specification axis
+
+- "reads the settings with `gh api` and changes nothing": met. See Blast radius.
+- "merge methods, linear history, required checks, force-push and deletion rules, the bypass list, tag rules, secret scanning, push protection, private vulnerability reporting and `SECURITY.md`": each has an item.
+- "takes the repository as an argument": met, `main` at line 278. Partial for consumers, see M1.
+- "not a `check:*` npm script and not a `validate` step": met. `package.json` uses `audit:settings`. A test asserts that `check` and `validate.yml` do not run it.
+- "Tests use recorded API responses, not the network. The coverage gate passes": met. The CLI tests use a fake `gh` on `PATH`. Coverage of `audit-settings.mjs` is 98.97% lines and 92.45% branches.
+- Extra items: "Delete branch on merge" comes from `version-control/feature-branches.md`, and CODEOWNERS comes from the skill step 4. Both are in the #200 audit. Not a finding.
+- The #200 audit table names fork approval for C4. Issue #302 does not ask for it. Not a finding. The owner can add it to a later issue.
+- Release branch rules are not checked. The body states this limit and the reason. Not a finding.
+
+## Blast radius
+
+Safety fact: the script sends only `gh api --method GET <path>`, with an argument array and no shell, and nothing runs it automatically.
+
+- Located: `scripts/audit-settings.mjs:245` is the only process call. There is no file write, no `-f` or `-F` field and no `--input`. `grep` finds `audit:settings` only in `package.json` and the tests.
+- Run: the CLI test at `test/audit-settings.test.mjs:359-361` asserts that each of 12 calls starts with `api --method GET`. I changed `GET` to `POST`, and the test failed.
+- Reproduced: I ran the tool once against `daniel-kindl/dkstack`. It gave 12 pass, 2 fail, 0 not run, exit 1. The failures were the Admin bypass on `protect-main` and no CODEOWNERS file. This matches the body.
+- Level reached: 5, Reproduced.
+
+Confirmed risks: none beyond H1, M1 and M2.
+
+Cleared risks:
+
+- `npm run check` and `validate`: not changed. A test asserts that neither runs the tool.
+- Path injection: `main` accepts only `[\w.-]+/[\w.-]+`. Ruleset IDs come from the API. A path such as `../..` can pass the pattern, but each call is GET only. No impact.
+- The raw `v1` link in the skill: it follows ADR 0001, which says consumers follow `v1`. The file reaches `v1` at the next release. `check:links` passed.
+- Unreadable ruleset detail: `fetchSettings` replaces all rulesets with the first error, so each branch and tag item is NOT RUN, never PASS.
+- Organization rulesets: the list endpoint includes parent rulesets by default. If `bypass_actors` is hidden, the bypass item is NOT RUN.
+- More than 100 rulesets: not read. Rare. No finding.
+
+## Tests
+
+The tests came first. The body says the new file failed with `ERR_MODULE_NOT_FOUND`, then two behavior tests failed and were fixed. The tests prove these behaviors:
+
+- the dkstack fixture gives exactly the two expected FAIL items
+- a full fixture gives 14 PASS items
+- an unreadable response gives NOT RUN for each item
+- a hidden bypass list and hidden security fields give NOT RUN
+- a 404 on a first file does not hide a 403 on a later file
+- ruleset include, exclude, `~ALL`, inactive and empty status check cases
+- CODEOWNERS last-match rule and owner removal
+- exit codes 0, 1 and 2, and GET on each CLI call
+
+Mutations that I tried. Each one made a test fail:
+
+1. `--method GET` changed to `POST`.
+2. An unreadable repository gives PASS in place of NOT RUN.
+3. A missing `security_and_analysis` status is not NOT RUN.
+4. The ref `exclude` is ignored.
+5. A 403 on a file is ignored.
+6. The tag item does not require `update`.
+7. The exit code 2 for NOT RUN is removed.
+8. A ruleset with no conditions counts as on the default branch.
+9. An unreadable ruleset detail is ignored.
+
+Gaps: no test for a repository body with no merge fields (H1). No test for CODEOWNERS with `require_code_owner_review: false` (M2). The fixes for H1 and M2 must add them.
+
+## Verification
+
+- `npm run check` at the head, in a detached worktree, on Linux 7.3.4 (Fedora) with Node.js v24.19.0: passed. 559 tests, 0 failures, 0 writing warnings. Coverage of `scripts/` is 99.19% lines and 93.46% branches. Level 4 on Linux only.
+- Required check `validate` on `c79a455819256dce29a6b014c071de6a820b4b0a`: completed, success.
+- Live run against `daniel-kindl/dkstack`: one run, GET only. 12 pass, 2 fail, exit 1.
+- One extra GET of `repos/cli/cli` to confirm that GitHub hides the merge fields from a user who is not admin (H1).
+- NOT RUN: the tool against a repository with classic branch protection (M1). Reason: I have no such repository to read. Covered by reasoning only, level 3.
+- NOT RUN: the CLI tests on Windows. Reason: they skip on `win32`, and I have no Windows system.
+- I changed no setting, issue, ruleset or file in `/workspace/dkstack`. The temporary worktree is removed.

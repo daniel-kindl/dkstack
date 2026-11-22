@@ -91,6 +91,9 @@ npm run check
 
 The workflow does not tag, release or publish.
 
+A reviewer runs `node scripts/check-review.mjs <file>` on the review file before posting it. The
+script checks the verdict, the head SHA and each finding.
+
 ## What is in each section
 
 - [AGENTS.md](AGENTS.md): The entry point for agents.

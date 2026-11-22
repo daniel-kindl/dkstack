@@ -10,6 +10,12 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ## [Unreleased]
 
+### Added
+
+- `scripts/check-review.mjs` (#309). A reviewer runs it on the review file before posting. It
+  checks the verdict, the head SHA, the `file:line` of each finding and open findings. The merge
+  rule names `gh pr merge --squash --match-head-commit <sha>`.
+
 ## [1.6.0] - 2026-11-21
 
 ### Added

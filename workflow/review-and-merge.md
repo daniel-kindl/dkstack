@@ -39,6 +39,15 @@ keeps the review and merge rules.
 - To update a branch, merge `main` into it. Do not rebase a pushed branch. Reason: a rebase of a
   pushed branch needs a force-push.
 
+To merge only the reviewed head on GitHub, give the head SHA of the review to `gh`:
+
+```bash
+gh pr merge --squash --match-head-commit <sha> <number>
+```
+
+The command fails if the head of the pull request is not `<sha>`. Reason: a push after the review
+must not reach `main` without a new review.
+
 ## After the merge
 
 The agent that merged cleans the local clone that it used for the merge. When the owner

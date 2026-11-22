@@ -1,0 +1,51 @@
+# Re-review of PR #318: feat(scripts): make check-writing fail
+
+**Verdict: APPROVE-RECOMMENDED**
+
+Head SHA: `16b8442a37c1cae015620a7aec864242508650fa`
+
+Earlier head: `97acdd5831126ff91e710fc1db616039a87d1c62`. Delta: one commit, `16b8442 fix: name the long step in the writing step`.
+
+Fallback used: the reviewer did not post this review. The requester said to report to the requester only. The review is in this file.
+
+## Summary
+
+- Standards: 0 open findings. L1 and L2 are fixed.
+- Specification: 0 findings. All four acceptance criteria of #299 stay met.
+- Blast radius: 0 confirmed risks. The safety fact stays at level 4, Run.
+- The required check `validate` is green on the new head.
+
+## Earlier findings
+
+- L1 (`.github/workflows/validate.yml:113-114`): fixed. The comment now says "This check fails when it finds a long step, a long sentence or a semicolon." The step name is now "Check for long steps, long sentences and semicolons in Markdown". The workflow, `README.md:84`, `CHANGELOG.md:15` and the script header now agree.
+- L2 (`test/check-writing.test.mjs:9`): fixed. The comment now says "find a step" and not "warn on a step". The comment is one wrapped block of three lines.
+
+## Standards
+
+No new finding. The delta changes one comment and one step name in the workflow, and one comment in a test file. No code changed. The commit title has 43 characters and is a conventional commit.
+
+## Specification
+
+No new finding. The delta does not change behavior. The criterion "The `validate` step comment and the script header no longer say that the check only warns" is still met. The other three criteria are not affected by the delta.
+
+## Blast radius
+
+Safety fact: `main` has 0 writing problems. At the new head, `npm run check:writing` printed "126 Markdown file(s) checked. 0 writing problem(s)." Level 4, Run.
+
+Confirmed risks: none.
+
+Cleared risks:
+
+- The step name changed again. The ruleset requires the context `validate`, which is the job name. The step name does not change that context. An earlier search found no script or test that reads the step name.
+- The comment is still a YAML comment. The `validate` job ran actionlint on the new head, and the job passed.
+
+## Tests
+
+The delta changes no test logic. The three mutations from the first review still apply, because `scripts/check-writing.mjs` and the test assertions did not change.
+
+## Verification
+
+- `npm run check` at the new head in a temporary worktree: pass. 536 tests, 0 failures. Coverage of `scripts/`: 99.22% lines, 93.69% branches. Level 4 on Fedora Linux (kernel 7.3.4, x86_64).
+- Required check `validate` on `16b8442a37c1cae015620a7aec864242508650fa`: completed, success. Run: https://github.com/daniel-kindl/dkstack/actions/runs/45037408276/job/137254118392
+- actionlint: NOT RUN locally by the reviewer. The `validate` job runs actionlint, and that job passed.
+- The temporary worktree was removed after the run.

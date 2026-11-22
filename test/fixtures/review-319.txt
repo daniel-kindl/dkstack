@@ -1,0 +1,117 @@
+# Review of PR #319: feat(scripts): add check-pr-body
+
+**Verdict: CHANGES-REQUESTED**
+
+Head SHA: `4083b135147c8f6ad78db27a26f32e30f95eb685`
+
+Base: `main`. Merge-base: `0d206c627eb93ec2a388d0c02ae9a8902244b59b`. Commits: one, `4083b13 feat(scripts): add check-pr-body`.
+
+Fallback used: the reviewer did not post this review. The requester said "Report to me only", so the review is in this file.
+
+## Summary
+
+- Standards axis: 3 findings (0 Blocking, 0 High, 0 Medium, 3 Low). The worst is L1, the issue link pattern is narrower than the GitHub closing keywords.
+- Specification axis: 1 finding (1 High). The worst is H1, the check accepts the template placeholder as a valid `Visual verification:` value.
+- Blast radius: no confirmed risk. The release pull request and Dependabot pull requests skip the check, because the author login ends with `[bot]`.
+- Required check `validate`: pass on the reviewed head.
+
+## Pull request text
+
+- Title: `feat(scripts): add check-pr-body`. It is a conventional commit of 32 characters. Pass.
+- The body links the issue with `Closes #301`. Pass.
+- The body lists the tests and names actionlint as NOT RUN, with a reason. Pass.
+- One logical change from one issue (#301, item C3 of #200). Pass.
+
+## Standards
+
+### L1: the issue link pattern rejects valid GitHub closing links
+
+- `scripts/check-pr-body.mjs:12`
+- Problem: `ISSUE_LINK` accepts only `closes`, `fixes` and `resolves`, then a space, then `#N` or an issue URL. GitHub also links and closes an issue with `close`, `closed`, `fix`, `fixed`, `resolve` and `resolved`. GitHub also accepts a colon after the keyword and the `owner/repo#N` form. I ran the function on these bodies. `Fix #12`, `Closed #12`, `Closes: #12` and `Closes daniel-kindl/dkstack#12` all fail with the issue error.
+- Rule: [review and merge](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md#rules), "Link the issue in the pull request."
+- Why: a body with a correct closing link fails `validate`. The author must find out which spelling the script wants. The impact is small, because the error message gives an example and an edit runs the check again. That is why this finding is Low.
+- Fix: accept the nine GitHub keywords, an optional colon and the `owner/repo#N` form. Add a test for each form.
+
+### L2: an Observability or Visual verification line inside a code block counts
+
+- `scripts/check-pr-body.mjs:15`
+- Problem: the script removes HTML comments but not fenced code blocks or inline code. A body that quotes a template line in a code block has two `Observability:` lines and fails. I ran a body with a fenced block that holds `Observability: x`. The result was "it has 2".
+- Rule: [write-pr, Evidence](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-pr/SKILL.md#evidence), "Add one observability line to Evidence." A quoted example is not the observability line.
+- Why: dkstack pull requests often change the pull request rules and quote them. Such a body fails for a wrong reason. The impact is small, because the author can rewrite the quote. That is why this finding is Low.
+- Fix: remove fenced code blocks before the line search, as the script does for HTML comments. Add a test with a fenced block.
+
+### L3: no test proves that the Evidence heading must be an exact level 2 heading
+
+- `test/check-pr-body.test.mjs:55`
+- Problem: I changed `EVIDENCE` at `scripts/check-pr-body.mjs:14` to `/## Evidence/`. All tests still passed. So no test proves that `### Evidence` or `## Evidence notes` fails. The real code rejects `### Evidence`. I ran that case.
+- Rule: [coding/testing.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/testing.md) and [tdd/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/index.md). Tests must prove behavior, including the edges.
+- Why: a later change can loosen the heading match and no test fails. The main behavior, a body with no Evidence section fails, has a test. That is why this finding is Low.
+- Fix: add cases for `### Evidence` and `## Evidence notes`, and expect the Evidence error for each.
+
+Checked with no finding: safety, security (the body and the login go in through `env:`, not into `run:`), dependencies (none added), quality gates (none lowered, the coverage gate passes), logging (the Observability line of this body is correct), docs (`README.md`, `CONTRIBUTING.md` and `CHANGELOG.md` describe the step), writing (`check-writing` gives no warning on the changed files), version (no version change). ADR 0001 is the only ADR. Its Decision is about how consumers follow versions. It does not apply to this change.
+
+## Specification
+
+Source: issue #301, acceptance criteria. Parent: item C3 of #200.
+
+### H1: the template placeholder passes the Visual verification check
+
+- `scripts/check-pr-body.mjs:17` and `scripts/check-pr-body.mjs:48`. The test that pins it is at `test/check-pr-body.test.mjs:86`.
+- Specification line: "A `Visual verification:` line, if present, starts with `PASS`, `FAIL` or `NOT RUN`."
+- Problem: the script accepts a value that starts with `<PASS, FAIL or NOT RUN>`. That value does not start with `PASS`, `FAIL` or `NOT RUN`. The unchanged template line (`.github/pull_request_template.md:18`) therefore passes. The test at line 86 expects this result. The pull request body does not record this choice as a decision.
+- Why: the acceptance criterion is not met for this input. [write-pr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-pr/SKILL.md#evidence) also says "A change with no rendered UI has no visual verification line." So the unchanged template line in a change with no rendered UI is an error, and the check does not find it. The Observability check rejects its template placeholder, so the two checks also do not agree.
+- Fix: remove the `VISUAL_PLACEHOLDER` exception and change the test at line 86 to expect the error. To keep the template easy to use, move the Visual verification example into the HTML comment of the Evidence section. Another fix is that the owner changes the acceptance criterion in #301 to allow the placeholder. Then record that decision in the pull request body.
+
+The other criteria are met:
+
+- `Closes #` alone fails. Tested at `test/check-pr-body.test.mjs:41`.
+- An Evidence section and exactly one `Observability:` line in the form `<events>` or `none, <reason>`. Tested, and the placeholders fail.
+- A bot author is skipped. Tested in the function and in the CLI.
+- `validate` runs the step on `pull_request` with the body through `env:`. The `edited` type is in `validate.yml:10`.
+- Tests cover each case. The coverage for the new script is 100% lines and 100% branches.
+
+## Blast radius
+
+**The one safety fact:** the release pull request and Dependabot pull requests have an author login that ends with `[bot]`, so the step exits 0 for them.
+
+- Release pull request. The release app token opens it (`.github/workflows/release.yml`, step "Open the release pull request"). The REST API gives `user.login` = `dkstack-release[bot]` for #298, the last release pull request. The step reads `github.event.pull_request.user.login` (`.github/workflows/validate.yml:54`). I ran the CLI with the body of #298 and `AUTHOR=dkstack-release[bot]`. It printed the skip message and exited 0. Without the bot author, the same body fails with three errors. So the skip is what keeps the release passing. Level: 4, Run, for the script with the real login. The full path on a real release pull request is level 3, Reasoned, until the next release runs.
+- Dependabot pull requests. `.github/dependabot.yml` updates `github-actions`. No Dependabot pull request exists in the repository yet, so I could not read a real login. The Dependabot login is `dependabot[bot]`, and the unit test and the CLI test use that string. Level: 3, Reasoned.
+
+Confirmed risks: none.
+
+Cleared risks:
+
+- Push to `main`: the step has `github.event_name == 'pull_request'`, so it does not run on a push. Located at `validate.yml:50`.
+- An empty body: GitHub sends `null`, so `BODY` is an empty string. The script reports three clear errors and exits 1. It does not crash. Tested.
+- Injection: the body and the login go in through `env:` only. `check-workflows` passed, and the test at `test/check-pr-body.test.mjs:147` checks that `run:` has no expression.
+- CRLF line endings from the web editor: I ran a body with CRLF. It passes.
+- The release job runs `npm run check` on the prepared release. The new test needs no pull request data, so it passes there. Proven by the local run of `npm run check`.
+- A very large body with many multibyte characters can be larger than the Linux limit for one environment variable. The title step has the same design. The likelihood is very low.
+- Open pull requests by people: after the merge, each open pull request with no issue link or no Observability line fails on its next run. This is the intended behavior.
+
+## Tests
+
+The tests prove: a complete body passes, the template fails, the issue link needs a number, a link in an HTML comment does not count, the Evidence section is required, exactly one Observability line is required, the placeholder and `none` without a reason fail, the Visual verification values, the bot skip, the exit codes 0, 1 and 2 of the CLI, and the workflow step text.
+
+Mutations I tried on `scripts/check-pr-body.mjs`. Each mutation ran against `test/check-pr-body.test.mjs`:
+
+| Mutation | Result |
+| --- | --- |
+| Remove the bot skip in `checkPrBody` | 1 test fails |
+| Remove the HTML comment strip | 1 test fails |
+| Allow two Observability lines | 1 test fails |
+| Reject the Visual verification placeholder | 1 test fails (see H1) |
+| Accept `none` with no reason | 1 test fails |
+| Make the issue number optional | 2 tests fail |
+| Accept `## Evidence` anywhere in a line | 0 tests fail (see L3) |
+
+The body says that the new test file failed first, because the script did not exist. This is level 1, Stated. The commit has the test and the script together, so I could not check the order.
+
+## Verification
+
+- `npm run check` at the head in a temporary worktree, on Linux (Fedora, in a container), Node v24.19.0. Result: 551 tests, 0 failures. The coverage gate passed. `check-pr-body.mjs` has 100% lines and branches. Level 4, Run, on Linux only.
+- `node scripts/check-pr-body.mjs` on the body of #319 and the body of #297. Both passed. Level 4.
+- The body of #298 with the release bot login. Skipped, exit 0. Level 4.
+- Required check on the head SHA: `validate` is the only required status check of `main`. Its state is SUCCESS, run 45037164141. The log shows that the new step ran on this body. The merge state is CLEAN.
+- NOT RUN: actionlint locally, because it is not installed. The `validate` run covers it, and it passed.
+- NOT RUN: a real release pull request and a real Dependabot pull request with the new step. Neither exists for this head. The blast radius section gives the reasoned proof.
