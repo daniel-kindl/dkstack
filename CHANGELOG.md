@@ -10,6 +10,12 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ## [Unreleased]
 
+### Added
+
+- `scripts/audit-settings.mjs` and `npm run audit:settings` (#302). It reads the settings of a
+  repository with `gh api` and compares them with `setup-repo-protection`. It changes nothing.
+  The owner runs it. `validate` does not run it.
+
 ## [1.6.0] - 2026-11-21
 
 ### Added

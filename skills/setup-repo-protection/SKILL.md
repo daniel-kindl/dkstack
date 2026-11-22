@@ -12,7 +12,7 @@ These are settings of the code host. An agent does not change a protection rule 
 
 ## Steps
 
-1. Read the current settings, if you can. List each setting below that is missing or weaker.
+1. Read the current settings, if you can. List each setting below that is missing or weaker. If [audit-settings.mjs](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/scripts/audit-settings.mjs) supports the code host of the project, the owner can run it to read the settings. The tool changes nothing.
 2. Default branch rule:
    - A pull request is required for each change.
    - The required checks must pass before a merge.
