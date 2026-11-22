@@ -23,6 +23,15 @@ change that a consumer must act on has a "Consumer action:" line.
 - `scripts/audit-settings.mjs` and `npm run audit:settings` (#302). It reads the settings of a
   repository with `gh api` and compares them with `setup-repo-protection`. It changes nothing.
   The owner runs it. `validate` does not run it.
+- `check-workflows` checks more CI workflow rules (#303). Each job sets `timeout-minutes`. A
+  release or deploy job needs an `environment:`, and its workflow starts only by
+  `workflow_dispatch`, sets `concurrency` and checks that the ref is `main`. The allowed secrets
+  are in `.github/check-workflows.json`, not in the code. dkstack keeps the release app exception.
+  The check now fails closed. Jobs must be at 2 spaces under `jobs:`, and job keys at 4 spaces.
+  Triggers must be on the `on:` line or at 2 spaces under it. Another form fails, also when the
+  workflow does not release.
+  Consumer action: before you copy the new `check-workflows.mjs`, write each job at 2 spaces under
+  `jobs:` with its keys at 4 spaces, and each trigger on the `on:` line or at 2 spaces under it.
 
 ### Changed
 

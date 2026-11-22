@@ -5,11 +5,12 @@
 // - The workflow sets top-level permissions, so the token has least privilege.
 //   "write-all" is not permitted. A top-level permission cannot be "write".
 //   Give a write permission to the one job that needs it.
-// - The workflow does not use secrets. There is one exception: the job with
-//   "environment: release" in release.yml may pass secrets.RELEASE_APP_ID as
-//   "app-id" and secrets.RELEASE_APP_PRIVATE_KEY as "private-key" to
-//   actions/create-github-app-token, in the "with:" block of that step only,
-//   one key per line. Daniel decided this on 2026-11-11 (#135).
+// - The workflow does not use secrets. The settings file
+//   .github/check-workflows.json can allow a secret. Each entry of its
+//   "allowedSecrets" list names a workflow file, the environment of the job,
+//   the action of the step and the "with:" keys with their secret names.
+//   That step may pass "key: ${{ secrets.NAME }}" in its "with:" block only,
+//   one key per line. With no settings file, no secret is allowed.
 // - The workflow does not pass all secrets: no "secrets: inherit" and no
 //   whole "secrets" context in an expression, as in "toJSON(secrets)".
 // - The workflow does not use the pull_request_target or workflow_run
@@ -18,13 +19,28 @@
 //   value goes through "env:", so it cannot inject shell code.
 // - Each actions/checkout step sets "persist-credentials: false", so the
 //   token is not left in .git/config for later steps.
-// The check reads lines. It does not parse YAML.
+// - Each job sets "timeout-minutes". A job that calls a reusable workflow
+//   with "uses:" cannot set it, so the check skips that job.
+// - A release or deploy job has an "environment:" key, or a line that
+//   RELEASE_MARKERS names, such as "npm publish", a tag push or a release
+//   action. That job needs an "environment:". RELEASE_MARKERS is a list, so a
+//   deploy job that it does not name must set "environment:" to be checked.
+//   The workflow starts only by "workflow_dispatch" and sets "concurrency"
+//   at the top level or on each such job. An "if:" expression or a "run:"
+//   script line compares "github.ref" or "GITHUB_REF" with
+//   "refs/heads/main". The check cannot prove that the comparison stops
+//   the run.
+// The check reads lines. It does not parse YAML. Job names must be at 2
+// spaces under "jobs:" and job keys at 4 spaces. Triggers must be on the
+// "on:" line or at 2 spaces under it. Another form fails, so that no job or
+// trigger is missed.
 
 import { readdir, readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 const DIR = ".github/workflows";
+const SETTINGS = ".github/check-workflows.json";
 const USES = /^\s*(?:-\s+)?uses\s*:\s*(["']?)([^"'\s#]+)\1(?:\s+#\s*(.*?))?\s*$/;
 const PINNED = /^\S+@[0-9a-f]{40}$/;
 const VERSION_COMMENT = /^v?[0-9]+(\.[0-9]+)*\b/;
@@ -32,11 +48,8 @@ const PERMISSIONS = /^permissions\s*:/m;
 const WRITE_ALL = /^\s*permissions\s*:\s*(["']?)write-all\1\s*(#.*)?$/;
 const WRITE = /:\s*(["']?)write\1\s*(?:[,}#]|$)/;
 const SECRETS = /\bsecrets\s*[.[]/;
-const APP_SECRET = [
-  /^\s+app-id: \$\{\{ secrets\.RELEASE_APP_ID \}\}$/,
-  /^\s+private-key: \$\{\{ secrets\.RELEASE_APP_PRIVATE_KEY \}\}$/,
-];
-const APP_TOKEN_ACTION = "actions/create-github-app-token@";
+const SETTINGS_MESSAGE =
+  'write "allowedSecrets" as a list of entries with the strings "file", "environment" and "action", and a "with" map of key to secret name';
 const SECRETS_INHERIT = /^\s*secrets\s*:\s*(["']?)inherit\1\s*(#.*)?$/;
 const EXPRESSION = /\$\{\{(.*?)\}\}/g;
 const WHOLE_SECRETS = /\bsecrets\b(?!\s*[.[])/;
@@ -48,6 +61,68 @@ const RUN_MESSAGE =
 const CHECKOUT_ACTION = "actions/checkout@";
 const PERSIST_FALSE = /^\s+persist-credentials\s*:\s*(["']?)false\1\s*(#.*)?$/;
 const PERSIST_MESSAGE = 'set "persist-credentials: false" in the "with:" block of the checkout step';
+const TOP_KEY = /^(["']?)([^"':\s]+)\1\s*:\s*(.*)$/;
+const TRIGGER_ITEM = /^ {2}(?:-\s+)?(["']?)([A-Za-z_]+)\1\s*(?::|$)/;
+const ON_MESSAGE = 'write "on:" on one line, or as a block with one trigger at 2 spaces on each line';
+const JOB = /^ {2}(["']?)([A-Za-z_][\w-]*)\1\s*:\s*(?:#.*)?$/;
+const JOB_MESSAGE = 'write each job as "name:" at 2 spaces under "jobs:", with its keys at 4 spaces';
+const JOB_KEY = /^ {4}(timeout-minutes|environment|uses|concurrency)\s*:\s*(["']?)([^"'\s#]*)\2/;
+// The commands and actions that mark a release or deploy job.
+const RELEASE_MARKERS = [
+  /\bgh\s+release\s+(?!view\b|list\b|download\b)\S/,
+  /\b(?:npm|pnpm|cargo)\s+publish\b/,
+  /\byarn\s+(?:npm\s+)?publish\b/,
+  /\bgit\s+push\b.*(?:--tags\b|--follow-tags\b|refs\/tags\/|\s["']?v[\d$])/,
+  /\bdocker\s+push\b/,
+  /\buses\s*:\s*["']?(?:softprops\/action-gh-release|ncipollo\/release-action)@/,
+];
+const IF_KEY = /^\s*(?:-\s+)?if\s*:/;
+const REF = /\bgithub\.ref\b|\bGITHUB_REF\b/;
+const MAIN_REF = /refs\/heads\/main(?![\w/.-])/;
+const COMPARE = /==|!=|\s=\s/;
+
+const isMap = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+const isText = (value) => typeof value === "string" && value !== "";
+const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// Return the allowed secrets of the settings file, as { allowed, error }.
+// With no settings file, no secret is allowed. A file that is not valid
+// allows no secret and gives an error.
+async function readSettings(root) {
+  let text;
+  try {
+    text = await readFile(join(root, SETTINGS), "utf8");
+  } catch {
+    return { allowed: [], error: null };
+  }
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    data = null;
+  }
+  const list = isMap(data) ? (data.allowedSecrets ?? []) : null;
+  const valid =
+    Array.isArray(list) &&
+    list.every(
+      (entry) =>
+        isMap(entry) &&
+        ["file", "environment", "action"].every((key) => isText(entry[key])) &&
+        isMap(entry.with) &&
+        Object.keys(entry.with).length > 0 &&
+        Object.entries(entry.with).every(([key, secret]) => isText(key) && isText(secret)),
+    );
+  if (!valid) return { allowed: [], error: `${SETTINGS}: ${SETTINGS_MESSAGE}` };
+  const allowed = list.map((entry) => ({
+    file: entry.file,
+    environment: entry.environment,
+    action: `${entry.action}@`,
+    lines: Object.entries(entry.with).map(
+      ([key, secret]) => new RegExp(`^\\s+${escape(key)}: \\$\\{\\{ secrets\\.${escape(secret)} \\}\\}$`),
+    ),
+  }));
+  return { allowed, error: null };
+}
 
 // Return { checked, errors }, or null when the folder does not exist.
 export async function checkWorkflows(root) {
@@ -59,6 +134,8 @@ export async function checkWorkflows(root) {
   }
   const files = names.filter((n) => /\.ya?ml$/.test(n)).sort();
   const errors = [];
+  const settings = await readSettings(root);
+  if (settings.error) errors.push(settings.error);
   for (const name of files) {
     const rel = `${DIR}/${name}`;
     const text = await readFile(join(root, DIR, name), "utf8");
@@ -66,7 +143,20 @@ export async function checkWorkflows(root) {
       errors.push(`${rel}: set top-level permissions, as in "permissions: contents: read"`);
     }
     let inTopPermissions = false;
-    let releaseJob = false;
+    // The current top-level key, the triggers and the jobs, for the
+    // timeout and the release rules.
+    let topKey = "";
+    const triggers = [];
+    let topConcurrency = false;
+    let refCheck = false;
+    const jobs = [];
+    let job = null;
+    // The indent of the first trigger under "on:", or -1.
+    let onIndent = -1;
+    // True when the check reported a line under "jobs:" that is not in a job.
+    let jobReported = false;
+    // The environment name of the current job, for the allowed secrets.
+    let jobEnvironment = "";
     // The state of the current step: its action and its "with:" block.
     let stepUses = "";
     let withIndent = -1;
@@ -91,8 +181,15 @@ export async function checkWorkflows(root) {
     text.split(/\r?\n/).forEach((line, i) => {
       const where = `${rel}:${i + 1}`;
       const lineIndent = line.search(/\S/);
+      const comment = line.trimStart().startsWith("#");
       // A line in a block script ("run: |" or "run: >") is shell code, not YAML.
-      if (runIndent !== -1 && (lineIndent === -1 || lineIndent > runIndent)) {
+      const inRunBlock = runIndent !== -1 && (lineIndent === -1 || lineIndent > runIndent);
+      if (!comment) {
+        if (job && RELEASE_MARKERS.some((re) => re.test(line))) job.releases = true;
+        const refLine = inRunBlock || RUN_KEY.test(line) || IF_KEY.test(line);
+        if (refLine && REF.test(line) && MAIN_REF.test(line) && COMPARE.test(line)) refCheck = true;
+      }
+      if (inRunBlock) {
         if (UNSAFE_IN_RUN.test(line)) errors.push(`${where}: ${RUN_MESSAGE}`);
         if (SECRETS.test(line)) errors.push(`${where}: do not use secrets in a workflow`);
         checkWholeSecrets(line, where);
@@ -129,18 +226,74 @@ export async function checkWorkflows(root) {
       checkWholeSecrets(line, where);
       if (/^\S/.test(line) && !line.startsWith("#")) {
         inTopPermissions = /^permissions\s*:/.test(line);
+        const top = TOP_KEY.exec(line);
+        topKey = top?.[2] ?? "";
+        job = null;
+        jobEnvironment = "";
+        onIndent = -1;
+        const value = (top?.[3] ?? "").replace(/(^|\s)#.*$/, "").trim();
+        if (topKey === "concurrency") topConcurrency = true;
+        if (topKey === "on") {
+          // A flow list or map that goes on to the next line can hide a trigger.
+          if (/^[[{]/.test(value) && !/[\]}]$/.test(value)) {
+            errors.push(`${where}: ${ON_MESSAGE}`);
+            triggers.push("?");
+          }
+          for (const m of value.matchAll(/[A-Za-z_]+/g)) triggers.push(m[0]);
+        }
+        if (topKey === "jobs" && value !== "" && value !== "{}") errors.push(`${where}: ${JOB_MESSAGE}`);
+      } else if (lineIndent > 0 && !comment && topKey === "on") {
+        if (onIndent === -1) onIndent = lineIndent;
+        const item = lineIndent === 2 ? TRIGGER_ITEM.exec(line) : null;
+        if (item) triggers.push(item[2]);
+        else if (lineIndent <= onIndent) {
+          errors.push(`${where}: ${ON_MESSAGE}`);
+          triggers.push("?");
+        }
+      } else if (lineIndent > 0 && !comment && topKey === "jobs") {
+        // Each line at job indent ends the job before it. A line there that
+        // is not a job start fails, so that it cannot keep the job state.
+        if (lineIndent <= 2) {
+          job = null;
+          jobEnvironment = "";
+          const jobStart = lineIndent === 2 ? JOB.exec(line) : null;
+          if (jobStart) {
+            job = {
+              name: jobStart[2],
+              line: i + 1,
+              keyIndent: -1,
+              timeout: false,
+              environment: false,
+              calls: false,
+              concurrency: false,
+              releases: false,
+            };
+            jobs.push(job);
+          } else {
+            errors.push(`${where}: ${JOB_MESSAGE}`);
+          }
+          jobReported = !jobStart;
+        } else if (!job) {
+          if (!jobReported) errors.push(`${where}: ${JOB_MESSAGE}`);
+          jobReported = true;
+        } else if (job.keyIndent === -1) {
+          job.keyIndent = lineIndent;
+          if (lineIndent !== 4) errors.push(`${where}: ${JOB_MESSAGE}`);
+        }
+      }
+      const jobKey = job ? JOB_KEY.exec(line) : null;
+      if (jobKey) {
+        const key = { "timeout-minutes": "timeout", uses: "calls" }[jobKey[1]] ?? jobKey[1];
+        job[key] = true;
+        if (key === "environment") jobEnvironment = jobKey[3];
       }
       const indent = line.search(/\S/);
-      if (/^  \S/.test(line)) {
-        releaseJob = false;
-        stepUses = "";
-      }
+      if (/^  \S/.test(line)) stepUses = "";
       // A step starts at "- ". A line at the indent of "with:" or less ends
       // the "with:" block.
       if (/^\s+- /.test(line)) stepUses = "";
       if (withIndent !== -1 && indent !== -1 && indent <= withIndent) withIndent = -1;
       if (/^\s+with:\s*$/.test(line)) withIndent = indent;
-      if (/^    environment:\s*release\s*$/.test(line)) releaseJob = true;
       if (WRITE_ALL.test(line)) {
         errors.push(`${where}: do not use "permissions: write-all"`);
       } else if (inTopPermissions && WRITE.test(line)) {
@@ -160,15 +313,40 @@ export async function checkWorkflows(root) {
         }
       }
       const appSecret =
-        name === "release.yml" &&
-        releaseJob &&
-        stepUses.startsWith(APP_TOKEN_ACTION) &&
         withIndent !== -1 &&
         indent === withIndent + 2 &&
-        APP_SECRET.some((re) => re.test(line));
+        settings.allowed.some(
+          (allow) =>
+            allow.file === name &&
+            allow.environment === jobEnvironment &&
+            stepUses.startsWith(allow.action) &&
+            allow.lines.some((re) => re.test(line)),
+        );
       if (SECRETS.test(line) && !appSecret) errors.push(`${where}: do not use secrets in a workflow`);
     });
     endStep();
+    for (const j of jobs) {
+      if (!j.timeout && !j.calls) errors.push(`${rel}:${j.line}: set "timeout-minutes" on the job "${j.name}"`);
+    }
+    const releaseJobs = jobs.filter((j) => j.environment || j.releases);
+    for (const j of releaseJobs) {
+      if (!j.environment) {
+        errors.push(`${rel}:${j.line}: give the release or deploy job "${j.name}" an "environment:"`);
+      }
+    }
+    if (releaseJobs.length > 0) {
+      if (triggers.length === 0 || triggers.some((t) => t !== "workflow_dispatch")) {
+        errors.push(`${rel}: start a release or deploy workflow only by "workflow_dispatch"`);
+      }
+      if (!topConcurrency && !releaseJobs.every((j) => j.concurrency)) {
+        errors.push(`${rel}: set "concurrency" in a release or deploy workflow, so that two runs do not overlap`);
+      }
+      if (!refCheck) {
+        errors.push(
+          `${rel}: check that the ref is "refs/heads/main" in a release or deploy workflow, and stop on a different ref`,
+        );
+      }
+    }
   }
   return { checked: files.length, errors };
 }
@@ -187,8 +365,8 @@ async function main() {
     return;
   }
   console.log(
-    `${result.checked} workflow(s) pin actions to a SHA and set permissions. ` +
-      "Only the release job uses the release app secrets.",
+    `${result.checked} workflow(s) pass the CI workflow rules. ` +
+      `Only the steps that ${SETTINGS} allows use secrets.`,
   );
 }
 
