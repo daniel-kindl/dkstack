@@ -48,6 +48,30 @@ test("an issue link needs a number", () => {
   }
 });
 
+test("every GitHub closing keyword and link form counts", () => {
+  for (const link of ["Close #1", "Closed #1", "Fix #1", "Fixed #1", "Resolve #1", "Resolved #1",
+    "Closes: #12", "FIXES #12", "Closes daniel-kindl/dkstack#12", "Fixes: octo/repo#3"]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [], link);
+  }
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "Closes owner/repo#")), [ISSUE_ERROR]);
+});
+
+test("lines inside fenced code blocks are ignored", () => {
+  const fence = (mark, ...lines) => [mark, ...lines, mark].join("\n");
+  for (const mark of ["```", "~~~"]) {
+    assert.deepEqual(checkPrBody(withLines(fence(mark, "Observability: x", "Visual verification: bad"))), [], mark);
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", fence(mark, "Closes #12"))), [ISSUE_ERROR], mark);
+  }
+  assert.deepEqual(checkPrBody(withLines("```js", "Observability: x", "```")), []);
+});
+
+test("the Evidence heading must be an exact level 2 heading", () => {
+  const error = ["the body must have an \"## Evidence\" section"];
+  for (const heading of ["### Evidence", "## Evidence notes", "# Evidence", "Evidence", "x ## Evidence"]) {
+    assert.deepEqual(checkPrBody(replaceLine("## Evidence", heading)), error, heading);
+  }
+});
+
 test("an issue link inside an HTML comment does not count", () => {
   assert.deepEqual(checkPrBody(replaceLine("Closes #12", "<!-- Closes #12 -->")), [ISSUE_ERROR]);
 });
@@ -82,13 +106,13 @@ test("a Visual verification line starts with PASS, FAIL or NOT RUN", () => {
   for (const value of ["PASS, screenshots in docs/a.png", "FAIL, the menu clips", "NOT RUN, no browser"]) {
     assert.deepEqual(checkPrBody(withLines(`- Visual verification: ${value}`)), [], value);
   }
-  assert.deepEqual(
-    checkPrBody(withLines("- Visual verification: <PASS, FAIL or NOT RUN>, <evidence>. Only for a rendered UI change.")),
-    [],
-  );
   const reason = "the \"Visual verification:\" line must start with PASS, FAIL or NOT RUN";
   assert.deepEqual(checkPrBody(withLines("- Visual verification: looks fine")), [reason]);
   assert.deepEqual(checkPrBody(withLines("- Visual verification:")), [reason]);
+  assert.deepEqual(
+    checkPrBody(withLines("- Visual verification: <PASS, FAIL or NOT RUN>, <evidence>. Only for a rendered UI change.")),
+    [reason],
+  );
 });
 
 test("a bot author is skipped", () => {

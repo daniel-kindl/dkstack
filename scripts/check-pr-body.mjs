@@ -10,11 +10,10 @@ import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 
 const ISSUE_LINK =
-  /\b(?:closes|fixes|resolves)\s+(?:#\d+|https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/issues\/\d+)/i;
+  /\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?):?\s+(?:(?:[\w.-]+\/[\w.-]+)?#\d+|https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/issues\/\d+)/i;
 const EVIDENCE = /^## Evidence[ \t]*$/m;
 const LINE = (name) => new RegExp(`^[ \\t]*(?:[-*][ \\t]+)?${name}:[ \\t]*(.*)$`, "gm");
 const OBSERVABILITY_PLACEHOLDERS = ["<events added or changed>", "<reason>"];
-const VISUAL_PLACEHOLDER = "<PASS, FAIL or NOT RUN>";
 const VISUAL_START = /^(?:PASS|FAIL|NOT RUN)\b/;
 
 const values = (body, name) => [...body.matchAll(LINE(name))].map((m) => m[1].trim());
@@ -22,8 +21,10 @@ const values = (body, name) => [...body.matchAll(LINE(name))].map((m) => m[1].tr
 // Return the list of problems. An empty list means a valid body.
 export function checkPrBody(rawBody, author = "") {
   if (author.endsWith("[bot]")) return [];
-  // A template comment can hold example lines. They are not part of the body.
-  const body = rawBody.replace(/<!--[\s\S]*?-->/g, "");
+  // A template comment or a code block can hold example lines. They are not part of the body.
+  const body = rawBody
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/^[ \t]*(`{3,}|~{3,})[^\n]*\n[\s\S]*?^[ \t]*\1[ \t]*$/gm, "");
   const errors = [];
   if (!ISSUE_LINK.test(body)) {
     errors.push("the body must link an issue with a number, for example \"Closes #12\"");
@@ -45,7 +46,7 @@ export function checkPrBody(rawBody, author = "") {
   }
 
   for (const value of values(body, "Visual verification")) {
-    if (!value.startsWith(VISUAL_PLACEHOLDER) && !VISUAL_START.test(value)) {
+    if (!VISUAL_START.test(value)) {
       errors.push("the \"Visual verification:\" line must start with PASS, FAIL or NOT RUN");
     }
   }
