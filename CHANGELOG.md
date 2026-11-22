@@ -12,11 +12,19 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `scripts/check-pr-body.mjs` and a `validate` step (#301). The step checks the PR body for an
+  issue link, an Evidence section, one Observability line and a valid Visual verification line.
+- `check-adrs` checks the ADR file names and amendments (#307). A new ADR is named `NNNN-short-title.md`, and no two ADRs share a number. A change to an Accepted ADR only adds lines under a `### Amendment YYYY-MM-DD` heading. A new `--diff <file>` option gives the diff without git.
 - `scripts/check-suppressions.mjs` (#306). It reads the added lines of the diff against the
   merge base. It fails on a blanket suppression and on a suppression with a rule ID but no
   reason. A `NoWarn` in one project file needs rule IDs and a reason. It gives a warning, not a
   failure, for a lowered number after a known coverage gate key or a raised `max-warnings`
   number. `npm run check` and `validate` run it.
+
+### Changed
+
+- `check-writing` now exits 1 when it finds a long sentence, a long step or a semicolon (#299).
+  Before, it only warned.
 
 ## [1.6.0] - 2026-11-21
 

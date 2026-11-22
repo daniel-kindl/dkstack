@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-// Warn about text that breaks the sentence limits of writing/index.md: a step
-// with more than 20 words, a sentence with more than 25 words, and a
-// semicolon. A step is a numbered list item or a checklist item ("- [ ]"). CHANGELOG.md, code, block
-// quotes, tables, headings and text in double quotes are not checked. This is
-// the first stage: the check prints warnings and always exits 0 (#154, P40).
+// Find text that breaks the sentence limits of writing/index.md: a step with
+// more than 20 words, a sentence with more than 25 words, and a semicolon. A
+// step is a numbered list item or a checklist item ("- [ ]"). CHANGELOG.md,
+// code, block quotes, tables, headings and text in double quotes are not
+// checked. Each problem goes to stderr as "path:line: message". The exit code
+// is 1 when the check finds a problem and 0 when it finds none (#154, #299).
 
 import { readFile } from "node:fs/promises";
 import { relative, resolve, sep } from "node:path";
@@ -91,7 +92,8 @@ async function main() {
   const root = resolve(process.argv[2] ?? ".");
   const { checked, warnings } = await checkWriting(root);
   for (const message of warnings) console.error(message);
-  console.log(`${checked} Markdown file(s) checked. ${warnings.length} writing warning(s). This check only warns.`);
+  console.log(`${checked} Markdown file(s) checked. ${warnings.length} writing problem(s).`);
+  if (warnings.length > 0) process.exitCode = 1;
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

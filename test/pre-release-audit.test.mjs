@@ -11,10 +11,10 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const raw = (file) => readFile(join(repoRoot, file), "utf8");
 const read = async (file) => (await raw(file)).replace(/\s+/g, " ");
 
-test("the Unreleased notes do not name the removed roles.md as a current owner", async () => {
+test("the 1.6.0 notes do not name the removed roles.md as a current owner", async () => {
   const changelog = await raw("CHANGELOG.md");
-  const unreleased = changelog.slice(changelog.indexOf("## [Unreleased]"), changelog.indexOf("## [1.5.0]"));
-  const changed = sectionText(unreleased, "### Changed").replace(/\s+/g, " ");
+  const release = changelog.slice(changelog.indexOf("## [1.6.0]"), changelog.indexOf("## [1.5.0]"));
+  const changed = sectionText(release, "### Changed").replace(/\s+/g, " ");
   assert.ok(!changed.includes("workflow/roles.md"), "Changed names workflow/roles.md");
   assert.ok(changed.includes('`workflow/safety.md` "Owner records"'));
 });
