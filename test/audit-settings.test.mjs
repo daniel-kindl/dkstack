@@ -63,12 +63,14 @@ const PROTECT_V1 = {
 
 const ok = (body) => ({ status: 200, body });
 const NOT_FOUND = { status: 404, error: "gh: Not Found (HTTP 404)" };
+const NOT_PROTECTED = { status: 404, error: "gh: Branch not protected (HTTP 404)" };
 const FORBIDDEN = { status: 403, error: "gh: Resource not accessible by integration (HTTP 403)" };
 
 function dkstackToday() {
   return {
     repo: ok(structuredClone(DKSTACK_REPO)),
     rulesets: ok(structuredClone([PROTECT_MAIN, PROTECT_TAGS, PROTECT_V1])),
+    classic: NOT_PROTECTED,
     privateReporting: ok({ enabled: true }),
     files: {
       "SECURITY.md": ok("# Security policy\n"),
@@ -84,6 +86,7 @@ function dkstackToday() {
 function allGood() {
   const data = dkstackToday();
   data.rulesets.body[0].bypass_actors = [];
+  data.rulesets.body[0].rules[3].parameters.require_code_owner_review = true;
   data.files[".github/CODEOWNERS"] = ok("# Owners\n/.github/workflows/ @daniel-kindl\n");
   return data;
 }
@@ -93,7 +96,8 @@ const byName = (items) => Object.fromEntries(items.map((i) => [i.name, i]));
 test("the audit of dkstack today reports the admin bypass and the missing CODEOWNERS", () => {
   const items = auditSettings(dkstackToday());
   const failed = items.filter((i) => i.status === "FAIL").map((i) => i.name);
-  assert.deepEqual(failed, ["No bypass for administrators", "CODEOWNERS covers .github/workflows/"]);
+  assert.deepEqual(failed, ["No bypass for administrators", "CODEOWNERS covers .github/workflows/",
+    "Code owner review required"]);
   const named = byName(items);
   assert.equal(named["No bypass for administrators"].found, "protect-main: RepositoryRole 5 (always)");
   assert.match(named["CODEOWNERS covers .github/workflows/"].found, /no CODEOWNERS file/);
@@ -102,7 +106,7 @@ test("the audit of dkstack today reports the admin bypass and the missing CODEOW
 
 test("a repository with all settings passes each item", () => {
   const items = auditSettings(allGood());
-  assert.equal(items.length, 14);
+  assert.equal(items.length, 15);
   for (const item of items) assert.equal(item.status, "PASS", item.name);
   assert.equal(
     byName(items)["CODEOWNERS covers .github/workflows/"].found,
@@ -144,7 +148,7 @@ test("a missing default branch ruleset fails each branch rule", () => {
   for (const name of branchItems) {
     const item = byName(items)[name];
     assert.equal(item.status, "FAIL", name);
-    assert.equal(item.found, "no active ruleset on the default branch");
+    assert.equal(item.found, "no active ruleset and no classic protection on the default branch");
   }
 });
 
@@ -187,7 +191,7 @@ test("the tag ruleset must block update and deletion", () => {
   data.rulesets.body[1].rules = [{ type: "deletion" }];
   const item = byName(auditSettings(data))["Release tags blocked from update and deletion"];
   assert.equal(item.status, "FAIL");
-  assert.equal(item.found, "protect-release-tags: deletion");
+  assert.equal(item.found, "protect-release-tags: refs/tags/v*: deletion");
   const none = allGood();
   none.rulesets.body = [none.rulesets.body[0]];
   assert.equal(byName(auditSettings(none))["Release tags blocked from update and deletion"].found, "no active tag ruleset");
@@ -228,14 +232,18 @@ test("a missing first file does not hide a later file that is not readable", () 
   assert.equal(byName(auditSettings(data))["SECURITY.md"].status, "PASS");
 });
 
-test("codeownersRule finds the last rule that matches a workflow file", () => {
+test("codeownersRule finds the last rule that covers the workflows folder", () => {
   const cases = [
     ["* @a", "* @a"],
     [".github/ @a", ".github/ @a"],
     ["/.github/workflows/** @a", "/.github/workflows/** @a"],
-    [".github/workflows/*.yml @a", ".github/workflows/*.yml @a"],
-    ["*.yml @a", "*.yml @a"],
-    ["/.github/workflows/validate.yml @a\n# comment\n\n/docs/ @b", "/.github/workflows/validate.yml @a"],
+    ["/.github/workflows/* @a", "/.github/workflows/* @a"],
+    ["/.github/workflows/ @a\n# comment\n\n/docs/ @b", "/.github/workflows/ @a"],
+    // A rule for one file or one file type does not cover the folder (L1 on #322).
+    [".github/workflows/*.yml @a", undefined],
+    ["*.yml @a", undefined],
+    ["/.github/workflows/validate.yml @a", undefined],
+    ["/.github/workflows/ci.yml @a", undefined],
     ["* @a\n/.github/workflows/", undefined],
     ["/docs/ @a\n/src/** @b", undefined],
     ["/.git @a", undefined],
@@ -255,8 +263,8 @@ test("a CODEOWNERS file with no rule for the workflows fails", () => {
 test("formatReport prints a line for each item and expected and found for each finding", () => {
   const text = formatReport(auditSettings(dkstackToday()));
   assert.match(text, /^PASS {5}Squash merge only$/m);
-  assert.match(text, /^FAIL {5}No bypass for administrators\n {9}expected: no bypass actor in a default branch ruleset\n {9}found: protect-main: RepositoryRole 5 \(always\)$/m);
-  assert.match(text, /^12 pass, 2 fail, 0 not run\.$/m);
+  assert.match(text, /^FAIL {5}No bypass for administrators\n {9}expected: no bypass actor in a default branch ruleset, and enforce_admins on in classic protection\n {9}found: protect-main: RepositoryRole 5 \(always\)$/m);
+  assert.match(text, /^12 pass, 3 fail, 0 not run\.$/m);
 });
 
 // A fake gh records each call and answers from a map of API path to response.
@@ -276,6 +284,7 @@ test("fetchSettings reads each endpoint with GET and decodes the files", () => {
     [`${r}/rulesets?per_page=100`]: ok([{ id: 1 }, { id: 2 }]),
     [`${r}/rulesets/1`]: ok(PROTECT_MAIN),
     [`${r}/rulesets/2`]: ok(PROTECT_TAGS),
+    [`${r}/branches/main/protection`]: ok({ enforce_admins: { enabled: true } }),
     [`${r}/private-vulnerability-reporting`]: ok({ enabled: true }),
     [`${r}/contents/SECURITY.md`]: ok({ content: Buffer.from("policy").toString("base64") }),
   });
@@ -284,7 +293,8 @@ test("fetchSettings reads each endpoint with GET and decodes the files", () => {
   assert.deepEqual(data.rulesets.body.map((s) => s.name), ["protect-main", "protect-release-tags"]);
   assert.deepEqual(data.files["SECURITY.md"], ok("policy"));
   assert.deepEqual(data.files.CODEOWNERS, NOT_FOUND);
-  assert.equal(calls.length, 11);
+  assert.deepEqual(data.classic, ok({ enforce_admins: { enabled: true } }));
+  assert.equal(calls.length, 12);
 });
 
 test("fetchSettings gives the error when one ruleset is not readable", () => {
@@ -302,13 +312,16 @@ test("fetchSettings gives the error when one ruleset is not readable", () => {
 // folder and logs each argument list.
 function runCli(args, files = {}) {
   const bin = mkdtempSync(join(tmpdir(), "fake-gh-"));
-  for (const [name, content] of Object.entries(files)) writeFileSync(join(bin, name), JSON.stringify(content));
+  for (const [name, content] of Object.entries(files)) {
+    writeFileSync(join(bin, name), name.endsWith(".err") ? content : JSON.stringify(content));
+  }
   const gh = [
     "#!/bin/sh",
     `echo "$*" >> "${bin}/calls.log"`,
     'eval "last=\\${$#}"',
     `file="${bin}/$(printf %s "$last" | tr '/?=' '___').json"`,
     'if [ -f "$file" ]; then cat "$file"; exit 0; fi',
+    'if [ -f "${file%.json}.err" ]; then cat "${file%.json}.err" >&2; exit 1; fi',
     'echo \'{"message":"Not Found"}\'',
     'echo "gh: Not Found (HTTP 404)" >&2',
     "exit 1",
@@ -349,15 +362,16 @@ test("the CLI exits 1 for dkstack today and calls gh api with GET only", skipWin
     [`${p}_rulesets_1.json`]: PROTECT_MAIN,
     [`${p}_rulesets_2.json`]: PROTECT_TAGS,
     [`${p}_rulesets_3.json`]: PROTECT_V1,
+    [`${p}_branches_main_protection.err`]: "gh: Branch not protected (HTTP 404)\n",
     [`${p}_private-vulnerability-reporting.json`]: { enabled: true },
     [`${p}_contents_SECURITY.md.json`]: { content: Buffer.from("policy").toString("base64") },
   });
   assert.equal(run.status, 1, run.stderr);
   assert.match(run.stdout, /^Audit of daniel-kindl\/dkstack\n/);
   assert.match(run.stdout, /^FAIL {5}No bypass for administrators$/m);
-  assert.match(run.stdout, /^12 pass, 2 fail, 0 not run\.$/m);
+  assert.match(run.stdout, /^12 pass, 3 fail, 0 not run\.$/m);
   const calls = run.calls.trim().split("\n");
-  assert.equal(calls.length, 12);
+  assert.equal(calls.length, 13);
   for (const call of calls) assert.match(call, /^api --method GET repos\/daniel-kindl\/dkstack(\/|$)/);
 });
 
@@ -365,7 +379,7 @@ test("the CLI exits 2 when no item fails but an item is NOT RUN", skipWin, () =>
   const run = runCli(["o/r"]);
   assert.equal(run.status, 2);
   assert.match(run.stdout, /^NOT RUN  Squash merge only\n {9}expected: .*\n {9}found: HTTP 404/m);
-  assert.match(run.stdout, /^0 pass, 0 fail, 14 not run\.$/m);
+  assert.match(run.stdout, /^0 pass, 0 fail, 15 not run\.$/m);
 });
 
 test("the CLI exits 0 when each item passes", skipWin, () => {
@@ -375,12 +389,13 @@ test("the CLI exits 0 when each item passes", skipWin, () => {
     [`${p}_rulesets_per_page_100.json`]: [{ id: 1 }, { id: 2 }],
     [`${p}_rulesets_1.json`]: { ...PROTECT_MAIN, bypass_actors: [] },
     [`${p}_rulesets_2.json`]: PROTECT_TAGS,
+    [`${p}_branches_main_protection.json`]: CLASSIC_FULL,
     [`${p}_private-vulnerability-reporting.json`]: { enabled: true },
     [`${p}_contents_SECURITY.md.json`]: { content: Buffer.from("policy").toString("base64") },
     [`${p}_contents_.github_CODEOWNERS.json`]: { content: Buffer.from("* @o\n").toString("base64") },
   });
   assert.equal(run.status, 0, run.stdout);
-  assert.match(run.stdout, /^14 pass, 0 fail, 0 not run\.$/m);
+  assert.match(run.stdout, /^15 pass, 0 fail, 0 not run\.$/m);
 });
 
 test("the CLI says NOT RUN when gh is not installed", skipWin, () => {
@@ -405,4 +420,133 @@ test("setup-repo-protection step 1 links the audit tool", async () => {
   const step = text.split("\n").find((l) => l.startsWith("1. "));
   assert.ok(step.includes("https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/scripts/audit-settings.mjs"));
   assert.match(step, /The tool changes nothing\./);
+  // L2 on #322: the step names what the tool needs.
+  for (const need of ["Node.js", "command line tool of the code host", "admin"]) assert.ok(step.includes(need), need);
+});
+
+// Fixes for the review of #322.
+const CLASSIC_FULL = {
+  required_status_checks: { strict: true, contexts: ["validate"], checks: [{ context: "validate" }] },
+  enforce_admins: { enabled: true },
+  required_pull_request_reviews: { require_code_owner_reviews: true },
+  required_linear_history: { enabled: true },
+  allow_force_pushes: { enabled: false },
+  allow_deletions: { enabled: false },
+};
+const BRANCH_ITEMS = ["Pull request required", "Required status checks", "Required linear history",
+  "No force-push", "No branch deletion", "No bypass for administrators", "Code owner review required"];
+
+test("H1: a repository body with no merge fields gives NOT RUN, not FAIL", () => {
+  const data = allGood();
+  data.repo = ok({ default_branch: "main" });
+  const named = byName(auditSettings(data));
+  for (const name of ["Squash merge only", "Delete branch on merge", "Secret scanning", "Push protection"]) {
+    assert.equal(named[name].status, "NOT RUN", name);
+    assert.match(named[name].found, /not in the response/);
+  }
+  assert.ok(Object.values(named).every((i) => i.status !== "FAIL"));
+});
+
+test("M1: classic branch protection alone meets each branch rule", () => {
+  const data = allGood();
+  data.rulesets.body = [PROTECT_TAGS];
+  data.classic = ok(structuredClone(CLASSIC_FULL));
+  const named = byName(auditSettings(data));
+  for (const name of BRANCH_ITEMS) assert.equal(named[name].status, "PASS", name);
+  assert.equal(named["Required status checks"].found, "classic branch protection: validate");
+});
+
+test("M1: classic protection with weak settings fails each branch rule", () => {
+  const data = allGood();
+  data.rulesets.body = [PROTECT_TAGS];
+  data.classic = ok({
+    required_status_checks: { contexts: [], checks: [] },
+    enforce_admins: { enabled: false },
+    required_linear_history: { enabled: false },
+    allow_force_pushes: { enabled: true },
+    allow_deletions: { enabled: true },
+  });
+  const named = byName(auditSettings(data));
+  for (const name of BRANCH_ITEMS) assert.equal(named[name].status, "FAIL", name);
+  assert.equal(named["No bypass for administrators"].found, "classic branch protection: enforce_admins off");
+});
+
+test("M1: a rule is met when one of the two sources has it", () => {
+  const data = allGood();
+  data.rulesets.body[0].rules = data.rulesets.body[0].rules.filter((r) => r.type !== "required_linear_history");
+  data.classic = ok({ required_linear_history: { enabled: true }, enforce_admins: { enabled: true } });
+  assert.equal(byName(auditSettings(data))["Required linear history"].status, "PASS");
+  const rulesetsHidden = allGood();
+  rulesetsHidden.rulesets = FORBIDDEN;
+  rulesetsHidden.classic = ok(structuredClone(CLASSIC_FULL));
+  const named = byName(auditSettings(rulesetsHidden));
+  for (const name of BRANCH_ITEMS) {
+    if (name === "No bypass for administrators") continue;
+    assert.equal(named[name].status, "PASS", name);
+  }
+  // The rulesets can still have a bypass actor, so the bypass item cannot pass.
+  assert.equal(named["No bypass for administrators"].status, "NOT RUN");
+});
+
+test("M1: no ruleset and unreadable classic protection gives NOT RUN, not FAIL", () => {
+  const data = allGood();
+  data.rulesets.body = [PROTECT_TAGS];
+  data.classic = NOT_FOUND;
+  const named = byName(auditSettings(data));
+  for (const name of BRANCH_ITEMS) {
+    assert.equal(named[name].status, "NOT RUN", name);
+    assert.match(named[name].found, /HTTP 404/);
+  }
+  const none = allGood();
+  none.rulesets.body = [PROTECT_TAGS];
+  for (const name of BRANCH_ITEMS) {
+    assert.equal(byName(auditSettings(none))[name].found, "no active ruleset and no classic protection on the default branch");
+  }
+});
+
+test("M1: an admin bypass in either source fails the bypass item", () => {
+  const data = allGood();
+  data.classic = ok({ ...CLASSIC_FULL, enforce_admins: { enabled: false } });
+  const item = byName(auditSettings(data))["No bypass for administrators"];
+  assert.equal(item.status, "FAIL");
+  assert.equal(item.found, "classic branch protection: enforce_admins off");
+  const hidden = allGood();
+  hidden.classic = FORBIDDEN;
+  assert.equal(byName(auditSettings(hidden))["No bypass for administrators"].status, "NOT RUN");
+});
+
+test("M2: CODEOWNERS needs code owner review on the default branch", () => {
+  const data = allGood();
+  data.rulesets.body[0].rules[3].parameters.require_code_owner_review = false;
+  const named = byName(auditSettings(data));
+  assert.equal(named["CODEOWNERS covers .github/workflows/"].status, "PASS");
+  assert.equal(named["Code owner review required"].status, "FAIL");
+  assert.equal(named["Code owner review required"].found, "no rule");
+  data.classic = ok({ ...CLASSIC_FULL });
+  assert.equal(byName(auditSettings(data))["Code owner review required"].found, "classic branch protection");
+});
+
+test("L4: the tag ruleset must cover the release tags", () => {
+  const data = allGood();
+  data.rulesets.body[1].conditions.ref_name.include = ["refs/tags/foo*"];
+  const item = byName(auditSettings(data))["Release tags blocked from update and deletion"];
+  assert.equal(item.status, "FAIL");
+  assert.equal(item.found, "protect-release-tags: refs/tags/foo*: deletion, non_fast_forward, update");
+  for (const ref of ["~ALL", "refs/tags/*", "refs/tags/**", "refs/tags/v*"]) {
+    data.rulesets.body[1].conditions.ref_name.include = [ref];
+    assert.equal(byName(auditSettings(data))["Release tags blocked from update and deletion"].status, "PASS", ref);
+  }
+  data.rulesets.body[1].conditions.ref_name.exclude = ["refs/tags/v*"];
+  assert.equal(byName(auditSettings(data))["Release tags blocked from update and deletion"].status, "FAIL");
+  delete data.rulesets.body[1].conditions;
+  assert.equal(byName(auditSettings(data))["Release tags blocked from update and deletion"].status, "FAIL");
+});
+
+test("fetchSettings encodes the default branch name and skips classic protection without a repository", () => {
+  const { get, calls } = fakeGh({ "repos/o/r": ok({ default_branch: "rel/1.0" }) });
+  fetchSettings("o/r", get);
+  assert.ok(calls.includes("repos/o/r/branches/rel%2F1.0/protection"));
+  const other = fakeGh({});
+  assert.deepEqual(fetchSettings("o/r", other.get).classic, NOT_FOUND);
+  assert.ok(!other.calls.some((c) => c.includes("/branches/")));
 });
