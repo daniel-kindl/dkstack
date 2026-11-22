@@ -30,7 +30,7 @@ const TABLE_ITEM = /^\s*\|\s*(?:\*\*)?`?([BHMLN]\d+)\b/;
 const FILE_LINE = /[\w@./-]+\.[A-Za-z0-9]+:\d+|\b(?:pull request|PR) (?:title|body)\b|\bcommit [0-9a-f]{7,40}\b/i;
 // The status of a finding is in its first sentence: "H1, title: **fixed**." or "H1 title **open**."
 // Only a status word that ends the clause counts, so "fixed-size" and "to be fixed" do not.
-const STATUS = /(?:[:)]\s*\**|\*\*)(fixed|open)\**(?=[.\s,;]|$)/i;
+const STATUS = /[:)]\s*\**(fixed|open)\**(?=[.\s,;]|$)|\*\*(fixed|open)\*\*(?=[.,;]|\s*$)/i;
 // In a table, the cell after the ID can be the status.
 const TABLE_STATUS = /^\s*\|[^|]*\|\s*\**(fixed|open)\b(?![-\w])/i;
 // A stated question for the owner starts a line, as in "Question: which scope?".
@@ -79,7 +79,8 @@ function findFindings(lines) {
       return;
     }
     const sentence = line.slice(line.indexOf(id) + id.length).split(/\.\s/)[0];
-    const status = (STATUS.exec(sentence) ?? TABLE_STATUS.exec(line))?.[1].toLowerCase();
+    const found = STATUS.exec(sentence) ?? TABLE_STATUS.exec(line);
+    const status = (found?.[1] ?? found?.[2])?.toLowerCase();
     // The first item with an ID defines the finding. A later item only refers to it.
     // In a re-review, a new finding heading can reuse the ID of a status line.
     const reuse = !status && Boolean(match?.[3]);

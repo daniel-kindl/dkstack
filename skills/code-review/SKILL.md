@@ -147,7 +147,7 @@ Each finding has an ID (B1, H1, M1, L1), `file:line`, the problem, the rule it b
 
 Send the verdict and the comment link, or the place of the review, to the person who asked for the review.
 
-For a re-review, post a new comment at the new head. State each earlier finding as fixed or open. Check the delta and the code it touches.
+For a re-review, post a new comment at the new head. State each earlier finding as fixed or open. Write it as `- <ID>, <short title>: **fixed**.` or `**open**.`, or as a table row with a Fixed or Open cell. Check the delta and the code it touches.
 
 ## Self-review
 

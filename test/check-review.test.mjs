@@ -356,6 +356,18 @@ test("a list item after a status line with the same ID is a reference", () => {
   assert.deepEqual(checkReview(review("APPROVE-RECOMMENDED", body)), []);
 });
 
+test("a bold word inside the problem text is not a status", () => {
+  const problems = checkReview(review("APPROVE-RECOMMENDED", "- M1 `a.mjs:1` The **fixed** buffer overflows.\n"));
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /M1.*not marked fixed/);
+});
+
+test("code-review defines the status form", async () => {
+  const text = await readFile(join(repoRoot, "skills", "code-review", "SKILL.md"), "utf8");
+  assert.match(text, /- <ID>, <short title>: \*\*fixed\*\*\./);
+  assert.match(text, /table row with a Fixed or Open cell/);
+});
+
 test("check-review is not an npm check script", async () => {
   const pkg = JSON.parse(await readFile(join(repoRoot, "package.json"), "utf8"));
   assert.equal(pkg.scripts["check:review"], undefined);
