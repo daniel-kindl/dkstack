@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          # check-adrs compares the change with origin/main, so it needs the history.
+          # check-adrs and check-suppressions compare the change with origin/main, so they need the history.
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -109,6 +109,10 @@ jobs:
       - name: Check that new ADRs have Status and Affects
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:adrs
+
+      - name: Check that the change adds no blanket suppression, no suppression without a reason and no weakened gate
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:suppressions
 
       # This check only warns. It always exits 0.
       - name: Warn about long sentences and semicolons in Markdown

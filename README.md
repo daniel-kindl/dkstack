@@ -79,6 +79,8 @@ each pull request to `main` and on each push to `main`. It does these checks:
 - CHANGELOG.md has an entry for the version in `package.json`, an `## [Unreleased]` line and its
   compare link.
 - The maps in `docs/maps/`, `CONTEXT.md` and new ADRs have the correct format.
+- The change adds no blanket suppression and no suppression without a reason. It does not lower
+  a coverage gate or a threshold.
 - The unit tests pass, and they cover at least 95% of the lines and 90% of the branches in
   `scripts/`.
 - A long sentence or a semicolon gives a warning, not a failure.
