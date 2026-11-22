@@ -96,6 +96,7 @@ async function adrNames(root) {
 }
 
 // Format mode. Return { checked, errors } for the added ADR files in `added`.
+// Only a new ADR can fail the shared-number check.
 export async function checkNewAdrs(root, added) {
   const names = await adrNames(root);
   if (names === null) return { checked: 0, errors: [] };
@@ -106,8 +107,9 @@ export async function checkNewAdrs(root, added) {
     const number = ADR_NAME.exec(name)?.[1] ?? /^\d{4}(?=-)/.exec(name)?.[0];
     if (number) owners.set(number, [...(owners.get(number) ?? []), name]);
   }
+  const addedNames = new Set(paths.map((path) => path.slice(DIR.length + 1)));
   for (const [number, list] of owners) {
-    if (list.length > 1) errors.push(`${DIR}: ADRs ${list.join(" and ")} share the number ${number}`);
+    if (list.length > 1 && list.some((name) => addedNames.has(name))) errors.push(`${DIR}: ADRs ${list.join(" and ")} share the number ${number}`);
   }
   let files = null;
   for (const path of paths) {
@@ -144,23 +146,33 @@ export async function checkNewAdrs(root, added) {
   return { checked: paths.length, errors };
 }
 
-// Split a unified diff into one entry for each file.
+// Split a unified diff into one entry for each file. A hunk header gives the line
+// counts, so a content line that starts with "--" or "++" is not a file header.
 export function parseDiff(text) {
   const entries = [];
   let entry = null;
   let line = 0;
+  let oldLeft = 0;
+  let newLeft = 0;
   for (const raw of text.split(/\r?\n/)) {
+    if (oldLeft > 0 || newLeft > 0) {
+      if (raw.startsWith("+")) entry.added.push({ line: line++, text: raw.slice(1) }), newLeft--;
+      else if (raw.startsWith("-")) entry.removed.push(raw.slice(1)), oldLeft--;
+      else if (raw.startsWith(" ")) line++, oldLeft--, newLeft--;
+      continue;
+    }
     if (raw.startsWith("diff --git ")) {
       entry = { path: raw.slice(raw.lastIndexOf(" b/") + 3), kind: "modified", added: [], removed: [] };
       entries.push(entry);
     } else if (!entry) continue;
     else if (raw.startsWith("new file mode") || raw === "--- /dev/null") entry.kind = "added";
     else if (raw.startsWith("deleted file mode") || raw === "+++ /dev/null") entry.kind = "deleted";
-    else if (raw.startsWith("--- ") || raw.startsWith("+++ ")) continue;
-    else if (raw.startsWith("@@")) line = Number(/\+(\d+)/.exec(raw)?.[1] ?? 1);
-    else if (raw.startsWith("+")) entry.added.push({ line: line++, text: raw.slice(1) });
-    else if (raw.startsWith("-")) entry.removed.push(raw.slice(1));
-    else if (raw.startsWith(" ")) line++;
+    else if (raw.startsWith("@@")) {
+      const m = /^@@ -\d+(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/.exec(raw);
+      oldLeft = Number(m?.[1] ?? 1);
+      line = Number(m?.[2] ?? 1);
+      newLeft = Number(m?.[3] ?? 1);
+    }
   }
   return entries;
 }
@@ -188,9 +200,11 @@ export async function checkAdrChanges(root, diffText) {
   for (const entry of parseDiff(diffText)) {
     if (!ADR_FILE.test(entry.path) || entry.kind === "added") continue;
     if (entry.kind === "deleted") {
-      // The old text is not on disk. A deleted ADR has no status to read, so it always fails.
+      // The old text is not on disk. Read its Status from the removed lines.
+      const status = oldStatus(entry, []);
+      if (status !== null && status !== "Accepted") continue;
       checked++;
-      errors.push(`${entry.path}:1: do not delete an ADR. Set it to "Superseded by NNNN" in place of this`);
+      errors.push(`${entry.path}:1: do not delete an Accepted ADR. Set it to "Superseded by NNNN" in place of this`);
       continue;
     }
     const lines = (await readFile(join(root, entry.path), "utf8")).split(/\r?\n/);
@@ -238,7 +252,7 @@ export async function adrsToRead(root, changed) {
 function changedFiles(root, base, addedOnly, withDiff) {
   const git = (...args) => execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
   const mergeBase = git("merge-base", base, "HEAD").trim();
-  const diff = git("diff", "--name-only", ...(addedOnly ? ["--diff-filter=A"] : []), mergeBase);
+  const diff = git("diff", "--name-only", ...(addedOnly ? ["--diff-filter=A"] : []), "--no-renames", mergeBase);
   const untracked = git("ls-files", "--others", "--exclude-standard");
   const files = [...diff.split("\n"), ...untracked.split("\n")].filter(Boolean);
   if (!withDiff) return { files };
@@ -280,7 +294,8 @@ async function main(args) {
       console.error(`cannot read the diff: ${err.message}`);
       return 2;
     }
-    files ??= parseDiff(diff).filter((e) => e.kind === "added").map((e) => e.path);
+    const entries = parseDiff(diff);
+    files ??= entries.filter((e) => options.review || e.kind === "added").map((e) => e.path);
   }
   if (files === null) {
     try {
@@ -305,6 +320,9 @@ async function main(args) {
     if (errors.length > 0) {
       for (const message of errors) console.error(message);
       return 1;
+    }
+    if (options.files !== null && options.diff === null) {
+      console.log("Amendment check NOT RUN. Give the diff with --diff <file>.");
     }
     if (changes.checked > 0) console.log(`${changes.checked} changed ADR(s) only add amendments.`);
     console.log(checked > 0 ? `${checked} new ADR(s) have Status and Affects.` : "No new ADR. Nothing to check.");
