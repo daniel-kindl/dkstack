@@ -46,6 +46,14 @@ jobs:
           TITLE: ${{ github.event.pull_request.title }}
         run: node scripts/check-title.mjs "$TITLE"
 
+      # The body goes in through env, never as an expression inside run.
+      - name: Check that the PR body links an issue and has the evidence lines
+        if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: node scripts/check-pr-body.mjs
+
       - name: Check that the commit titles of the push are conventional commits
         if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'push' }}
         env:

@@ -10,6 +10,11 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ## [Unreleased]
 
+### Added
+
+- `scripts/check-pr-body.mjs` and a `validate` step (#301). The step checks the PR body for an
+  issue link, an Evidence section, one Observability line and a valid Visual verification line.
+
 ### Changed
 
 - `check-writing` now exits 1 when it finds a long sentence, a long step or a semicolon (#299).
