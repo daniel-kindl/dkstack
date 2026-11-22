@@ -253,6 +253,7 @@ test("the checker skips plain text files", () => {
     assert.deepEqual(added(path, "// eslint-disable"), [], path);
   }
   assert.equal(added("src/a.txt.js", "// eslint-disable").length, 1);
+  for (const path of ["bin/cmd", "src/rawtxt"]) assert.equal(added(path, "// eslint-disable").length, 1, path);
 });
 
 test("the line above comes from a context line or from the file on disk", async () => {
