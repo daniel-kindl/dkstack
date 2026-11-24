@@ -50,6 +50,10 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Fixed
 
+- `scripts/check-pr-body.mjs` reads links and inline code (#330). A closing reference in inline
+  code or in the label of a link does not count. A link counts only when its destination is an
+  issue URL, for example `Closes [#19](https://github.com/o/r/issues/19)`. A removed link or code
+  span does not join the text on each side of it into a new reference.
 - `scripts/markdown-files.mjs` lists the files that Git sees (#333). In a Git work tree, it
   lists the tracked files and the untracked files that `.gitignore` does not ignore. So
   `check-dashes`, `check-writing` and `check-links` read the same files locally and in CI.

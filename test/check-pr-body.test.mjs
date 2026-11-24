@@ -178,3 +178,49 @@ test("the validate workflow checks the body on pull_request with env", async () 
   assert.match(step, /run: node scripts\/check-pr-body\.mjs\s*$/m);
   assert.doesNotMatch(step.split("run:")[1], /\$\{\{/);
 });
+
+test("a closing reference in inline code does not count", () => {
+  for (const link of ["`Closes #19`", "``Closes #19``", "`` a ` Closes #19 ``"]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [ISSUE_ERROR], link);
+  }
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "Closes #19 and `x`")), []);
+});
+
+test("the label of a link is not a closing reference", () => {
+  for (const link of [
+    "[Closes #19 in Diffy](README.md)",
+    "[Closes #19 in Diffy][d]\n\n[d]: README.md",
+    "[Closes #19 in Diffy][]\n\n[Closes #19 in Diffy]: README.md",
+    "[Closes #19]\n\n[closes #19]: README.md",
+    "Closes [#19](README.md)",
+    "Closes [#19](https://github.com/o/r/pull/19)",
+  ]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [ISSUE_ERROR], link);
+  }
+});
+
+test("a link to an issue URL counts after a closing keyword", () => {
+  for (const link of [
+    "Closes [#19](https://github.com/o/r/issues/19)",
+    "Closes [the bug](<https://github.com/o/r/issues/19> \"title\")",
+    "Fixes [#19][i]\n\n[i]: https://github.com/o/r/issues/19",
+    "Fixes [#19]\n\n[#19]: https://github.com/o/r/issues/19",
+  ]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [], link);
+  }
+  assert.deepEqual(
+    checkPrBody(replaceLine("Closes #12", "See [#19](https://github.com/o/r/issues/19)")),
+    [ISSUE_ERROR],
+  );
+});
+
+test("a removed link or code span does not join the text around it", () => {
+  for (const link of ["Closes [docs](README.md) #19", "Closes `x` #19", "Closes [docs][d] #19\n\n[d]: README.md"]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [ISSUE_ERROR], link);
+  }
+});
+
+test("brackets with no reference definition stay plain text", () => {
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[Closes #19]")), []);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[Closes #19][none]")), []);
+});

@@ -16,6 +16,38 @@ const LINE = (name) => new RegExp(`^[ \\t]*(?:[-*][ \\t]+)?${name}:[ \\t]*(.*)$`
 const OBSERVABILITY_PLACEHOLDERS = ["<events added or changed>", "<reason>"];
 const VISUAL_START = /^(?:PASS|FAIL|NOT RUN)\b/;
 
+const ISSUE_URL = /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/issues\/\d+$/;
+// A removed code span or link becomes this mark. It is not a space, so the text
+// on each side of it does not join into a new closing reference.
+const GAP = "\uFFFC";
+const CODE_SPAN = /(?<!`)(`+)(?!`)[\s\S]*?(?<!`)\1(?!`)/g;
+const DEFINITION = /^[ ]{0,3}\[([^\[\]]+)\]:[ \t]*(<[^>\n]*>|\S+)[^\n]*$/gm;
+const DESTINATION = String.raw`(<[^>\n]*>|[^\s()]+)(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*`;
+const INLINE_LINK = new RegExp(String.raw`!?\[[^\[\]]*\]\(\s*${DESTINATION}\)`, "g");
+const REFERENCE_LINK = /!?\[([^\[\]]*)\](?:\[([^\[\]]*)\])?/g;
+
+const label = (text) => text.trim().replace(/\s+/g, " ").toLowerCase();
+const unwrap = (destination) => destination.replace(/^<(.*)>$/, "$1");
+// A link to an issue keeps its URL. Another link is not prose.
+const linkText = (destination) => (ISSUE_URL.test(destination) ? destination : GAP);
+
+// Return the prose of the body for the issue link check. Inline code does not count. A link
+// counts only by its destination, not by its label.
+function prose(body) {
+  const text = body.replace(CODE_SPAN, GAP);
+  const definitions = new Map();
+  const withoutDefinitions = text.replace(DEFINITION, (_, name, destination) => {
+    if (!definitions.has(label(name))) definitions.set(label(name), unwrap(destination));
+    return GAP;
+  });
+  return withoutDefinitions
+    .replace(INLINE_LINK, (_, destination) => linkText(unwrap(destination)))
+    .replace(REFERENCE_LINK, (match, first, second) => {
+      const name = label(second === undefined || second.trim() === "" ? first : second);
+      return definitions.has(name) ? linkText(definitions.get(name)) : match;
+    });
+}
+
 const values = (body, name) => [...body.matchAll(LINE(name))].map((m) => m[1].trim());
 
 // Return the list of problems. An empty list means a valid body.
@@ -26,7 +58,7 @@ export function checkPrBody(rawBody, author = "") {
     .replace(/<!--[\s\S]*?-->/g, "")
     .replace(/^[ \t]*(`{3,}|~{3,})[^\n]*\n[\s\S]*?^[ \t]*\1[ \t]*$/gm, "");
   const errors = [];
-  if (!ISSUE_LINK.test(body)) {
+  if (!ISSUE_LINK.test(prose(body))) {
     errors.push("the body must link an issue with a number, for example \"Closes #12\"");
   }
   if (!EVIDENCE.test(body)) errors.push("the body must have an \"## Evidence\" section");
