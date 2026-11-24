@@ -4,7 +4,8 @@
 // In a Git work tree, the list holds the tracked files that exist and the
 // untracked files that .gitignore does not ignore. So a local run reads the
 // same files as CI, which checks a clean checkout (#333). Outside a Git work
-// tree, the walk reads the folder and skips the .git and node_modules folders.
+// tree, or in a folder that .gitignore ignores, the walk reads the folder and
+// skips the .git and node_modules folders.
 
 import { execFile } from "node:child_process";
 import { existsSync } from "node:fs";
@@ -26,9 +27,12 @@ export async function markdownFiles(dir) {
 }
 
 // Return the paths relative to dir, or null when dir is not in a Git work
-// tree or Git is not available. A file with a merge conflict has one index
-// entry for each stage, so the paths go through a Set.
+// tree, Git is not available, or .gitignore ignores dir. Git lists no file in
+// an ignored folder, and a check of zero files must not pass. A file with a
+// merge conflict has one index entry for each stage, so the paths go through
+// a Set.
 async function gitFiles(dir) {
+  if (await isIgnored(dir)) return null;
   try {
     const { stdout } = await run(
       "git",
@@ -38,6 +42,16 @@ async function gitFiles(dir) {
     return [...new Set(stdout.split("\0").filter(Boolean))];
   } catch {
     return null;
+  }
+}
+
+// git check-ignore exits 0 when the path is ignored and 1 when it is not.
+async function isIgnored(dir) {
+  try {
+    await run("git", ["check-ignore", "-q", "."], { cwd: dir });
+    return true;
+  } catch {
+    return false;
   }
 }
 

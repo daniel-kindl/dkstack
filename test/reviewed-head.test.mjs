@@ -75,8 +75,8 @@ test("safety.md defines the owner under its own heading", async () => {
   assert.ok(flat.includes("It is never the owner."));
 });
 
-// The shared list reads the files that Git sees, so an untracked or an
-// ignored copy of the pages does not fail a local run (#333).
+// The shared list reads the files that Git sees, so an ignored copy of the
+// pages, or a copy in a nested Git work tree, does not fail a local run (#333).
 async function markdownFiles(dir) {
   const files = await listMarkdown(join(repoRoot, dir));
   return files.map((full) => relative(repoRoot, full).split(sep).join("/"))

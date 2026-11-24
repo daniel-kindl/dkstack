@@ -53,7 +53,8 @@ change that a consumer must act on has a "Consumer action:" line.
 - `scripts/markdown-files.mjs` lists the files that Git sees (#333). In a Git work tree, it
   lists the tracked files and the untracked files that `.gitignore` does not ignore. So
   `check-dashes`, `check-writing` and `check-links` read the same files locally and in CI.
-  Outside a Git work tree, it reads the folder as before.
+  Outside a Git work tree, or in a folder that `.gitignore` ignores, it reads the folder as
+  before.
 
 ## [1.6.0] - 2026-11-21
 
