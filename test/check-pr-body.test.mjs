@@ -178,3 +178,129 @@ test("the validate workflow checks the body on pull_request with env", async () 
   assert.match(step, /run: node scripts\/check-pr-body\.mjs\s*$/m);
   assert.doesNotMatch(step.split("run:")[1], /\$\{\{/);
 });
+
+test("a closing reference in inline code does not count", () => {
+  for (const link of ["`Closes #19`", "``Closes #19``", "`` a ` Closes #19 ``"]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [ISSUE_ERROR], link);
+  }
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "Closes #19 and `x`")), []);
+});
+
+test("the label of a link is not a closing reference", () => {
+  for (const link of [
+    "[Closes #19 in Diffy](README.md)",
+    "[Closes #19 in Diffy][d]\n\n[d]: README.md",
+    "[Closes #19 in Diffy][]\n\n[Closes #19 in Diffy]: README.md",
+    "[Closes #19]\n\n[closes #19]: README.md",
+    "Closes [#19](README.md)",
+    "Closes [#19](https://github.com/o/r/pull/19)",
+  ]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [ISSUE_ERROR], link);
+  }
+});
+
+test("a link to an issue URL counts after a closing keyword", () => {
+  for (const link of [
+    "Closes [#19](https://github.com/o/r/issues/19)",
+    "Closes [the bug](<https://github.com/o/r/issues/19> \"title\")",
+    "Fixes [#19][i]\n\n[i]: https://github.com/o/r/issues/19",
+    "Fixes [#19]\n\n[#19]: https://github.com/o/r/issues/19",
+  ]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [], link);
+  }
+  assert.deepEqual(
+    checkPrBody(replaceLine("Closes #12", "See [#19](https://github.com/o/r/issues/19)")),
+    [ISSUE_ERROR],
+  );
+});
+
+test("a removed link or code span does not join the text around it", () => {
+  for (const link of ["Closes [docs](README.md) #19", "Closes `x` #19", "Closes [docs][d] #19\n\n[d]: README.md"]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [ISSUE_ERROR], link);
+  }
+});
+
+test("brackets with no reference definition stay plain text", () => {
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[Closes #19]")), []);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[Closes #19][none]")), []);
+});
+
+test("a code span ends at a blank line", () => {
+  const body = replaceLine("Closes #12", "A lone ` mark.\n\nCloses #12\n\nThen `code`.");
+  assert.deepEqual(checkPrBody(body), []);
+});
+
+test("a code span closes only on a run of the same length", () => {
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "``Closes #19` x``")), [ISSUE_ERROR]);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "```Closes #19``")), []);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "`` Closes #12 ```")), []);
+});
+
+test("an escaped mark does not start code or a link", () => {
+  for (const link of ["\\`Closes #19\\`", "\\[Closes #19\\](README.md)"]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [], link);
+  }
+});
+
+test("a link with parentheses or nested brackets is still a link", () => {
+  for (const link of [
+    "[Closes #19](https://en.wikipedia.org/wiki/A_(b))",
+    "[Closes #19 [x]](README.md)",
+    "[Closes #19 [x]][d]\n\n[d]: README.md",
+  ]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [ISSUE_ERROR], link);
+  }
+});
+
+test("only a full issue URL counts as an issue destination", () => {
+  for (const link of [
+    "Closes [#19](#19)",
+    "Closes [x](https://github.com/o/r/issues/19/files)",
+    "Closes [x](o/r#19?https://github.com/o/r/issues/19)",
+    "Closes [x](https://github.com/o/r/issues/)",
+  ]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [ISSUE_ERROR], link);
+  }
+});
+
+test("a reference definition is read as CommonMark reads it", () => {
+  const issue = "https://github.com/o/r/issues/19";
+  // The first definition of a label wins, and labels match without case.
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", `Closes [x][D]\n\n[d]: ${issue}\n[d]: README.md`)), []);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", `Closes [x][d]\n\n[d]: README.md\n[d]: ${issue}`)), [ISSUE_ERROR]);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", `Closes [x][d]\n\n[d]: <${issue}> "title"`)), []);
+  // A definition line is not prose.
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[Closes #19]: README.md")), [ISSUE_ERROR]);
+  // A line with other text after the destination is not a definition.
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[Note]: Closes #12")), []);
+});
+
+test("a backslash in a code span is literal", () => {
+  for (const link of ["The `\\` key. Closes #19. Run `npm test`.", "Use `C:\\` here. Closes #19. Run `npm test`."]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [], link);
+  }
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "`a` Closes #19 `b`")), []);
+  // An escaped backslash does not escape the backtick after it.
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "\\\\`Closes #19`")), [ISSUE_ERROR]);
+});
+
+test("a link does not go across a blank line", () => {
+  for (const link of ["[Note\n\nCloses #19\n\nsee](README.md)", "[Draft\n\nCloses #19\n\nx]: README.md"]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [], link);
+  }
+});
+
+test("a link with an empty destination is a link", () => {
+  for (const link of ["[Closes #19]()", "[Closes #19]( )"]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [ISSUE_ERROR], link);
+  }
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[Closes #19] (x)")), []);
+});
+
+test("the guards of labels, definitions and escapes hold", () => {
+  const issue = "https://github.com/o/r/issues/19";
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", `Closes [x][a\nb]\n\n[a b]: ${issue}`)), []);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", `Closes [x]\n\n    [x]: ${issue}`)), [ISSUE_ERROR]);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "Closes\\`#19")), [ISSUE_ERROR]);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[d]: README.md \"Closes #19\"")), [ISSUE_ERROR]);
+});
