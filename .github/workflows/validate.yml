@@ -43,24 +43,16 @@ jobs:
       # Each check runs when an earlier check fails, so one run shows all failures.
       - name: Check that the PR title is a conventional commit
         if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}
-        env:
-          TITLE: ${{ github.event.pull_request.title }}
-        run: node scripts/check-title.mjs "$TITLE"
+        run: node scripts/check-title.mjs --event
 
       # A push to main has no pull request title, so this check runs only on a pull request.
       - name: Check that a breaking change has "!" in the title and a Consumer action line
         if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}
-        env:
-          TITLE: ${{ github.event.pull_request.title }}
-        run: node scripts/check-breaking.mjs
+        run: node scripts/check-breaking.mjs --event
 
-      # The body goes in through env, never as an expression inside run.
       - name: Check that the PR body links an issue and has the evidence lines
         if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}
-        env:
-          BODY: ${{ github.event.pull_request.body }}
-          AUTHOR: ${{ github.event.pull_request.user.login }}
-        run: node scripts/check-pr-body.mjs
+        run: node scripts/check-pr-body.mjs --event
 
       - name: Check that the commit titles of the push are conventional commits
         if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'push' }}
@@ -71,13 +63,15 @@ jobs:
           if ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
             BEFORE="$GITHUB_SHA~1"
           fi
-          # A git log error must fail the step, so write the titles to a file first.
-          titles=$(mktemp)
-          git log --format=%s "$BEFORE..$GITHUB_SHA" > "$titles" || exit 1
+          # A git log error must fail the step, so save the Git output before the loop.
+          commits=$(mktemp)
+          trap 'rm -f "$commits"' EXIT
+          git log --format='%h %s' "$BEFORE..$GITHUB_SHA" > "$commits" || exit 1
           status=0
-          while IFS= read -r title; do
-            node scripts/check-title.mjs "$title" || status=1
-          done < "$titles"
+          while IFS= read -r commit; do
+            echo "Check commit ${commit%% *}."
+            node scripts/check-title.mjs -- "${commit#* }" || status=1
+          done < "$commits"
           exit "$status"
 
       - name: Check the skill folders and frontmatter
