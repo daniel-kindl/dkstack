@@ -21,7 +21,7 @@ test("the validate workflow runs the CHANGELOG check", () => {
 });
 
 test("the validate workflow runs the CHANGELOG diff mode", () => {
-  assert.match(workflow, /^\s+run: node scripts\/check-changelog\.mjs --diff\s*$/m);
+  assert.match(workflow, /^\s+run: node scripts\/check-changelog\.mjs --diff --base "\$\{PR_BASE:-origin\/main\}"\s*$/m);
 });
 
 test("no script only prints text", () => {
@@ -34,7 +34,7 @@ test("npm run check and the validate workflow run the map, glossary, ADR and sup
   for (const name of ["maps", "context", "adrs", "suppressions"]) {
     assert.equal(pkg.scripts[`check:${name}`], `node scripts/check-${name}.mjs`);
     assert.match(pkg.scripts.check, new RegExp(`npm run check:${name} &&`));
-    assert.match(workflow, new RegExp(`^\\s+run: npm run check:${name}\\s*$`, "m"));
+    assert.ok(stepFor(`npm run check:${name}`), `the validate workflow runs check:${name}`);
   }
 });
 
@@ -49,7 +49,13 @@ test("the validate workflow fetches the history that check-adrs and check-suppre
 // "npm run check" or the validate workflow does not protect main.
 const validateSteps = workflow.split(/\n(?= {6}- name: )/).slice(1);
 const ALWAYS = "if: ${{ !cancelled() && steps.node.outcome == 'success' }}";
-const stepFor = (command) => validateSteps.find((s) => new RegExp(`^\\s+run: ${command.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*$`, "m").test(s));
+const stepFor = (command) => {
+  const escaped = command.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const inline = new RegExp(`^ {8}run: ${escaped}(?: -- .+)?$`, "m");
+  const block = new RegExp(`^ {10}${escaped}(?: -- .+)?$`, "m");
+  return validateSteps.find((step) =>
+    inline.test(step) || block.test(step.split(/^ {8}run: \|\n/m)[1] ?? ""));
+};
 
 test("each check script is in npm run check and has a validate step that runs after a failure", () => {
   const names = Object.keys(pkg.scripts).filter((n) => n.startsWith("check:") && n !== "check:title");
