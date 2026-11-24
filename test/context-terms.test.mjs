@@ -1,9 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readdir } from "node:fs/promises";
 import { flatten, readFile, sectionText } from "./helpers.mjs";
 import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { dirname, join, relative, sep } from "node:path";
+import { markdownFiles as listMarkdown } from "../scripts/markdown-files.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const raw = (path) => readFile(join(repoRoot, path), "utf8");
@@ -11,19 +11,12 @@ const read = async (path) => (await raw(path)).replace(/\s+/g, " ");
 
 // Issue #285: the pages use the terms of CONTEXT.md. CONTEXT.md names the
 // avoided words, and CHANGELOG.md keeps the words of each released entry.
+// The shared list reads the files that Git sees, so an untracked or an
+// ignored copy of the pages does not fail a local run (#333).
 async function markdownFiles(dir) {
-  const found = [];
-  for (const entry of await readdir(join(repoRoot, dir), { withFileTypes: true })) {
-    const path = dir === "." ? entry.name : `${dir}/${entry.name}`;
-    if (entry.isDirectory()) {
-      if (![".git", "node_modules"].includes(entry.name) && !entry.name.startsWith("archive-")) {
-        found.push(...await markdownFiles(path));
-      }
-    } else if (path.endsWith(".md") && !["CHANGELOG.md", "CONTEXT.md"].includes(path)) {
-      found.push(path);
-    }
-  }
-  return found;
+  const files = await listMarkdown(join(repoRoot, dir));
+  return files.map((full) => relative(repoRoot, full).split(sep).join("/"))
+    .filter((path) => !["CHANGELOG.md", "CONTEXT.md"].includes(path));
 }
 
 // Return each word of each "_Avoid_:" line of CONTEXT.md.

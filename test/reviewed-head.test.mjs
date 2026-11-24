@@ -1,9 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "./helpers.mjs";
-import { access, readdir } from "node:fs/promises";
+import { access } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { dirname, join, relative, sep } from "node:path";
+import { markdownFiles as listMarkdown } from "../scripts/markdown-files.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -73,22 +74,16 @@ test("safety.md defines the owner under its own heading", async () => {
   assert.ok(flat.includes("A bot or an agent that acts through the owner's account is always an agent."));
   assert.ok(flat.includes("It is never the owner."));
 });
-// #191: an agent does not get a role. The task and the skills tell it what to do.
+
+// The shared list reads the files that Git sees, so an untracked or an
+// ignored copy of the pages does not fail a local run (#333).
 async function markdownFiles(dir) {
-  const found = [];
-  for (const entry of await readdir(join(repoRoot, dir), { withFileTypes: true })) {
-    const path = dir === "." ? entry.name : `${dir}/${entry.name}`;
-    if (entry.isDirectory()) {
-      if (![".git", "node_modules"].includes(entry.name) && !entry.name.startsWith("archive-")) {
-        found.push(...await markdownFiles(path));
-      }
-    } else if (path.endsWith(".md") && path !== "CHANGELOG.md") {
-      found.push(path);
-    }
-  }
-  return found;
+  const files = await listMarkdown(join(repoRoot, dir));
+  return files.map((full) => relative(repoRoot, full).split(sep).join("/"))
+    .filter((path) => path !== "CHANGELOG.md");
 }
 
+// #191: an agent does not get a role. The task and the skills tell it what to do.
 test("no page defines an agent role or links the removed roles page", async () => {
   await assert.rejects(access(join(repoRoot, "workflow/roles.md")), "workflow/roles.md must not exist");
   for (const file of await markdownFiles(".")) {
