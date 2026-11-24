@@ -164,7 +164,7 @@ test("release checks that main did not move before it merges and before it tags"
 // App. Its token pushes the release branch and opens the pull request, so the
 // normal pull_request run of validate gives the check that protect-main
 // requires. See #135 and the failed runs 43070086329 and 43073954019.
-const APP_PIN = "actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0";
+const APP_PIN = "actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0";
 const APP_TOKEN = "${{ steps.app.outputs.token }}";
 const writeSteps = steps(write);
 const appStep = writeSteps.find((s) => /uses: actions\/create-github-app-token@/.test(s.text));
@@ -172,7 +172,7 @@ const appStep = writeSteps.find((s) => /uses: actions\/create-github-app-token@/
 test("the write job gets an app token for dkstack only, with three write permissions", () => {
   assert.ok(appStep, "a create-github-app-token step");
   assert.match(appStep.text, /^ {8}id: app$/m);
-  assert.ok(appStep.text.includes(`uses: ${APP_PIN}`), "pinned to v3.3.0 by SHA");
+  assert.ok(appStep.text.includes(`uses: ${APP_PIN}`), "pinned to v3.4.0 by SHA");
   const inputs = /\n {8}with:\n((?: {10}.*\n?)+)/.exec(appStep.text)[1].split("\n").filter(Boolean).map((l) => l.trim()).sort();
   assert.deepEqual(inputs, [
     "app-id: ${{ secrets.RELEASE_APP_ID }}",
