@@ -66,15 +66,14 @@ test("each check script is in npm run check and has a validate step that runs af
 });
 
 test("validate checks the pull request title and each pushed commit title", () => {
-  const pr = validateSteps.find((s) => /node scripts\/check-title\.mjs "\$TITLE"/.test(s));
+  const pr = validateSteps.find((s) => /node scripts\/check-title\.mjs --event/.test(s));
   assert.ok(pr, "a pull request title step");
   assert.match(pr, /github\.event_name == 'pull_request'/);
-  assert.match(pr, /TITLE: \$\{\{ github\.event\.pull_request\.title \}\}/);
   const push = validateSteps.find((s) => /github\.event_name == 'push'/.test(s) && /check-title/.test(s));
   assert.ok(push, "a push title step");
   assert.match(push, /BEFORE: \$\{\{ github\.event\.before \}\}/);
-  assert.match(push, /git log --format=%s "\$BEFORE\.\.\$GITHUB_SHA"/);
-  assert.match(push, /node scripts\/check-title\.mjs "\$title"/);
+  assert.match(push, /git log --format='%h %s' "\$BEFORE\.\.\$GITHUB_SHA"/);
+  assert.match(push, /node scripts\/check-title\.mjs -- "\$\{commit#\* \}"/);
 });
 
 // The Low on #190: a git log error must fail the push title step.
@@ -101,10 +100,15 @@ test("the push title step fails when git log fails", { skip: process.platform ==
 });
 
 test("the push title step checks each title that git log gives", { skip: process.platform === "win32" }, () => {
-  const good = runPushStep('[ "$1" = log ] && printf "docs: one\\nfix: two\\n"\nexit 0');
+  const good = runPushStep('[ "$1" = log ] && printf "1111111 docs: add privatemarker\\n2222222 fix: add privatemarker\\n"\nexit 0');
   assert.equal(good.status, 0, good.stderr);
-  const bad = runPushStep('[ "$1" = log ] && printf "docs: one\\nnot a title\\n"\nexit 0');
+  const bad = runPushStep('[ "$1" = log ] && printf "1111111 docs: add privatemarker\\n2222222 privatemarker: add a title\\n"\nexit 0');
   assert.equal(bad.status, 1);
+  for (const result of [good, bad]) {
+    assert.match(result.stdout, /Check commit 1111111\./);
+    assert.match(result.stdout, /Check commit 2222222\./);
+    assert.ok(!(result.stdout + result.stderr).includes("privatemarker"));
+  }
 });
 
 // FRG-11, SEN-19 and SCR-16 in #154: one Node version in package.json and in

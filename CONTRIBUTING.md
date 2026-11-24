@@ -79,3 +79,24 @@ reviewer edits the title before the merge, for example to `ci: bump create-githu
 
 Only the owner releases dkstack. The rule is in [safety](workflow/safety.md). The steps are in
 [Release dkstack](versioning/index.md#release-dkstack).
+
+## Check pull request text in CI
+
+If you copy dkstack's pull request checks, use a fixed release tag that has the `--event` option.
+Copy `check-title.mjs`, `check-pr-body.mjs` and their helper `pr-event.mjs` from the same tag.
+In GitHub Actions, run these steps only on `pull_request`:
+
+```yaml
+- name: Check the pull request title
+  if: github.event_name == 'pull_request'
+  run: node scripts/check-title.mjs --event
+
+- name: Check the pull request body
+  if: github.event_name == 'pull_request'
+  run: node scripts/check-pr-body.mjs --event
+```
+
+Both scripts read `GITHUB_EVENT_PATH`. Keep the title, body and author login out of the step
+environment and logs. To add the breaking change check, copy `check-breaking.mjs`,
+`check-links.mjs` and `markdown-files.mjs` from the same tag. Run
+`node scripts/check-breaking.mjs --event` for that step.
