@@ -139,6 +139,21 @@ test("a Consumer action line that [Unreleased] had at the merge base does not co
     CHANGELOG("- Consumer action: earlier change.\n- Consumer action: stop reading kiss.md.\n"), earlier), []);
 });
 
+test("the CLI compares with the pull request target from CI", async () => {
+  const root = await repoWith({ "guide/other.md": null });
+  try {
+    const env = { ...process.env, TITLE: "docs: remove other", PR_BASE: "HEAD" };
+    const pr = spawnSync(process.execPath, [script, root], { encoding: "utf8", env });
+    assert.equal(pr.status, 0, pr.stderr);
+    assert.equal(pr.stdout, "No breaking change.\n");
+    const explicit = spawnSync(process.execPath, [script, "--base", "main", root], { encoding: "utf8", env });
+    assert.equal(explicit.status, 1);
+    assert.match(explicit.stderr, /removed page guide\/other\.md/);
+  } finally {
+    await removeTree(root);
+  }
+});
+
 test("the CLI fails when only an earlier Consumer action line is in [Unreleased]", async () => {
   const root = await makeTree({ ...BASE, "CHANGELOG.md": CHANGELOG("- Consumer action: earlier change.\n") });
   try {
@@ -269,7 +284,7 @@ test("validate runs check-breaking on pull_request with the title through env", 
   assert.ok(step, "a check-breaking step");
   assert.ok(step.includes("if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}"));
   assert.match(step, /TITLE: \$\{\{ github\.event\.pull_request\.title \}\}/);
-  assert.match(step, /^\s+run: node scripts\/check-breaking\.mjs\b.* --base "\$PR_BASE"$/m);
+  assert.match(step, /^\s+run: node scripts\/check-breaking\.mjs$/m);
 });
 
 test("an anchor in a file that is not Markdown is not an item", () => {

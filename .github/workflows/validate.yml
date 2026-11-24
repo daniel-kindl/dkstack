@@ -52,7 +52,7 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}
         env:
           TITLE: ${{ github.event.pull_request.title }}
-        run: node scripts/check-breaking.mjs --base "$PR_BASE"
+        run: node scripts/check-breaking.mjs
 
       # The body goes in through env, never as an expression inside run.
       - name: Check that the PR body links an issue and has the evidence lines
