@@ -2,6 +2,7 @@
 // Check that a PR title or a commit title is a conventional commit:
 // type(scope)!: description. The PR title becomes the commit title on main,
 // so the validate workflow checks the PR title before the merge.
+// A description that does not start with an imperative verb gives a warning, not a failure.
 // Usage: node scripts/check-title.mjs "<title>"
 
 import { pathToFileURL } from "node:url";
@@ -20,6 +21,13 @@ const DASHES = new Map([
   ["\u2014", "em dash (U+2014)"],
   ["\u2013", "en dash (U+2013)"],
 ]);
+
+// A first word with one of these endings is often a past form, a gerund or a third person form.
+const NOT_IMPERATIVE = /(?:ed|ing|s)$/;
+// These imperative verbs have one of the endings above.
+const IMPERATIVE = /(?:ss|us|eed)$|^(?:embed|bring)$/;
+const MOOD_WARNING =
+  'the description should start with a verb in imperative mood, as in "add", not "added", "adding" or "adds"';
 
 // Return a list with the first problem, or an empty list for a valid title.
 export function checkTitle(fullTitle) {
@@ -51,6 +59,14 @@ export function checkTitle(fullTitle) {
   return [];
 }
 
+// Return the warnings for a valid title. A warning does not make the title fail.
+export function titleWarnings(fullTitle) {
+  if (checkTitle(fullTitle).length > 0) return [];
+  const [, , , description] = HEADER.exec(fullTitle.replace(SQUASH_SUFFIX, ""));
+  const word = (/^ ([A-Za-z]+)/.exec(description)?.[1] ?? "").toLowerCase();
+  return NOT_IMPERATIVE.test(word) && !IMPERATIVE.test(word) ? [MOOD_WARNING] : [];
+}
+
 function main() {
   const title = process.argv[2] ?? "";
   const errors = checkTitle(title);
@@ -59,6 +75,7 @@ function main() {
     process.exitCode = 1;
     return;
   }
+  for (const warning of titleWarnings(title)) console.error(`title warning: ${warning}`);
   console.log(`title "${title}" is a conventional commit.`);
 }
 
