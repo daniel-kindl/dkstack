@@ -11,7 +11,9 @@ Use conventional commits. Keep history clear and machine-readable. Use short-liv
   needs a MAJOR version. See [versioning](../versioning/index.md).
 - Allowed types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `build`, `ci`, `perf`,
   `style`, `revert`. A title with a different type fails the title check.
-- Write the description in imperative mood. Start with a verb.
+- Write the description in imperative mood. Start with a verb. The title check gives a warning
+  when the first word ends in `-ed`, `-ing` or `-s`, for example `added`. The warning does not
+  make the check fail.
 - Keep the subject line short (50 characters or fewer). The type, the scope and the `!` count.
   A character is one Unicode code point. Some marks that look like one character, such as a flag
   emoji or a letter with a combining accent, are more than one code point.

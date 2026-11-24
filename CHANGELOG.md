@@ -12,6 +12,9 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `check-title` gives a warning when the first word of the description ends in `-ed`, `-ing` or
+  `-s` (#311). The exit code does not change. Some imperative verbs, for example `pass`, `focus`
+  and `embed`, give no warning.
 - `scripts/check-pr-body.mjs` and a `validate` step (#301). The step checks the PR body for an
   issue link, an Evidence section, one Observability line and a valid Visual verification line.
 - `check-adrs` checks the ADR file names and amendments (#307). A new ADR is named `NNNN-short-title.md`, and no two ADRs share a number. A change to an Accepted ADR only adds lines under a `### Amendment YYYY-MM-DD` heading. A new `--diff <file>` option gives the diff without git.

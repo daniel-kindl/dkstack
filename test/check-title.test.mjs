@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { checkTitle } from "../scripts/check-title.mjs";
+import { checkTitle, titleWarnings } from "../scripts/check-title.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const script = join(repoRoot, "scripts", "check-title.mjs");
@@ -128,4 +128,38 @@ test("a title with only the (#NN) suffix as description fails", () => {
     assert.deepEqual(checkTitle(title), [reason], title);
   }
   assert.deepEqual(checkTitle("fix: a (#12)"), []);
+});
+
+const MOOD_WARNING =
+  'the description should start with a verb in imperative mood, as in "add", not "added", "adding" or "adds"';
+
+test("a first word that ends in -ed, -ing or -s gives a warning", () => {
+  for (const title of ["feat: added login", "fix(x): fixing the parser", "docs: updates the guide",
+    "feat!: Removed the v0 endpoints", "fix: added login (#12)"]) {
+    assert.deepEqual(titleWarnings(title), [MOOD_WARNING], title);
+    assert.deepEqual(checkTitle(title), [], title);
+  }
+});
+
+test("an imperative first word gives no warning", () => {
+  for (const title of ["feat: add user login", "fix: pass the token", "fix: focus the input",
+    "feat: embed the font", "fix: bring back the flag", "revert: feat: add user login",
+    "fix: seed the data", "test: cover the 64 character name", "fix: 2fa codes", "fix: `npm` scripts"]) {
+    assert.deepEqual(titleWarnings(title), [], title);
+  }
+});
+
+test("a title that fails the check gives no warning", () => {
+  for (const title of ["", "added login", "feat:added", "wip: added login"]) {
+    assert.deepEqual(titleWarnings(title), [], JSON.stringify(title));
+  }
+});
+
+test("the CLI prints the warning and keeps exit code 0", () => {
+  const result = spawnSync(process.execPath, [script, "feat: added login"], { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stderr, `title warning: ${MOOD_WARNING}\n`);
+  const clean = spawnSync(process.execPath, [script, "feat: add login"], { encoding: "utf8" });
+  assert.equal(clean.status, 0);
+  assert.equal(clean.stderr, "");
 });
