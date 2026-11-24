@@ -13,6 +13,7 @@ A reader who knows the domain should understand the intent without translation.
 - Do not leak technical details into domain logic.
 - Prefer a small vocabulary that matches how domain experts speak.
 - Make the domain language the shared language between people and code.
+- To model a domain that has rules, see [domain-modeling.md](domain-modeling.md).
 - Keep the terms in the [glossary](#glossary). Use the glossary term in code, tests, issues and
   docs.
 

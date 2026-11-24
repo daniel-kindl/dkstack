@@ -56,3 +56,5 @@ store(value)
 A component that accepts any value and silently clamps or ignores values outside the range.
 
 The caller cannot know whether the stored value matches what was sent. The invariant is not guaranteed.
+
+Related: [domain-modeling.md](domain-modeling.md) puts each invariant in one aggregate.
