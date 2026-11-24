@@ -21,6 +21,11 @@ test("validate starts for every pull request and for pushes to main, and keeps t
   assert.match(validate, /^jobs:\n  validate:\n    name: validate\n/m);
 });
 
+test("validate passes the target SHA to the breaking change check", () => {
+  assert.match(validate, /PR_BASE: \$\{\{ github\.event\.pull_request\.base\.sha \}\}/);
+  assert.match(validate, /run: node scripts\/check-breaking\.mjs --event --base "\$PR_BASE"/);
+});
+
 test("validate checks the commit title of a push", () => {
   const step = validate.slice(validate.indexOf("- name: Check that the commit title"));
   assert.match(step.split("\n").slice(0, 3).join("\n"), /github\.event_name == 'push'/);

@@ -189,7 +189,5 @@ async function main(args, title) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const args = process.argv.slice(2);
-  if (process.env.PR_BASE) args.unshift("--base", process.env.PR_BASE);
-  process.exitCode = await main(args, process.env.TITLE);
+  process.exitCode = await main(process.argv.slice(2), process.env.TITLE);
 }
