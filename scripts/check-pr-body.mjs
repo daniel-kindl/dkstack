@@ -19,11 +19,20 @@ const VISUAL_START = /^(?:PASS|FAIL|NOT RUN)\b/;
 const ISSUE_URL = /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/issues\/\d+$/;
 // A removed code span or link becomes this mark. It is not a space, so the text
 // on each side of it does not join into a new closing reference.
-const GAP = "\uFFFC";
-const CODE_SPAN = /(?<!`)(`+)(?!`)[\s\S]*?(?<!`)\1(?!`)/g;
-const DEFINITION = /^[ ]{0,3}\[([^\[\]]+)\]:[ \t]*(<[^>\n]*>|\S+)[^\n]*$/gm;
-const DESTINATION = String.raw`(<[^>\n]*>|[^\s()]+)(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*`;
-const INLINE_LINK = new RegExp(String.raw`!?\[[^\[\]]*\]\(\s*${DESTINATION}\)`, "g");
+const GAP = "￼";
+const ESCAPE = /\\[!-/:-@[-`{-~]/g;
+// A code span closes on a run of backticks of the same length. It does not pass a blank line.
+const CODE_SPAN = /(?<!`)(`+)(?!`)(?:(?!\n[ \t]*\n)[\s\S])*?(?<!`)\1(?!`)/g;
+const TITLE = String.raw`(?:"[^"\n]*"|'[^'\n]*'|\([^)\n]*\))`;
+const DEFINITION = new RegExp(
+  String.raw`^[ ]{0,3}\[([^\[\]]+)\]:[ \t]*(<[^>\n]*>|\S+)(?:[ \t]+${TITLE})?[ \t]*$`,
+  "gm",
+);
+// The text of a link can hold one level of brackets, and a destination one level of parentheses.
+const TEXT = String.raw`((?:[^\[\]]|\[[^\[\]]*\])*)`;
+const DESTINATION = String.raw`(<[^>\n]*>|(?:[^\s()]|\([^\s()]*\))+)(?:\s+${TITLE})?\s*`;
+const INLINE_LINK = new RegExp(String.raw`!?\[${TEXT}\]\(\s*${DESTINATION}\)`, "g");
+const FULL_REFERENCE = new RegExp(String.raw`!?\[${TEXT}\]\[([^\[\]]+)\]`, "g");
 const REFERENCE_LINK = /!?\[([^\[\]]*)\](?:\[([^\[\]]*)\])?/g;
 
 const label = (text) => text.trim().replace(/\s+/g, " ").toLowerCase();
@@ -34,14 +43,16 @@ const linkText = (destination) => (ISSUE_URL.test(destination) ? destination : G
 // Return the prose of the body for the issue link check. Inline code does not count. A link
 // counts only by its destination, not by its label.
 function prose(body) {
-  const text = body.replace(CODE_SPAN, GAP);
+  const text = body.replace(ESCAPE, GAP).replace(CODE_SPAN, GAP);
   const definitions = new Map();
   const withoutDefinitions = text.replace(DEFINITION, (_, name, destination) => {
     if (!definitions.has(label(name))) definitions.set(label(name), unwrap(destination));
     return GAP;
   });
   return withoutDefinitions
-    .replace(INLINE_LINK, (_, destination) => linkText(unwrap(destination)))
+    .replace(INLINE_LINK, (_, _text, destination) => linkText(unwrap(destination)))
+    .replace(FULL_REFERENCE, (match, _text, name) =>
+      definitions.has(label(name)) ? linkText(definitions.get(label(name))) : match)
     .replace(REFERENCE_LINK, (match, first, second) => {
       const name = label(second === undefined || second.trim() === "" ? first : second);
       return definitions.has(name) ? linkText(definitions.get(name)) : match;

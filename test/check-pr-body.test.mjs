@@ -224,3 +224,53 @@ test("brackets with no reference definition stay plain text", () => {
   assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[Closes #19]")), []);
   assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[Closes #19][none]")), []);
 });
+
+test("a code span ends at a blank line", () => {
+  const body = replaceLine("Closes #12", "A lone ` mark.\n\nCloses #12\n\nThen `code`.");
+  assert.deepEqual(checkPrBody(body), []);
+});
+
+test("a code span closes only on a run of the same length", () => {
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "``Closes #19` x``")), [ISSUE_ERROR]);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "```Closes #19``")), []);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "`` Closes #12 ```")), []);
+});
+
+test("an escaped mark does not start code or a link", () => {
+  for (const link of ["\\`Closes #19\\`", "\\[Closes #19\\](README.md)"]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [], link);
+  }
+});
+
+test("a link with parentheses or nested brackets is still a link", () => {
+  for (const link of [
+    "[Closes #19](https://en.wikipedia.org/wiki/A_(b))",
+    "[Closes #19 [x]](README.md)",
+    "[Closes #19 [x]][d]\n\n[d]: README.md",
+  ]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [ISSUE_ERROR], link);
+  }
+});
+
+test("only a full issue URL counts as an issue destination", () => {
+  for (const link of [
+    "Closes [#19](#19)",
+    "Closes [x](https://github.com/o/r/issues/19/files)",
+    "Closes [x](o/r#19?https://github.com/o/r/issues/19)",
+    "Closes [x](https://github.com/o/r/issues/)",
+  ]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [ISSUE_ERROR], link);
+  }
+});
+
+test("a reference definition is read as CommonMark reads it", () => {
+  const issue = "https://github.com/o/r/issues/19";
+  // The first definition of a label wins, and labels match without case.
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", `Closes [x][D]\n\n[d]: ${issue}\n[d]: README.md`)), []);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", `Closes [x][d]\n\n[d]: README.md\n[d]: ${issue}`)), [ISSUE_ERROR]);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", `Closes [x][d]\n\n[d]: <${issue}> "title"`)), []);
+  // A definition line is not prose.
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[Closes #19]: README.md")), [ISSUE_ERROR]);
+  // A line with other text after the destination is not a definition.
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[Note]: Closes #12")), []);
+});
