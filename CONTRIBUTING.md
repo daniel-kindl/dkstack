@@ -60,6 +60,13 @@ posted. The file is not in the repository, so `npm run check` does not run this 
 - In a skill, link each other dkstack file with its raw URL on `v1`, for example
   `https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md`.
 
+## Validate workflow
+
+The workflow runs on pull requests to every branch so work that targets an intermediate branch
+gets the same checks as work that targets main. The pull request diff checks use the target commit.
+The workflow also runs on pushes to main. On a push, the ADR check uses the commit before the
+push, or the first parent of HEAD if the earlier commit is unavailable.
+
 ## Update bot pull requests
 
 An update bot can open a pull request with a title over 50 characters, for example

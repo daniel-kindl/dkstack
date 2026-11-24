@@ -6,7 +6,6 @@ name: validate
 
 on:
   pull_request:
-    branches: [main]
     types: [opened, synchronize, reopened, edited]
   push:
     branches: [main]
@@ -25,12 +24,14 @@ jobs:
     name: validate
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      PR_BASE: ${{ github.event.pull_request.base.sha }}
     steps:
       - name: Check out the repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          # check-adrs, check-suppressions and check-breaking compare the change with origin/main, so they need the history.
+          # The diff checks need the pull request target or the history before the push.
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -51,7 +52,7 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}
         env:
           TITLE: ${{ github.event.pull_request.title }}
-        run: node scripts/check-breaking.mjs
+        run: node scripts/check-breaking.mjs --base "$PR_BASE"
 
       # The body goes in through env, never as an expression inside run.
       - name: Check that the PR body links an issue and has the evidence lines
@@ -113,10 +114,9 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:changelog
 
-      # check-changelog --diff compares the change with origin/main, so it needs the history.
       - name: Check that a new page or skill changes CHANGELOG.md under Unreleased
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
-        run: node scripts/check-changelog.mjs --diff
+        run: node scripts/check-changelog.mjs --diff --base "${PR_BASE:-origin/main}"
 
       - name: Check the format of the maps in docs/maps
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
@@ -128,11 +128,17 @@ jobs:
 
       - name: Check that new ADRs have Status and Affects
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
-        run: npm run check:adrs
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == push ]] && ! git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
+            BASE_SHA=HEAD~1
+          fi
+          npm run check:adrs -- --base "$BASE_SHA"
 
       - name: Check that the change adds no blanket suppression and no suppression without a reason, and warn about weaker gates
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
-        run: npm run check:suppressions
+        run: npm run check:suppressions -- --base "${PR_BASE:-origin/main}"
 
       # This check fails when it finds a long step, a long sentence or a semicolon.
       - name: Check for long steps, long sentences and semicolons in Markdown

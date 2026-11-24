@@ -269,7 +269,7 @@ test("validate runs check-breaking on pull_request with the title through env", 
   assert.ok(step, "a check-breaking step");
   assert.ok(step.includes("if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}"));
   assert.match(step, /TITLE: \$\{\{ github\.event\.pull_request\.title \}\}/);
-  assert.match(step, /^\s+run: node scripts\/check-breaking\.mjs$/m);
+  assert.match(step, /^\s+run: node scripts\/check-breaking\.mjs\b.* --base "\$PR_BASE"$/m);
 });
 
 test("an anchor in a file that is not Markdown is not an item", () => {
