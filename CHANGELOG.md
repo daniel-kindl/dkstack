@@ -48,6 +48,13 @@ change that a consumer must act on has a "Consumer action:" line.
 - `check-writing` now exits 1 when it finds a long sentence, a long step or a semicolon (#299).
   Before, it only warned.
 
+### Fixed
+
+- `scripts/markdown-files.mjs` lists the files that Git sees (#333). In a Git work tree, it
+  lists the tracked files and the untracked files that `.gitignore` does not ignore. So
+  `check-dashes`, `check-writing` and `check-links` read the same files locally and in CI.
+  Outside a Git work tree, it reads the folder as before.
+
 ## [1.6.0] - 2026-11-21
 
 ### Added
