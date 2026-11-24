@@ -3,11 +3,13 @@
 // section, one Observability line, and a valid Visual verification line.
 // The rules are in skills/write-pr/SKILL.md and workflow/review-and-merge.md.
 // A PR from a bot account is skipped.
+// In GitHub Actions, use --event to read the body and login from GITHUB_EVENT_PATH.
 // Usage: BODY="<body>" AUTHOR="<login>" node scripts/check-pr-body.mjs
 //    or: node scripts/check-pr-body.mjs <file>
 
 import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
+import { readPullRequest } from "./pr-event.mjs";
 
 const ISSUE_LINK =
   /\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?):?\s+(?:(?:[\w.-]+\/[\w.-]+)?#\d+|https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/issues\/\d+)/i;
@@ -79,9 +81,7 @@ export function checkPrBody(rawBody, author = "") {
 
   const observability = values(body, "Observability");
   if (observability.length !== 1) {
-    errors.push(
-      `the body must have one "Observability:" line, and it has ${observability.length}`,
-    );
+    errors.push('the body must have one "Observability:" line');
   } else {
     const [value] = observability;
     if (value === "" || OBSERVABILITY_PLACEHOLDERS.some((p) => value.includes(p))) {
@@ -102,7 +102,17 @@ export function checkPrBody(rawBody, author = "") {
 function main() {
   const file = process.argv[2];
   let body = process.env.BODY;
-  if (file !== undefined) {
+  let author = process.env.AUTHOR ?? "";
+  if (file === "--event") {
+    const pr = readPullRequest((value) =>
+      (value.body === null || typeof value.body === "string") && typeof value.user?.login === "string");
+    if (!pr) {
+      process.exitCode = 2;
+      return;
+    }
+    body = pr.body ?? "";
+    author = pr.user.login;
+  } else if (file !== undefined) {
     try {
       body = readFileSync(file, "utf8");
     } catch (error) {
@@ -116,9 +126,8 @@ function main() {
     process.exitCode = 2;
     return;
   }
-  const author = process.env.AUTHOR ?? "";
   if (author.endsWith("[bot]")) {
-    console.log(`PR body check skipped: the author ${author} is a bot.`);
+    console.log("PR body check skipped for a bot.");
     return;
   }
   const errors = checkPrBody(body, author);

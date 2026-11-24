@@ -183,10 +183,10 @@ test("the title needs ! and [Unreleased] needs a Consumer action line when there
   assert.deepEqual(missingPieces("feat(skills)!: rename x", good), []);
   assert.deepEqual(missingPieces("feat!: rename x", CHANGELOG("Consumer action: do it.\n")), []);
   assert.deepEqual(missingPieces("feat(skills): rename x", CHANGELOG("- Old line.\n")), [
-    'the pull request title has no "!" before the colon: feat(skills): rename x',
+    'the pull request title has no "!" before the colon',
     'the ## [Unreleased] section of CHANGELOG.md has no new line that starts with "Consumer action:"',
   ]);
-  assert.deepEqual(missingPieces("feat: x!: y", good), ['the pull request title has no "!" before the colon: feat: x!: y']);
+  assert.deepEqual(missingPieces("feat: x!: y", good), ['the pull request title has no "!" before the colon']);
   assert.deepEqual(missingPieces("feat!: x", null), [
     'the ## [Unreleased] section of CHANGELOG.md has no new line that starts with "Consumer action:"',
   ]);
@@ -211,7 +211,7 @@ test("the CLI fails for a removed page without ! and Consumer action, and names 
     assert.equal(r.status, 1);
     assert.equal(r.stderr, [
       "breaking: removed page guide/other.md",
-      'missing: the pull request title has no "!" before the colon: docs: remove other',
+      'missing: the pull request title has no "!" before the colon',
       'missing: the ## [Unreleased] section of CHANGELOG.md has no new line that starts with "Consumer action:"',
       "",
     ].join("\n"));
@@ -262,18 +262,35 @@ test("the CLI exits 2 with no title, a bad argument or a bad base ref", async ()
   }
 });
 
-test("validate runs check-breaking on pull_request with the title through env", async () => {
+test("validate runs check-breaking on pull_request with the title from the event file", async () => {
   const { readFile } = await import("./helpers.mjs");
   const workflow = await readFile(join(repoRoot, ".github/workflows/validate.yml"), "utf8");
   const step = workflow.split(/\n(?= {6}- name: )/).find((s) => /node scripts\/check-breaking\.mjs/.test(s));
   assert.ok(step, "a check-breaking step");
   assert.ok(step.includes("if: ${{ !cancelled() && steps.node.outcome == 'success' && github.event_name == 'pull_request' }}"));
-  assert.match(step, /TITLE: \$\{\{ github\.event\.pull_request\.title \}\}/);
-  assert.match(step, /^\s+run: node scripts\/check-breaking\.mjs$/m);
+  assert.match(step, /^\s+run: node scripts\/check-breaking\.mjs --event\b/m);
 });
 
 test("an anchor in a file that is not Markdown is not an item", () => {
   const base = { ...BASE, "AGENTS.md": "[a](notes.txt#top)\n", "notes.txt": "# Top\n" };
   const head = { ...base, "notes.txt": "# Other\n" };
   assert.deepEqual(breakingItems(tree(base), tree(head)), []);
+});
+
+test("the CLI reads the event title without logging it on a breaking change", async () => {
+  const root = await repoWith({ "guide/other.md": null });
+  const marker = "privatetitle";
+  const eventPath = join(root, "event.json");
+  try {
+    await writeFile(eventPath, JSON.stringify({ pull_request: { title: "docs: " + marker } }));
+    const result = spawnSync(process.execPath, [script, "--event", "--base", "main", root], {
+      encoding: "utf8",
+      env: { ...process.env, GITHUB_EVENT_PATH: eventPath },
+    });
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /title has no "!"/);
+    assert.ok(!(result.stdout + result.stderr).includes(marker));
+  } finally {
+    await removeTree(root);
+  }
 });

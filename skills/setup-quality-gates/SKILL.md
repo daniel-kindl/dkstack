@@ -37,6 +37,11 @@ A building block of [bootstrap](https://raw.githubusercontent.com/daniel-kindl/d
    - A missing `docs/maps/` folder or a missing `CONTEXT.md` is a pass. The repository may not have them yet.
    - Do not change the copied scripts. To update them, copy them again from a newer tag.
 
+## Check pull request text in CI
+
+Keep pull request titles, bodies and author logins out of step environments and logs.
+Read the event file inside each check. See the [event file example](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/CONTRIBUTING.md#check-pull-request-text-in-ci).
+
 ## Subagents
 
 Do not start subagents for this skill. Reason: this is one building block. bootstrap can check it in a subagent. See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).
