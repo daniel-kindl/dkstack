@@ -135,7 +135,7 @@ const MOOD_WARNING =
 
 test("a first word that ends in -ed, -ing or -s gives a warning", () => {
   for (const title of ["feat: added login", "fix(x): fixing the parser", "docs: updates the guide",
-    "feat!: Removed the v0 endpoints", "fix: added login (#12)"]) {
+    "feat!: Removed the v0 endpoints", "feat: ADDS login", "fix: added login (#12)"]) {
     assert.deepEqual(titleWarnings(title), [MOOD_WARNING], title);
     assert.deepEqual(checkTitle(title), [], title);
   }
