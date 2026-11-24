@@ -97,5 +97,6 @@ In GitHub Actions, run these steps only on `pull_request`:
 ```
 
 Both scripts read `GITHUB_EVENT_PATH`. Keep the title, body and author login out of the step
-environment and logs. If you also copy `check-breaking.mjs`, copy its dependency
-`check-links.mjs` from the same tag and use `--event` for that step.
+environment and logs. To add the breaking change check, copy `check-breaking.mjs`,
+`check-links.mjs` and `markdown-files.mjs` from the same tag. Run
+`node scripts/check-breaking.mjs --event` for that step.
