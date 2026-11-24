@@ -67,20 +67,22 @@ test("a folder that .gitignore ignores is read with the folder walk", async () =
 // M2 on #336: Git lists a file with a merge conflict once for each stage.
 test("a Markdown file with a merge conflict is listed once", async () => {
   const root = await makeTree({ "a.md": "base\n" });
-  const git = (...args) => spawnSync("git", ["-c", "user.name=t", "-c", "user.email=t@example.com", ...args],
-    { cwd: root, stdio: "ignore" });
+  // The -c options keep a global Git config, for example commit signing, from
+  // failing a setup step. Each step must pass, or the test proves nothing.
+  const config = ["-c", "user.name=t", "-c", "user.email=t@example.com", "-c", "commit.gpgsign=false"];
+  const git = (...args) => spawnSync("git", [...config, ...args], { cwd: root, stdio: "ignore" }).status;
+  const step = (...args) => assert.equal(git(...args), 0, `git ${args.join(" ")}`);
   try {
-    git("init", "--quiet", "--initial-branch=main");
-    git("add", "a.md");
-    git("commit", "--quiet", "-m", "base");
-    git("switch", "--quiet", "-c", "other");
+    step("init", "--quiet", "--initial-branch=main");
+    step("add", "a.md");
+    step("commit", "--quiet", "-m", "base");
+    step("switch", "--quiet", "-c", "other");
     await writeFile(join(root, "a.md"), "other\n");
-    git("commit", "--quiet", "-am", "other");
-    git("switch", "--quiet", "main");
+    step("commit", "--quiet", "-am", "other");
+    step("switch", "--quiet", "main");
     await writeFile(join(root, "a.md"), "main\n");
-    git("commit", "--quiet", "-am", "main");
-    const merge = git("merge", "--quiet", "other");
-    assert.notEqual(merge.status, 0, "the merge must stop with a conflict");
+    step("commit", "--quiet", "-am", "main");
+    assert.equal(git("merge", "--quiet", "other"), 1, "the merge must stop with a conflict");
     const found = (await markdownFiles(root)).map((p) => p.slice(root.length + 1));
     assert.deepEqual(found, ["a.md"]);
   } finally {
