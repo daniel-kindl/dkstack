@@ -274,3 +274,33 @@ test("a reference definition is read as CommonMark reads it", () => {
   // A line with other text after the destination is not a definition.
   assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[Note]: Closes #12")), []);
 });
+
+test("a backslash in a code span is literal", () => {
+  for (const link of ["The `\\` key. Closes #19. Run `npm test`.", "Use `C:\\` here. Closes #19. Run `npm test`."]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [], link);
+  }
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "`a` Closes #19 `b`")), []);
+  // An escaped backslash does not escape the backtick after it.
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "\\\\`Closes #19`")), [ISSUE_ERROR]);
+});
+
+test("a link does not go across a blank line", () => {
+  for (const link of ["[Note\n\nCloses #19\n\nsee](README.md)", "[Draft\n\nCloses #19\n\nx]: README.md"]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [], link);
+  }
+});
+
+test("a link with an empty destination is a link", () => {
+  for (const link of ["[Closes #19]()", "[Closes #19]( )"]) {
+    assert.deepEqual(checkPrBody(replaceLine("Closes #12", link)), [ISSUE_ERROR], link);
+  }
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[Closes #19] (x)")), []);
+});
+
+test("the guards of labels, definitions and escapes hold", () => {
+  const issue = "https://github.com/o/r/issues/19";
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", `Closes [x][a\nb]\n\n[a b]: ${issue}`)), []);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", `Closes [x]\n\n    [x]: ${issue}`)), [ISSUE_ERROR]);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "Closes\\`#19")), [ISSUE_ERROR]);
+  assert.deepEqual(checkPrBody(replaceLine("Closes #12", "[d]: README.md \"Closes #19\"")), [ISSUE_ERROR]);
+});

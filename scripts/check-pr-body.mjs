@@ -19,21 +19,24 @@ const VISUAL_START = /^(?:PASS|FAIL|NOT RUN)\b/;
 const ISSUE_URL = /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/issues\/\d+$/;
 // A removed code span or link becomes this mark. It is not a space, so the text
 // on each side of it does not join into a new closing reference.
-const GAP = "￼";
+const GAP = "\uFFFC";
 const ESCAPE = /\\[!-/:-@[-`{-~]/g;
 // A code span closes on a run of backticks of the same length. It does not pass a blank line.
-const CODE_SPAN = /(?<!`)(`+)(?!`)(?:(?!\n[ \t]*\n)[\s\S])*?(?<!`)\1(?!`)/g;
+// An escaped backtick does not open a span. A backslash in a span is literal.
+const CODE_SPAN = /(?<!(?<!\\)(?:\\\\)*\\)(?<!`)(`+)(?!`)(?:(?!\n[ \t]*\n)[\s\S])*?(?<!`)\1(?!`)/g;
+// A character of a label or of link text. A link does not go across a blank line.
+const INNER = String.raw`(?:(?!\n[ \t]*\n)[^\[\]])`;
 const TITLE = String.raw`(?:"[^"\n]*"|'[^'\n]*'|\([^)\n]*\))`;
 const DEFINITION = new RegExp(
-  String.raw`^[ ]{0,3}\[([^\[\]]+)\]:[ \t]*(<[^>\n]*>|\S+)(?:[ \t]+${TITLE})?[ \t]*$`,
+  String.raw`^[ ]{0,3}\[(${INNER}+)\]:[ \t]*(<[^>\n]*>|\S+)(?:[ \t]+${TITLE})?[ \t]*$`,
   "gm",
 );
 // The text of a link can hold one level of brackets, and a destination one level of parentheses.
-const TEXT = String.raw`((?:[^\[\]]|\[[^\[\]]*\])*)`;
-const DESTINATION = String.raw`(<[^>\n]*>|(?:[^\s()]|\([^\s()]*\))+)(?:\s+${TITLE})?\s*`;
+const TEXT = String.raw`((?:${INNER}|\[${INNER}*\])*)`;
+const DESTINATION = String.raw`(<[^>\n]*>|(?:[^\s()]|\([^\s()]*\))*)(?:\s+${TITLE})?\s*`;
 const INLINE_LINK = new RegExp(String.raw`!?\[${TEXT}\]\(\s*${DESTINATION}\)`, "g");
-const FULL_REFERENCE = new RegExp(String.raw`!?\[${TEXT}\]\[([^\[\]]+)\]`, "g");
-const REFERENCE_LINK = /!?\[([^\[\]]*)\](?:\[([^\[\]]*)\])?/g;
+const FULL_REFERENCE = new RegExp(String.raw`!?\[${TEXT}\]\[(${INNER}+)\]`, "g");
+const REFERENCE_LINK = new RegExp(String.raw`!?\[(${INNER}*)\](?:\[(${INNER}*)\])?`, "g");
 
 const label = (text) => text.trim().replace(/\s+/g, " ").toLowerCase();
 const unwrap = (destination) => destination.replace(/^<(.*)>$/, "$1");
@@ -43,7 +46,7 @@ const linkText = (destination) => (ISSUE_URL.test(destination) ? destination : G
 // Return the prose of the body for the issue link check. Inline code does not count. A link
 // counts only by its destination, not by its label.
 function prose(body) {
-  const text = body.replace(ESCAPE, GAP).replace(CODE_SPAN, GAP);
+  const text = body.replace(CODE_SPAN, GAP).replace(ESCAPE, GAP);
   const definitions = new Map();
   const withoutDefinitions = text.replace(DEFINITION, (_, name, destination) => {
     if (!definitions.has(label(name))) definitions.set(label(name), unwrap(destination));
