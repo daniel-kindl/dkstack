@@ -12,6 +12,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Changed
 
+- `workflow/review-and-merge.md` "After the merge": the author removes each worktree that it or its subagents made for the pull request, with the same checks (#369). Before, only the agent that merged cleaned up, so the author's worktrees stayed.
+- `coding/quality.md` owns two rules that were only smells in `review-standards` (#365). "Literal values": give a literal with a meaning a named constant, with a short list of values that need no name. "Complexity": a cyclomatic complexity limit of 10 by default in the linter, run in CI as an error. The two smell rows link the sections.
 - `writing/comments.md` has a section for a comment as a signal (#199). A comment that explains a workaround shows a cause to fix. A comment that guards a constraint becomes a type, a check, a test or a lint rule, and then the comment goes. The section lists the comments that stay. `review-standards` has a matching smell row.
 - `coding/security.md` says that push protection of the code host meets the secret scan rule. `setup-quality-gates` and `setup-repo-protection` tell a consumer which option applies (#335).
 
@@ -28,6 +30,7 @@ change that a consumer must act on has a "Consumer action:" line.
   block with no paragraph directly above it fails. A tracked `.png` or `.svg` file in `docs/`
   fails. A diagram with more than 12 nodes gives a warning only. `npm run check` and `validate`
   run it. The file has no dependencies, so a consumer can copy it.
+- `coding/feature-flags.md` (#377). Each temporary flag has an owner and a linked issue that removes it. Tests cover each state that can reach production. A flag has a safe default, is not nested, and is not configuration or a permission.
 - `setup-quality-gates` copies `check-title`, `check-dashes` and `check-writing` to a consumer, with
   `markdown-files.mjs` and `pr-event.mjs` that they import (#304). Step 4 gives the title steps of
   `validate` as the CI example. A test pins the list and runs each script alone.
@@ -35,6 +38,7 @@ change that a consumer must act on has a "Consumer action:" line.
 - `scripts/check-maps.mjs --diff` (#317). A change to `docs/maps/` fails when it also changes a
   file outside `docs/maps/`, `docs/adr/` and `CONTEXT.md`, or when it deletes a map. The
   `validate` workflow runs it.
+- The first tips in `tips/index.md` (#367): check the exit code of each step, check for a breaking change before you push, and find worktrees and branches that are left. AGENTS.md "Sections", the README and the triage section map list `tips/index.md`.
 - A test fails for a page in a section folder that no file in `test/` names (#314). The 41 pages
   that had no test get one in `test/section-pages.test.mjs`.
 - `.gitignore` ignores `.claude/worktrees/`, so `git add -A` does not add an agent worktree (#363). A test checks that `.claude/settings.json` is not ignored.

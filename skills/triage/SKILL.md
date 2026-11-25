@@ -90,6 +90,7 @@ One agent can do all the steps. Many agents can share the steps. A skill does no
 - Commits or branches: [version-control/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/version-control/index.md)
 - Version numbers or releases: [versioning/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/versioning/index.md)
 - Any text, including documentation, comments and messages: [writing/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/index.md). For copy that the users of a product read, also [user-facing copy](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/user-facing-copy.md).
+- A shell, git or check problem, or a short how-to: [tips/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tips/index.md). A tip is not a rule.
 - Learning work: [learning/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/learning/index.md)
 - A change to `.github/workflows`, tokens, secrets or repository settings: [CI workflows](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md#ci-workflows) and [safety](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md)
 - Issues, pull requests, review, merge or release: [workflow/index.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/index.md)

@@ -13,6 +13,7 @@ Coding standards and practices.
 - [error-handling.md](error-handling.md): Handle errors explicitly.
 - [logging.md](logging.md): Logging events and the observability assessment.
 - [security.md](security.md): Security basics.
+- [feature-flags.md](feature-flags.md): Each flag has an owner and an issue that removes it.
 - [testing.md](testing.md): A pointer to [tdd/](../tdd/index.md), which has the testing rules.
 - [dependencies.md](dependencies.md): No unjustified dependencies.
 - [time.md](time.md): Time and dates in production code.
