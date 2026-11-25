@@ -72,10 +72,12 @@ test("a term on an _Avoid_ line fails", () => {
 test("a missing CONTEXT.md is a pass", async () => {
   const root = await makeTree({ "README.md": "# x\n" });
   try {
-    assert.deepEqual(await checkContext(root), { found: false, errors: [] });
-    const result = run([root]);
-    assert.equal(result.status, 0);
-    assert.equal(result.stdout, "No CONTEXT.md. Nothing to check.\n");
+    const result = await checkContext(root);
+    assert.equal(result.found, false);
+    assert.deepEqual(result.errors, []);
+    const cli = run([root]);
+    assert.equal(cli.status, 0);
+    assert.equal(cli.stdout, "No CONTEXT.md. Nothing to check.\n");
   } finally {
     await removeTree(root);
   }

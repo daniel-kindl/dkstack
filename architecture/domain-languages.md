@@ -61,7 +61,7 @@ The business meaning is lost. Changing the rule requires understanding the flags
 
 ## Glossary
 
-Each project keeps its domain terms in one file: `CONTEXT.md` at the repository root. People
+Each project keeps its domain terms in one file: `CONTEXT.md` at the repository root. A project with two or more contexts uses [one file for each context](#several-contexts). People
 and agents read it before they name a thing. The
 [domain-glossary](../skills/domain-glossary/SKILL.md) skill keeps it current.
 
@@ -81,6 +81,37 @@ and agents read it before they name a thing. The
   Record a decision in an [ADR](adrs.md).
 - One term has one meaning. A term must not also appear on an `_Avoid_:` line.
 - When the meaning of a term changes, change the entry in the same pull request as the code.
+
+### Several contexts
+
+A project with one [bounded context](domain-modeling.md#bounded-contexts) keeps the root
+`CONTEXT.md` as it is. A project with two or more contexts keeps one glossary for each context.
+
+- Put one `CONTEXT.md` in the folder of each context. Each file follows the rules above.
+- Put `CONTEXT-MAP.md` at the repository root. Start it with an H1 and list each context under a
+  `## Contexts` heading. Write each context as `- **Name**: [file](path/CONTEXT.md)`.
+- List the relations under a `## Relations` heading. Write each relation as
+  `- **Upstream** -> **Downstream**: <text>`. The text says where the downstream context
+  translates the upstream terms. See the [context map](domain-modeling.md#context-map).
+- The `## Relations` heading is optional when no context relates to another.
+- The root `CONTEXT.md` is optional when a map exists.
+- A term can have a different meaning in each context. A term is unique inside one file only.
+- Create `CONTEXT-MAP.md` when the second context is resolved. Do not create it for one context.
+
+Example of `CONTEXT-MAP.md`:
+
+```markdown
+# Library
+
+## Contexts
+
+- **Catalog**: [catalog/CONTEXT.md](catalog/CONTEXT.md)
+- **Lending**: [lending/CONTEXT.md](lending/CONTEXT.md)
+
+## Relations
+
+- **Catalog** -> **Lending**: Lending translates a catalog book to a copy.
+```
 
 ### Good example
 
