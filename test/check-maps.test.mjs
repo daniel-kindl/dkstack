@@ -1,9 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { checkMaps } from "../scripts/check-maps.mjs";
+import { checkMaps, checkMapsDiff } from "../scripts/check-maps.mjs";
+import { writeFile, rm } from "node:fs/promises";
 import { makeTree, removeTree } from "./helpers.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -231,5 +232,66 @@ test("the CLI exits 2 when a map cannot be read", async () => {
     assert.match(result.stderr, /^cannot read docs\/maps: /);
   } finally {
     await removeTree(root);
+  }
+});
+
+const A = (path) => ({ status: "A", path });
+const M = (path) => ({ status: "M", path });
+const D = (path) => ({ status: "D", path });
+
+test("diff: a map change with only maps, ADRs and CONTEXT.md passes", () => {
+  assert.deepEqual(checkMapsDiff([M(MAP), A("docs/adr/0002-x.md"), M("CONTEXT.md")]), []);
+});
+
+test("diff: a map change with a file outside the allowed paths fails", () => {
+  assert.deepEqual(checkMapsDiff([M(MAP), M("scripts/x.mjs")]), [
+    "scripts/x.mjs: a map pull request changes only docs/maps/, docs/adr/ and CONTEXT.md.",
+  ]);
+});
+
+test("diff: a deleted map fails", () => {
+  assert.deepEqual(checkMapsDiff([D(MAP)]), [`${MAP}: a map must never be deleted.`]);
+});
+
+test("diff: a change with no map change passes", () => {
+  assert.deepEqual(checkMapsDiff([M("scripts/x.mjs"), D("docs/adr/0001-a.md")]), []);
+  assert.deepEqual(checkMapsDiff([]), []);
+});
+
+const git = (root, ...args) => execFileSync("git", ["-c", "user.name=t", "-c", "user.email=t@example.com", ...args], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+
+test("the CLI diff mode exits 0, 1 and 2, and a missing docs/maps folder passes", async () => {
+  const root = await makeTree({ "README.md": "# x\n", [MAP]: OPEN });
+  try {
+    git(root, "init", "-q", "-b", "main");
+    git(root, "add", "-A");
+    git(root, "commit", "-q", "-m", "base");
+    const diff = () => run(["--diff", "--base", "main", root]);
+    assert.equal(diff().status, 0);
+    await writeFile(join(root, MAP), `${OPEN}\n`);
+    assert.equal(diff().status, 0);
+    await writeFile(join(root, "other.txt"), "x\n");
+    const mixed = diff();
+    assert.equal(mixed.status, 1);
+    assert.equal(mixed.stderr, "other.txt: a map pull request changes only docs/maps/, docs/adr/ and CONTEXT.md.\n");
+    await rm(join(root, "other.txt"));
+    await rm(join(root, MAP));
+    const gone = diff();
+    assert.equal(gone.status, 1);
+    assert.equal(gone.stderr, `${MAP}: a map must never be deleted.\n`);
+    assert.equal(run(["--diff", "--base", "nope", root]).status, 2);
+    assert.equal(run(["--bogus"]).status, 2);
+  } finally {
+    await removeTree(root);
+  }
+  const none = await makeTree({ "README.md": "# x\n" });
+  try {
+    git(none, "init", "-q", "-b", "main");
+    git(none, "add", "-A");
+    git(none, "commit", "-q", "-m", "base");
+    await writeFile(join(none, "a.txt"), "x\n");
+    assert.equal(run(["--diff", "--base", "main", none]).status, 0);
+  } finally {
+    await removeTree(none);
   }
 });

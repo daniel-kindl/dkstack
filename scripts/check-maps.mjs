@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 // Check the format of each map in docs/maps/. The chart-route skill writes the
 // maps and has the template. A missing docs/maps/ folder is a pass.
+// Diff mode (--diff) checks the change. A change to docs/maps/ must change no
+// file outside docs/maps/, docs/adr/ and CONTEXT.md, and must delete no map.
+// The base is the merge base of --base (default origin/main) and HEAD.
 // This file has no dependencies, so another repository can copy it.
-// Usage: node scripts/check-maps.mjs [root]
+// Usage: node scripts/check-maps.mjs [--diff [--base <ref>]] [root]
 // Exit 0: pass. Exit 1: findings. Exit 2: usage or read error.
 
+import { execFileSync } from "node:child_process";
 import { readFile, readdir, stat } from "node:fs/promises";
 import { join, posix, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -228,14 +232,73 @@ export async function checkMaps(root) {
   return { checked: names.length, errors };
 }
 
+// Diff mode. `changes` is a list of { status, path } with a git status letter.
+// Return one message for each finding, or an empty list.
+export function checkMapsDiff(changes) {
+  const isMap = (path) => path.startsWith(`${DIR}/`);
+  if (!changes.some((c) => isMap(c.path))) return [];
+  const allowed = (path) => isMap(path) || path.startsWith("docs/adr/") || path === "CONTEXT.md";
+  const errors = [];
+  for (const { status, path } of changes) {
+    if (status === "D" && isMap(path)) errors.push(`${path}: a map must never be deleted.`);
+    else if (!allowed(path)) {
+      errors.push(`${path}: a map pull request changes only docs/maps/, docs/adr/ and CONTEXT.md.`);
+    }
+  }
+  return errors;
+}
+
+function parseArgs(args) {
+  const options = { diff: false, base: "origin/main", root: "." };
+  let rootSet = false;
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === "--diff") options.diff = true;
+    else if (arg === "--base" && i + 1 < args.length) options.base = args[++i];
+    else if (!arg.startsWith("-") && !rootSet) {
+      options.root = arg;
+      rootSet = true;
+    } else return null;
+  }
+  return options;
+}
+
+// Return the changed files as { status, path }. Throw if git fails.
+function gitChanges(root, base) {
+  const git = (...args) => execFileSync("git", ["-c", "core.quotePath=false", ...args], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  const mergeBase = git("merge-base", base, "HEAD").trim();
+  const changes = git("diff", "--no-renames", "--name-status", mergeBase).split("\n").filter(Boolean).map((line) => {
+    const [status, ...rest] = line.split("\t");
+    return { status: status[0], path: rest.join("\t") };
+  });
+  for (const path of git("ls-files", "--others", "--exclude-standard").split("\n").filter(Boolean)) {
+    changes.push({ status: "A", path });
+  }
+  return changes;
+}
+
 async function main(args) {
-  if (args.length > 1 || args.some((arg) => arg.startsWith("-"))) {
-    console.error("usage: node scripts/check-maps.mjs [root]");
+  const options = parseArgs(args);
+  if (!options) {
+    console.error("usage: node scripts/check-maps.mjs [--diff [--base <ref>]] [root]");
     return 2;
+  }
+  if (options.diff) {
+    let errors;
+    try {
+      errors = checkMapsDiff(gitChanges(resolve(options.root), options.base));
+    } catch (err) {
+      console.error(`cannot list the changed files: ${(err.stderr || err.message).toString().trim()}`);
+      return 2;
+    }
+    for (const message of errors) console.error(message);
+    if (errors.length > 0) return 1;
+    console.log("The change keeps to the rules for a map pull request.");
+    return 0;
   }
   let result;
   try {
-    result = await checkMaps(resolve(args[0] ?? "."));
+    result = await checkMaps(resolve(options.root));
   } catch (err) {
     console.error(`cannot read ${DIR}: ${err.message}`);
     return 2;
