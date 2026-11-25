@@ -39,6 +39,10 @@ A building block of [bootstrap](https://raw.githubusercontent.com/daniel-kindl/d
    - A missing `docs/maps/` folder or a missing `CONTEXT.md` is a pass. The repository may not have them yet.
    - Do not change the copied scripts. To update them, copy them again from a newer tag.
 
+5. Secret scanning: follow [coding/security.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md#rules).
+   - If the code host has push protection and it is on, add no secret scan to CI. The setting meets the rule. For a repository that has history from before the setting was on, run one scan of the full history with a pinned scanner. Push protection does not find a secret that is already in the history. [setup-repo-protection](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-repo-protection/SKILL.md) turns it on.
+   - If it is not on, add a secret scanner to CI. Run it on the full history. Pin the scanner by version and SHA-256.
+
 ## Check pull request text in CI
 
 Keep pull request titles, bodies and author logins out of step environments and logs.
