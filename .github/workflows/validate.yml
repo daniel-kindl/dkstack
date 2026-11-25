@@ -121,6 +121,10 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:diagrams
 
+      - name: Check that a map change touches only maps, ADRs and CONTEXT.md, and deletes no map
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: node scripts/check-maps.mjs --diff --base "${PR_BASE:-origin/main}"
+
       - name: Check the format of CONTEXT.md
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:context
