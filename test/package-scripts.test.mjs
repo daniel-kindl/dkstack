@@ -21,7 +21,7 @@ test("the validate workflow runs the CHANGELOG check", () => {
 });
 
 test("the validate workflow runs the CHANGELOG diff mode", () => {
-  assert.match(workflow, /^\s+run: node scripts\/check-changelog\.mjs --diff\s*$/m);
+  assert.match(workflow, /^\s+run: node scripts\/check-changelog\.mjs --diff --base "\$\{PR_BASE:-origin\/main\}"\s*$/m);
 });
 
 test("no script only prints text", () => {
@@ -34,7 +34,7 @@ test("npm run check and the validate workflow run the map, glossary, ADR and sup
   for (const name of ["maps", "context", "adrs", "suppressions"]) {
     assert.equal(pkg.scripts[`check:${name}`], `node scripts/check-${name}.mjs`);
     assert.match(pkg.scripts.check, new RegExp(`npm run check:${name} &&`));
-    assert.match(workflow, new RegExp(`^\\s+run: npm run check:${name}\\s*$`, "m"));
+    assert.ok(stepFor(`npm run check:${name}`), `the validate workflow runs check:${name}`);
   }
 });
 
@@ -49,7 +49,13 @@ test("the validate workflow fetches the history that check-adrs and check-suppre
 // "npm run check" or the validate workflow does not protect main.
 const validateSteps = workflow.split(/\n(?= {6}- name: )/).slice(1);
 const ALWAYS = "if: ${{ !cancelled() && steps.node.outcome == 'success' }}";
-const stepFor = (command) => validateSteps.find((s) => new RegExp(`^\\s+run: ${command.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*$`, "m").test(s));
+const stepFor = (command) => {
+  const escaped = command.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const inline = new RegExp(`^ {8}run: ${escaped}(?: -- .+)?$`, "m");
+  const block = new RegExp(`^ {10}${escaped}(?: -- .+)?$`, "m");
+  return validateSteps.find((step) =>
+    inline.test(step) || block.test(step.split(/^ {8}run: \|\n/m)[1] ?? ""));
+};
 
 test("each check script is in npm run check and has a validate step that runs after a failure", () => {
   const names = Object.keys(pkg.scripts).filter((n) => n.startsWith("check:") && n !== "check:title");
@@ -66,15 +72,14 @@ test("each check script is in npm run check and has a validate step that runs af
 });
 
 test("validate checks the pull request title and each pushed commit title", () => {
-  const pr = validateSteps.find((s) => /node scripts\/check-title\.mjs "\$TITLE"/.test(s));
+  const pr = validateSteps.find((s) => /node scripts\/check-title\.mjs --event/.test(s));
   assert.ok(pr, "a pull request title step");
   assert.match(pr, /github\.event_name == 'pull_request'/);
-  assert.match(pr, /TITLE: \$\{\{ github\.event\.pull_request\.title \}\}/);
   const push = validateSteps.find((s) => /github\.event_name == 'push'/.test(s) && /check-title/.test(s));
   assert.ok(push, "a push title step");
   assert.match(push, /BEFORE: \$\{\{ github\.event\.before \}\}/);
-  assert.match(push, /git log --format=%s "\$BEFORE\.\.\$GITHUB_SHA"/);
-  assert.match(push, /node scripts\/check-title\.mjs "\$title"/);
+  assert.match(push, /git log --format='%h %s' "\$BEFORE\.\.\$GITHUB_SHA"/);
+  assert.match(push, /node scripts\/check-title\.mjs -- "\$\{commit#\* \}"/);
 });
 
 // The Low on #190: a git log error must fail the push title step.
@@ -101,10 +106,15 @@ test("the push title step fails when git log fails", { skip: process.platform ==
 });
 
 test("the push title step checks each title that git log gives", { skip: process.platform === "win32" }, () => {
-  const good = runPushStep('[ "$1" = log ] && printf "docs: one\\nfix: two\\n"\nexit 0');
+  const good = runPushStep('[ "$1" = log ] && printf "1111111 docs: add privatemarker\\n2222222 fix: add privatemarker\\n"\nexit 0');
   assert.equal(good.status, 0, good.stderr);
-  const bad = runPushStep('[ "$1" = log ] && printf "docs: one\\nnot a title\\n"\nexit 0');
+  const bad = runPushStep('[ "$1" = log ] && printf "1111111 docs: add privatemarker\\n2222222 privatemarker: add a title\\n"\nexit 0');
   assert.equal(bad.status, 1);
+  for (const result of [good, bad]) {
+    assert.match(result.stdout, /Check commit 1111111\./);
+    assert.match(result.stdout, /Check commit 2222222\./);
+    assert.ok(!(result.stdout + result.stderr).includes("privatemarker"));
+  }
 });
 
 // FRG-11, SEN-19 and SCR-16 in #154: one Node version in package.json and in

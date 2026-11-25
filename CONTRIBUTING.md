@@ -60,6 +60,13 @@ posted. The file is not in the repository, so `npm run check` does not run this 
 - In a skill, link each other dkstack file with its raw URL on `v1`, for example
   `https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md`.
 
+## Validate workflow
+
+The workflow runs on pull requests to every branch so work that targets an intermediate branch
+gets the same checks as work that targets main. The pull request diff checks use the target commit.
+The workflow also runs on pushes to main. On a push, the ADR check uses the commit before the
+push, or the first parent of HEAD if the earlier commit is unavailable.
+
 ## Update bot pull requests
 
 An update bot can open a pull request with a title over 50 characters, for example
@@ -79,3 +86,24 @@ reviewer edits the title before the merge, for example to `ci: bump create-githu
 
 Only the owner releases dkstack. The rule is in [safety](workflow/safety.md). The steps are in
 [Release dkstack](versioning/index.md#release-dkstack).
+
+## Check pull request text in CI
+
+If you copy dkstack's pull request checks, use a fixed release tag that has the `--event` option.
+Copy `check-title.mjs`, `check-pr-body.mjs` and their helper `pr-event.mjs` from the same tag.
+In GitHub Actions, run these steps only on `pull_request`:
+
+```yaml
+- name: Check the pull request title
+  if: github.event_name == 'pull_request'
+  run: node scripts/check-title.mjs --event
+
+- name: Check the pull request body
+  if: github.event_name == 'pull_request'
+  run: node scripts/check-pr-body.mjs --event
+```
+
+Both scripts read `GITHUB_EVENT_PATH`. Keep the title, body and author login out of the step
+environment and logs. To add the breaking change check, copy `check-breaking.mjs`,
+`check-links.mjs` and `markdown-files.mjs` from the same tag. Run
+`node scripts/check-breaking.mjs --event` for that step.

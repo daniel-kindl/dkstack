@@ -23,12 +23,14 @@
 //
 // The validate workflow runs this check only on pull_request, because a push
 // to main has no pull request title. The title check ran on the pull request.
+// In GitHub Actions, use --event to read the title from GITHUB_EVENT_PATH.
 // Usage: TITLE="<title>" node scripts/check-breaking.mjs [--base <ref>] [root]
 // Exit 0: pass. Exit 1: findings. Exit 2: usage or git error.
 
 import { execFileSync } from "node:child_process";
 import { posix, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { readPullRequest } from "./pr-event.mjs";
 import { REPO_URL_PATTERN, anchorsIn, fragmentOf, linksIn } from "./check-links.mjs";
 
 const NOT_A_PAGE = /^(?:docs\/maps|test)\//;
@@ -113,7 +115,7 @@ const consumerActions = (changelog) =>
 // "Consumer action:" line under [Unreleased] that the base did not have.
 export function missingPieces(title, changelog, baseChangelog = null) {
   const missing = [];
-  if (!MAJOR_TITLE.test(title)) missing.push(`the pull request title has no "!" before the colon: ${title}`);
+  if (!MAJOR_TITLE.test(title)) missing.push('the pull request title has no "!" before the colon');
   const earlier = new Set(consumerActions(baseChangelog));
   if (!consumerActions(changelog).some((line) => !earlier.has(line))) {
     missing.push('the ## [Unreleased] section of CHANGELOG.md has no new line that starts with "Consumer action:"');
@@ -134,11 +136,12 @@ function gitTrees(root, ref) {
 }
 
 function parseArgs(args) {
-  const options = { base: "origin/main", root: "." };
+  const options = { base: "origin/main", root: ".", event: false };
   let rootSet = false;
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    if (arg === "--base" && i + 1 < args.length) options.base = args[++i];
+    if (arg === "--event") options.event = true;
+    else if (arg === "--base" && i + 1 < args.length) options.base = args[++i];
     else if (!arg.startsWith("-") && !rootSet) {
       options.root = arg;
       rootSet = true;
@@ -149,9 +152,14 @@ function parseArgs(args) {
 
 async function main(args, title) {
   const options = parseArgs(args);
-  if (!options || !title) {
+  if (!options || (!options.event && !title)) {
     console.error('usage: TITLE="<title>" node scripts/check-breaking.mjs [--base <ref>] [root]');
     return 2;
+  }
+  if (options.event) {
+    const pr = readPullRequest((value) => typeof value.title === "string" && value.title.length > 0);
+    if (!pr) return 2;
+    title = pr.title;
   }
   let items;
   let changelog;

@@ -1,22 +1,29 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "./helpers.mjs";
+import { makeTree, readFile, removeTree } from "./helpers.mjs";
+import { execFileSync, spawnSync } from "node:child_process";
+import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
-// validate runs on pull requests to main and on pushes to main. The Release
+// validate runs on all pull requests and on pushes to main. The Release
 // workflow does not start it by hand: the release app opens the pull request,
 // and the pull_request run gives the check "validate" that protect-main requires.
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const validate = await readFile(join(repoRoot, ".github/workflows/validate.yml"), "utf8");
 
-test("validate starts only for pull requests and pushes to main, and keeps the job name", () => {
+test("validate starts for every pull request and for pushes to main, and keeps the job name", () => {
   const on = /^on:\n((?:  .*\n|    .*\n)+)/m.exec(validate)[1];
   assert.deepEqual(on.split("\n").filter((l) => /^  \S/.test(l)).map((l) => l.trim()), ["pull_request:", "push:"]);
-  assert.match(validate, /^  pull_request:\n    branches: \[main\]/m);
+  assert.match(validate, /^  pull_request:\n    types: \[opened, synchronize, reopened, edited\]\n  push:/m);
   assert.match(validate, /^  push:\n    branches: \[main\]/m);
   assert.match(validate, /^jobs:\n  validate:\n    name: validate\n/m);
+});
+
+test("validate passes the target SHA to the breaking change check", () => {
+  assert.match(validate, /PR_BASE: \$\{\{ github\.event\.pull_request\.base\.sha \}\}/);
+  assert.match(validate, /run: node scripts\/check-breaking\.mjs --event --base "\$PR_BASE"/);
 });
 
 test("validate checks the commit title of a push", () => {
@@ -42,4 +49,56 @@ test("validate runs a pinned actionlint with shellcheck on the workflows", () =>
   assert.match(body, /command -v shellcheck/);
   assert.match(body, /-shellcheck=shellcheck/);
   assert.match(body, /if: \$\{\{ !cancelled\(\) && steps\.node\.outcome == 'success' \}\}/);
+});
+
+test("the ADR workflow step compares the pull request target and the push range", { skip: process.platform === "win32" }, async (t) => {
+  const root = await makeTree({ "base.txt": "base\n" });
+  t.after(() => removeTree(root));
+  const git = (...args) => execFileSync("git", [
+    "-c", "user.name=test", "-c", "user.email=test@example.com", "-c", "commit.gpgsign=false", ...args,
+  ], { cwd: root, encoding: "utf8" }).trim();
+  git("init", "-q", "-b", "main");
+  git("add", ".");
+  git("commit", "-qm", "base");
+  const before = git("rev-parse", "HEAD");
+  git("switch", "-qc", "target");
+  await mkdir(join(root, "docs/adr"), { recursive: true });
+  await writeFile(join(root, "docs/adr/0001-example.md"), "# Missing required fields\n");
+  git("add", ".");
+  git("commit", "-qm", "add ADR");
+  const target = git("rev-parse", "HEAD");
+  git("update-ref", "refs/remotes/origin/main", target);
+
+  const step = validate.split(/\n(?= {6}- name: )/).find((part) => part.includes("npm run check:adrs"));
+  assert.match(step, /BASE_SHA: \$\{\{ github\.event\.pull_request\.base\.sha \|\| github\.event\.before \}\}/);
+  const command = step.split("run: |\n")[1].split("\n").map((line) => line.replace(/^ {10}/, "")).join("\n");
+  await writeFile(join(root, "package.json"), JSON.stringify({
+    scripts: { "check:adrs": `node "${join(repoRoot, "scripts/check-adrs.mjs")}"` },
+  }));
+  const run = (event, base) => spawnSync("bash", ["-e", "-c", command], {
+    cwd: root, encoding: "utf8",
+    env: { ...process.env, GITHUB_EVENT_NAME: event, BASE_SHA: base },
+  });
+
+  git("commit", "-qm", "finish the push", "--allow-empty");
+  git("update-ref", "refs/remotes/origin/main", "HEAD");
+  const push = run("push", before);
+  assert.equal(push.status, 1);
+  assert.match(push.stderr, /a new ADR must have a "Status:" line/);
+
+  const missing = "0".repeat(40);
+  git("switch", "-qc", "single-commit-push", target);
+  const fallback = run("push", missing);
+  assert.equal(fallback.status, 1);
+  assert.match(fallback.stderr, /a new ADR must have a "Status:" line/);
+
+  git("update-ref", "refs/remotes/origin/main", before);
+  git("switch", "-qc", "work", target);
+  git("commit", "-qm", "propose a change", "--allow-empty");
+  const pr = run("pull_request", target);
+  assert.equal(pr.status, 0, pr.stderr);
+  assert.match(pr.stdout, /No new ADR/);
+  const prWithoutBase = run("pull_request", missing);
+  assert.equal(prWithoutBase.status, 2);
+  assert.match(prWithoutBase.stderr, /cannot list the changed files/);
 });

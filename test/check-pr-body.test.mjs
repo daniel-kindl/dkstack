@@ -83,9 +83,9 @@ test("the body needs an Evidence section", () => {
 
 test("the body needs exactly one Observability line", () => {
   const none = good.replace("- Observability: none, docs only", "");
-  assert.deepEqual(checkPrBody(none), ["the body must have one \"Observability:\" line, and it has 0"]);
+  assert.deepEqual(checkPrBody(none), ["the body must have one \"Observability:\" line"]);
   assert.deepEqual(checkPrBody(withLines("- Observability: logs added")), [
-    "the body must have one \"Observability:\" line, and it has 2",
+    "the body must have one \"Observability:\" line",
   ]);
 });
 
@@ -146,7 +146,7 @@ test("the CLI reads BODY, exits 0 for a good body and 1 for a bad body", () => {
 test("the CLI skips a bot author", () => {
   const result = run([], { BODY: "", AUTHOR: "dependabot[bot]" });
   assert.equal(result.status, 0);
-  assert.equal(result.stdout, "PR body check skipped: the author dependabot[bot] is a bot.\n");
+  assert.equal(result.stdout, "PR body check skipped for a bot.\n");
 });
 
 test("the CLI reads a file argument", async () => {
@@ -168,14 +168,12 @@ test("the CLI exits 2 with no input or an unreadable file", () => {
   assert.match(missing.stderr, /cannot read/);
 });
 
-test("the validate workflow checks the body on pull_request with env", async () => {
+test("the validate workflow checks the body on pull_request from the event file", async () => {
   const workflow = await readFile(join(repoRoot, ".github/workflows/validate.yml"), "utf8");
   const step = workflow.split(/\n(?= {6}- name: )/).find((s) => s.includes("check-pr-body"));
   assert.ok(step, "a PR body step");
   assert.match(step, /if: \$\{\{ !cancelled\(\) && steps\.node\.outcome == 'success' && github\.event_name == 'pull_request' \}\}/);
-  assert.match(step, /BODY: \$\{\{ github\.event\.pull_request\.body \}\}/);
-  assert.match(step, /AUTHOR: \$\{\{ github\.event\.pull_request\.user\.login \}\}/);
-  assert.match(step, /run: node scripts\/check-pr-body\.mjs\s*$/m);
+  assert.match(step, /run: node scripts\/check-pr-body\.mjs --event\s*$/m);
   assert.doesNotMatch(step.split("run:")[1], /\$\{\{/);
 });
 
