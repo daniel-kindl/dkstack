@@ -53,6 +53,11 @@ must not reach `main` without a new review.
 The agent that merged cleans the local clone that it used for the merge. When the owner
 merges, the owner can ask an agent to do these steps.
 
+The author also cleans up after the merge. When an agent other than the author merged, the
+author removes each worktree that it or its subagents made for the pull request. It also
+deletes the local branch. The author uses the steps below, with the same checks. Reason: the agent that merged
+does not know the worktrees of the author. They stay, and the next agent can start on old code.
+
 - Switch to `main` and update it with a fast-forward only. Reason: the next task starts from the
   merged state, and a fast-forward never makes a merge commit on `main`.
 - Remove the worktree of the merged branch. Then delete the local branch. Reason: a stale
