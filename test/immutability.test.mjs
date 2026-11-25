@@ -26,6 +26,12 @@ test("coding/immutability.md states the immutability rules", async () => {
     "no-param-reassign",
     "architecture/concurrency.md",
     "Object.freeze",
+    "`no-param-reassign` with `props: true`",
+    "`prefer-readonly`",
+    "`init`",
+    "`@dataclass(frozen=True)`",
+    "These are shallow",
+    "DeepReadonly",
   ]) {
     assert.ok(page.includes(part), `missing ${part}`);
   }
