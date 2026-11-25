@@ -87,3 +87,18 @@ test("feature-branches and code-review link the clean-up rules and do not copy t
     assert.doesNotMatch(text, /fast-forward only|git branch -D|worktree prune/);
   }
 });
+
+// Issue #369: the worktrees that the author or its subagents made were left after the merge.
+test("the author removes the worktrees that it and its subagents made", async () => {
+  const text = (await section("workflow/review-and-merge.md", "After the merge")).replace(/\s+/g, " ");
+  for (const phrase of [
+    "The author also cleans up after the merge.",
+    "each worktree that it or its subagents made for the pull request",
+    "with the same checks",
+    "an agent other than the author merged",
+    "A worktree of a subagent can have its own branch, or no branch.",
+    "only when its tip is the merged head or an ancestor of it",
+  ]) {
+    assert.ok(text.includes(phrase), `missing: ${phrase}`);
+  }
+});
