@@ -16,6 +16,10 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `scripts/check-diagrams.mjs` (#316). It checks the format rules of `make-diagram`. A `mermaid`
+  block with no paragraph directly above it fails. A tracked `.png` or `.svg` file in `docs/`
+  fails. A diagram with more than 12 nodes gives a warning only. `npm run check` and `validate`
+  run it. The file has no dependencies, so a consumer can copy it.
 - `setup-quality-gates` copies `check-title`, `check-dashes` and `check-writing` to a consumer, with
   `markdown-files.mjs` and `pr-event.mjs` that they import (#304). Step 4 gives the title steps of
   `validate` as the CI example. A test pins the list and runs each script alone.
