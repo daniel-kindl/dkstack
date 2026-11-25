@@ -82,6 +82,11 @@ reviewer edits the title before the merge, for example to `ci: bump create-githu
   the first dependency.
 - Reason: a lockfile and an audit with no dependency check nothing.
 
+- dkstack rule: the type check of JavaScript in [Explicit types](coding/types.md#explicit-types).
+- Project rule: the scripts are plain JavaScript with no type check. They use `const` and `let`,
+  and `test/types.test.mjs` fails on `var`. Add the type check with the first dependency.
+- Reason: a type check of JavaScript needs `typescript`, and dkstack has no npm dependencies.
+
 ## Release
 
 Only the owner releases dkstack. The rule is in [safety](workflow/safety.md). The steps are in
