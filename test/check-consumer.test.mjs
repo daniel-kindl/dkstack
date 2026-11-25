@@ -234,3 +234,150 @@ test("setup-quality-gates step 4 copies check-consumer and the hash list", async
   for (const name of ["check-consumer.mjs", "dkstack-hashes.json"]) assert.ok(four.includes(`\`${name}\``), name);
   assert.ok(four.includes("node scripts/check-consumer.mjs"));
 });
+
+// Each test below fails when the matching check is removed from the script.
+const EC = GOOD[".editorconfig"];
+for (const [key, value] of [["root", "true"], ["charset", "utf-8"], ["end_of_line", "lf"], ["indent_style", "space"],
+  ["insert_final_newline", "true"], ["trim_trailing_whitespace", "true"]]) {
+  test(`.editorconfig without "${key} = ${value}" fails`, async () => {
+    const text = EC.split("\n").filter((l) => !l.startsWith(`${key} =`) || l.startsWith("trim_trailing_whitespace = false")).join("\n");
+    assert.notEqual(text, EC, "the fixture line");
+    assert.match((await errorsOf({ ".editorconfig": text })).join("\n"), new RegExp(`missing "${key} = ${value}"`));
+  });
+  test(`.editorconfig with "${key}" set to another value fails`, async () => {
+    const text = EC.replace(new RegExp(`^${key} = .*$`, "m"), `${key} = other`);
+    assert.match((await errorsOf({ ".editorconfig": text })).join("\n"), new RegExp(`missing "${key} = ${value}"`));
+  });
+}
+
+test(".editorconfig keys count only in the top or the * section", async () => {
+  const text = EC.replace("[*]\n", "[*.js]\n");
+  assert.match((await errorsOf({ ".editorconfig": text })).join("\n"), /missing "charset = utf-8"/);
+  const upper = EC.replace("charset = utf-8", "CHARSET = UTF-8");
+  assert.deepEqual(await errorsOf({ ".editorconfig": upper }), []);
+  const other = EC.replace("[*.md]", "[*.txt]");
+  assert.match((await errorsOf({ ".editorconfig": other })).join("\n"), /Markdown section/);
+  const wrong = EC.replace("[*.md]\ntrim_trailing_whitespace = false", "[*.md]\ntrim_trailing_whitespace = true");
+  assert.match((await errorsOf({ ".editorconfig": wrong })).join("\n"), /Markdown section/);
+});
+
+test("CI needs both npm ci and npm audit", async () => {
+  const ci = (body) => ({ ...NPM, ".github/workflows/ci.yml": `jobs:\n  t:\n    steps:\n${body}` });
+  const onlyCi = (await errorsOf(ci("      - run: npm ci\n"))).join("\n");
+  assert.match(onlyCi, /no CI step runs "npm audit"/);
+  assert.doesNotMatch(onlyCi, /"npm ci"/);
+  const onlyAudit = (await errorsOf(ci("      - run: npm audit\n"))).join("\n");
+  assert.match(onlyAudit, /no CI step runs "npm ci"/);
+  assert.doesNotMatch(onlyAudit, /"npm audit"/);
+  assert.match((await errorsOf(ci("      - run: npm install\n"))).join("\n"), /"npm ci"/);
+  assert.match((await errorsOf(ci("      - run: npm run audit\n      - run: npm cit\n"))).join("\n"), /"npm audit"/);
+});
+
+test("CI steps are read from each workflow file, .yaml too, and comments do not count", async () => {
+  const files = { ...NPM, ".github/workflows/ci.yml": "# npm ci\n", ".github/workflows/audit.yaml": "run: npm audit\n", ".github/workflows/ci2.yml": "run: npm ci\n", ".github/workflows/notes.txt": "x" };
+  assert.deepEqual(await errorsOf(files), []);
+  assert.match((await errorsOf({ ...NPM, ".github/workflows/ci.yml": "  # npm ci and npm audit\n" })).join("\n"), /"npm ci"/);
+});
+
+test("each dependency field needs a lockfile", async () => {
+  for (const field of ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"]) {
+    const files = { ...NPM, "package.json": JSON.stringify({ [field]: { a: "1" } }), "package-lock.json": undefined };
+    assert.match((await errorsOf(files)).join("\n"), /no package-lock\.json/, field);
+  }
+  const none = { ...NPM, "package.json": JSON.stringify({ name: "x" }), "package-lock.json": undefined, ".github/workflows/ci.yml": "run: echo\n" };
+  assert.deepEqual(await errorsOf(none), []);
+});
+
+test("Dependabot asks for npm with a manifest and for github-actions with workflows", async () => {
+  const npmOnly = DEPENDABOT.replace(/  - package-ecosystem: "github-actions"[\s\S]*/, "");
+  const actionsOnly = DEPENDABOT.replace(/  - package-ecosystem: "npm"[\s\S]*?(?=  - package-ecosystem: "github)/, "");
+  const manifest = { "package.json": JSON.stringify({ name: "x" }) };
+  assert.deepEqual(await errorsOf({ ...manifest, ".github/dependabot.yml": npmOnly }), []);
+  assert.match((await errorsOf({ ...manifest, ".github/dependabot.yml": actionsOnly })).join("\n"), /no update entry for "npm"/);
+  const flow = { ".github/workflows/ci.yml": "run: echo\n" };
+  assert.deepEqual(await errorsOf({ ...flow, ".github/dependabot.yml": actionsOnly }), []);
+  assert.match((await errorsOf({ ...flow, ".github/dependabot.yml": npmOnly })).join("\n"), /no update entry for "github-actions"/);
+  assert.deepEqual(await errorsOf({ ".github/dependabot.yml": "broken" }), []);
+});
+
+test("Dependabot checks the weekly interval and the prefix of the npm entry too", async () => {
+  const daily = (await errorsOf({ ...NPM, ".github/dependabot.yml": DEPENDABOT.replace('"weekly"', '"daily"') })).join("\n");
+  assert.match(daily, /"npm" entry does not check weekly/);
+  assert.doesNotMatch(daily, /"github-actions" entry/);
+  const bare = (await errorsOf({ ...NPM, ".github/dependabot.yml": DEPENDABOT.replace('prefix: "build"', "") })).join("\n");
+  assert.match(bare, /"npm" entry has no commit-message prefix/);
+  assert.doesNotMatch(bare, /"github-actions" entry/);
+  assert.match((await errorsOf({ ...NPM, ".github/dependabot.yml": DEPENDABOT.replace("interval: weekly", "interval: monthly") })).join("\n"), /"github-actions" entry does not check weekly/);
+});
+
+test("the hash check names the scripts that the list names, and no others", async () => {
+  const files = { "AGENTS.md": `${URL_TAG}\n## Exceptions\n`, "scripts/dkstack-hashes.json": LIST };
+  assert.deepEqual(await errorsOf({ ...files, "scripts/other.mjs": "x" }), []);
+  assert.deepEqual(await errorsOf({ ...files, "scripts/check-x.mjs": SCRIPT_TEXT, "scripts/other.mjs": "x" }), []);
+  assert.match((await errorsOf({ ...files, "scripts/check-x.mjs": "changed", "scripts/other.mjs": "x" })).join("\n"), /check-x\.mjs/);
+});
+
+test("the CLI reads --tag, --hashes and the root", async () => {
+  const root = await makeTree({ ...GOOD, "scripts/check-x.mjs": SCRIPT_TEXT, "list.json": LIST });
+  try {
+    const run = (...args) => spawnSync(process.execPath, [script, ...args], { encoding: "utf8" });
+    assert.equal(run(root, "--hashes", join(root, "list.json"), "--tag", "v1.6.0").status, 0);
+    assert.equal(run("--tag", "v1.7.0", "--hashes", join(root, "list.json"), root).status, 1);
+    assert.equal(run(root, "--hashes", join(root, "list.json")).status, 1);
+    assert.equal(run("--hashes").status, 2);
+  } finally {
+    await removeTree(root);
+  }
+});
+
+test("the hash list names each script that step 4 copies and that exists at the tag", async (t) => {
+  const skill = await readFile(join(repoRoot, "skills", "setup-quality-gates", "SKILL.md"), "utf8");
+  const four = skill.split("\n4. ")[1].split("\n5. ")[0];
+  const names = [...new Set([...four.matchAll(/`([\w-]+\.mjs)`/g)].map((m) => m[1]))];
+  const list = JSON.parse(await readFile(join(repoRoot, "scripts", "dkstack-hashes.json"), "utf8"));
+  for (const [tag, files] of Object.entries(list)) {
+    for (const name of names) {
+      let exists = true;
+      try {
+        execFileSync("git", ["cat-file", "-e", `${tag}:scripts/${name}`], { cwd: repoRoot, stdio: "ignore" });
+      } catch {
+        exists = false;
+      }
+      if (exists) assert.ok(name in files, `${tag} has ${name}, so the list needs it`);
+      else assert.ok(!(name in files), `${tag} lacks ${name}`);
+    }
+  }
+  assert.ok(names.includes("check-links.mjs"));
+  t.diagnostic(`${names.length} names`);
+});
+
+test("the Markdown rule reads only trim_trailing_whitespace, and only for the md glob", async () => {
+  const later = EC.replace("[*.md]\ntrim_trailing_whitespace = false", "[*.md]\ntrim_trailing_whitespace = false\nindent_size = 2");
+  assert.deepEqual(await errorsOf({ ".editorconfig": later }), []);
+  const js = EC.replace("[*.md]", "[*.{js,ts}]");
+  assert.match((await errorsOf({ ".editorconfig": js })).join("\n"), /Markdown section/);
+});
+
+test("the update interval must be exactly weekly", async () => {
+  const text = (await errorsOf({ ...NPM, ".github/dependabot.yml": DEPENDABOT.replace('"weekly"', "weeklyish") })).join("\n");
+  assert.match(text, /"npm" entry does not check weekly/);
+});
+
+test("a read error that is not a missing file stops the check with exit 2", async () => {
+  const run = async (files) => {
+    const root = await makeTree(files);
+    try {
+      return spawnSync(process.execPath, [script, root], { encoding: "utf8" }).status;
+    } finally {
+      await removeTree(root);
+    }
+  };
+  assert.equal(await run({ "AGENTS.md/x": "y" }), 2);
+  assert.equal(await run({ ...GOOD, scripts: "not a folder" }), 2);
+  assert.equal(await run({ ...GOOD, ".github/workflows": "not a folder" }), 2);
+  assert.equal(await run({ ...GOOD, "scripts/dkstack-hashes.json/x": "y", "scripts/check-consumer.mjs": "x" }), 2);
+});
+
+test("an unknown flag is not a root", () => {
+  assert.equal(spawnSync(process.execPath, [script, "--bogus", join(repoRoot, "test", "fixtures", "consumer")], { encoding: "utf8" }).status, 2);
+});

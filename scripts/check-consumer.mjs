@@ -17,6 +17,11 @@
 // script compares the SHA-256 of each file in scripts/ that the list names for the
 // tag. CRLF line endings count as LF. A repository that copies this script
 // must also copy the list.
+// The CI check reads the workflow text without comment lines and looks for the
+// patterns "npm ci" and "npm audit". It does not parse the workflow, so a step
+// like `echo "npm ci"` would pass. A review must still read the CI steps.
+// The list covers only the scripts that exist at a tag. It does not hash this
+// script or the list.
 // --print-hashes <dir> prints the hash entry of each .mjs file in <dir>. The
 // owner adds the entry to the list at a release.
 // This file has no dependencies and reads no other dkstack file, so another
