@@ -36,8 +36,9 @@ for example a change to an argument through a method call.
 ## Good example
 
 `applyDiscount(order: DeepReadonly<Order>, percent: number): Order` returns a new order with new
-line totals. The deep readonly type stops a change to `order.lines[0].total`. The caller keeps the
-old order for the audit log.
+line totals. `DeepReadonly` is a type that makes each nested field readonly. It comes from a
+library or from the project. It stops a change to `order.lines[0].total`. The caller keeps the old
+order for the audit log.
 
 ## Bad example
 

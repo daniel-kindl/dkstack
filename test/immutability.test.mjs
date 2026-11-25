@@ -31,7 +31,7 @@ test("coding/immutability.md states the immutability rules", async () => {
     "`init`",
     "`@dataclass(frozen=True)`",
     "These are shallow",
-    "DeepReadonly",
+    "DeepReadonly` is a type that makes each nested field readonly",
   ]) {
     assert.ok(page.includes(part), `missing ${part}`);
   }
