@@ -31,11 +31,12 @@ These are settings of the code host. An agent does not change a protection rule 
    - Set required approvals to 0. Do not require a code owner review. A required approval or a required code owner review blocks every pull request.
    - The `CODEOWNERS` entry from step 4 then has no effect. Do not rely on it.
    - Keep all other rules from step 2. The required checks and the linear history still apply.
-   - Record an exception in `AGENTS.md`. The owner reads each CI workflow change and merges it. The agent does not merge it. This rests on the merge rules in [safety](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md), because the settings do not enforce it. For example:
+   - Each pull request still needs an independent review before the merge. See [review and merge](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/review-and-merge.md).
+   - Record an exception in `AGENTS.md`. The owner reads each CI workflow change and merges it. The owner writes the review of each CI workflow change in the pull request before the merge. The agent does not merge it. This rests on the merge rules in [safety](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md), because the settings do not enforce it. For example:
 
      ```markdown
      - dkstack rule: setup-repo-protection, the `CODEOWNERS` entry that requires the owner's review for the CI workflow files.
-     - Project rule: no required approval. The owner reads the diff of each CI workflow change and merges it.
+     - Project rule: no required approval. The owner reads the diff of each CI workflow change, writes the review in the pull request and merges it.
      - Reason: the owner and the agents use one account. The code host does not let it approve its own pull request.
      ```
 6. Apply the [CI workflow rules](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md#ci-workflows) to each workflow.
