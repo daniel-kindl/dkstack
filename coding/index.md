@@ -14,6 +14,7 @@ Coding standards and practices.
 - [security.md](security.md): Security basics.
 - [testing.md](testing.md): A pointer to [tdd/](../tdd/index.md), which has the testing rules.
 - [dependencies.md](dependencies.md): No unjustified dependencies.
+- [time.md](time.md): Time and dates in production code.
 - [debugging.md](debugging.md): Reproduce the problem and fix the cause.
 
 ## Application
