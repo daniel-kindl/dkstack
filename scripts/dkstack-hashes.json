@@ -1,0 +1,12 @@
+{
+  "v1.6.0": {
+    "check-maps.mjs": "aeeebb17eaf15f9bc38d3e8280530426e2bd470ed607823db4b69dd509a7694c",
+    "check-context.mjs": "08c3d930e25351f2ca73d306abe42e0775d999f45ab5beaab3a4154adfe8657b",
+    "check-adrs.mjs": "0a9332373f57980508f69792cd4633ec2d1640e926485399304eb310393e0b1f",
+    "check-title.mjs": "6dd90c06bf958d0c0e7f148ab8c10864ae7b636b8985ede7cbb8b3f5b5b45262",
+    "check-dashes.mjs": "5c999fe0c03a20bf5d6cb282fdb7007328b9e4a4674b342446783d6e19069e81",
+    "check-writing.mjs": "44510565478237bb72037c8e0b4e95b86a06de6466abe5de8e8b2d10a549398f",
+    "check-links.mjs": "c609ffd8b7a4bd24cc13ff2809f2c7207213947caec2b2b5e24d46f33b4a510f",
+    "markdown-files.mjs": "bcedd0e9b0ab46fabc63c3055da9f1181eb555fb3901966f86ffb3ee25a029fe"
+  }
+}

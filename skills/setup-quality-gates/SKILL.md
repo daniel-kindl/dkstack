@@ -39,6 +39,7 @@ A building block of [bootstrap](https://raw.githubusercontent.com/daniel-kindl/d
    - A missing `docs/maps/` folder or a missing `CONTEXT.md` is a pass. The repository may not have them yet.
    - Add the title steps. On a pull request, run `node scripts/check-title.mjs --event`. For each commit of a push, run `node scripts/check-title.mjs -- "<commit title>"`.
    - Run `node scripts/check-dashes.mjs` and `node scripts/check-writing.mjs` in CI.
+   - Copy `check-consumer.mjs` and the hash list `dkstack-hashes.json` from the same tag. Run `node scripts/check-consumer.mjs` in CI. It checks the dkstack setup of the repository, and it checks each copied script against the hash list for the tag. It needs no network.
    - Run `node scripts/check-links.mjs` in CI. It checks only the local links and skips each dkstack URL. To check the dkstack URLs and anchors too, clone the dkstack branch `v1` to a folder outside the repository and run `node scripts/check-links.mjs . --dkstack-root <clone>`. The check maps each raw or blob URL to a file in the clone. The clone must be the same ref as the ref in the links, for example `v1`. A link on a tag, such as `v1.6.0`, is checked against the same clone, so use one ref in all links.
    - Do not change the copied scripts. To update them, copy them again from a newer tag.
 
