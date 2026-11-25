@@ -68,7 +68,7 @@ test("a file that two contexts share fails", () => {
 });
 
 test("a context file outside its own folder fails", () => {
-  for (const path of ["CONTEXT.md", "/abs/CONTEXT.md", "../up/CONTEXT.md", "lending/NOTES.md"]) {
+  for (const path of ["CONTEXT.md", "./CONTEXT.md", ".//CONTEXT.md", "a/./CONTEXT.md", "a//CONTEXT.md", "/abs/CONTEXT.md", "../up/CONTEXT.md", "lending/NOTES.md"]) {
     const text = MAP.replace("lending/CONTEXT.md](lending/CONTEXT.md", `${path}](${path}`);
     assert.deepEqual(checkMapText(text).errors, [
       `CONTEXT-MAP.md:8: the file "${path}" must be a CONTEXT.md in a folder below the root`,
@@ -171,4 +171,25 @@ test("the glossary rules and the domain-glossary skill describe the map", async 
   const skill = await flat("skills/domain-glossary/SKILL.md");
   assert.ok(skill.includes("If a `CONTEXT-MAP.md` exists, read it"));
   assert.ok(skill.includes("architecture/domain-languages.md#several-contexts"));
+});
+
+test("a malformed list line under Contexts or Relations fails", () => {
+  const entry = checkMapText(MAP.replace("- **Lending**: [lending/CONTEXT.md](lending/CONTEXT.md)", "- **Lending**: lending/CONTEXT.md"));
+  assert.ok(entry.errors.includes(
+    "CONTEXT-MAP.md:8: the line is not a context entry. Write - **Name**: [file](path/CONTEXT.md)"));
+  const relation = checkMapText(MAP.replace("**Lending**: Catalog", "**Lending** Catalog"));
+  assert.ok(relation.errors.includes(
+    "CONTEXT-MAP.md:12: the line is not a relation. Write - **Upstream** -> **Downstream**: <text>"));
+});
+
+test("prose lines under a heading are not list lines", () => {
+  assert.deepEqual(checkMapText(MAP.replace("## Relations\n", "## Relations\n\nThe relations follow.\n")).errors, []);
+});
+
+test("a map with no Relations heading passes, and the rules say the heading is optional", async () => {
+  assert.deepEqual(checkMapText(MAP.replace(/\n## Relations[\s\S]*/, "")).errors, []);
+  const { readFile } = await import("./helpers.mjs");
+  const rules = (await readFile(join(repoRoot, "architecture/domain-languages.md"), "utf8")).replace(/\s+/g, " ");
+  assert.ok(rules.includes("The `## Relations` heading is optional when no context relates to another."));
+  assert.ok(rules.includes("The root `CONTEXT.md` is optional when a map exists."));
 });

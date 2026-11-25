@@ -105,7 +105,12 @@ export function checkMapText(text) {
   let i = heading + 1;
   for (; i < lines.length && !/^## /.test(lines[i]); i++) {
     const entry = CONTEXT_ENTRY.exec(lines[i].trim());
-    if (!entry) continue;
+    if (!entry) {
+      if (lines[i].trim().startsWith("- ")) {
+        error(i, "the line is not a context entry. Write - **Name**: [file](path/CONTEXT.md)");
+      }
+      continue;
+    }
     const name = entry[1].trim();
     const path = entry[2].trim();
     if (names.has(name.toLowerCase())) {
@@ -118,7 +123,8 @@ export function checkMapText(text) {
     }
     names.set(name.toLowerCase(), i);
     paths.set(path, i);
-    if (!/^[^/][^]*\/CONTEXT\.md$/.test(path) || path.split("/").includes("..")) {
+    const parts = path.split("/");
+    if (parts.length < 2 || parts.at(-1) !== "CONTEXT.md" || parts.some((p) => p === "" || p === "." || p === "..")) {
       error(i, `the file "${path}" must be a CONTEXT.md in a folder below the root`);
       continue;
     }
@@ -132,7 +138,12 @@ export function checkMapText(text) {
   for (let j = relations === -1 ? lines.length : relations + 1; j < lines.length; j++) {
     if (/^## /.test(lines[j])) break;
     const relation = RELATION.exec(lines[j].trim());
-    if (!relation) continue;
+    if (!relation) {
+      if (lines[j].trim().startsWith("- ")) {
+        error(j, "the line is not a relation. Write - **Upstream** -> **Downstream**: <text>");
+      }
+      continue;
+    }
     const [, from, to, rest] = relation;
     const unknown = [from, to].find((name) => !names.has(name.trim().toLowerCase()));
     if (unknown) {

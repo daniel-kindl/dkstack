@@ -93,6 +93,8 @@ A project with one [bounded context](domain-modeling.md#bounded-contexts) keeps 
 - List the relations under a `## Relations` heading. Write each relation as
   `- **Upstream** -> **Downstream**: <text>`. The text says where the downstream context
   translates the upstream terms. See the [context map](domain-modeling.md#context-map).
+- The `## Relations` heading is optional when no context relates to another.
+- The root `CONTEXT.md` is optional when a map exists.
 - A term can have a different meaning in each context. A term is unique inside one file only.
 - Create `CONTEXT-MAP.md` when the second context is resolved. Do not create it for one context.
 
