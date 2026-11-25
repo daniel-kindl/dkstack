@@ -10,6 +10,7 @@ Coding standards and practices.
 - [naming.md](naming.md): Identifier forms, meaning and enforcement.
 - [quality-gates.md](quality-gates.md): Never weaken a quality gate.
 - [error-handling.md](error-handling.md): Handle errors explicitly.
+- [absent-values.md](absent-values.md): Show an absent value in its type.
 - [logging.md](logging.md): Logging events and the observability assessment.
 - [security.md](security.md): Security basics.
 - [testing.md](testing.md): A pointer to [tdd/](../tdd/index.md), which has the testing rules.
