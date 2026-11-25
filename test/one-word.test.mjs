@@ -30,7 +30,7 @@ test("prose says pull request, not PR, outside trigger words", async () => {
     if (dir.isDirectory()) files.push(`skills/${dir.name}/SKILL.md`);
   }
   // The Low on #256: the top-level pages too. An ADR is a record, so docs/adr/ is not changed.
-  files.push("README.md", "CONTRIBUTING.md", "SECURITY.md", "AGENTS.md", "sample-AGENTS.md");
+  files.push("README.md", "docs/index.md", "CONTRIBUTING.md", "SECURITY.md", "AGENTS.md", "sample-AGENTS.md");
   for (const file of files) {
     const text = (await read(file)).replace(/Triggers:[^"\n]*/g, "").replace(/`[^`]*`/g, "");
     assert.doesNotMatch(text, /\bPRs?\b/, file);

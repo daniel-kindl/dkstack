@@ -67,6 +67,38 @@ gets the same checks as work that targets main. The pull request diff checks use
 The workflow also runs on pushes to main. On a push, the ADR check uses the commit before the
 push, or the first parent of HEAD if the earlier commit is unavailable.
 
+The workflow checks the following:
+
+- The pull request title, or each commit title on a push, is a conventional commit.
+- On a pull request, a removed page, skill or linked anchor needs `!` in the title and a
+  "Consumer action:" line under `## [Unreleased]` in CHANGELOG.md.
+- The pull request body links an issue and has an Evidence section, one Observability line and a
+  valid Visual verification line. A bot author is skipped.
+- Each skill has the correct folder and frontmatter.
+- Relative links and links to this repository resolve, including anchors.
+- Markdown files have no em dash or en dash.
+- Workflows pin actions, set permissions and set `timeout-minutes` on each job. A release or deploy
+  workflow starts only by `workflow_dispatch`, checks that the ref is `main`, uses an environment
+  and sets `concurrency`. The check finds a release job from a list of commands and actions, so a
+  deploy job must set `environment:` to be checked. Only the release job uses the release app secrets. The allowed secrets
+  are in [.github/check-workflows.json](.github/check-workflows.json). Jobs must be at 2 spaces under
+  `jobs:`, with job keys at 4 spaces. Triggers must be on the `on:` line or at 2 spaces under it.
+  Another form fails, so the check never passes a form that it cannot read.
+- actionlint and shellcheck find no fault in the workflows.
+- CHANGELOG.md has an entry for the version in `package.json`, an `## [Unreleased]` line and its
+  compare link. A pull request that adds or renames a page, or adds a skill, also changes
+  `## [Unreleased]`.
+- The maps in `docs/maps/`, `CONTEXT.md` and new ADRs have the correct format.
+- The change adds no blanket suppression and no suppression without a reason. A lowered number
+  directly after a known coverage gate key, or a raised `max-warnings` number, gives a warning
+  for the reviewer. It does not fail the check. On a push to `main`, the change is empty, so
+  this check has nothing to check.
+- The unit tests pass, and they cover at least 95% of the lines and 90% of the branches in
+  `scripts/`.
+- A long sentence, a long step or a semicolon in Markdown fails the check.
+
+The validation workflow does not tag, release, or publish.
+
 ## Update bot pull requests
 
 An update bot can open a pull request with a title over 50 characters, for example

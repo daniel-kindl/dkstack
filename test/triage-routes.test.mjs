@@ -46,11 +46,11 @@ test("triage links AGENTS.md Precedence for a rule conflict and does not restate
   assert.doesNotMatch(rules, /more specific rule/);
 });
 
-test("AGENTS.md and README.md list the learning section and the tips section", async () => {
+test("AGENTS.md and the docs index list the learning section and the tips section", async () => {
   const sections = section(await read("AGENTS.md"), "## Sections");
   assert.match(sections, /\[learning\/index\.md\]\(learning\/index\.md\)/);
   assert.match(sections, /\[tips\/index\.md\]\(tips\/index\.md\)/);
-  assert.match(await read("README.md"), /\(tips\/index\.md\)/);
+  assert.match(await read("docs/index.md"), /\(\.\.\/tips\/index\.md\)/);
 });
 
 test("skills/index.md links the learning section next to learn, and bootstrap matches its description", async () => {

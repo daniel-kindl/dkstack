@@ -2,138 +2,94 @@
 
 Rules and skills for AI coding agents, in one place.
 
-dkstack has rules, skills and check scripts for architecture, code, tests, UI, commits, versions,
-writing and the review workflow. It is guidance only: your agents read the pages and run the
-skills. It runs no service, and it changes nothing in your project by itself. It is for any team
-that uses AI coding agents, under the [MIT license](LICENSE). Update the rules here once, and each
-consumer gets the new rules. A consumer is a repository whose `AGENTS.md` points to dkstack.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/header-dark.svg">
+  <img src="assets/brand/header-light.svg" alt="dkstack: rules and skills for AI coding agents." width="1280">
+</picture>
+
+[![Release: read the latest version and notes](https://img.shields.io/github/v/release/daniel-kindl/dkstack?style=flat-square&logo=github&logoColor=c7f36b&labelColor=111814&color=111814)](https://github.com/daniel-kindl/dkstack/releases/latest)
+[![License: MIT](https://img.shields.io/github/license/daniel-kindl/dkstack?style=flat-square&labelColor=111814&color=111814)](LICENSE)
+[![Checks: read the latest result for pushes to main](https://img.shields.io/github/actions/workflow/status/daniel-kindl/dkstack/validate.yml?branch=main&event=push&style=flat-square&label=checks&labelColor=111814&color=111814)](https://github.com/daniel-kindl/dkstack/actions/workflows/validate.yml?query=branch%3Amain+event%3Apush)
+
+**Use the same coding standards across your projects.**
+dkstack gives any team shared rules and task-specific skills for AI coding agents.
+Your project's `AGENTS.md` links your agent to the relevant guidance.
+It is guidance only, with no service to run.
+
+[Get started](#start) · [Browse skills](skills/index.md) · [Read the docs](docs/index.md) · [Get help](#get-help)
 
 ## Start
 
-1. Copy [sample-AGENTS.md](sample-AGENTS.md) into your project as `AGENTS.md`. Or tell your agent
-   to run the [setup-dkstack](skills/setup-dkstack/SKILL.md) skill. It works in a new or an
-   existing project.
-2. Optional: install the skills. See [Install the skills](#install-the-skills).
-3. Give your agent a task. It reads the triage skill first, and triage selects the rules for the
-   task.
+In your project, give your coding agent this prompt:
 
-## Release status
+```
+Set up dkstack in this repository.
+Read and follow:
+https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-dkstack/SKILL.md
+```
 
-Consumers follow the `v1` release branch. See
-[ADR 0001](docs/adr/0001-how-consumers-follow-versions.md).
+The [setup skill](skills/setup-dkstack/SKILL.md) links your project's `AGENTS.md` to dkstack and configures your agent to read it.
+It preserves project text unless you approve a conflicting rule change.
+It commits the setup on a branch and asks before installing skills.
+If your repository lacks commit, version, and quality rules, setup continues with [bootstrap](skills/bootstrap/SKILL.md).
 
-Each compatible release moves `v1` forward. Each release also gets a fixed `vX.Y.Z` tag. The
-latest release is at <https://github.com/daniel-kindl/dkstack/releases/latest>. See
-[CHANGELOG.md](CHANGELOG.md) for all releases.
+**Check the setup:** start a new agent session.
+Ask, "Which skill will you read first for a task? Open it."
+It should open [triage](skills/triage/SKILL.md).
+
+Prefer manual setup? Use the [manual guide](docs/index.md#manual-setup) and [sample-AGENTS.md](sample-AGENTS.md).
+
 
 ## How to use
 
-Tell an agent:
+Give your agent a task in your project.
+The [triage skill](skills/triage/SKILL.md) selects the rules and skills for that task.
+Rules set the standards. Skills give the agent steps to follow.
 
-> Read and follow https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md
+| Your task | Skill |
+| --- | --- |
+| Plan a feature before writing code. | [plan-work](skills/plan-work/SKILL.md) |
+| Implement a change with tests. | [tdd-loop](skills/tdd-loop/SKILL.md) |
+| Review a pull request. | [code-review](skills/code-review/SKILL.md) |
+| Check an interface for accessibility. | [ui-review](skills/ui-review/SKILL.md) |
+| Set up repository checks and versioning. | [bootstrap](skills/bootstrap/SKILL.md) |
 
-To read all files on the same version, follow the version rule in
-[AGENTS.md](AGENTS.md#version).
+[Browse all skills](skills/index.md) for architecture, writing, learning, and other tasks.
+See [how project rules work with dkstack](AGENTS.md#precedence).
 
-To set up a project, copy [sample-AGENTS.md](sample-AGENTS.md) into it as `AGENTS.md`.
+## Release status
 
-## Install the skills
+Use `v1` for compatible releases.
+Read the [latest release notes](https://github.com/daniel-kindl/dkstack/releases/latest) or [choose a fixed version](docs/index.md#follow-versions).
 
-List the skills on the `v1` ref:
+<a id="install-the-skills"></a>
+<a id="follow-versions"></a>
+<a id="what-is-in-each-section"></a>
+<a id="checks"></a>
+<a id="visual-identity"></a>
 
-```bash
-npx skills add https://github.com/daniel-kindl/dkstack/tree/v1 --list
-```
+## Documentation
 
-Install one skill:
+| You want to | Read |
+| --- | --- |
+| Set up manually or manage updates. | [Usage guide](docs/index.md) |
+| Install optional skills. | [Skill installation](docs/index.md#install-the-skills) |
+| Find guidance for code, tests, UI, and other work. | [Rule directory](docs/index.md#what-is-in-each-section) |
+| Propose a change or run repository checks. | [Contribution guide](CONTRIBUTING.md) |
+| Use the logos, icons, or banners. | [Brand assets](assets/brand/README.md) |
 
-```bash
-npx skills add https://github.com/daniel-kindl/dkstack/tree/v1 --skill <name>
-```
+## Get help
 
-Replace `<name>` with a skill name from [skills/index.md](skills/index.md), for example `triage`.
-
-## Follow versions
-
-- Compatible releases (MINOR and PATCH) move `v1` forward. You do not change anything.
-- A breaking release starts `v2`. Read `CHANGELOG.md`, then change `v1` to `v2` in your URL.
-- If a release breaks your project, pin the last good `vX.Y.Z` tag in place of `v1`. Follow the
-  version rule in [AGENTS.md](AGENTS.md#version). Go back to `v1` after the fix.
-- If you installed skills, run `npx skills update` after a release. Installed skills do not
-  update by themselves.
-
-The current version is in `package.json`. See [versioning/index.md](versioning/index.md) for
-semantic versioning.
-
-## Checks
-
-The `validate` workflow ([.github/workflows/validate.yml](.github/workflows/validate.yml)) runs on
-each pull request to `main` and on each push to `main`. It does these checks:
-
-- The pull request title, or each commit title on a push, is a conventional commit.
-- On a pull request, a removed page, skill or linked anchor needs `!` in the title and a
-  "Consumer action:" line under `## [Unreleased]` in CHANGELOG.md.
-- The pull request body links an issue and has an Evidence section, one Observability line and a
-  valid Visual verification line. A bot author is skipped.
-- Each skill has the correct folder and frontmatter.
-- Relative links and links to this repository resolve, including anchors.
-- Markdown files have no em dash or en dash.
-- Workflows pin actions, set permissions and set `timeout-minutes` on each job. A release or deploy
-  workflow starts only by `workflow_dispatch`, checks that the ref is `main`, uses an environment
-  and sets `concurrency`. The check finds a release job from a list of commands and actions, so a
-  deploy job must set `environment:` to be checked. Only the release job uses the release app secrets. The allowed secrets
-  are in [.github/check-workflows.json](.github/check-workflows.json). Jobs must be at 2 spaces under
-  `jobs:`, with job keys at 4 spaces. Triggers must be on the `on:` line or at 2 spaces under it.
-  Another form fails, so the check never passes a form that it cannot read.
-- actionlint and shellcheck find no fault in the workflows.
-- CHANGELOG.md has an entry for the version in `package.json`, an `## [Unreleased]` line and its
-  compare link. A pull request that adds or renames a page, or adds a skill, also changes
-  `## [Unreleased]`.
-- The maps in `docs/maps/`, `CONTEXT.md` and new ADRs have the correct format.
-- The change adds no blanket suppression and no suppression without a reason. A lowered number
-  directly after a known coverage gate key, or a raised `max-warnings` number, gives a warning
-  for the reviewer. It does not fail the check. On a push to `main`, the change is empty, so
-  this check has nothing to check.
-- The unit tests pass, and they cover at least 95% of the lines and 90% of the branches in
-  `scripts/`.
-- A long sentence, a long step or a semicolon in Markdown fails the check.
-
-To run the same checks locally, except the title check, the body check, the breaking change check and actionlint, use Node 24 or later:
-
-```bash
-npm run check
-```
-
-To audit the open issues and the labels of a repository, run `npm run audit:issues -- <owner/repo>`. The tool reads with `gh` and writes nothing.
-
-The workflow does not tag, release or publish.
-
-The owner can run `npm run audit:settings -- <owner/repo>` to compare the repository settings
-with [setup-repo-protection](skills/setup-repo-protection/SKILL.md). It only reads, and the
-workflow does not run it.
-
-A reviewer runs `node scripts/check-review.mjs <file>` on the review file before posting it. The
-script checks the verdict, the head SHA and each finding.
-
-## What is in each section
-
-- [AGENTS.md](AGENTS.md): The entry point for agents.
-- [architecture/](architecture/index.md): Architecture principles and design rules.
-- [coding/](coding/index.md): Coding standards and practices.
-- [tdd/](tdd/index.md): Test-driven development.
-- [learning/](learning/index.md): Adaptive learning principles and standards.
-- [ui/](ui/index.md): User interface rules, accessibility and visual verification.
-- [version-control/](version-control/index.md): Conventional commits and short-lived feature
-  branches.
-- [versioning/](versioning/index.md): Semantic versioning.
-- [writing/](writing/index.md): Writing style (ASD-STE100).
-- [skills/](skills/index.md): Skills for agents.
-- [tips/](tips/index.md): Short tips and tricks.
-- [workflow/](workflow/index.md): Issues, review and merge, and safety.
-- [ADR 0001](docs/adr/0001-how-consumers-follow-versions.md): How consumers follow versions. The ADRs
-  are in `docs/adr/`.
+[Open an issue](https://github.com/daniel-kindl/dkstack/issues) for a question, a problem, or a proposed change.
+Include your agent, dkstack version, and what you expected to happen.
+Report security concerns through the [security policy](SECURITY.md).
 
 ## Changes
 
-Do not change this repository from another project. To propose a change, open an issue. The owner
-approves every change. See [CONTRIBUTING.md](CONTRIBUTING.md).
+To contribute, start with an issue and the [contribution guide](CONTRIBUTING.md).
+Daniel Kindl ([@daniel-kindl](https://github.com/daniel-kindl)) owns dkstack and approves each change.
+Propose shared rule changes here instead of editing dkstack from another project.
+
+## License
+
+[MIT](LICENSE). The [asset guide](assets/brand/README.md#license-and-sources) records the font license and artwork sources.

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" role="img" aria-labelledby="title desc">
+  <title id="title">Review</title>
+  <desc id="desc">dkstack review section icon. Chalk and lime strokes on a graphite tile.</desc>
+  <rect width="32" height="32" rx="3" fill="#111814"/><g transform="translate(4 4)"><g fill="none" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><g stroke="#F3F1E8"><path d="M11 21H3V3H14L18 7V10M7 7H11M7 11H10M18 18L22 22"/></g><g stroke="#C7F36B"><circle cx="15" cy="15" r="5"/></g></g></g>
+</svg>

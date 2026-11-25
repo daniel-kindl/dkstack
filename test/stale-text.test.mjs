@@ -19,12 +19,13 @@ test("README.md and SECURITY.md have no text from before the first release", asy
   }
 });
 
-test("README.md links the latest release, names Node 24 and lists the CHANGELOG check", async () => {
+test("entry docs link the release and document contributor checks", async () => {
   const readme = await read("README.md");
+  const contributing = await read("CONTRIBUTING.md");
   assert.ok(readme.includes("https://github.com/daniel-kindl/dkstack/releases/latest"));
-  assert.ok(readme.includes("Node 24 or later"));
-  assert.ok(readme.includes("Only the release job uses the release app secrets."));
-  assert.match(readme, /CHANGELOG\.md has an entry for the version in `package\.json`/);
+  assert.ok(contributing.includes("Node 24 or later"));
+  assert.ok(contributing.includes("Only the release job uses the release app secrets."));
+  assert.match(contributing, /CHANGELOG\.md has an entry for the version in `package\.json`/);
 });
 
 test("SECURITY.md says which release gets fixes and how they ship", async () => {

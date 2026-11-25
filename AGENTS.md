@@ -54,6 +54,7 @@ Every rule in [workflow/safety.md](workflow/safety.md) is a hard limit. For exam
 
 ## Sections
 
+- [docs/index.md](docs/index.md): Setup, skill installation and version guidance.
 - [architecture/index.md](architecture/index.md): Architecture principles.
 - [coding/index.md](coding/index.md): Coding standards and practices.
 - [tdd/index.md](tdd/index.md): Test-driven development.

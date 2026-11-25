@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
+  <title id="title">dkstack</title>
+  <desc id="desc">A lime modular K on graphite.</desc>
+  <rect width="96" height="96" rx="12" fill="#111814"/><g transform="translate(17 14) scale(0.723)" fill="#C7F36B"><path d="M0 6H28V88H0Z"/><path d="M32 29L61 0H90V10L55 45H32Z"/><path d="M32 49H55L90 84V94H61L32 65Z"/></g>
+</svg>

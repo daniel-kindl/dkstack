@@ -27,14 +27,14 @@ function line(text, prefix) {
 }
 
 test("the entry points link the UI pages and both UI skills", async () => {
-  const [agents, readme, index, triage] = await Promise.all([
+  const [agents, docs, index, triage] = await Promise.all([
     document("AGENTS.md"),
-    document("README.md"),
+    document("docs/index.md"),
     document("skills/index.md"),
     document("skills/triage/SKILL.md"),
   ]);
   assert.match(agents, /\(ui\/index\.md\)/);
-  assert.match(readme, /\(ui\/index\.md\)/);
+  assert.match(docs, /\(\.\.\/ui\/index\.md\)/);
   assert.match(index, /\[ui-design\]\(ui-design\/SKILL\.md\)/);
   assert.match(index, /\[ui-review\]\(ui-review\/SKILL\.md\)/);
   assert.ok(triage.includes(`New or changed rendered UI: [ui-design](${raw}/skills/ui-design/SKILL.md).`));
