@@ -96,6 +96,8 @@ test("the author removes the worktrees that it and its subagents made", async ()
     "each worktree that it or its subagents made for the pull request",
     "with the same checks",
     "an agent other than the author merged",
+    "A worktree of a subagent can have its own branch, or no branch.",
+    "only when its tip is the merged head or an ancestor of it",
   ]) {
     assert.ok(text.includes(phrase), `missing: ${phrase}`);
   }

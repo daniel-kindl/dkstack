@@ -55,8 +55,13 @@ merges, the owner can ask an agent to do these steps.
 
 The author also cleans up after the merge. When an agent other than the author merged, the
 author removes each worktree that it or its subagents made for the pull request. It also
-deletes the local branch. The author uses the steps below, with the same checks. Reason: the agent that merged
-does not know the worktrees of the author. They stay, and the next agent can start on old code.
+deletes the local branch. The author uses the steps below, with the same checks. Reason: the
+agent that merged does not know the worktrees of the author. They stay, and the next agent can
+start on old code.
+
+A worktree of a subagent can have its own branch, or no branch. Treat it as the worktree of the
+merged branch only when its tip is the merged head or an ancestor of it. Keep each other
+worktree, and name it in your report.
 
 - Switch to `main` and update it with a fast-forward only. Reason: the next task starts from the
   merged state, and a fast-forward never makes a merge commit on `main`.
