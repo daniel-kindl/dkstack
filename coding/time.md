@@ -35,8 +35,9 @@ reminder time.
 
 ## Bad example
 
-A booking service stores the start as `2027-03-28T09:00+01:00`. The clocks in Prague change to
-`+02:00` that night. The reminder comes one hour late. The job calls `new Date()` directly, so no
-test can set the time to that night.
+A booking service stores the start as `2027-03-28T09:00+01:00`. That is 08:00 UTC. The user meant
+09:00 in Prague. The clocks in Prague changed to `+02:00` at 02:00 that night, so 09:00 in Prague
+is 07:00 UTC. The reminder comes one hour late. The job calls `new Date()` directly, so no test
+can set the time to that night.
 
 Related: [configuration](../architecture/configuration.md).
