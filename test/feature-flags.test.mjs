@@ -23,6 +23,13 @@ test("coding/feature-flags.md states the feature flag rules", async () => {
     "permission",
     "safe default",
     "Do not nest",
+    "The safe default is the state that is correct for users now.",
+    "change the default to on",
+    "A flag is not configuration and not a permission.",
+    "A flag is temporary",
+    "closes #412",
+    "Tests run the checkout with the flag on and off.",
+    "The default of `beta2` is still off.",
   ]) {
     assert.ok(page.includes(part), `missing ${part}`);
   }
