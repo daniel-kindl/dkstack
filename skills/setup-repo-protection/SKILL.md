@@ -23,7 +23,7 @@ These are settings of the code host. An agent does not change a protection rule 
    - Protect release tags from update and deletion. Only the release process creates them.
    - Protect release branches from force-push and deletion.
 4. Security settings:
-   - Turn on secret scanning with push protection.
+   - Turn on secret scanning with push protection. Push protection meets the secret scan rule in the security rules. With it on, the repository needs no secret scan in CI. See [setup-quality-gates](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-quality-gates/SKILL.md).
    - Turn on private vulnerability reporting.
    - Add `SECURITY.md` that says how to report a vulnerability.
    - Add a `CODEOWNERS` entry that requires the owner's review for the CI workflow files.
