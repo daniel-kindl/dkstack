@@ -22,8 +22,8 @@ it. Preserve established public contracts unless a compatible migration is in sc
   `(User)value`. Use a cast only when a check before it proves the type. Do not use a
   non-null assertion, for example `user!.name`, unless a check before it proves that the value is
   present. Reason: a cast is a claim that the checker does not check.
-- In Go, use a generic type parameter or a specific interface, not `any`, for a value inside the
-  code. Use a type switch at the boundary.
+- In Go, use a generic type parameter or a specific interface for a value inside the code. Do
+  not use `any`. Use a type switch at the boundary.
 
 ## Explicit types
 

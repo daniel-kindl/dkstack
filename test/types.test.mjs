@@ -11,9 +11,10 @@ async function text(path) {
   return readFile(join(root, path), "utf8");
 }
 
-// Return the lines of a JavaScript source that declare a variable with `var`.
+// Return the lines of a JavaScript source that declare a variable with `var`. The
+// keyword counts at the start of a line or after ";", "{", "}" or "(".
 function varLines(source) {
-  return source.split("\n").filter((line) => /^\s*(export\s+)?var\s/.test(line) || /^\s*for\s*\(\s*var\s/.test(line));
+  return source.split("\n").filter((line) => /(?:^|[;{}(])\s*(?:export\s+)?var\s+[\w$[{]/.test(line));
 }
 
 test("coding/types.md forbids a type or a comment that turns off the type check", async () => {
@@ -50,6 +51,7 @@ test("coding/types.md requires explicit types and names the language exceptions"
     "`var`",
     "`const`",
     "`let`",
+    "Do not use `var`. Reason",
   ]) {
     assert.ok(section.includes(part), `missing ${part}`);
   }
@@ -99,14 +101,19 @@ test("CONTRIBUTING.md records the dkstack exception to the type check", async ()
 test("varLines finds a var declaration and ignores other text", () => {
   assert.deepEqual(varLines("var a = 1;\n  var b;\nexport var c = 2;"), ["var a = 1;", "  var b;", "export var c = 2;"]);
   assert.deepEqual(varLines("for (var i = 0; i < 2; i++) {}"), ["for (var i = 0; i < 2; i++) {}"]);
+  assert.deepEqual(varLines("if (true) { var z = 1; }\nconst q = 1; var w = 2;"), ["if (true) { var z = 1; }", "const q = 1; var w = 2;"]);
   assert.deepEqual(varLines("const variable = 1;\n// var in a comment\nlet x = 'var y';"), []);
 });
 
+// This file holds `var` in its own fixtures, so the scan skips it.
+const SELF = "test/types.test.mjs";
+
 test("no script or test declares a variable with var", async () => {
   for (const dir of ["scripts", "test"]) {
-    for (const name of await readdir(join(root, dir))) {
-      if (!name.endsWith(".mjs")) continue;
-      assert.deepEqual(varLines(await text(`${dir}/${name}`)), [], `${dir}/${name} uses var`);
+    for (const name of await readdir(join(root, dir), { recursive: true })) {
+      const path = `${dir}/${name}`;
+      if (!/\.(mjs|js|cjs)$/.test(name) || path === SELF || name.includes("node_modules")) continue;
+      assert.deepEqual(varLines(await text(path)), [], `${path} uses var`);
     }
   }
 });
