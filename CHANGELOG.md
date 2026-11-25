@@ -16,6 +16,9 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `setup-quality-gates` copies `check-title`, `check-dashes` and `check-writing` to a consumer, with
+  `markdown-files.mjs` and `pr-event.mjs` that they import (#304). Step 4 gives the title steps of
+  `validate` as the CI example. A test pins the list and runs each script alone.
 - `scripts/check-maps.mjs --diff` (#317). A change to `docs/maps/` fails when it also changes a
   file outside `docs/maps/`, `docs/adr/` and `CONTEXT.md`, or when it deletes a map. The
   `validate` workflow runs it.

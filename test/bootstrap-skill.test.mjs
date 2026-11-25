@@ -1,6 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "./helpers.mjs";
+import { spawnSync } from "node:child_process";
+import { copyFile, mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -70,7 +73,7 @@ test("the setup-quality-gates CI step runs on every pull request", async () => {
 });
 
 // The format checks of #174. A consumer copies them from a fixed release tag.
-test("setup-quality-gates copies the three format checks from a pinned tag and makes them required", async () => {
+test("setup-quality-gates copies the format checks from a pinned tag and makes them required", async () => {
   const four = (await step(4, "setup-quality-gates")).replace(/\s+/g, " ");
   for (const name of ["check-maps.mjs", "check-context.mjs", "check-adrs.mjs"]) {
     assert.ok(four.includes(`\`${name}\``), `step 4 must name ${name}`);
@@ -82,6 +85,49 @@ test("setup-quality-gates copies the three format checks from a pinned tag and m
   assert.match(four, /Do not change the copied scripts\./);
   const three = await step(3);
   assert.match(three, /copy the dkstack format checks/);
+});
+
+// #304: the skill copies the title, dash and writing checks too. Each copied script must run
+// from a folder with no other dkstack file, so the list names each file that a script imports.
+const COPIED = [
+  "check-maps.mjs", "check-context.mjs", "check-adrs.mjs",
+  "check-title.mjs", "check-dashes.mjs", "check-writing.mjs",
+  "markdown-files.mjs", "pr-event.mjs",
+];
+
+test("setup-quality-gates step 4 lists each copied script and the title steps", async () => {
+  const four = (await step(4, "setup-quality-gates")).replace(/\s+/g, " ");
+  for (const name of COPIED) assert.ok(four.includes(`\`${name}\``), `step 4 must name ${name}`);
+  assert.ok(four.includes("node scripts/check-title.mjs --event"));
+  assert.match(four, /node scripts\/check-title\.mjs -- "<commit title>"/);
+  const skill = await readFile(join(repoRoot, "skills", "setup-quality-gates", "SKILL.md"), "utf8");
+  for (const word of [/github/i, /gitlab/i, /npm\b/i, /pnpm/i, /yarn/i, /dependabot/i, /renovate/i]) {
+    assert.doesNotMatch(skill.replace(/https:\/\/\S+/g, ""), word);
+  }
+});
+
+test("each copied script imports only a Node module or a copied script", async () => {
+  for (const name of COPIED) {
+    const text = await readFile(join(repoRoot, "scripts", name), "utf8");
+    for (const [, from] of text.matchAll(/^import .* from "([^"]+)";/gm)) {
+      const ok = from.startsWith("node:") || (from.startsWith("./") && COPIED.includes(from.slice(2)));
+      assert.ok(ok, `${name} imports ${from}`);
+    }
+  }
+});
+
+test("each copied script runs alone in an empty folder", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "copied-"));
+  try {
+    for (const name of COPIED) await copyFile(join(repoRoot, "scripts", name), join(dir, name));
+    for (const args of [["check-title.mjs", "feat: add a check"], ["check-dashes.mjs"], ["check-writing.mjs"]]) {
+      const [script, ...rest] = args;
+      const { status, stderr } = spawnSync(process.execPath, [join(dir, script), ...rest], { cwd: dir, encoding: "utf8" });
+      assert.ok(status === 0 || !/ERR_MODULE_NOT_FOUND|Cannot find/.test(stderr), `${script}: ${stderr}`);
+    }
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
 });
 
 // ATL-9, IRIS-6, REED-4 and SCR-M7 in #154: a project has one place for its
