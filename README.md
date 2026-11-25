@@ -2,6 +2,17 @@
 
 Rules and skills for AI coding agents, in one place.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/header-dark.svg">
+  <img src="assets/brand/header-light.svg" alt="dkstack: rules and skills for AI coding agents." width="1280">
+</picture>
+
+[![Latest release](https://img.shields.io/github/v/release/daniel-kindl/dkstack?style=flat-square&logo=github&logoColor=c7f36b&labelColor=111814&color=111814)](https://github.com/daniel-kindl/dkstack/releases/latest)
+[![License](https://img.shields.io/github/license/daniel-kindl/dkstack?style=flat-square&labelColor=111814&color=111814)](LICENSE)
+[![Checks on main](https://img.shields.io/github/actions/workflow/status/daniel-kindl/dkstack/validate.yml?branch=main&event=push&style=flat-square&label=checks&labelColor=111814)](https://github.com/daniel-kindl/dkstack/actions/workflows/validate.yml?query=branch%3Amain)
+
+[Start](#start) · [Skills](skills/index.md) · [Brand assets](assets/brand/README.md) · [Contributing](CONTRIBUTING.md)
+
 dkstack has rules, skills and check scripts for architecture, code, tests, UI, commits, versions,
 writing and the review workflow. It is guidance only: your agents read the pages and run the
 skills. It runs no service, and it changes nothing in your project by itself. It is for any team
@@ -132,6 +143,11 @@ script checks the verdict, the head SHA and each finding.
 - [workflow/](workflow/index.md): Issues, review and merge, and safety.
 - [ADR 0001](docs/adr/0001-how-consumers-follow-versions.md): How consumers follow versions. The ADRs
   are in `docs/adr/`.
+
+## Visual identity
+
+Browse the [logos, icons, and banners](assets/brand/README.md).
+The asset guide lists colors, fonts, and usage instructions.
 
 ## Changes
 
