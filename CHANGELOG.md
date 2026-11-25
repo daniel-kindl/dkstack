@@ -30,6 +30,7 @@ change that a consumer must act on has a "Consumer action:" line.
   block with no paragraph directly above it fails. A tracked `.png` or `.svg` file in `docs/`
   fails. A diagram with more than 12 nodes gives a warning only. `npm run check` and `validate`
   run it. The file has no dependencies, so a consumer can copy it.
+- `coding/feature-flags.md` (#377). Each temporary flag has an owner and a linked issue that removes it. Tests cover each state that can reach production. A flag has a safe default, is not nested, and is not configuration or a permission.
 - `setup-quality-gates` copies `check-title`, `check-dashes` and `check-writing` to a consumer, with
   `markdown-files.mjs` and `pr-event.mjs` that they import (#304). Step 4 gives the title steps of
   `validate` as the CI example. A test pins the list and runs each script alone.
