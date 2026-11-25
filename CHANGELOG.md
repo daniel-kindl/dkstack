@@ -15,6 +15,10 @@ change that a consumer must act on has a "Consumer action:" line.
 - SVG logos, section icons, a favicon, banners, and a brand asset guide (#381).
 - Light and dark README headers, plus Shields.io badges for the latest release, license, and checks on main (#381).
 
+### Changed
+
+- The README leads with setup, a success check, and task examples. Optional installation and contributor checks have separate sections (#381).
+
 ## [1.7.0] - 2026-11-25
 
 ### Changed

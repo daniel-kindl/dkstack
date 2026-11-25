@@ -65,8 +65,8 @@ Give an icon-only control an accessible name in the page that uses it.
 | Sage | `#89968C` | Secondary text on graphite. |
 
 Use graphite text on lime. Do not use chalk text on lime or lime text on chalk.
-Let status badges use their own result colors.
-The checks badge shows the current text and color supplied by Shields.io.
+Use white badge text on graphite for readable contrast.
+The checks badge keeps the live result text supplied by Shields.io.
 
 ## Type
 
@@ -97,7 +97,7 @@ The README uses three linked [Shields.io](https://shields.io/) badges.
 | --- | --- | --- |
 | Release | Latest published GitHub release, excluding prereleases. | Latest release. |
 | License | GitHub license metadata. | Repository license. |
-| Checks | The validate workflow, restricted to pushes on main. | Workflow runs on main. |
+| Checks | The validate workflow, restricted to pushes on main. | Workflow runs for pushes on main. |
 
 The badges need a network connection.
 Shields.io and GitHub cache badge images, so a badge can show an older value.
