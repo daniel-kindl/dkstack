@@ -17,7 +17,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Changed
 
-- The README leads with setup, a success check, and task examples. Optional installation and contributor checks have separate sections (#381).
+- The README leads with setup, a success check, and task examples (#381).
+- `docs/index.md` holds manual setup, optional skill installation, versions, and the rule directory. Validation details move to `CONTRIBUTING.md` (#381).
 
 ## [1.7.0] - 2026-11-25
 

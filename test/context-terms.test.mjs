@@ -45,8 +45,10 @@ test("no page uses an avoided word of CONTEXT.md", async () => {
 });
 
 test("a page calls a repository that points to dkstack a consumer", async () => {
-  for (const file of ["AGENTS.md", "README.md", "skills/triage/SKILL.md"]) {
+  for (const file of ["AGENTS.md", "README.md", "docs/index.md", "skills/triage/SKILL.md"]) {
     assert.doesNotMatch(await read(file), /\b(?:project|repository) that points? to\b|\bpoints to them\b/i, file);
+  }
+  for (const file of ["AGENTS.md", "docs/index.md", "skills/triage/SKILL.md"]) {
     assert.match(await read(file), /\bconsumer\b/, file);
   }
   assert.match(await read("versioning/index.md"), /A consumer does not use them\./);

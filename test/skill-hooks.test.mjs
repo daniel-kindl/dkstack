@@ -50,7 +50,7 @@ test("no skill or entry page names the removed map-work skill", async () => {
   const skills = (await readdir(join(repoRoot, "skills"), { withFileTypes: true }))
     .filter((entry) => entry.isDirectory())
     .map((entry) => join("skills", entry.name, "SKILL.md"));
-  for (const file of ["skills/index.md", "AGENTS.md", "README.md", "CONTRIBUTING.md", "sample-AGENTS.md",
+  for (const file of ["skills/index.md", "AGENTS.md", "README.md", "docs/index.md", "CONTRIBUTING.md", "sample-AGENTS.md",
     "workflow/index.md", "workflow/safety.md", "workflow/review-and-merge.md",
     "tips/index.md", ".github/ISSUE_TEMPLATE/external-request.md", ...skills]) {
     const text = await readFile(join(repoRoot, file), "utf8");
