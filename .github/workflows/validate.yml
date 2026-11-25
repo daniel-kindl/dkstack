@@ -134,6 +134,10 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:suppressions -- --base "${PR_BASE:-origin/main}"
 
+      - name: Check that each TODO in scripts and test has an issue reference
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:todos
+
       # This check fails when it finds a long step, a long sentence or a semicolon.
       - name: Check for long steps, long sentences and semicolons in Markdown
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}

@@ -12,6 +12,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `scripts/check-todos.mjs` (#313). It fails when a `TODO` in `scripts/` or `test/` has no
+  `#NNN` issue reference. `npm run check` and `validate` run it.
 - `check-dashes` checks the `.mjs`, `.yml` and `.yaml` files, in addition to Markdown (#312). An em
   dash or an en dash in a script or in a workflow fails.
 - `check-context` checks `CONTEXT-MAP.md` and each context file that it lists (#342). The glossary
