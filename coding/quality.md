@@ -26,8 +26,10 @@
 ## Complexity
 
 - Set a cyclomatic complexity limit for each function in the project's linter. Run the check
-  in CI as an error. The default limit is 10. Examples are ESLint `complexity` with `max: 10`, Ruff `C901` with
-  `max-complexity = 10` and the .NET analyzer rule `CA1502`.
+  in CI as an error. The default limit is 10. Examples are ESLint `complexity` with `max: 10` and
+  Ruff `C901` with `max-complexity = 10`. In .NET, turn on the analyzer rule `CA1502` and set its
+  threshold to 10 in `CodeMetricsConfig.txt` with `CA1502: 10`. The rule is off by default, and its
+  default threshold is 25.
 - A project can select another limit. Record the limit and the reason in the project's coding
   rules.
 - Do not raise the limit to make a change pass. Split the function into smaller functions with

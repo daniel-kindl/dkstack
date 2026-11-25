@@ -19,7 +19,7 @@ test("coding/quality.md owns the literal value rule", async () => {
 
 test("coding/quality.md owns the complexity rule", async () => {
   const section = sectionText(await text("coding/quality.md"), "## Complexity");
-  for (const part of ["cyclomatic complexity", "10", "in CI as an error", "Record", "Do not raise the limit", "complexity", "C901", "CA1502"]) {
+  for (const part of ["cyclomatic complexity", "The default limit is 10.", "`max: 10`", "`max-complexity = 10`", "in CI as an error", "Record", "Do not raise the limit", "C901", "CA1502", "`CA1502: 10`", "CodeMetricsConfig.txt"]) {
     assert.ok(section.includes(part), `missing ${part}`);
   }
 });
