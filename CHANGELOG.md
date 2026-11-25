@@ -36,6 +36,7 @@ change that a consumer must act on has a "Consumer action:" line.
 - `scripts/check-maps.mjs --diff` (#317). A change to `docs/maps/` fails when it also changes a
   file outside `docs/maps/`, `docs/adr/` and `CONTEXT.md`, or when it deletes a map. The
   `validate` workflow runs it.
+- The first tips in `tips/index.md` (#367): check the exit code of each step, check for a breaking change before you push, and find worktrees and branches that are left. AGENTS.md "Sections", the README and the triage section map list `tips/index.md`.
 - A test fails for a page in a section folder that no file in `test/` names (#314). The 41 pages
   that had no test get one in `test/section-pages.test.mjs`.
 - `.gitignore` ignores `.claude/worktrees/`, so `git add -A` does not add an agent worktree (#363). A test checks that `.claude/settings.json` is not ignored.
