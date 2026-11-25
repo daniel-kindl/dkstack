@@ -12,6 +12,8 @@
 // links in an indented code block are ignored. Setext headings are not read. In a skill folder, a relative link must
 // stay in that folder, and a link to another dkstack file must be a raw URL on
 // the ref v1. The check still maps each such URL to a file at HEAD.
+// In another repository, a dkstack URL is skipped. Pass "--dkstack-root <dir>",
+// a clone of the dkstack branch, to check each dkstack URL and anchor there.
 
 import { readFile, stat } from "node:fs/promises";
 import { dirname, relative, resolve, sep } from "node:path";
@@ -154,7 +156,10 @@ export function fragmentOf(target) {
 }
 
 // Return { checked, links, errors }. Paths use "/" and are relative to root.
-export async function checkLinks(root) {
+// A dkstack URL resolves against options.dkstackRoot. It defaults to root, which
+// is right in dkstack. A consumer passes a clone of the dkstack branch, or null
+// to skip each dkstack URL.
+export async function checkLinks(root, { dkstackRoot = root } = {}) {
   const links = [];
   const errors = [];
   const anchorCache = new Map();
@@ -167,6 +172,8 @@ export async function checkLinks(root) {
     const text = await readFile(file, "utf8");
     for (const { line, target } of linksIn(text)) {
       const repoUrl = REPO_URL_PATTERN.exec(target);
+      if (repoUrl && dkstackRoot === null) continue;
+      const base = repoUrl ? dkstackRoot : root;
       if (!repoUrl && target.startsWith("#")) {
         const fragment = fragmentOf(target);
         if (fragment !== null && !(await anchorsOf(file)).has(fragment)) {
@@ -182,14 +189,14 @@ export async function checkLinks(root) {
         errors.push(`${relFile}:${line}: broken link ${target}`);
         continue;
       }
-      let full = resolve(repoUrl ? root : dirname(file), path);
+      let full = resolve(repoUrl ? base : dirname(file), path);
       // A ref with a slash, such as release/v1.5.0, puts its second part in
       // the path. Drop it when the ref starts with a branch type.
       if (repoUrl && REF_WITH_SLASH.test(target) && !(await exists(full))) {
-        const shorter = resolve(root, path.split("/").slice(1).join("/"));
+        const shorter = resolve(base, path.split("/").slice(1).join("/"));
         if (await exists(shorter)) full = shorter;
       }
-      const resolved = relative(root, full).split(sep).join("/");
+      const resolved = relative(base, full).split(sep).join("/");
       links.push({ file: relFile, line, target, resolved });
       const skillDir = SKILL_FILE_PATTERN.exec(relFile)?.[0];
       if (skillDir && repoUrl && !target.startsWith(SKILL_URL_PREFIX)) {
@@ -214,9 +221,33 @@ export async function checkLinks(root) {
   return { checked: links.length, links, errors };
 }
 
+// Parse "[dir] [--dkstack-root <dir>]". Return { root, dkstackRoot }. Without
+// the option, a repository that is not dkstack skips each dkstack URL.
+export async function parseArgs(argv) {
+  const args = [...argv];
+  let option = null;
+  const at = args.indexOf("--dkstack-root");
+  if (at !== -1) {
+    option = args[at + 1];
+    if (!option) throw new Error("--dkstack-root needs a folder");
+    args.splice(at, 2);
+  }
+  const root = resolve(args[0] ?? ".");
+  if (option !== null) return { root, dkstackRoot: resolve(option) };
+  const isDkstack = await exists(resolve(root, "skills", "triage", "SKILL.md"));
+  return { root, dkstackRoot: isDkstack ? root : null };
+}
+
 async function main() {
-  const root = resolve(process.argv[2] ?? ".");
-  const { checked, errors } = await checkLinks(root);
+  let parsed;
+  try {
+    parsed = await parseArgs(process.argv.slice(2));
+  } catch (error) {
+    console.error(error.message);
+    process.exitCode = 1;
+    return;
+  }
+  const { checked, errors } = await checkLinks(parsed.root, { dkstackRoot: parsed.dkstackRoot });
   if (errors.length > 0) {
     for (const message of errors) console.error(message);
     process.exitCode = 1;

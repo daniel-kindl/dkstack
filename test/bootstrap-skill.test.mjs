@@ -92,7 +92,7 @@ test("setup-quality-gates copies the format checks from a pinned tag and makes t
 const COPIED = [
   "check-maps.mjs", "check-context.mjs", "check-adrs.mjs",
   "check-title.mjs", "check-dashes.mjs", "check-writing.mjs",
-  "markdown-files.mjs", "pr-event.mjs",
+  "check-links.mjs", "markdown-files.mjs", "pr-event.mjs",
 ];
 
 test("setup-quality-gates step 4 lists each copied script and the title steps", async () => {

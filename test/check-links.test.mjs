@@ -396,3 +396,57 @@ test("a repository URL on a ref with a slash, such as release/v1.5.0, resolves",
   });
   assert.deepEqual(result.errors, ["README.md:3: broken link https://github.com/daniel-kindl/dkstack/blob/release/v1.5.0/missing.md"]);
 });
+
+// #332: a consumer checks its dkstack links against a clone of the dkstack branch.
+const DK = "https://raw.githubusercontent.com/daniel-kindl/dkstack/v1";
+
+async function runCli(files, extra = (dir) => []) {
+  const root = await makeTree(files);
+  const clone = await makeTree({ "skills/x/SKILL.md": "# X\n\n## Real part\n", "coding/a.md": "# A\n\n## Rules\n" });
+  try {
+    return spawnSync(process.execPath, [script, root, ...extra(clone)], { encoding: "utf8" });
+  } finally {
+    await removeTree(root);
+    await removeTree(clone);
+  }
+}
+
+test("without the option, a consumer run skips dkstack URLs", async () => {
+  const r = await runCli({ "AGENTS.md": `# A\n\n[x](${DK}/missing.md) [y](${DK}/coding/a.md#nope) [z](b.md)\n`, "b.md": "# B\n" });
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /^1 link\(s\) resolve\./);
+});
+
+test("without the option, a consumer run still reports a broken local link", async () => {
+  const r = await runCli({ "AGENTS.md": `# A\n\n[x](${DK}/missing.md) [z](gone.md)\n` });
+  assert.equal(r.status, 1);
+  assert.equal(r.stderr, "AGENTS.md:3: broken link gone.md\n");
+});
+
+test("with --dkstack-root, a missing dkstack file is reported", async () => {
+  const r = await runCli({ "AGENTS.md": `# A\n\n[x](${DK}/coding/missing.md)\n` }, (c) => ["--dkstack-root", c]);
+  assert.equal(r.status, 1);
+  assert.equal(r.stderr, `AGENTS.md:3: broken link ${DK}/coding/missing.md\n`);
+});
+
+test("with --dkstack-root, a missing dkstack anchor is reported", async () => {
+  const r = await runCli({ "AGENTS.md": `# A\n\n[x](${DK}/coding/a.md#nope)\n` }, (c) => ["--dkstack-root", c]);
+  assert.equal(r.status, 1);
+  assert.equal(r.stderr, `AGENTS.md:3: missing anchor ${DK}/coding/a.md#nope\n`);
+});
+
+test("with --dkstack-root, a valid dkstack file and anchor pass", async () => {
+  const r = await runCli({ "AGENTS.md": `# A\n\n[x](${DK}/coding/a.md#rules)\n` }, (c) => ["--dkstack-root", c]);
+  assert.equal(r.status, 0, r.stderr);
+});
+
+test("--dkstack-root without a folder fails", async () => {
+  const r = await runCli({ "AGENTS.md": "# A\n" }, () => ["--dkstack-root"]);
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /needs a folder/);
+});
+
+test("the dkstack repository run keeps mapping dkstack URLs to its own tree", async () => {
+  const r = spawnSync(process.execPath, [script, repoRoot], { encoding: "utf8" });
+  assert.equal(r.status, 0, r.stderr);
+});

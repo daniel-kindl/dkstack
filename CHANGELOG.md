@@ -16,6 +16,10 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `scripts/check-links.mjs` has an option `--dkstack-root <dir>` (#332). Without it, a run in a consumer
+  checks only the local links and skips each dkstack URL. With it, the run checks each dkstack file and
+  anchor against a clone of the dkstack branch. The run in dkstack does not change. `setup-quality-gates`
+  copies the script and documents both forms.
 - `setup-quality-gates` copies `check-title`, `check-dashes` and `check-writing` to a consumer, with
   `markdown-files.mjs` and `pr-event.mjs` that they import (#304). Step 4 gives the title steps of
   `validate` as the CI example. A test pins the list and runs each script alone.
