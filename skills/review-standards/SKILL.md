@@ -70,6 +70,7 @@ A smell is a judgement, not a hard violation. Write it as "possible feature envy
 | Configuration read in many places, or environment values in code | Read configuration in one place and pass it in | [configuration](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/configuration.md), [reversibility](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/reversibility.md) |
 | An error is ignored, or bad input is accepted and fails later | Fail at once, at the boundary | [fail fast](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/fail-fast.md), [design by contract](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/design-by-contract.md) |
 | Calls that must run in a hidden order | Make the order explicit, or remove it | [temporal coupling](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/temporal-coupling.md) |
+| Signal comment: a comment explains a workaround in the project's own code, or guards a constraint, for example "do not remove" | Fix the cause, or encode the constraint as a type, a check, a test or a lint rule. Then delete the comment. If the cause is out of scope, link an issue in the comment | [comments](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/writing/comments.md#a-comment-as-a-signal) |
 
 ## Subagents
 
