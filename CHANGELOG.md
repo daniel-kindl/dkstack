@@ -12,6 +12,9 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- A test checks the example progress block in `learning/progress.md` (#315). It parses the block
+  with no dependency and checks the keys, `schema_version`, the levels, the `assistance` values,
+  the dates and the empty `evidence` of an `unknown` level.
 - `check-context` checks `CONTEXT-MAP.md` and each context file that it lists (#342). The glossary
   rules and `domain-glossary` describe a project with two or more contexts.
 - `skills/model-domain` (#341). The skill finds the bounded contexts first, then the aggregates,
