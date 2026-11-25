@@ -12,6 +12,9 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `setup-quality-gates` copies `check-title`, `check-dashes` and `check-writing` to a consumer, with
+  `markdown-files.mjs` and `pr-event.mjs` that they import (#304). Step 4 gives the title steps of
+  `validate` as the CI example. A test pins the list and runs each script alone.
 - A test fails for a page in a section folder that no file in `test/` names (#314). The 41 pages
   that had no test get one in `test/section-pages.test.mjs`.
 - A test checks the example progress block in `learning/progress.md` (#315). It parses the block
