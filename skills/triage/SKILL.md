@@ -58,6 +58,7 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 - Durable decision: [write-adr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-adr/SKILL.md)
 - Any text: [writing-check](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/writing-check/SKILL.md)
 - Learn, practice, assess or review a topic: [learn](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/learn/SKILL.md)
+- Retrospective of a session, a pull request or an issue, to improve the agents' environment: [improve-agents](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/improve-agents/SKILL.md). It is user-invoked: only the owner starts it.
 - Version number or release: [release](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/release/SKILL.md). It is user-invoked: only the owner starts it. If the task needs it, tell the owner.
 
 ## Scale

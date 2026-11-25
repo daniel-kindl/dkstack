@@ -1,0 +1,5 @@
+interface:
+  display_name: "Improve agents"
+  short_description: "Find changes to the agent setup after a session. Only the owner starts it."
+policy:
+  allow_implicit_invocation: false

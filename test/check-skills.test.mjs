@@ -31,6 +31,7 @@ test("the repository skills use the folder layout and valid frontmatter", async 
     "clarify-intent",
     "code-review",
     "domain-glossary",
+    "improve-agents",
     "learn",
     "make-diagram",
     "model-domain",
