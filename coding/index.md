@@ -16,6 +16,7 @@ Coding standards and practices.
 - [feature-flags.md](feature-flags.md): Each flag has an owner and an issue that removes it.
 - [testing.md](testing.md): A pointer to [tdd/](../tdd/index.md), which has the testing rules.
 - [dependencies.md](dependencies.md): No unjustified dependencies.
+- [time.md](time.md): Time and dates in production code.
 - [debugging.md](debugging.md): Reproduce the problem and fix the cause.
 
 ## Application
