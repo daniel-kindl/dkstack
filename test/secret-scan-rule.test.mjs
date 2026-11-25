@@ -17,6 +17,10 @@ test("the security rule says push protection meets the secret scan rule", async 
     "Push protection of the code host meets this rule when it is on.",
     "It blocks a secret before the secret enters the history.",
     "If push protection is not on, run a pinned secret scanner in CI.",
+    "This reading of the rule is deliberate.",
+    "It scans only new pushes, so it does not find a secret that is already in the history.",
+    "A person can bypass a block with a reason.",
+    "For a repository that has history from before push protection was on, run one scan of the full history.",
   ]) assert.ok(text.includes(fact), fact);
 });
 
@@ -26,6 +30,8 @@ test("setup-quality-gates tells a consumer which secret scan option applies", as
     "If the code host has push protection and it is on, add no secret scan to CI.",
     "If it is not on, add a secret scanner to CI.",
     "Pin the scanner by version and SHA-256.",
+    "For a repository that has history from before the setting was on, run one scan of the full history with a pinned scanner.",
+    "Push protection does not find a secret that is already in the history.",
   ]) assert.ok(text.includes(fact), fact);
 });
 

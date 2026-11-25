@@ -7,7 +7,7 @@ Protect data and limit damage.
 - Validate all input at the boundary.
 - Do not put a secret in code, commits, logs, errors, issues, pull request text or chat. A secret is a credential, a session ID, a token, a key or a password.
 - Where the project has static analysis (SAST) or secret scanning, run them in CI as gates. Follow [quality gates](quality-gates.md).
-  Push protection of the code host meets this rule when it is on. It blocks a secret before the secret enters the history. A CI scan finds the secret after the push. If push protection is not on, run a pinned secret scanner in CI.
+  Push protection of the code host meets this rule when it is on. It blocks a secret before the secret enters the history. A CI scan finds the secret after the push. If push protection is not on, run a pinned secret scanner in CI. This reading of the rule is deliberate. Push protection has limits. It scans only new pushes, so it does not find a secret that is already in the history. A person can bypass a block with a reason. It finds only known secret patterns. For a repository that has history from before push protection was on, run one scan of the full history.
 - Do not put personal data in code, logs or errors. Personal data includes direct identifiers. Examples are a name, an email address, a phone number, a postal address and an IP address. Free text from a user is also personal data.
 - Logs have one exception. You can put an opaque internal ID, such as a user ID or an order ID, in a log field. A user ID is still personal data, so log it only when the event needs it.
 - Log each failed sign-in and each denied access at Warning. Include the opaque user ID and the outcome. Do not log the credential, the token or other personal data.
