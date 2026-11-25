@@ -19,7 +19,6 @@ A bounded context is a part of the system in which each domain term has one mean
 
 - Draw a boundary where one word has two meanings.
 - Draw a boundary where a different set of rules or a different team owns the work.
-- Give each context its own glossary. See the [glossary](domain-languages.md#glossary).
 - Do not share one model between two contexts. Translate the data at the boundary.
 - Keep the number of contexts small. For most small projects, one context is the correct result.
 
@@ -46,8 +45,10 @@ root of the aggregate.
 - Keep each aggregate small. Add an object to an aggregate only when an invariant needs it.
 - Change one aggregate in one transaction.
 - Refer to another aggregate by its identifier, not by the object.
-- If a rule needs data from two aggregates, change the boundary or let a domain event update the
-  second aggregate later. Record the choice in an [ADR](adrs.md) when it meets the ADR test.
+- If a rule must hold at all times, keep all its data in one aggregate. Change the boundary if
+  necessary. Reason: if a second aggregate changes later, two changes can both pass the check.
+- Use a domain event to update a second aggregate later only when the domain permits the delay.
+- Record the choice of boundary in an [ADR](adrs.md) when it meets the ADR test.
 
 ## Value objects
 
@@ -72,7 +73,7 @@ A domain event records a fact that occurred in the domain.
 
 - During design, write the model in the issue or the plan.
 - After that, the code and the tests are the record of the model. A test proves each invariant.
-- Record each domain term in the glossary of its context.
+- For the domain terms, see the [glossary](domain-languages.md#glossary).
 - Record a boundary that is hard to reverse in an [ADR](adrs.md) when it meets the ADR test.
 
 ## Good example
@@ -88,7 +89,7 @@ context Lending
     refers to a Book by book_id only
 
 relation: Catalog is upstream, Lending is downstream
-  Lending translates a Book into the copies that it owns
+  Lending records the book_id from Catalog on each copy that it owns
 ```
 
 Each term has one meaning in its context. Lending does not use the fields of a Book.
@@ -118,6 +119,7 @@ aggregate Member (root: Member)
   active_loan_ids: at most 5
   borrow(copy_id)
     precondition: count of active_loan_ids is less than 5
+    adds the new loan_id to active_loan_ids
     emits LoanStarted(loan_id, member_id, copy_id, period)
 
 aggregate Loan (root: Loan)
@@ -126,17 +128,24 @@ aggregate Loan (root: Loan)
   state: active or returned
   return()
     precondition: state is active
+    sets state to returned
     emits CopyReturned(loan_id, member_id, copy_id)
 
 value object LoanPeriod
   start, due
   rule: due is after start
 
+on LoanStarted: create Loan(loan_id, member_id, copy_id, period) with state active
 on CopyReturned: Member removes loan_id from active_loan_ids
 ```
 
-Each aggregate holds only the data for its invariants. Each change touches one aggregate. An event
-updates the second aggregate.
+Each aggregate holds only the data for its invariants. Each change touches one aggregate and
+records its new state before it emits its event. Thus a second borrow sees the new loan, and a
+second return stops at the precondition.
+
+An event creates the Loan and updates the Member after a return. For a short time after a return,
+the Member has one loan too many. The domain permits this delay, because the delay can only stop a
+borrow. It cannot let a member borrow a sixth copy.
 
 ## Another bad example
 
