@@ -7,9 +7,9 @@ Rules and skills for AI coding agents, in one place.
   <img src="assets/brand/header-light.svg" alt="dkstack: rules and skills for AI coding agents." width="1280">
 </picture>
 
-[![Read the latest release version and notes](https://img.shields.io/github/v/release/daniel-kindl/dkstack?style=flat-square&logo=github&logoColor=c7f36b&labelColor=111814&color=111814)](https://github.com/daniel-kindl/dkstack/releases/latest)
-[![MIT license](https://img.shields.io/github/license/daniel-kindl/dkstack?style=flat-square&labelColor=111814&color=111814)](LICENSE)
-[![Read the latest validation result for pushes to main](https://img.shields.io/github/actions/workflow/status/daniel-kindl/dkstack/validate.yml?branch=main&event=push&style=flat-square&label=checks&labelColor=111814&color=111814)](https://github.com/daniel-kindl/dkstack/actions/workflows/validate.yml?query=branch%3Amain+event%3Apush)
+[![Release: read the latest version and notes](https://img.shields.io/github/v/release/daniel-kindl/dkstack?style=flat-square&logo=github&logoColor=c7f36b&labelColor=111814&color=111814)](https://github.com/daniel-kindl/dkstack/releases/latest)
+[![License: MIT](https://img.shields.io/github/license/daniel-kindl/dkstack?style=flat-square&labelColor=111814&color=111814)](LICENSE)
+[![Checks: read the latest result for pushes to main](https://img.shields.io/github/actions/workflow/status/daniel-kindl/dkstack/validate.yml?branch=main&event=push&style=flat-square&label=checks&labelColor=111814&color=111814)](https://github.com/daniel-kindl/dkstack/actions/workflows/validate.yml?query=branch%3Amain+event%3Apush)
 
 **Use the same coding standards across your projects.**
 dkstack gives any team shared rules and task-specific skills for AI coding agents.
