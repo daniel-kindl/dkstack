@@ -402,7 +402,7 @@ const DK = "https://raw.githubusercontent.com/daniel-kindl/dkstack/v1";
 
 async function runCli(files, extra = (dir) => []) {
   const root = await makeTree(files);
-  const clone = await makeTree({ "skills/x/SKILL.md": "# X\n\n## Real part\n", "coding/a.md": "# A\n\n## Rules\n" });
+  const clone = await makeTree({ "AGENTS.md": "# D\n", "skills/x/SKILL.md": "# X\n\n## Real part\n", "coding/a.md": "# A\n\n## Rules\n" });
   try {
     return spawnSync(process.execPath, [script, root, ...extra(clone)], { encoding: "utf8" });
   } finally {
@@ -442,11 +442,45 @@ test("with --dkstack-root, a valid dkstack file and anchor pass", async () => {
 
 test("--dkstack-root without a folder fails", async () => {
   const r = await runCli({ "AGENTS.md": "# A\n" }, () => ["--dkstack-root"]);
-  assert.equal(r.status, 1);
+  assert.equal(r.status, 2);
   assert.match(r.stderr, /needs a folder/);
 });
 
 test("the dkstack repository run keeps mapping dkstack URLs to its own tree", async () => {
   const r = spawnSync(process.execPath, [script, repoRoot], { encoding: "utf8" });
   assert.equal(r.status, 0, r.stderr);
+});
+
+test("--dkstack-root with a missing folder exits 2 with a clear message", async () => {
+  const r = await runCli({ "AGENTS.md": `# A\n\n[x](${DK}/coding/a.md)\n` }, (c) => ["--dkstack-root", join(c, "nope")]);
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /is not a clone of dkstack/);
+  assert.doesNotMatch(r.stderr, /broken link/);
+});
+
+test("--dkstack-root with a folder that is not a dkstack clone exits 2", async () => {
+  const empty = await makeTree({ "other.md": "# O\n" });
+  try {
+    const r = await runCli({ "AGENTS.md": "# A\n" }, () => ["--dkstack-root", empty]);
+    assert.equal(r.status, 2);
+    assert.match(r.stderr, /no AGENTS\.md/);
+  } finally {
+    await removeTree(empty);
+  }
+});
+
+test("a repository with skills/triage/SKILL.md is dkstack: its dkstack URLs are checked", async () => {
+  const r = await runCli({
+    "skills/triage/SKILL.md": "# T\n",
+    "AGENTS.md": `# A\n\n[x](${DK}/missing.md) [y](${DK}/skills/triage/SKILL.md#nope)\n`,
+  });
+  assert.equal(r.status, 1);
+  assert.equal(r.stderr, `AGENTS.md:3: broken link ${DK}/missing.md\nAGENTS.md:3: missing anchor ${DK}/skills/triage/SKILL.md#nope\n`);
+});
+
+test("the dkstack repository run counts dkstack URLs among the checked links", async () => {
+  const r = spawnSync(process.execPath, [script, repoRoot], { encoding: "utf8" });
+  const own = await checkLinks(repoRoot);
+  assert.ok(own.links.some((l) => /^https:\/\/raw\.githubusercontent\.com\/daniel-kindl\/dkstack\//.test(l.target)));
+  assert.equal(r.stdout, `${own.checked} link(s) resolve.\n`);
 });

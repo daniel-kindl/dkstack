@@ -223,17 +223,25 @@ export async function checkLinks(root, { dkstackRoot = root } = {}) {
 
 // Parse "[dir] [--dkstack-root <dir>]". Return { root, dkstackRoot }. Without
 // the option, a repository that is not dkstack skips each dkstack URL.
+export class UsageError extends Error {}
+
 export async function parseArgs(argv) {
   const args = [...argv];
   let option = null;
   const at = args.indexOf("--dkstack-root");
   if (at !== -1) {
     option = args[at + 1];
-    if (!option) throw new Error("--dkstack-root needs a folder");
+    if (!option) throw new UsageError("--dkstack-root needs a folder");
     args.splice(at, 2);
   }
   const root = resolve(args[0] ?? ".");
-  if (option !== null) return { root, dkstackRoot: resolve(option) };
+  if (option !== null) {
+    const dkstackRoot = resolve(option);
+    if (!(await exists(resolve(dkstackRoot, "AGENTS.md")))) {
+      throw new UsageError(`--dkstack-root ${option} is not a clone of dkstack: it has no AGENTS.md`);
+    }
+    return { root, dkstackRoot };
+  }
   const isDkstack = await exists(resolve(root, "skills", "triage", "SKILL.md"));
   return { root, dkstackRoot: isDkstack ? root : null };
 }
@@ -243,8 +251,9 @@ async function main() {
   try {
     parsed = await parseArgs(process.argv.slice(2));
   } catch (error) {
+    if (!(error instanceof UsageError)) throw error;
     console.error(error.message);
-    process.exitCode = 1;
+    process.exitCode = 2;
     return;
   }
   const { checked, errors } = await checkLinks(parsed.root, { dkstackRoot: parsed.dkstackRoot });
