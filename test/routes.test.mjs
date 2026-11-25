@@ -81,12 +81,10 @@ test("each section index lists each page of its section", async () => {
   }
 });
 
-test("AGENTS.md lists each section index, except tips while it has no tip", async () => {
+test("AGENTS.md lists each section index", async () => {
   const agents = await read("AGENTS.md");
   const sections = agents.slice(agents.indexOf("## Sections\n"), agents.indexOf("\n## ", agents.indexOf("## Sections\n") + 1));
-  const tips = await read("tips/index.md");
   for (const section of [...SECTIONS, "skills"]) {
-    if (section === "tips" && tips.includes("(None yet.")) continue;
     assert.ok(sections.includes(`(${section}/index.md)`), `AGENTS.md "Sections" does not list ${section}/index.md`);
   }
 });
