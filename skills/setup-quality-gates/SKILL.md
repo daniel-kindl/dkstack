@@ -28,6 +28,9 @@ A building block of [bootstrap](https://raw.githubusercontent.com/daniel-kindl/d
      Configure naming rules that native tools can check reliably, such as supported Roslyn,
      ESLint or Ruff rules. Run those checks in CI as errors. An `.editorconfig` file alone does
      not enforce naming in every language. Leave unsupported or semantic rules to review.
+   - Follow [coding/types.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/types.md).
+     Turn on the strict settings of the type checker and the lint rules that it names. Run the
+     type check in CI as an error.
 
 4. Copy the dkstack format checks:
    - Copy `check-maps.mjs`, `check-context.mjs`, `check-adrs.mjs`, `check-title.mjs`, `check-dashes.mjs`, `check-writing.mjs` and `check-links.mjs` into `scripts/` from a fixed dkstack release tag, for example `v1.6.0`. The source URL is `https://raw.githubusercontent.com/daniel-kindl/dkstack/<tag>/scripts/<name>`. Do not copy them from `main`, from `v1` or from a URL at run time. Copy `markdown-files.mjs` too, because `check-dashes.mjs` and `check-writing.mjs` import it. Copy `pr-event.mjs` too, because `check-title.mjs` imports it. See [ADR 0001](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/docs/adr/0001-how-consumers-follow-versions.md).
