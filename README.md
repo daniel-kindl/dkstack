@@ -22,7 +22,7 @@ It is guidance only, with no service to run.
 
 In your project, give your coding agent this prompt:
 
-```text
+```
 Set up dkstack in this repository.
 Read and follow:
 https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/setup-dkstack/SKILL.md
