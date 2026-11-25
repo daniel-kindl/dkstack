@@ -117,7 +117,7 @@ returned again.
 aggregate Member (root: Member)
   member_id
   active_loan_ids: at most 5
-  borrow(copy_id)
+  borrow(copy_id, period: LoanPeriod)
     precondition: count of active_loan_ids is less than 5
     adds the new loan_id to active_loan_ids
     emits LoanStarted(loan_id, member_id, copy_id, period)
@@ -143,8 +143,9 @@ Each aggregate holds only the data for its invariants. Each change touches one a
 records its new state before it emits its event. Thus a second borrow sees the new loan, and a
 second return stops at the precondition.
 
-An event creates the Loan and updates the Member after a return. For a short time after a return,
-the Member has one loan too many. The domain permits this delay, because the delay can only stop a
+The caller creates the LoanPeriod, so `borrow` gets only a period that obeys its rule. After a
+borrow, `LoanStarted` creates the Loan. After a return, `CopyReturned` removes the loan_id from
+the Member. For a short time after a return, the Member has one loan too many. The domain permits this delay, because the delay can only stop a
 borrow. It cannot let a member borrow a sixth copy.
 
 ## Another bad example
