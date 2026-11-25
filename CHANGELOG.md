@@ -12,6 +12,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `architecture/domain-modeling.md` (#340). The page has rules for bounded contexts, the
+  context map, aggregates, value objects and domain events, and says when not to model.
 - `check-title` gives a warning when the first word of the description ends in `-ed`, `-ing` or
   `-s` (#311). The exit code does not change. Some imperative verbs, for example `pass`, `focus`
   and `embed`, give no warning.

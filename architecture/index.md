@@ -22,6 +22,7 @@ Use this rule as the tie-breaker when other principles do not decide between two
 - [reversibility.md](reversibility.md): Make decisions easy to reverse. Related: [orthogonality.md](orthogonality.md), [adrs.md](adrs.md).
 - [tracer-bullets.md](tracer-bullets.md): Build a thin end-to-end path first. Related: [prototype.md](prototype.md).
 - [domain-languages.md](domain-languages.md): Express the solution in domain terms.
+- [domain-modeling.md](domain-modeling.md): Model bounded contexts, aggregates, value objects and domain events. Related: [domain-languages.md](domain-languages.md), [design-by-contract.md](design-by-contract.md).
 - [design-by-contract.md](design-by-contract.md): Define preconditions, postconditions, and invariants. Related: [fail-fast.md](fail-fast.md).
 - [resource-balancing.md](resource-balancing.md): Pair every resource acquisition with a release.
 - [decoupling.md](decoupling.md): Minimize knowledge between components. Related: [orthogonality.md](orthogonality.md).
