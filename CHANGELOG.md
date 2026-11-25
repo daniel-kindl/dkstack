@@ -16,6 +16,7 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `scripts/check-consumer.mjs` checks a consumer: the `AGENTS.md` pointer, `CLAUDE.md`, `.editorconfig`, `.gitattributes`, the lockfile, the CI audit steps and Dependabot. It also checks each copied dkstack script against `scripts/dkstack-hashes.json` for its tag, with no network. `setup-quality-gates` step 4 copies both (#305).
 - `scripts/check-diagrams.mjs` (#316). It checks the format rules of `make-diagram`. A `mermaid`
   block with no paragraph directly above it fails. A tracked `.png` or `.svg` file in `docs/`
   fails. A diagram with more than 12 nodes gives a warning only. `npm run check` and `validate`

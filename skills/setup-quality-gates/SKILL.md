@@ -39,6 +39,7 @@ A building block of [bootstrap](https://raw.githubusercontent.com/daniel-kindl/d
    - A missing `docs/maps/` folder or a missing `CONTEXT.md` is a pass. The repository may not have them yet.
    - Add the title steps. On a pull request, run `node scripts/check-title.mjs --event`. For each commit of a push, run `node scripts/check-title.mjs -- "<commit title>"`.
    - Run `node scripts/check-dashes.mjs` and `node scripts/check-writing.mjs` in CI.
+   - Copy `check-consumer.mjs` and the hash list `dkstack-hashes.json` from the same tag. Run `node scripts/check-consumer.mjs` in CI. It checks the dkstack setup of the repository, and it checks each copied script against the hash list for the tag. It needs no network.
    - Do not change the copied scripts. To update them, copy them again from a newer tag.
 
 5. Secret scanning: follow [coding/security.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md#rules).
