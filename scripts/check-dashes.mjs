@@ -1,12 +1,14 @@
 #!/usr/bin/env node
-// Check that no Markdown file has an em dash (U+2014) or an en dash (U+2013).
-// ASD-STE100 does not use them. Code blocks are checked too, because an
-// example is text that a reader copies.
+// Check that no Markdown, .mjs or YAML file has an em dash (U+2014) or an en dash (U+2013).
+// ASD-STE100 does not use them. Code blocks and script comments are checked
+// too, because an example is text that a reader copies.
 
 import { readFile } from "node:fs/promises";
 import { relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 import { markdownFiles } from "./markdown-files.mjs";
+
+const EXTENSIONS = [".md", ".mjs", ".yml", ".yaml"];
 
 const DASHES = new Map([
   ["\u2014", "em dash (U+2014)"],
@@ -15,7 +17,7 @@ const DASHES = new Map([
 
 // Return { checked, errors }. Paths use "/" and are relative to root.
 export async function checkDashes(root) {
-  const files = await markdownFiles(root);
+  const files = await markdownFiles(root, EXTENSIONS);
   const errors = [];
   for (const file of files) {
     const relFile = relative(root, file).split(sep).join("/");
@@ -38,7 +40,7 @@ async function main() {
     process.exitCode = 1;
     return;
   }
-  console.log(`${checked} Markdown file(s) have no em dash or en dash.`);
+  console.log(`${checked} file(s) have no em dash or en dash.`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

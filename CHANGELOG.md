@@ -14,6 +14,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 - A test fails for a page in a section folder that no file in `test/` names (#314). The 41 pages
   that had no test get one in `test/section-pages.test.mjs`.
+- `check-dashes` checks the `.mjs`, `.yml` and `.yaml` files, in addition to Markdown (#312). An em
+  dash or an en dash in a script or in a workflow fails.
 - `check-context` checks `CONTEXT-MAP.md` and each context file that it lists (#342). The glossary
   rules and `domain-glossary` describe a project with two or more contexts.
 - `skills/model-domain` (#341). The skill finds the bounded contexts first, then the aggregates,
