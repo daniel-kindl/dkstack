@@ -20,6 +20,7 @@ test("the security rule says push protection meets the secret scan rule", async 
     "This reading of the rule is deliberate.",
     "It scans only new pushes, so it does not find a secret that is already in the history.",
     "A person can bypass a block with a reason.",
+    "It finds only known secret patterns.",
     "For a repository that has history from before push protection was on, run one scan of the full history.",
   ]) assert.ok(text.includes(fact), fact);
 });
