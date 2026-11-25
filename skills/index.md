@@ -50,6 +50,7 @@ A building block does one job. A larger skill, such as `code-review` or `bootstr
 - [writing-check](writing-check/SKILL.md) (both): Apply ASD-STE100 to text.
 - [plan-work](plan-work/SKILL.md) (both): Plan a goal as small, reviewable increments with tests first.
 - [chart-route](chart-route/SKILL.md) (both): Settle a large, unclear effort in a map in `docs/maps/`, one question per session, then hand off to `plan-work`.
+- [improve-agents](improve-agents/SKILL.md) (user): Find changes to the agents' environment after a session, a pull request or an issue. Report them to the owner. Do not edit dkstack.
 - [release](release/SKILL.md) (user): Prepare a release. Link the versioning and safety rules. Do not publish.
 - [learn](learn/SKILL.md) (both): Teach, practice, assess and review any topic with an adaptive curriculum. The rules are in [learning/](../learning/index.md).
 - [ui-design](ui-design/SKILL.md) (both): Make or change a rendered UI and check the rendered result.

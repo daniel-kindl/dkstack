@@ -17,6 +17,7 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `skills/improve-agents` (#198). The owner starts it after a session, a pull request or an issue. It finds changes to the agents' environment in six categories and grades each finding with the `verify-claim` levels. A finding with no event is a hypothesis. The report goes to the owner. A finding about dkstack becomes a draft issue, not an edit. The idea comes from the `retro` skill by Matt Pocock.
 - `scripts/check-consumer.mjs` checks a consumer: the `AGENTS.md` pointer, `CLAUDE.md`, `.editorconfig`, `.gitattributes`, the lockfile, the CI audit steps and Dependabot. It also checks each copied dkstack script against `scripts/dkstack-hashes.json` for its tag, with no network. `setup-quality-gates` step 4 copies both (#305).
 - `scripts/check-links.mjs` has an option `--dkstack-root <dir>` (#332). Without it, a run in a consumer
   checks only the local links and skips each dkstack URL. With it, the run checks each dkstack file and
