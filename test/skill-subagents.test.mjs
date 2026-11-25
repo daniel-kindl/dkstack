@@ -8,7 +8,7 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 // Skills that use subagents where they help.
 const skills = ["code-review", "writing-check", "apply-architecture", "write-adr", "clarify-intent",
-  "release", "triage"];
+  "release", "triage", "model-domain"];
 
 // Return the text of the "Subagents" section of a skill.
 async function subagents(skill) {
