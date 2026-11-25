@@ -17,6 +17,7 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `coding/types.md` (#362). Do not turn off the type check with `any`, `dynamic`, `Any` or `@ts-ignore`. Use the safe top type and check the value at the boundary. Write explicit types for public signatures and local variables. The page names the exceptions where a language cannot name a type, and the strict settings for TypeScript, JavaScript, C# and Python. `review-standards` has a smell row and `setup-quality-gates` links the page. `CONTRIBUTING.md` records the dkstack exception: the scripts are plain JavaScript, and a test fails on `var`.
 - `skills/improve-agents` (#198). The owner starts it after a session, a pull request or an issue. It finds changes to the agents' environment in six categories and grades each finding with the `verify-claim` levels. A finding with no event is a hypothesis. The report goes to the owner. A finding about dkstack becomes a draft issue, not an edit. The idea comes from the `retro` skill by Matt Pocock.
 - `coding/absent-values.md` (#368). A value that can be absent says so in its type. The null check of the language is on. No special value stands for "no value". Input is converted once at the boundary. An absent value does not report a failure, and an empty collection means "no items".
 - `scripts/check-consumer.mjs` checks a consumer: the `AGENTS.md` pointer, `CLAUDE.md`, `.editorconfig`, `.gitattributes`, the lockfile, the CI audit steps and Dependabot. It also checks each copied dkstack script against `scripts/dkstack-hashes.json` for its tag, with no network. `setup-quality-gates` step 4 copies both (#305).
@@ -36,6 +37,7 @@ change that a consumer must act on has a "Consumer action:" line.
   `validate` workflow runs it.
 - A test fails for a page in a section folder that no file in `test/` names (#314). The 41 pages
   that had no test get one in `test/section-pages.test.mjs`.
+- `.gitignore` ignores `.claude/worktrees/`, so `git add -A` does not add an agent worktree (#363). A test checks that `.claude/settings.json` is not ignored.
 - A test checks the example progress block in `learning/progress.md` (#315). It parses the block
   with no dependency and checks the keys, `schema_version`, the levels, the `assistance` values,
   the dates and the empty `evidence` of an `unknown` level.
