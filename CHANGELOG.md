@@ -46,7 +46,8 @@ change that a consumer must act on has a "Consumer action:" line.
   value objects and events, and writes a Domain model block in the issue. `triage`,
   `clarify-intent`, `plan-work` and `skills/index.md` link it.
 - `setup-repo-protection` covers an owner who uses one code host account with the agents (#334).
-  It gives the safe settings and a sample exception for `AGENTS.md`. The step says that the independent review still applies.
+  It gives the safe settings and a sample exception for `AGENTS.md`. The step says that the
+  independent review still applies.
 - `architecture/domain-modeling.md` (#340). The page has rules for bounded contexts, the
   context map, aggregates, value objects and domain events, and says when not to model.
 - `check-title` gives a warning when the first word of the description ends in `-ed`, `-ing` or
