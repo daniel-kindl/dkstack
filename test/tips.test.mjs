@@ -23,7 +23,8 @@ test("tips/index.md has the first tips and no placeholder", async () => {
   }
 });
 
-test("AGENTS.md lists tips/index.md", async () => {
+test("AGENTS.md and triage list tips/index.md", async () => {
+  assert.ok((await text("skills/triage/SKILL.md")).includes("v1/tips/index.md"), "triage does not route to tips/index.md");
   const sections = sectionText(await text("AGENTS.md"), "## Sections");
   assert.ok(sections.includes("(tips/index.md)"), "AGENTS.md does not list tips/index.md");
 });
