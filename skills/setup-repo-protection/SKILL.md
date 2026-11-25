@@ -27,8 +27,19 @@ These are settings of the code host. An agent does not change a protection rule 
    - Turn on private vulnerability reporting.
    - Add `SECURITY.md` that says how to report a vulnerability.
    - Add a `CODEOWNERS` entry that requires the owner's review for the CI workflow files.
-5. Apply the [CI workflow rules](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md#ci-workflows) to each workflow.
-6. Give the list to the owner. Record in the issue what the owner applied and what stays open.
+5. Check if the owner and the agents use one code host account. The code host does not let an account approve its own pull request. In that case:
+   - Set required approvals to 0. Do not require a code owner review. Each of these blocks every pull request.
+   - The `CODEOWNERS` entry from step 4 then has no effect. Do not rely on it.
+   - Keep all other rules from step 2. The required checks and the linear history still apply.
+   - Record an exception in `AGENTS.md`. The owner reviews each CI workflow change and merges it. The agent does not merge it. For example:
+
+     ```markdown
+     - dkstack rule: setup-repo-protection, step 4, a code owner review for the CI workflow files.
+     - Project rule: no required review. The owner reads the diff of each CI workflow change and merges it.
+     - Reason: the owner and the agents use one account. The code host does not let it approve its own pull request.
+     ```
+6. Apply the [CI workflow rules](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/security.md#ci-workflows) to each workflow.
+7. Give the list to the owner. Record in the issue what the owner applied and what stays open.
 
 ## Subagents
 

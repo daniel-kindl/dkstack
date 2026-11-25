@@ -12,6 +12,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `setup-repo-protection` covers an owner who uses one code host account with the agents (#334).
+  It gives the safe settings and a sample exception for `AGENTS.md`.
 - `architecture/domain-modeling.md` (#340). The page has rules for bounded contexts, the
   context map, aggregates, value objects and domain events, and says when not to model.
 - `check-title` gives a warning when the first word of the description ends in `-ed`, `-ing` or
