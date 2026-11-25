@@ -13,6 +13,7 @@ change that a consumer must act on has a "Consumer action:" line.
 ### Changed
 
 - `workflow/review-and-merge.md` "After the merge": the author removes each worktree that it or its subagents made for the pull request, with the same checks (#369). Before, only the agent that merged cleaned up, so the author's worktrees stayed.
+- `coding/quality.md` owns two rules that were only smells in `review-standards` (#365). "Literal values": give a literal with a meaning a named constant, with a short list of values that need no name. "Complexity": a cyclomatic complexity limit of 10 by default in the linter, run in CI as an error. The two smell rows link the sections.
 - `writing/comments.md` has a section for a comment as a signal (#199). A comment that explains a workaround shows a cause to fix. A comment that guards a constraint becomes a type, a check, a test or a lint rule, and then the comment goes. The section lists the comments that stay. `review-standards` has a matching smell row.
 - `coding/security.md` says that push protection of the code host meets the secret scan rule. `setup-quality-gates` and `setup-repo-protection` tell a consumer which option applies (#335).
 
