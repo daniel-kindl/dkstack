@@ -12,6 +12,7 @@ Coding standards and practices.
 - [types.md](types.md): No escape from the type system, and explicit types.
 - [quality-gates.md](quality-gates.md): Never weaken a quality gate.
 - [error-handling.md](error-handling.md): Handle errors explicitly.
+- [absent-values.md](absent-values.md): Show an absent value in its type.
 - [logging.md](logging.md): Logging events and the observability assessment.
 - [security.md](security.md): Security basics.
 - [feature-flags.md](feature-flags.md): Each flag has an owner and an issue that removes it.
