@@ -20,10 +20,10 @@ async function dashesFor(files) {
   }
 }
 
-test("no Markdown file in the repository has an em dash or an en dash", async () => {
+test("no tracked Markdown, .mjs or .yml file in the repository has an em dash or an en dash", async () => {
   const result = await checkDashes(repoRoot);
   assert.deepEqual(result.errors, []);
-  assert.ok(result.checked > 0, "the check must find Markdown files in the repository");
+  assert.ok(result.checked > 0, "the check must find files in the repository");
 });
 
 test("each em dash and en dash is reported with file, line and column", async () => {
@@ -46,12 +46,28 @@ test("dashes in code blocks also fail, and the hyphen and minus forms pass", asy
   assert.deepEqual(result.errors, ["a.md:2:3: em dash (U+2014)", "a.md:4:2: en dash (U+2013)"]);
 });
 
-test("only Markdown files are checked, and node_modules and .git are skipped", async () => {
+test("dashes in .mjs, .yml and .yaml files fail, in code and in comments", async () => {
+  const result = await dashesFor({
+    "scripts/a.mjs": `// one ${EM} two\nconst x = 1;\n`,
+    ".github/workflows/ci.yml": `name: ci\n# pages 1${EN}3\n`,
+    "b.yaml": `k: v ${EM}\n`,
+    "ok.mjs": "// fine\n",
+  });
+  assert.equal(result.checked, 4);
+  assert.deepEqual(result.errors, [
+    ".github/workflows/ci.yml:2:10: en dash (U+2013)",
+    "b.yaml:1:6: em dash (U+2014)",
+    "scripts/a.mjs:1:8: em dash (U+2014)",
+  ]);
+});
+
+test("other file types, node_modules and .git are skipped", async () => {
   const result = await dashesFor({
     "notes.txt": EM,
-    "script.mjs": `// ${EM}\n`,
     "node_modules/pkg/README.md": EM,
+    "node_modules/pkg/x.mjs": EM,
     ".git/x.md": EM,
+    ".git/x.yml": EM,
     "ok.md": "fine\n",
   });
   assert.equal(result.checked, 1);
@@ -68,7 +84,7 @@ test("the CLI exits 1 for a dash and 0 for a clean tree", async () => {
     const passRun = spawnSync(process.execPath, [script, good], { encoding: "utf8" });
     assert.equal(passRun.stderr, "");
     assert.equal(passRun.status, 0);
-    assert.equal(passRun.stdout, "1 Markdown file(s) have no em dash or en dash.\n");
+    assert.equal(passRun.stdout, "1 file(s) have no em dash or en dash.\n");
   } finally {
     await removeTree(bad);
     await removeTree(good);

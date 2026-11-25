@@ -16,11 +16,13 @@ import { promisify } from "node:util";
 const SKIP_DIRS = new Set([".git", "node_modules"]);
 const run = promisify(execFile);
 
-export async function markdownFiles(dir) {
+// extensions lists the file name endings to keep. The default is Markdown.
+export async function markdownFiles(dir, extensions = [".md"]) {
+  const keep = (name) => extensions.some((ext) => name.endsWith(ext));
   const listed = await gitFiles(dir);
-  if (listed === null) return (await walk(dir)).sort();
+  if (listed === null) return (await walk(dir, keep)).sort();
   return listed
-    .filter((path) => path.endsWith(".md"))
+    .filter(keep)
     .map((path) => join(dir, path))
     .filter((full) => existsSync(full))
     .sort();
@@ -55,13 +57,13 @@ async function isIgnored(dir) {
   }
 }
 
-async function walk(dir) {
+async function walk(dir, keep) {
   const found = [];
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     const full = join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (!SKIP_DIRS.has(entry.name)) found.push(...(await walk(full)));
-    } else if (entry.isFile() && entry.name.endsWith(".md")) {
+      if (!SKIP_DIRS.has(entry.name)) found.push(...(await walk(full, keep)));
+    } else if (entry.isFile() && keep(entry.name)) {
       found.push(full);
     }
   }
