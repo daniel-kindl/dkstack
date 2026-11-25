@@ -23,6 +23,7 @@ change that a consumer must act on has a "Consumer action:" line.
   checks only the local links and skips each dkstack URL. With it, the run checks each dkstack file and
   anchor against a clone of the dkstack branch. The run in dkstack does not change. `setup-quality-gates`
   copies the script and documents both forms.
+- `coding/immutability.md` (#364). Declare a variable so that it cannot be reassigned, do not change an argument, and make value objects immutable. A change in place needs a measurement and stays inside one function or type.
 - `scripts/check-diagrams.mjs` (#316). It checks the format rules of `make-diagram`. A `mermaid`
   block with no paragraph directly above it fails. A tracked `.png` or `.svg` file in `docs/`
   fails. A diagram with more than 12 nodes gives a warning only. `npm run check` and `validate`

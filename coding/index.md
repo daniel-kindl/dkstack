@@ -7,6 +7,7 @@ Coding standards and practices.
 - [brace-style.md](brace-style.md): Brace placement and formatter exceptions.
 - [practices.md](practices.md): Development practices.
 - [quality.md](quality.md): Code quality rules.
+- [immutability.md](immutability.md): Make values unchangeable by default.
 - [naming.md](naming.md): Identifier forms, meaning and enforcement.
 - [quality-gates.md](quality-gates.md): Never weaken a quality gate.
 - [error-handling.md](error-handling.md): Handle errors explicitly.
