@@ -15,7 +15,7 @@ const efforts = ["low", "medium", "high", "xhigh"];
 // Skills that start subagents. Each other skill says why it does not.
 const users = ["triage", "setup-dkstack", "bootstrap", "start-issue", "clarify-intent",
   "apply-architecture", "code-review", "write-adr", "make-diagram", "writing-check", "plan-work",
-  "chart-route", "release", "ui-design", "ui-review"];
+  "chart-route", "release", "ui-design", "ui-review", "model-domain"];
 
 async function guide() {
   return readFile(join(repoRoot, "workflow", "subagents.md"), "utf8");

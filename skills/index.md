@@ -36,6 +36,7 @@ A building block does one job. A larger skill, such as `code-review` or `bootstr
 - [start-issue](start-issue/SKILL.md) (both): Find or open one issue for the task and set the labels. Assign it and start the branch when the work on the issue starts.
 - [clarify-intent](clarify-intent/SKILL.md) (both): Clarify requirements and domain language before coding.
 - [domain-glossary](domain-glossary/SKILL.md) (both): Read `CONTEXT.md`, flag a word that conflicts with it, and record a resolved domain term.
+- [model-domain](model-domain/SKILL.md) (both): Find the bounded contexts first, then the aggregates, value objects and events. Writes a Domain model block in the issue.
 - [apply-architecture](apply-architecture/SKILL.md) (both): Check design changes against architecture principles.
 - [tdd-loop](tdd-loop/SKILL.md) (both): Enforce the red-green-refactor cycle.
 - [code-review](code-review/SKILL.md) (both): Review a change on two axes (standards and specification) and give one verdict.

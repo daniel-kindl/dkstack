@@ -57,6 +57,7 @@ During the rounds:
 
 - Find the facts in the code, `CONTEXT.md` and the ADRs. Do not ask the owner for a fact that you can find. Never answer a decision that is the owner's.
 - When the owner resolves a term, write it to `CONTEXT.md` with [domain-glossary](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/domain-glossary/SKILL.md).
+- When the work designs or changes a domain that has rules, offer [model-domain](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/model-domain/SKILL.md).
 - Offer `write-adr` only when the decision meets the test in [architecture/adrs.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/adrs.md). See [write-adr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-adr/SKILL.md).
 
 The rounds are done when no open question is left and the owner confirms the summary in their own words. Then continue with step 4.

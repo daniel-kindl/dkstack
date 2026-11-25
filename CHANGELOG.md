@@ -12,6 +12,9 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- `skills/model-domain` (#341). The skill finds the bounded contexts first, then the aggregates,
+  value objects and events, and writes a Domain model block in the issue. `triage`,
+  `clarify-intent`, `plan-work` and `skills/index.md` link it.
 - `setup-repo-protection` covers an owner who uses one code host account with the agents (#334).
   It gives the safe settings and a sample exception for `AGENTS.md`.
 - `architecture/domain-modeling.md` (#340). The page has rules for bounded contexts, the
