@@ -10,6 +10,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-11-25
+
 ### Changed
 
 - `workflow/review-and-merge.md` "After the merge": the author removes each worktree that it or its subagents made for the pull request, with the same checks (#369). Before, only the agent that merged cleaned up, so the author's worktrees stayed.
@@ -859,7 +861,8 @@ This minor release removes pages, skills and scripts by the owner's decision on 
 - The `validate` workflow. It checks the PR or commit title, the skills, the links, the dashes,
   the workflows, the CHANGELOG entry for the version and the unit tests.
 
-[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/daniel-kindl/dkstack/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/daniel-kindl/dkstack/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/daniel-kindl/dkstack/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/daniel-kindl/dkstack/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/daniel-kindl/dkstack/compare/v1.3.1...v1.4.0
