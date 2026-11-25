@@ -92,7 +92,7 @@ test("setup-quality-gates copies the format checks from a pinned tag and makes t
 const COPIED = [
   "check-maps.mjs", "check-context.mjs", "check-adrs.mjs",
   "check-title.mjs", "check-dashes.mjs", "check-writing.mjs",
-  "markdown-files.mjs", "pr-event.mjs", "check-consumer.mjs",
+  "check-links.mjs", "markdown-files.mjs", "pr-event.mjs", "check-consumer.mjs",
 ];
 
 test("setup-quality-gates step 4 lists each copied script and the title steps", async () => {
@@ -104,6 +104,11 @@ test("setup-quality-gates step 4 lists each copied script and the title steps", 
   for (const word of [/github/i, /gitlab/i, /npm\b/i, /pnpm/i, /yarn/i, /dependabot/i, /renovate/i]) {
     assert.doesNotMatch(skill.replace(/https:\/\/\S+/g, ""), word);
   }
+});
+
+test("setup-quality-gates says the clone must match the ref in the links", async () => {
+  const four = (await step(4, "setup-quality-gates")).replace(/\s+/g, " ");
+  assert.ok(four.includes("The clone must be the same ref as the ref in the links, for example `v1`."));
 });
 
 test("each copied script imports only a Node module or a copied script", async () => {
@@ -120,7 +125,7 @@ test("each copied script runs alone in an empty folder", async () => {
   const dir = await mkdtemp(join(tmpdir(), "copied-"));
   try {
     for (const name of COPIED) await copyFile(join(repoRoot, "scripts", name), join(dir, name));
-    for (const args of [["check-title.mjs", "feat: add a check"], ["check-dashes.mjs"], ["check-writing.mjs"]]) {
+    for (const args of [["check-title.mjs", "feat: add a check"], ["check-dashes.mjs"], ["check-writing.mjs"], ["check-links.mjs"]]) {
       const [script, ...rest] = args;
       const { status, stderr } = spawnSync(process.execPath, [join(dir, script), ...rest], { cwd: dir, encoding: "utf8" });
       assert.ok(status === 0 || !/ERR_MODULE_NOT_FOUND|Cannot find/.test(stderr), `${script}: ${stderr}`);
