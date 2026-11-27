@@ -13,15 +13,18 @@ To find what a change can break outside the diff, use [review-blast-radius](../s
 | --- | --- |
 | Low | Focused checks, relevant existing tests, and a diff inspection |
 | Moderate | Low-risk checks plus integration and compatibility checks for touched boundaries |
-| High | Moderate checks plus negative paths, rollback or recovery evidence, and independent review |
+| High | Moderate checks plus negative paths, and rollback or recovery evidence |
+
+Every pull request needs an independent review before merge, at every level. See [review and merge](review-and-merge.md#rules).
+The levels change only the evidence that the author gives.
 
 These levels rate the risk of a change. They are not the finding severities in
 [code review](../skills/code-review/SKILL.md).
 
-Do not treat these levels as substitutes for required project gates. Tests that cannot run stay NOT RUN, never PASS. Evaluate the risk again when the implementation changes.
+Do not treat these levels as substitutes for required project gates. Report a check that cannot run as NOT RUN, as [quality gates](../coding/quality-gates.md#rules) says. Evaluate the risk again when the implementation changes.
 
 ## High-risk signals
 
-Authentication, authorization, secrets, payment, persistent data, public contracts, production infrastructure, concurrent writes, and destructive operations justify deeper verification. Owner-only actions remain forbidden regardless of risk.
+Authentication, authorization, secrets, payment, persistent data, public contracts, production infrastructure, concurrent writes, and destructive operations justify deeper verification. No agent does an owner-only action, at any risk level. See [safety](safety.md#rules).
 
 See [safety](safety.md), [code review](../skills/code-review/SKILL.md), and [quality gates](../coding/quality-gates.md).
