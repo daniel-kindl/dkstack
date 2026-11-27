@@ -10,15 +10,20 @@ Find the cause of a problem before you change the code.
 
 ## Investigation method
 
-- Separate observed facts, assumptions, and hypotheses.
-- Record the smallest reproduction and its environment.
-- When the cause is uncertain, test competing explanations.
-- Give each hypothesis a falsifiable prediction.
-- Change one variable at a time. Prefer instrumentation over guesswork.
-- Check history, dependencies, and boundaries only when evidence points there.
-- A fix is verified when the regression fails before and passes after the change.
-- Re-run the original reproduction and nearby tests.
-- If reproduction is unavailable, state the limitation and the evidence collected.
+- Keep observed facts, assumptions and hypotheses apart. Reason: a hypothesis that you treat as a
+  fact stops the search.
+- Record the smallest reproduction and its environment. Reason: another person can then run it again.
+- When the cause is not certain, test two or more explanations. Reason: with one explanation, you
+  look only for evidence that supports it.
+- Give each hypothesis a falsifiable prediction. Reason: a prediction that cannot fail proves
+  nothing.
+- Change one variable at a time. Reason: two changes at once hide which one had the effect.
+- Use logs, a debugger or a profiler to get data. Do not guess.
+- Check history, dependencies and boundaries only when the evidence points there.
+- Verify the fix with the [bug-fix cycle](../tdd/regression-testing.md#bug-fix-cycle). Then run the
+  original reproduction and the nearby tests again.
+- If you cannot reproduce the problem, follow
+  [boundaries and evidence](../tdd/index.md#boundaries-and-evidence).
 
 For a repeatable procedure use [investigate-bug](../skills/investigate-bug/SKILL.md).
 For outages use [incident analysis](incident-analysis.md).
@@ -31,4 +36,5 @@ A test fails on some input. You write a test that reproduces the failure. You fi
 
 A value is sometimes empty. You add a default value where the program shows it. The code that makes the empty value stays wrong.
 
-Related: [testing.md](testing.md), [tdd/index.md](../tdd/index.md).
+Related: [testing.md](testing.md), [tdd/index.md](../tdd/index.md),
+[regression testing](../tdd/regression-testing.md).
