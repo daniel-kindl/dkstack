@@ -67,7 +67,7 @@ The command creates **directories**, not ZIP archives or published releases.
 
 ## Skill evaluation
 
-`evals/skill-cases.json` defines 60 positive and negative cases for ten skills.
+`evals/skill-cases.json` defines 144 positive and negative cases for all 31 skills.
 Cases include training and held-out validation prompts.
 Descriptions must be evaluated with competing skills discoverable.
 
