@@ -1410,10 +1410,15 @@
           "query": "Build a responsive accessible mobile settings screen and verify light and dark states.",
           "should_trigger": true,
           "split": "train",
-          "expected_output": "Uses existing design tokens and validates rendered states, accessibility, and layout.",
+          "expected_output": "Uses the project's design system, or records the direction it chose when none exists. Verifies the screen in light and dark themes.",
           "assertions": [
             "The agent activates the ui-design skill when appropriate",
-            "Uses existing design tokens and validates rendered states, accessibility, and layout."
+            "Uses the project's design system, or records the direction it chose when none exists.",
+            "Captures the rendered result at 320 CSS px and at one wide width, in each supported theme.",
+            "Records each minimum evidence item as done, or as NOT RUN or NOT APPLICABLE with a reason.",
+            "Reports the measured contrast ratio of each new or changed color pair.",
+            "Writes the `Visual verification:` line with PASS, FAIL or NOT RUN and its evidence.",
+            "Does not claim a check on a platform that it could not run."
           ]
         },
         {
@@ -1421,10 +1426,15 @@
           "query": "Our dashboard buttons overflow on phones. Fix the layout and inspect the rendered result.",
           "should_trigger": true,
           "split": "train",
-          "expected_output": "Uses existing design tokens and validates rendered states, accessibility, and layout.",
+          "expected_output": "Keeps the existing design system. Fixes the overflow and verifies the dashboard at phone widths.",
           "assertions": [
             "The agent activates the ui-design skill when appropriate",
-            "Uses existing design tokens and validates rendered states, accessibility, and layout."
+            "Shows no horizontal scroll on the dashboard at 320 CSS px after the fix.",
+            "Captures the rendered result at 320 CSS px and at one wide width, in each supported theme.",
+            "Records each minimum evidence item as done, or as NOT RUN or NOT APPLICABLE with a reason.",
+            "Reports the measured contrast ratio of each new or changed color pair.",
+            "Writes the `Visual verification:` line with PASS, FAIL or NOT RUN and its evidence.",
+            "Does not claim a check on a platform that it could not run."
           ]
         },
         {
@@ -1432,10 +1442,15 @@
           "query": "Make the new desktop UI using existing design tokens and run visual checks.",
           "should_trigger": true,
           "split": "validation",
-          "expected_output": "Uses existing design tokens and validates rendered states, accessibility, and layout.",
+          "expected_output": "Reuses the existing design tokens and components, and verifies the rendered desktop UI.",
           "assertions": [
             "The agent activates the ui-design skill when appropriate",
-            "Uses existing design tokens and validates rendered states, accessibility, and layout."
+            "Reuses the existing design tokens and components.",
+            "Captures the rendered result at 320 CSS px and at one wide width, in each supported theme.",
+            "Records each minimum evidence item as done, or as NOT RUN or NOT APPLICABLE with a reason.",
+            "Reports the measured contrast ratio of each new or changed color pair.",
+            "Writes the `Visual verification:` line with PASS, FAIL or NOT RUN and its evidence.",
+            "Does not claim a check on a platform that it could not run."
           ]
         },
         {
@@ -1481,10 +1496,14 @@
           "query": "Audit this rendered page at mobile widths for contrast, keyboard use, and layout defects.",
           "should_trigger": true,
           "split": "train",
-          "expected_output": "Reports observable defects in visual states, sizes, and themes with grounded evidence.",
+          "expected_output": "A code-review report with findings per surface, state, size and theme, and a verdict. No file changes.",
           "assertions": [
             "The agent activates the ui-review skill when appropriate",
-            "Reports observable defects in visual states, sizes, and themes with grounded evidence."
+            "Reports the findings through the code-review severity table and gives a verdict.",
+            "Gives each finding its surface, state, size and theme, with evidence.",
+            "Reads only: the agent changes no files and does not approve or merge.",
+            "Gives no numeric score for taste.",
+            "Checks the page at 320 CSS px, with a keyboard walk-through and measured contrast ratios."
           ]
         },
         {
@@ -1492,10 +1511,14 @@
           "query": "I have a screenshot of a desktop dashboard. Please review design consistency.",
           "should_trigger": true,
           "split": "train",
-          "expected_output": "Reports observable defects in visual states, sizes, and themes with grounded evidence.",
+          "expected_output": "A code-review report with findings per surface, state, size and theme, and a verdict. No file changes.",
           "assertions": [
             "The agent activates the ui-review skill when appropriate",
-            "Reports observable defects in visual states, sizes, and themes with grounded evidence."
+            "Reports the findings through the code-review severity table and gives a verdict.",
+            "Gives each finding its surface, state, size and theme, with evidence.",
+            "Reads only: the agent changes no files and does not approve or merge.",
+            "Gives no numeric score for taste.",
+            "States that one screenshot is not enough evidence for PASS, and marks the missing checks NOT RUN."
           ]
         },
         {
@@ -1503,10 +1526,14 @@
           "query": "Review this PR screen in dark mode and high zoom for issues.",
           "should_trigger": true,
           "split": "validation",
-          "expected_output": "Reports observable defects in visual states, sizes, and themes with grounded evidence.",
+          "expected_output": "A code-review report with findings per surface, state, size and theme, and a verdict. No file changes.",
           "assertions": [
             "The agent activates the ui-review skill when appropriate",
-            "Reports observable defects in visual states, sizes, and themes with grounded evidence."
+            "Reports the findings through the code-review severity table and gives a verdict.",
+            "Gives each finding its surface, state, size and theme, with evidence.",
+            "Reads only: the agent changes no files and does not approve or merge.",
+            "Gives no numeric score for taste.",
+            "Checks the dark theme and text at 200%, and reports each check as PASS, FAIL or NOT RUN."
           ]
         },
         {

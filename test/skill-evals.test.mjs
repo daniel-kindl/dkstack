@@ -200,3 +200,34 @@ test("a failed assertion fails the run and the CLI reports the assertion counts"
     assert.equal(run.status, 1, run.stdout + run.stderr);
   } finally { await rm(dir, { recursive: true, force: true }); }
 });
+
+async function positivesFor(skill) {
+  const { readFile } = await import("./helpers.mjs");
+  const suite = JSON.parse(await readFile(new URL("../evals/skill-cases.json", import.meta.url), "utf8"));
+  return suite.skills.find((x) => x.skill === skill).queries.filter((q) => q.should_trigger);
+}
+
+test("ui-design positive cases assert the visual verification evidence", async () => {
+  for (const q of await positivesFor("ui-design")) {
+    const text = q.assertions.join("\n");
+    assert.doesNotMatch(text + q.expected_output, /validates rendered states, accessibility, and layout/, q.id);
+    assert.doesNotMatch(q.expected_output, /^Uses existing design tokens/, q.id);
+    assert.match(text, /320 CSS px and at one wide width/, q.id);
+    assert.match(text, /each supported theme/, q.id);
+    assert.match(text, /NOT RUN or NOT APPLICABLE with a reason/, q.id);
+    assert.match(text, /measured contrast ratio/, q.id);
+    assert.match(text, /`Visual verification:` line/, q.id);
+  }
+});
+
+test("ui-review positive cases assert the code-review output and a read-only review", async () => {
+  const positives = await positivesFor("ui-review");
+  for (const q of positives) {
+    const text = q.assertions.join("\n");
+    assert.match(text, /code-review severity table and gives a verdict/, q.id);
+    assert.match(text, /changes no files/, q.id);
+    assert.match(text, /no numeric score for taste/, q.id);
+  }
+  const screenshot = positives.find((q) => /one screenshot|a screenshot/i.test(q.query));
+  assert.match(screenshot.assertions.join("\n"), /one screenshot is not enough evidence for PASS/);
+});
