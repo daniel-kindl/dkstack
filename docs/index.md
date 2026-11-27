@@ -74,7 +74,9 @@ See [how consumers follow versions](adr/0001-how-consumers-follow-versions.md) f
 
 ## Engineering agent evaluations
 
-Run [engineering evaluation scenarios](../evals/engineering/README.md) to compare real task outcomes with and without DKSTACK guidance. This is separate from skill activation checks.
+Grade an agent's solution to a fixed engineering task.
+See [engineering evaluations](../evals/engineering/README.md).
+Skill activation checks are separate.
 
 ## Contributing and checks
 

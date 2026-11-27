@@ -12,8 +12,7 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
-- Isolated engineering evaluation fixtures, oracle grading and deterministic manifest validation (#389).
-
+- Engineering evaluation scenarios with oracle grading. `npm run check` validates their manifest (#389).
 - SVG logos, section icons, a favicon, banners, and a brand asset guide (#381).
 - Light and dark README headers, plus Shields.io badges for the latest release, license, and checks on main (#381).
 

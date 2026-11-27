@@ -93,6 +93,8 @@ The workflow checks the following:
   directly after a known coverage gate key, or a raised `max-warnings` number, gives a warning
   for the reviewer. It does not fail the check. On a push to `main`, the change is empty, so
   this check has nothing to check.
+- The engineering evaluation manifest is valid. Each listed path exists and is not a symlink.
+  Its real path stays inside the evaluation root.
 - The unit tests pass, and they cover at least 95% of the lines and 90% of the branches in
   `scripts/`.
 - A long sentence, a long step or a semicolon in Markdown fails the check.
