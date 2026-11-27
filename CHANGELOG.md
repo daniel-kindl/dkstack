@@ -12,13 +12,13 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
-- Hypothesis-driven debugging, incident analysis, and investigate-bug skill (#386).
-
+- Incident analysis page and the `investigate-bug` skill (#386).
 - SVG logos, section icons, a favicon, banners, and a brand asset guide (#381).
 - Light and dark README headers, plus Shields.io badges for the latest release, license, and checks on main (#381).
 
 ### Changed
 
+- `coding/debugging.md` has an investigation method. Triage sends a bug to `investigate-bug` (#386).
 - The README leads with setup, a success check, and task examples (#381).
 - `docs/index.md` holds manual setup, optional skill installation, versions, and the rule directory. Validation details move to `CONTRIBUTING.md` (#381).
 
