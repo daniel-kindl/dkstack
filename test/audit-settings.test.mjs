@@ -416,8 +416,9 @@ test("package.json has audit:settings, and npm run check and validate do not run
   const pkg = JSON.parse(await readFile(join(repoRoot, "package.json"), "utf8"));
   const workflow = await readFile(join(repoRoot, ".github/workflows/validate.yml"), "utf8");
   assert.equal(pkg.scripts["audit:settings"], "node scripts/audit-settings.mjs");
+  // The settings audit needs an admin token, so no check or CI step may run it.
   assert.doesNotMatch(pkg.scripts.check, /audit/);
-  assert.doesNotMatch(workflow, /audit/);
+  assert.doesNotMatch(workflow, /audit:settings|audit-settings/);
 });
 
 test("setup-repo-protection step 1 links the audit tool", async () => {
