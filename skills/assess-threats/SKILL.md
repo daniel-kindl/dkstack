@@ -26,4 +26,5 @@ Read [threat modeling](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1
 
 ## Subagents
 
-Independent read-only review is useful for complex threat surfaces. Each subagent receives a boundary and a no-write brief. The lead validates findings.
+Do not start subagents for this skill. Reason: one lead must correlate threats, evidence, and mitigations at the same boundary.
+See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).
