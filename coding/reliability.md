@@ -20,7 +20,7 @@ page does not require retries or a circuit breaker for code without such a call.
 - Document degraded behavior when a fallback sacrifices capability.
 - Test disconnects, timeouts, retries, cancellation, overload, and recovery.
 
-## Failure analysis
+## Failure design
 
 At design time, name the fault domain, the detection, the blast radius and the restore action for each failure. A unit test that passes does not prove availability when a real dependency fails.
 
