@@ -21,4 +21,4 @@ Design failures as explicit outcomes, not surprises.
 
 Identify fault domain, detection, blast radius, restoration action, and evidence. A successful unit test does not prove availability under real dependency failures.
 
-See [error handling](error-handling.md), [logging](logging.md), and [incident analysis](incident-analysis.md) when available.
+See [error handling](error-handling.md), [logging](logging.md), and [debugging](debugging.md) when failures recur.
