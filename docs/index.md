@@ -72,6 +72,10 @@ See [how consumers follow versions](adr/0001-how-consumers-follow-versions.md) f
 | Clear text and learning. | [Writing](../writing/index.md) · [Learning](../learning/index.md) |
 | Task instructions and practical advice. | [Skills](../skills/index.md) · [Tips](../tips/index.md) |
 
+## Engineering agent evaluations
+
+Run [engineering evaluation scenarios](../evals/engineering/README.md) to compare real task outcomes with and without DKSTACK guidance. This is separate from skill activation checks.
+
 ## Contributing and checks
 
 Use the [contribution guide](../CONTRIBUTING.md) to propose a change or [run repository checks](../CONTRIBUTING.md#run-the-checks).
