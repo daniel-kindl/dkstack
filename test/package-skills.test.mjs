@@ -173,3 +173,13 @@ test("does not treat inline or indented examples as dependencies", async()=>temp
   const result=await packageSkills(root,join(root,"dist/out"),["one"]);
   assert.equal(result[0].dependencies,0);
 }));
+
+test("a bundle stops at 1000 dependencies",async()=>temporary(async root=>{
+  const links=[];
+  for(let i=0;i<=1000;i++){ await put(root,`docs/many/f${i}.txt`,"x\n"); links.push(`[f${i}](${RAW}docs/many/f${i}.txt)`); }
+  await put(root,"skills/one/SKILL.md",`---\nname: one\ndescription: One\n---\n\n${links.join("\n")}\n`);
+  await assert.rejects(packageSkills(root,join(root,"dist/out"),["one"]),/Too many dependencies/);
+  await put(root,"skills/two/SKILL.md",`---\nname: two\ndescription: Two\n---\n\n${links.slice(0,1000).join("\n")}\n`);
+  const [result]=await packageSkills(root,join(root,"dist/two"),["two"]);
+  assert.equal(result.dependencies,1000);
+}));
