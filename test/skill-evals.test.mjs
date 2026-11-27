@@ -155,3 +155,35 @@ test("each repository skill requires an evaluation suite", () => {
   duplicate.skills.push(structuredClone(sample.skills[0]));
   assert.match(validateSuite(duplicate, ["tdd-loop"]).join(" "), /duplicate skill suite/);
 });
+
+async function cliRun(adapterSource) {
+  const { spawnSync } = await import("node:child_process");
+  const { mkdir } = await import("node:fs/promises");
+  const { fileURLToPath } = await import("node:url");
+  const dir = await mkdtemp(join(tmpdir(), "dkstack-eval-cli-"));
+  await mkdir(join(dir, "skills", "tdd-loop"), { recursive: true });
+  await mkdir(join(dir, "evals"));
+  await writeFile(join(dir, "skills", "tdd-loop", "SKILL.md"), "---\nname: tdd-loop\ndescription: Tests\n---\n");
+  await writeFile(join(dir, "evals", "skill-cases.json"), JSON.stringify(sample));
+  const adapter = join(dir, "adapter.mjs");
+  await writeFile(adapter, "#!/usr/bin/env node\nlet data='';for await(const part of process.stdin)data+=part;const input=JSON.parse(data);\n" + adapterSource, { mode: 0o755 });
+  const script = fileURLToPath(new URL("../scripts/skill-evals.mjs", import.meta.url));
+  const run = spawnSync(process.execPath, [script, "run", "--adapter", adapter, "--out", join(dir, "results"), "--runs", "3"], { cwd: dir, encoding: "utf8", timeout: 30000 });
+  return { dir, run };
+}
+
+test("an adapter cannot change the case, mode or run number of a record", async () => {
+  const { readFile } = await import("./helpers.mjs");
+  const { dir, run } = await cliRun(
+    "console.log(JSON.stringify({case_id:'tdd-p1',mode:'with_skill',iteration:9,activated_skills:[input.skill],evidence:'tool record'}));\n",
+  );
+  try {
+    const record = JSON.parse(await readFile(join(dir, "results", "tdd-n2", "without_skill", "run-2.json"), "utf8"));
+    assert.equal(record.case_id, "tdd-n2");
+    assert.equal(record.mode, "without_skill");
+    assert.equal(record.iteration, 2);
+    const summary = JSON.parse(await readFile(join(dir, "results", "summary.json"), "utf8"));
+    assert.ok(summary.outcomes.every((x) => x.status === "INVALID_BASELINE"), JSON.stringify(summary.outcomes));
+    assert.equal(run.status, 1);
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});

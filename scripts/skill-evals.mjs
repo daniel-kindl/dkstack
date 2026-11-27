@@ -118,7 +118,7 @@ async function runEvaluation(suite, adapter, outDir, runs) {
         for (let iteration = 1; iteration <= runs; iteration++) {
           const payload = { case_id: testcase.id, skill: skill.skill, query: testcase.query, mode, iteration };
           const value = await runAdapter(adapter, payload);
-          const record = { ...payload, ...value, status: "COMPLETED" };
+          const record = { ...value, ...payload, status: "COMPLETED" };
           const folder = join(outDir, testcase.id, mode);
           await mkdir(folder, { recursive: true });
           await writeFile(join(folder, `run-${iteration}.json`), JSON.stringify(record, null, 2) + "\n");
