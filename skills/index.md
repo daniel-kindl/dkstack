@@ -16,6 +16,10 @@ What each client applies:
 - Codex reads `agents/openai.yaml`. A user skill does not load by itself. Codex has no key that hides a skill from a person, so a person can still start an agent skill.
 - A client that reads neither file treats each skill as both.
 
+Client invocation hints are not part of the core Agent Skills specification.
+Read the [interoperability guide](../docs/agent-skills-compatibility.md) for portability and evaluation.
+Every skill has activation cases in [skill-cases.json](../evals/skill-cases.json).
+
 A description can end with `Triggers:` and the words that a person uses to ask for the skill, for example `Triggers: teach me, quiz me`.
 
 ## Building blocks

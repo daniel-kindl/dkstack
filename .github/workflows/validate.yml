@@ -78,6 +78,34 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:skills
 
+      - name: Validate core Agent Skills specification
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: |
+          python3 -m venv "$RUNNER_TEMP/skills-ref-venv"
+          "$RUNNER_TEMP/skills-ref-venv/bin/python" -m pip install --disable-pip-version-check \
+            --require-hashes --only-binary :all: -r .github/skills-ref-requirements.txt
+          "$RUNNER_TEMP/skills-ref-venv/bin/python" -m pip install --disable-pip-version-check \
+            --no-deps --no-build-isolation \
+            'git+https://github.com/agentskills/agentskills.git@83021e2be457a9b6679148719c1f6074f0ad975e#subdirectory=skills-ref'
+          PATH="$RUNNER_TEMP/skills-ref-venv/bin:$PATH" npm run validate:skills-ref
+
+      - name: Audit the Python packages for known vulnerabilities
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: |
+          python3 -m venv "$RUNNER_TEMP/pip-audit-venv"
+          "$RUNNER_TEMP/pip-audit-venv/bin/python" -m pip install --disable-pip-version-check \
+            --require-hashes --only-binary :all: -r .github/pip-audit-requirements.txt
+          "$RUNNER_TEMP/pip-audit-venv/bin/pip-audit" --version
+          PATH="$RUNNER_TEMP/pip-audit-venv/bin:$PATH" pip-audit --strict --require-hashes --disable-pip -r .github/skills-ref-requirements.txt
+
+      - name: Validate skill evaluation manifest
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:skill-evals
+
+      - name: Build offline skill bundles for every skill
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run bundle:skills
+
       - name: Check that relative and repository links resolve
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:links
