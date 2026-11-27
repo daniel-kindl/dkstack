@@ -34,8 +34,7 @@ To see available skills before installing:
 npx skills add https://github.com/daniel-kindl/dkstack/tree/v1 --list
 ```
 
-For portable offline bundles and skill evaluation, read the [interoperability guide](agent-skills-compatibility.md).
-The bundle command copies local rule dependencies and rewrites DKSTACK raw links.
+For offline skill bundles and the reference check, read the [interoperability guide](agent-skills-compatibility.md).
 
 Installed skills do not update by themselves.
 For skills installed from `v1`, run `npx skills update` after a release.
@@ -75,11 +74,9 @@ See [how consumers follow versions](adr/0001-how-consumers-follow-versions.md) f
 | Clear text and learning. | [Writing](../writing/index.md) · [Learning](../learning/index.md) |
 | Task instructions and practical advice. | [Skills](../skills/index.md) · [Tips](../tips/index.md) |
 
-## Agent Skills quality
+## Evaluations
 
-Read [interoperability](agent-skills-compatibility.md) and [evaluation cases](skill-evaluation-cases.md).
-The first page explains portable skill bundles and the verification commands.
-The second page describes activation and behavioral evaluation requirements.
+- Skill activation and behavior: [skill evaluation cases](skill-evaluation-cases.md).
 
 ## Contributing and checks
 
