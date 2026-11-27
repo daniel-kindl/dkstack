@@ -1,6 +1,6 @@
 ---
 name: recover-work
-description: "Use when agent work was interrupted, a tool failed after a possible write, CI is unavailable, or a shared workspace has unexpected changes. Establish state and resume safely."
+description: "Use when agent work stopped early or a tool failed after a possible write. Also use when CI is unavailable or a workspace has unexpected changes. Find the state and resume safely."
 ---
 
 # Recover work
