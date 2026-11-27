@@ -5,14 +5,18 @@ Select verification by possible damage, not by the size of the diff.
 ## Assess risk
 
 Consider external consumers, stored data, security boundaries, concurrency, irreversible effects, and platform differences. A tiny change in authentication can have greater impact than a large documentation edit.
+To find what a change can break outside the diff, use [review-blast-radius](../skills/review-blast-radius/SKILL.md).
 
 ## Verification levels
 
-| Risk | Minimum evidence |
+| Change risk | Minimum evidence |
 | --- | --- |
 | Low | Focused checks, relevant existing tests, and a diff inspection |
 | Moderate | Low-risk checks plus integration and compatibility checks for touched boundaries |
 | High | Moderate checks plus negative paths, rollback or recovery evidence, and independent review |
+
+These levels rate the risk of a change. They are not the finding severities in
+[code review](../skills/code-review/SKILL.md).
 
 Do not treat these levels as substitutes for required project gates. Tests that cannot run stay NOT RUN, never PASS. Evaluate the risk again when the implementation changes.
 
