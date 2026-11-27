@@ -38,8 +38,9 @@ A check on syntax or metadata alone cannot pass a behavioral evaluation.
 ## Executable cases
 
 The machine-readable suite is in [skill-cases.json](../evals/skill-cases.json).
-It contains 60 scenarios across ten high-impact skills.
-Every skill has three positive and three negative scenarios.
+It contains 144 scenarios across all 31 DKSTACK skills.
+Ten high-impact skills have three positive and three negative cases.
+The remaining skills have two positive and two negative cases.
 The last example in each group is held out for validation.
 
 Run `npm run check:skill-evals` for suite format checks.
