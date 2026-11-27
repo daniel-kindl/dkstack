@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile } from "./helpers.mjs";
 
 test("security and data rules cover cross-boundary failure modes", async () => {
   const cases = [
