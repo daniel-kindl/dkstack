@@ -22,7 +22,7 @@ test("operational guides describe independently verifiable engineering behavior"
   assert.match(texts[0], /baseline/);
   assert.match(texts[1], /idempotency/);
   assert.match(texts[2], /cardinality/);
-  assert.match(texts[3], /partial reads/);
+  assert.match(texts[3], /complete message/);
   assert.match(texts[4], /synchronization/);
   assert.match(texts[5], /lockfiles/);
 });
