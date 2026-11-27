@@ -67,7 +67,7 @@ commit from a bad one. Run it in a clean worktree of your own.
 
 ```bash
 git bisect start <bad-commit> <good-commit>
-git bisect run <test-command>   # exit 0: good, 125: skip, 1 to 127: bad
+git bisect run <test-command>   # exit 0: good, 125: skip, any other code from 1 to 127: bad, 128 or more: bisect stops
 git bisect reset
 ```
 
