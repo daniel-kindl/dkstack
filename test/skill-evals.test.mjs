@@ -6,8 +6,8 @@ import { join } from "node:path";
 import { runAdapter, summarize, validateAdapterResult, validateSuite } from "../scripts/skill-evals.mjs";
 
 const sample = {version:1, skills:[{skill:"tdd-loop",queries:[
-  {id:"tdd-p1",query:"Implement a parser test-first",should_trigger:true,split:"train",expected_output:"Tests first and source changed",assertions:["Test fails before implementation"]},
-  {id:"tdd-p2",query:"Write test before code change",should_trigger:true,split:"validation",expected_output:"Tests first and verified",assertions:["Test fails before implementation"]},
+  {id:"tdd-p1",query:"Implement a parser test-first",should_trigger:true,split:"train",expected_output:"Tests first and source changed",assertions:["Test fails before implementation","Runs the focused test and sees it fail","Writes only the code that makes it pass"]},
+  {id:"tdd-p2",query:"Write test before code change",should_trigger:true,split:"validation",expected_output:"Tests first and verified",assertions:["Test fails before implementation","Runs the focused test and sees it fail","Writes only the code that makes it pass"]},
   {id:"tdd-n1",query:"Explain red green refactor",should_trigger:false,split:"train",expected_output:"Explain red green refactor",assertions:["TDD skill not activated"]},
   {id:"tdd-n2",query:"Summarize this release changelog",should_trigger:false,split:"validation",expected_output:"Changelog summary",assertions:["TDD skill not activated"]},
 ]}]};
@@ -75,7 +75,7 @@ test("summary identifies failed activation and grading evidence", () => {
   const suite={version:1,skills:[{skill:"tdd-loop",queries:[sample.skills[0].queries[0]]}]};
   const results=[];
   for(let i=0;i<3;i++) {
-    results.push({case_id:"tdd-p1",mode:"with_skill",status:"COMPLETED",activated_skills:[],assertion_results:[{text:"Test fails before implementation",passed:true,evidence:"log"}]});
+    results.push({case_id:"tdd-p1",mode:"with_skill",status:"COMPLETED",activated_skills:[],assertion_results:["Test fails before implementation","Runs the focused test and sees it fail","Writes only the code that makes it pass"].map(text=>({text,passed:true,evidence:"log"}))});
     results.push({case_id:"tdd-p1",mode:"without_skill",status:"COMPLETED",activated_skills:[]});
   }
   assert.equal(summarize(suite,results,3)[0].status,"FAIL");
@@ -191,8 +191,8 @@ test("an adapter cannot change the case, mode or run number of a record", async 
 test("a failed assertion fails the run and the CLI reports the assertion counts", async () => {
   const { dir, run } = await cliRun(
     "const hit=input.mode==='with_skill'&&input.case_id.includes('-p');" +
-    "const text=input.case_id.includes('-p')?'Test fails before implementation':'TDD skill not activated';" +
-    "console.log(JSON.stringify({activated_skills:hit?[input.skill]:[],evidence:'tool record',graded_by:'deterministic',assertion_results:[{text,passed:input.case_id!=='tdd-p1',evidence:'grader log'}]}));\n",
+    "const texts=input.case_id.includes('-p')?['Test fails before implementation','Runs the focused test and sees it fail','Writes only the code that makes it pass']:['TDD skill not activated'];" +
+    "console.log(JSON.stringify({activated_skills:hit?[input.skill]:[],evidence:'tool record',graded_by:'deterministic',assertion_results:texts.map(text=>({text,passed:input.case_id!=='tdd-p1',evidence:'grader log'}))}));\n",
   );
   try {
     assert.match(run.stdout, /4\/4 trigger cases passed/);
@@ -258,9 +258,30 @@ test("the activation threshold is two of three runs", () => {
 
 test("an assertion result must match the case text and cite evidence", () => {
   const suite = { version: 1, skills: [{ skill: "tdd-loop", queries: [sample.skills[0].queries[0]] }] };
+  const rest = ["Runs the focused test and sees it fail", "Writes only the code that makes it pass"];
   const graded = (text, evidence) => activations("tdd-p1", 3).map((r) =>
-    r.mode === "with_skill" ? { ...r, assertion_results: [{ text, passed: true, evidence }] } : r);
+    r.mode === "with_skill" ? { ...r, assertion_results: [text, ...rest].map((t) => ({ text: t, passed: true, evidence })) } : r);
   assert.equal(summarize(suite, graded("Test fails before implementation", "log"), 3)[0].assertion_status, "PASS");
   assert.equal(summarize(suite, graded("Another assertion text", "log"), 3)[0].assertion_status, "FAIL");
   assert.equal(summarize(suite, graded("Test fails before implementation", ""), 3)[0].assertion_status, "FAIL");
+});
+
+test("a positive case needs two gradable behavior assertions", () => {
+  const copy = structuredClone(sample);
+  copy.skills[0].queries[0].assertions = ["The agent activates the tdd-loop skill", "Tests first and source changed", "Runs the focused test and sees it fail"];
+  assert.match(validateSuite(copy, ["tdd-loop"]).join(" "), /tdd-p1: an assertion copies expected_output/);
+  const vague = structuredClone(sample);
+  vague.skills[0].queries[0].assertions = ["The agent activates the tdd-loop skill when appropriate", "Runs the focused test and sees it fail", "Writes only the code that makes it pass"];
+  assert.match(validateSuite(vague, ["tdd-loop"]).join(" "), /tdd-p1: "when appropriate" cannot be graded/);
+  const short = structuredClone(sample);
+  short.skills[0].queries[0].assertions = ["The agent activates the tdd-loop skill", "Runs the focused test and sees it fail"];
+  assert.match(validateSuite(short, ["tdd-loop"]).join(" "), /tdd-p1: a positive case needs at least 3 assertions/);
+});
+
+test("the repository manifest has gradable positive cases", async () => {
+  const { readFile } = await import("./helpers.mjs");
+  const { readdir } = await import("node:fs/promises");
+  const suite = JSON.parse(await readFile(new URL("../evals/skill-cases.json", import.meta.url), "utf8"));
+  const names = (await readdir(new URL("../skills/", import.meta.url), { withFileTypes: true })).filter((x) => x.isDirectory()).map((x) => x.name);
+  assert.deepEqual(validateSuite(suite, names), []);
 });

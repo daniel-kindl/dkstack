@@ -10,6 +10,15 @@ const DEFAULT_SUITE = "evals/skill-cases.json";
 const MIN_RUNS = 3;
 const ACTIVATION_THRESHOLD = 2 / 3;
 
+// A grader must be able to check each assertion of a positive case.
+function positiveAssertionErrors(query) {
+  const errors = [];
+  if (query.assertions.length < 3) errors.push(`${query.id}: a positive case needs at least 3 assertions: activation and two behaviors`);
+  if (query.assertions.includes(query.expected_output)) errors.push(`${query.id}: an assertion copies expected_output`);
+  if (query.assertions.some(x => x.includes("when appropriate"))) errors.push(`${query.id}: "when appropriate" cannot be graded`);
+  return errors;
+}
+
 export function validateSuite(suite, names) {
   const errors = [];
   if (!suite || suite.version !== 1 || !Array.isArray(suite.skills)) return ["Suite must have version 1 and skills array"];
@@ -32,6 +41,8 @@ export function validateSuite(suite, names) {
       if (typeof query.expected_output !== "string" || query.expected_output.length < 12) errors.push(`${query.id}: expected_output missing`);
       if (!Array.isArray(query.assertions) || !query.assertions.length || query.assertions.some(x => typeof x !== "string" || x.length < 10)) {
         errors.push(`${query.id}: assertions missing`);
+      } else if (query.should_trigger === true) {
+        errors.push(...positiveAssertionErrors(query));
       }
     }
     if (positives < 2 || negatives < 2) errors.push(`${entry.skill}: need at least two positive and two negative cases`);

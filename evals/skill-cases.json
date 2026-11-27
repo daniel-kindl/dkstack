@@ -11,8 +11,10 @@
           "split": "train",
           "expected_output": "Checks proposed changes against explicit architecture principles and identifies affected boundaries.",
           "assertions": [
-            "The agent activates the apply-architecture skill when appropriate",
-            "Checks proposed changes against explicit architecture principles and identifies affected boundaries."
+            "The agent activates the apply-architecture skill",
+            "Lists each design decision in the task.",
+            "For each decision, names the architecture principle that it follows or violates.",
+            "Proposes a smaller or more reversible option for each violation."
           ]
         },
         {
@@ -22,8 +24,10 @@
           "split": "validation",
           "expected_output": "Checks proposed changes against explicit architecture principles and identifies affected boundaries.",
           "assertions": [
-            "The agent activates the apply-architecture skill when appropriate",
-            "Checks proposed changes against explicit architecture principles and identifies affected boundaries."
+            "The agent activates the apply-architecture skill",
+            "Lists each design decision in the task.",
+            "For each decision, names the architecture principle that it follows or violates.",
+            "Proposes a smaller or more reversible option for each violation."
           ]
         },
         {
@@ -60,8 +64,10 @@
           "split": "train",
           "expected_output": "Sets repository standards and deterministic checks without weakening existing protections.",
           "assertions": [
-            "The agent activates the bootstrap skill when appropriate",
-            "Sets repository standards and deterministic checks without weakening existing protections."
+            "The agent activates the bootstrap skill",
+            "Runs setup-dkstack first, then the other setup building blocks in the order of the skill.",
+            "Checks that the README says what the project is, how to install and run it, and how to contribute.",
+            "Does not weaken or remove an existing protection or quality gate."
           ]
         },
         {
@@ -71,8 +77,10 @@
           "split": "train",
           "expected_output": "Sets repository standards and deterministic checks without weakening existing protections.",
           "assertions": [
-            "The agent activates the bootstrap skill when appropriate",
-            "Sets repository standards and deterministic checks without weakening existing protections."
+            "The agent activates the bootstrap skill",
+            "Runs setup-dkstack first, then the other setup building blocks in the order of the skill.",
+            "Checks that the README says what the project is, how to install and run it, and how to contribute.",
+            "Does not weaken or remove an existing protection or quality gate."
           ]
         },
         {
@@ -82,8 +90,10 @@
           "split": "validation",
           "expected_output": "Sets repository standards and deterministic checks without weakening existing protections.",
           "assertions": [
-            "The agent activates the bootstrap skill when appropriate",
-            "Sets repository standards and deterministic checks without weakening existing protections."
+            "The agent activates the bootstrap skill",
+            "Runs setup-dkstack first, then the other setup building blocks in the order of the skill.",
+            "Checks that the README says what the project is, how to install and run it, and how to contribute.",
+            "Does not weaken or remove an existing protection or quality gate."
           ]
         },
         {
@@ -131,8 +141,10 @@
           "split": "train",
           "expected_output": "Captures major open decisions in a route map without inventing scope or acceptance criteria.",
           "assertions": [
-            "The agent activates the chart-route skill when appropriate",
-            "Captures major open decisions in a route map without inventing scope or acceptance criteria."
+            "The agent activates the chart-route skill",
+            "Names the destination with the owner before it writes the map.",
+            "Writes the map in docs/maps/<slug>.md and runs check-maps.",
+            "Does not invent scope, decisions or acceptance criteria that the owner did not give."
           ]
         },
         {
@@ -142,8 +154,10 @@
           "split": "validation",
           "expected_output": "Captures major open decisions in a route map without inventing scope or acceptance criteria.",
           "assertions": [
-            "The agent activates the chart-route skill when appropriate",
-            "Captures major open decisions in a route map without inventing scope or acceptance criteria."
+            "The agent activates the chart-route skill",
+            "Names the destination with the owner before it writes the map.",
+            "Writes the map in docs/maps/<slug>.md and runs check-maps.",
+            "Does not invent scope, decisions or acceptance criteria that the owner did not give."
           ]
         },
         {
@@ -180,8 +194,10 @@
           "split": "train",
           "expected_output": "Identifies material ambiguities and resolves requirements before coding or planning.",
           "assertions": [
-            "The agent activates the clarify-intent skill when appropriate",
-            "Identifies material ambiguities and resolves requirements before coding or planning."
+            "The agent activates the clarify-intent skill",
+            "Restates the request in its own words.",
+            "Lists open questions about behavior, edge cases and constraints, and asks them.",
+            "Does not start design or code before the owner answers."
           ]
         },
         {
@@ -191,8 +207,10 @@
           "split": "validation",
           "expected_output": "Identifies material ambiguities and resolves requirements before coding or planning.",
           "assertions": [
-            "The agent activates the clarify-intent skill when appropriate",
-            "Identifies material ambiguities and resolves requirements before coding or planning."
+            "The agent activates the clarify-intent skill",
+            "Restates the request in its own words.",
+            "Lists open questions about behavior, edge cases and constraints, and asks them.",
+            "Does not start design or code before the owner answers."
           ]
         },
         {
@@ -229,8 +247,10 @@
           "split": "train",
           "expected_output": "Reports standards and specification findings separately with source-based evidence.",
           "assertions": [
-            "The agent activates the code-review skill when appropriate",
-            "Reports standards and specification findings separately with source-based evidence."
+            "The agent activates the code-review skill",
+            "Reports the standards axis and the specification axis separately.",
+            "Gives each finding a severity from the severity table and a file:line.",
+            "Gives a verdict and does not merge or approve."
           ]
         },
         {
@@ -240,8 +260,10 @@
           "split": "train",
           "expected_output": "Reports standards and specification findings separately with source-based evidence.",
           "assertions": [
-            "The agent activates the code-review skill when appropriate",
-            "Reports standards and specification findings separately with source-based evidence."
+            "The agent activates the code-review skill",
+            "Reports the standards axis and the specification axis separately.",
+            "Gives each finding a severity from the severity table and a file:line.",
+            "Gives a verdict and does not merge or approve."
           ]
         },
         {
@@ -251,8 +273,10 @@
           "split": "validation",
           "expected_output": "Reports standards and specification findings separately with source-based evidence.",
           "assertions": [
-            "The agent activates the code-review skill when appropriate",
-            "Reports standards and specification findings separately with source-based evidence."
+            "The agent activates the code-review skill",
+            "Reports the standards axis and the specification axis separately.",
+            "Gives each finding a severity from the severity table and a file:line.",
+            "Gives a verdict and does not merge or approve."
           ]
         },
         {
@@ -300,8 +324,10 @@
           "split": "train",
           "expected_output": "Uses CONTEXT.md to detect terminology conflicts and record resolved domain terms.",
           "assertions": [
-            "The agent activates the domain-glossary skill when appropriate",
-            "Uses CONTEXT.md to detect terminology conflicts and record resolved domain terms."
+            "The agent activates the domain-glossary skill",
+            "Reads CONTEXT.md before it compares the terms.",
+            "Asks the owner when a word gives a term a second meaning.",
+            "Writes each resolved term in CONTEXT.md when the owner resolves it."
           ]
         },
         {
@@ -311,8 +337,10 @@
           "split": "validation",
           "expected_output": "Uses CONTEXT.md to detect terminology conflicts and record resolved domain terms.",
           "assertions": [
-            "The agent activates the domain-glossary skill when appropriate",
-            "Uses CONTEXT.md to detect terminology conflicts and record resolved domain terms."
+            "The agent activates the domain-glossary skill",
+            "Reads CONTEXT.md before it compares the terms.",
+            "Asks the owner when a word gives a term a second meaning.",
+            "Writes each resolved term in CONTEXT.md when the owner resolves it."
           ]
         },
         {
@@ -349,8 +377,10 @@
           "split": "train",
           "expected_output": "Reports environment improvements to the owner without unauthorized repository edits.",
           "assertions": [
-            "The agent activates the improve-agents skill when appropriate",
-            "Reports environment improvements to the owner without unauthorized repository edits."
+            "The agent activates the improve-agents skill",
+            "Lists each event in the session that cost time or caused a mistake.",
+            "Finds a cause in the environment for each event and grades the evidence.",
+            "Writes the report for the owner and changes no files."
           ]
         },
         {
@@ -360,8 +390,10 @@
           "split": "validation",
           "expected_output": "Reports environment improvements to the owner without unauthorized repository edits.",
           "assertions": [
-            "The agent activates the improve-agents skill when appropriate",
-            "Reports environment improvements to the owner without unauthorized repository edits."
+            "The agent activates the improve-agents skill",
+            "Lists each event in the session that cost time or caused a mistake.",
+            "Finds a cause in the environment for each event and grades the evidence.",
+            "Writes the report for the owner and changes no files."
           ]
         },
         {
@@ -398,8 +430,10 @@
           "split": "train",
           "expected_output": "Adapts teaching to the learner's responses and assesses progress only from evidence.",
           "assertions": [
-            "The agent activates the learn skill when appropriate",
-            "Adapts teaching to the learner's responses and assesses progress only from evidence."
+            "The agent activates the learn skill",
+            "Teaches one concept at a time and responds to each answer.",
+            "Records a level for a concept only from evidence in the learner's answers.",
+            "Does not mark a concept as known without evidence."
           ]
         },
         {
@@ -409,8 +443,10 @@
           "split": "train",
           "expected_output": "Adapts teaching to the learner's responses and assesses progress only from evidence.",
           "assertions": [
-            "The agent activates the learn skill when appropriate",
-            "Adapts teaching to the learner's responses and assesses progress only from evidence."
+            "The agent activates the learn skill",
+            "Teaches one concept at a time and responds to each answer.",
+            "Records a level for a concept only from evidence in the learner's answers.",
+            "Does not mark a concept as known without evidence."
           ]
         },
         {
@@ -420,8 +456,10 @@
           "split": "validation",
           "expected_output": "Adapts teaching to the learner's responses and assesses progress only from evidence.",
           "assertions": [
-            "The agent activates the learn skill when appropriate",
-            "Adapts teaching to the learner's responses and assesses progress only from evidence."
+            "The agent activates the learn skill",
+            "Teaches one concept at a time and responds to each answer.",
+            "Records a level for a concept only from evidence in the learner's answers.",
+            "Does not mark a concept as known without evidence."
           ]
         },
         {
@@ -469,8 +507,10 @@
           "split": "train",
           "expected_output": "Creates a readable diagram and verifies syntax and intended relationships.",
           "assertions": [
-            "The agent activates the make-diagram skill when appropriate",
-            "Creates a readable diagram and verifies syntax and intended relationships."
+            "The agent activates the make-diagram skill",
+            "Uses the names from the code or the text in the diagram.",
+            "Writes a text alternative for the diagram.",
+            "Does the checks of the skill and fixes each problem before it publishes the diagram."
           ]
         },
         {
@@ -480,8 +520,10 @@
           "split": "validation",
           "expected_output": "Creates a readable diagram and verifies syntax and intended relationships.",
           "assertions": [
-            "The agent activates the make-diagram skill when appropriate",
-            "Creates a readable diagram and verifies syntax and intended relationships."
+            "The agent activates the make-diagram skill",
+            "Uses the names from the code or the text in the diagram.",
+            "Writes a text alternative for the diagram.",
+            "Does the checks of the skill and fixes each problem before it publishes the diagram."
           ]
         },
         {
@@ -518,8 +560,10 @@
           "split": "train",
           "expected_output": "Defines bounded contexts, invariants, and aggregate boundaries before implementation.",
           "assertions": [
-            "The agent activates the model-domain skill when appropriate",
-            "Defines bounded contexts, invariants, and aggregate boundaries before implementation."
+            "The agent activates the model-domain skill",
+            "Finds the bounded contexts before it models an aggregate.",
+            "States the invariants and the root of each aggregate.",
+            "Writes the Domain model block in the issue."
           ]
         },
         {
@@ -529,8 +573,10 @@
           "split": "validation",
           "expected_output": "Defines bounded contexts, invariants, and aggregate boundaries before implementation.",
           "assertions": [
-            "The agent activates the model-domain skill when appropriate",
-            "Defines bounded contexts, invariants, and aggregate boundaries before implementation."
+            "The agent activates the model-domain skill",
+            "Finds the bounded contexts before it models an aggregate.",
+            "States the invariants and the root of each aggregate.",
+            "Writes the Domain model block in the issue."
           ]
         },
         {
@@ -567,8 +613,10 @@
           "split": "train",
           "expected_output": "Maps each acceptance criterion to verification and small test-first increments.",
           "assertions": [
-            "The agent activates the plan-work skill when appropriate",
-            "Maps each acceptance criterion to verification and small test-first increments."
+            "The agent activates the plan-work skill",
+            "Maps each acceptance criterion to a verification.",
+            "Divides the work into small increments, each a conventional commit with its dependencies and risks.",
+            "Puts the tests before the behavior change in each increment."
           ]
         },
         {
@@ -578,8 +626,10 @@
           "split": "train",
           "expected_output": "Maps each acceptance criterion to verification and small test-first increments.",
           "assertions": [
-            "The agent activates the plan-work skill when appropriate",
-            "Maps each acceptance criterion to verification and small test-first increments."
+            "The agent activates the plan-work skill",
+            "Maps each acceptance criterion to a verification.",
+            "Divides the work into small increments, each a conventional commit with its dependencies and risks.",
+            "Puts the tests before the behavior change in each increment."
           ]
         },
         {
@@ -589,8 +639,10 @@
           "split": "validation",
           "expected_output": "Maps each acceptance criterion to verification and small test-first increments.",
           "assertions": [
-            "The agent activates the plan-work skill when appropriate",
-            "Maps each acceptance criterion to verification and small test-first increments."
+            "The agent activates the plan-work skill",
+            "Maps each acceptance criterion to a verification.",
+            "Divides the work into small increments, each a conventional commit with its dependencies and risks.",
+            "Puts the tests before the behavior change in each increment."
           ]
         },
         {
@@ -638,8 +690,10 @@
           "split": "train",
           "expected_output": "Checks compatibility, proposes a release version, and never publishes or tags.",
           "assertions": [
-            "The agent activates the release skill when appropriate",
-            "Checks compatibility, proposes a release version, and never publishes or tags."
+            "The agent activates the release skill",
+            "Lists the changes in the release and checks for breaking changes.",
+            "Proposes a version number by the versioning rules and a changelog entry.",
+            "Stops after the proposal and does not tag, publish or start the release."
           ]
         },
         {
@@ -649,8 +703,10 @@
           "split": "train",
           "expected_output": "Checks compatibility, proposes a release version, and never publishes or tags.",
           "assertions": [
-            "The agent activates the release skill when appropriate",
-            "Checks compatibility, proposes a release version, and never publishes or tags."
+            "The agent activates the release skill",
+            "Lists the changes in the release and checks for breaking changes.",
+            "Proposes a version number by the versioning rules and a changelog entry.",
+            "Stops after the proposal and does not tag, publish or start the release."
           ]
         },
         {
@@ -660,8 +716,10 @@
           "split": "validation",
           "expected_output": "Checks compatibility, proposes a release version, and never publishes or tags.",
           "assertions": [
-            "The agent activates the release skill when appropriate",
-            "Checks compatibility, proposes a release version, and never publishes or tags."
+            "The agent activates the release skill",
+            "Lists the changes in the release and checks for breaking changes.",
+            "Proposes a version number by the versioning rules and a changelog entry.",
+            "Stops after the proposal and does not tag, publish or start the release."
           ]
         },
         {
@@ -709,8 +767,10 @@
           "split": "train",
           "expected_output": "Examines transitive callers and contracts beyond the immediate diff.",
           "assertions": [
-            "The agent activates the review-blast-radius skill when appropriate",
-            "Examines transitive callers and contracts beyond the immediate diff."
+            "The agent activates the review-blast-radius skill",
+            "Names the callers and consumers outside the diff with file:line.",
+            "Reports confirmed risks and cleared risks separately.",
+            "Does not report a caller or an API that it did not find in the code."
           ]
         },
         {
@@ -720,8 +780,10 @@
           "split": "validation",
           "expected_output": "Examines transitive callers and contracts beyond the immediate diff.",
           "assertions": [
-            "The agent activates the review-blast-radius skill when appropriate",
-            "Examines transitive callers and contracts beyond the immediate diff."
+            "The agent activates the review-blast-radius skill",
+            "Names the callers and consumers outside the diff with file:line.",
+            "Reports confirmed risks and cleared risks separately.",
+            "Does not report a caller or an API that it did not find in the code."
           ]
         },
         {
@@ -758,8 +820,10 @@
           "split": "train",
           "expected_output": "Identifies missing, extra, or incorrect behavior against the actual task specification.",
           "assertions": [
-            "The agent activates the review-spec skill when appropriate",
-            "Identifies missing, extra, or incorrect behavior against the actual task specification."
+            "The agent activates the review-spec skill",
+            "Finds the specification from the issue references first.",
+            "Quotes the specification line for each finding.",
+            "Classifies each finding as missing or partial, not asked for, or wrong."
           ]
         },
         {
@@ -769,8 +833,10 @@
           "split": "validation",
           "expected_output": "Identifies missing, extra, or incorrect behavior against the actual task specification.",
           "assertions": [
-            "The agent activates the review-spec skill when appropriate",
-            "Identifies missing, extra, or incorrect behavior against the actual task specification."
+            "The agent activates the review-spec skill",
+            "Finds the specification from the issue references first.",
+            "Quotes the specification line for each finding.",
+            "Classifies each finding as missing or partial, not asked for, or wrong."
           ]
         },
         {
@@ -807,8 +873,10 @@
           "split": "train",
           "expected_output": "Cites engineering rule sources and grounds each reported violation in the diff.",
           "assertions": [
-            "The agent activates the review-standards skill when appropriate",
-            "Cites engineering rule sources and grounds each reported violation in the diff."
+            "The agent activates the review-standards skill",
+            "Links the rule for each finding and does not copy it.",
+            "Grounds each finding in a file:line of the diff.",
+            "Does not repeat a check that an automated check in the project already enforces."
           ]
         },
         {
@@ -818,8 +886,10 @@
           "split": "validation",
           "expected_output": "Cites engineering rule sources and grounds each reported violation in the diff.",
           "assertions": [
-            "The agent activates the review-standards skill when appropriate",
-            "Cites engineering rule sources and grounds each reported violation in the diff."
+            "The agent activates the review-standards skill",
+            "Links the rule for each finding and does not copy it.",
+            "Grounds each finding in a file:line of the diff.",
+            "Does not repeat a check that an automated check in the project already enforces."
           ]
         },
         {
@@ -856,8 +926,10 @@
           "split": "train",
           "expected_output": "Preserves project instructions, checks client pointers, and requests consent for installation.",
           "assertions": [
-            "The agent activates the setup-dkstack skill when appropriate",
-            "Preserves project instructions, checks client pointers, and requests consent for installation."
+            "The agent activates the setup-dkstack skill",
+            "Reads the existing AGENTS.md and the other agent instruction files first.",
+            "Does not delete project text, and asks the owner about each conflicting rule.",
+            "Asks the owner before it installs skill copies or changes a version URL."
           ]
         },
         {
@@ -867,8 +939,10 @@
           "split": "train",
           "expected_output": "Preserves project instructions, checks client pointers, and requests consent for installation.",
           "assertions": [
-            "The agent activates the setup-dkstack skill when appropriate",
-            "Preserves project instructions, checks client pointers, and requests consent for installation."
+            "The agent activates the setup-dkstack skill",
+            "Reads the existing AGENTS.md and the other agent instruction files first.",
+            "Does not delete project text, and asks the owner about each conflicting rule.",
+            "Asks the owner before it installs skill copies or changes a version URL."
           ]
         },
         {
@@ -878,8 +952,10 @@
           "split": "validation",
           "expected_output": "Preserves project instructions, checks client pointers, and requests consent for installation.",
           "assertions": [
-            "The agent activates the setup-dkstack skill when appropriate",
-            "Preserves project instructions, checks client pointers, and requests consent for installation."
+            "The agent activates the setup-dkstack skill",
+            "Reads the existing AGENTS.md and the other agent instruction files first.",
+            "Does not delete project text, and asks the owner about each conflicting rule.",
+            "Asks the owner before it installs skill copies or changes a version URL."
           ]
         },
         {
@@ -927,8 +1003,10 @@
           "split": "train",
           "expected_output": "Configures strict editor standards and consistent LF line endings.",
           "assertions": [
-            "The agent activates the setup-editorconfig skill when appropriate",
-            "Configures strict editor standards and consistent LF line endings."
+            "The agent activates the setup-editorconfig skill",
+            "Writes .editorconfig with root = true, charset = utf-8 and end_of_line = lf.",
+            "Adds .gitattributes with * text=auto eol=lf.",
+            "Keeps the existing quality gates."
           ]
         },
         {
@@ -938,8 +1016,10 @@
           "split": "validation",
           "expected_output": "Configures strict editor standards and consistent LF line endings.",
           "assertions": [
-            "The agent activates the setup-editorconfig skill when appropriate",
-            "Configures strict editor standards and consistent LF line endings."
+            "The agent activates the setup-editorconfig skill",
+            "Writes .editorconfig with root = true, charset = utf-8 and end_of_line = lf.",
+            "Adds .gitattributes with * text=auto eol=lf.",
+            "Keeps the existing quality gates."
           ]
         },
         {
@@ -976,8 +1056,10 @@
           "split": "train",
           "expected_output": "Identifies missing labels and obtains owner approval before creating them.",
           "assertions": [
-            "The agent activates the setup-labels skill when appropriate",
-            "Identifies missing labels and obtains owner approval before creating them."
+            "The agent activates the setup-labels skill",
+            "Lists each dkstack type and priority label that the project does not have.",
+            "Asks the owner before it creates or renames a label.",
+            "Does not change or delete an existing label without the owner's OK."
           ]
         },
         {
@@ -987,8 +1069,10 @@
           "split": "validation",
           "expected_output": "Identifies missing labels and obtains owner approval before creating them.",
           "assertions": [
-            "The agent activates the setup-labels skill when appropriate",
-            "Identifies missing labels and obtains owner approval before creating them."
+            "The agent activates the setup-labels skill",
+            "Lists each dkstack type and priority label that the project does not have.",
+            "Asks the owner before it creates or renames a label.",
+            "Does not change or delete an existing label without the owner's OK."
           ]
         },
         {
@@ -1025,8 +1109,10 @@
           "split": "train",
           "expected_output": "Sets deterministic quality gates with warnings treated as errors.",
           "assertions": [
-            "The agent activates the setup-quality-gates skill when appropriate",
-            "Sets deterministic quality gates with warnings treated as errors."
+            "The agent activates the setup-quality-gates skill",
+            "Makes the build treat warnings as errors.",
+            "Sets up CI that runs the full check on each push to the default branch and each pull request.",
+            "Does not weaken an existing gate."
           ]
         },
         {
@@ -1036,8 +1122,10 @@
           "split": "validation",
           "expected_output": "Sets deterministic quality gates with warnings treated as errors.",
           "assertions": [
-            "The agent activates the setup-quality-gates skill when appropriate",
-            "Sets deterministic quality gates with warnings treated as errors."
+            "The agent activates the setup-quality-gates skill",
+            "Makes the build treat warnings as errors.",
+            "Sets up CI that runs the full check on each push to the default branch and each pull request.",
+            "Does not weaken an existing gate."
           ]
         },
         {
@@ -1074,8 +1162,10 @@
           "split": "train",
           "expected_output": "Reports branch and security protections for owner action without bypassing restrictions.",
           "assertions": [
-            "The agent activates the setup-repo-protection skill when appropriate",
-            "Reports branch and security protections for owner action without bypassing restrictions."
+            "The agent activates the setup-repo-protection skill",
+            "Lists each missing or weaker protection setting.",
+            "Gives the settings to the owner as steps and does not change them itself.",
+            "Does not bypass a branch rule or a ruleset."
           ]
         },
         {
@@ -1085,8 +1175,10 @@
           "split": "validation",
           "expected_output": "Reports branch and security protections for owner action without bypassing restrictions.",
           "assertions": [
-            "The agent activates the setup-repo-protection skill when appropriate",
-            "Reports branch and security protections for owner action without bypassing restrictions."
+            "The agent activates the setup-repo-protection skill",
+            "Lists each missing or weaker protection setting.",
+            "Gives the settings to the owner as steps and does not change them itself.",
+            "Does not bypass a branch rule or a ruleset."
           ]
         },
         {
@@ -1123,8 +1215,10 @@
           "split": "train",
           "expected_output": "Applies dependency provenance, pins, and approved supply chain security rules.",
           "assertions": [
-            "The agent activates the setup-supply-chain skill when appropriate",
-            "Applies dependency provenance, pins, and approved supply chain security rules."
+            "The agent activates the setup-supply-chain skill",
+            "Pins each third-party CI action to a full commit SHA.",
+            "Commits the lockfile and installs from the lockfile in CI.",
+            "Does not keep credentials in the checked-out code when a later step does not need them."
           ]
         },
         {
@@ -1134,8 +1228,10 @@
           "split": "validation",
           "expected_output": "Applies dependency provenance, pins, and approved supply chain security rules.",
           "assertions": [
-            "The agent activates the setup-supply-chain skill when appropriate",
-            "Applies dependency provenance, pins, and approved supply chain security rules."
+            "The agent activates the setup-supply-chain skill",
+            "Pins each third-party CI action to a full commit SHA.",
+            "Commits the lockfile and installs from the lockfile in CI.",
+            "Does not keep credentials in the checked-out code when a later step does not need them."
           ]
         },
         {
@@ -1172,8 +1268,10 @@
           "split": "train",
           "expected_output": "Configures commit and branch conventions, semantic versions, and changelog rules.",
           "assertions": [
-            "The agent activates the setup-versioning skill when appropriate",
-            "Configures commit and branch conventions, semantic versions, and changelog rules."
+            "The agent activates the setup-versioning skill",
+            "Documents conventional commits and short-lived feature branches.",
+            "Puts the version in the project manifest and adds CHANGELOG.md.",
+            "Links version-control/index.md and versioning/index.md."
           ]
         },
         {
@@ -1183,8 +1281,10 @@
           "split": "validation",
           "expected_output": "Configures commit and branch conventions, semantic versions, and changelog rules.",
           "assertions": [
-            "The agent activates the setup-versioning skill when appropriate",
-            "Configures commit and branch conventions, semantic versions, and changelog rules."
+            "The agent activates the setup-versioning skill",
+            "Documents conventional commits and short-lived feature branches.",
+            "Puts the version in the project manifest and adds CHANGELOG.md.",
+            "Links version-control/index.md and versioning/index.md."
           ]
         },
         {
@@ -1221,8 +1321,10 @@
           "split": "train",
           "expected_output": "Finds existing work before opening an issue, and coordinates a scoped branch.",
           "assertions": [
-            "The agent activates the start-issue skill when appropriate",
-            "Finds existing work before opening an issue, and coordinates a scoped branch."
+            "The agent activates the start-issue skill",
+            "Searches the open issues before it opens a new one.",
+            "Gives a new issue a goal, acceptance criteria and the required labels.",
+            "Creates one branch for the issue from the default branch."
           ]
         },
         {
@@ -1232,8 +1334,10 @@
           "split": "validation",
           "expected_output": "Finds existing work before opening an issue, and coordinates a scoped branch.",
           "assertions": [
-            "The agent activates the start-issue skill when appropriate",
-            "Finds existing work before opening an issue, and coordinates a scoped branch."
+            "The agent activates the start-issue skill",
+            "Searches the open issues before it opens a new one.",
+            "Gives a new issue a goal, acceptance criteria and the required labels.",
+            "Creates one branch for the issue from the default branch."
           ]
         },
         {
@@ -1270,8 +1374,10 @@
           "split": "train",
           "expected_output": "Demonstrates a failing regression test before implementation, then green and refactor.",
           "assertions": [
-            "The agent activates the tdd-loop skill when appropriate",
-            "Demonstrates a failing regression test before implementation, then green and refactor."
+            "The agent activates the tdd-loop skill",
+            "Writes a focused test and runs it before the production code.",
+            "Shows that the test fails for the expected reason.",
+            "Runs the tests and the quality gates, and marks each check that did not run as NOT RUN."
           ]
         },
         {
@@ -1281,8 +1387,10 @@
           "split": "train",
           "expected_output": "Demonstrates a failing regression test before implementation, then green and refactor.",
           "assertions": [
-            "The agent activates the tdd-loop skill when appropriate",
-            "Demonstrates a failing regression test before implementation, then green and refactor."
+            "The agent activates the tdd-loop skill",
+            "Writes a focused test and runs it before the production code.",
+            "Shows that the test fails for the expected reason.",
+            "Runs the tests and the quality gates, and marks each check that did not run as NOT RUN."
           ]
         },
         {
@@ -1292,8 +1400,10 @@
           "split": "validation",
           "expected_output": "Demonstrates a failing regression test before implementation, then green and refactor.",
           "assertions": [
-            "The agent activates the tdd-loop skill when appropriate",
-            "Demonstrates a failing regression test before implementation, then green and refactor."
+            "The agent activates the tdd-loop skill",
+            "Writes a focused test and runs it before the production code.",
+            "Shows that the test fails for the expected reason.",
+            "Runs the tests and the quality gates, and marks each check that did not run as NOT RUN."
           ]
         },
         {
@@ -1341,8 +1451,10 @@
           "split": "train",
           "expected_output": "Selects the smallest relevant set of rules and skills for the actual task.",
           "assertions": [
-            "The agent activates the triage skill when appropriate",
-            "Selects the smallest relevant set of rules and skills for the actual task."
+            "The agent activates the triage skill",
+            "Names the type of work.",
+            "Lists the sections and skills that apply, and only those.",
+            "Does not load a section or a skill that does not apply to the task."
           ]
         },
         {
@@ -1352,8 +1464,10 @@
           "split": "train",
           "expected_output": "Selects the smallest relevant set of rules and skills for the actual task.",
           "assertions": [
-            "The agent activates the triage skill when appropriate",
-            "Selects the smallest relevant set of rules and skills for the actual task."
+            "The agent activates the triage skill",
+            "Names the type of work.",
+            "Lists the sections and skills that apply, and only those.",
+            "Does not load a section or a skill that does not apply to the task."
           ]
         },
         {
@@ -1363,8 +1477,10 @@
           "split": "validation",
           "expected_output": "Selects the smallest relevant set of rules and skills for the actual task.",
           "assertions": [
-            "The agent activates the triage skill when appropriate",
-            "Selects the smallest relevant set of rules and skills for the actual task."
+            "The agent activates the triage skill",
+            "Names the type of work.",
+            "Lists the sections and skills that apply, and only those.",
+            "Does not load a section or a skill that does not apply to the task."
           ]
         },
         {
@@ -1412,7 +1528,7 @@
           "split": "train",
           "expected_output": "Uses the project's design system, or records the direction it chose when none exists. Verifies the screen in light and dark themes.",
           "assertions": [
-            "The agent activates the ui-design skill when appropriate",
+            "The agent activates the ui-design skill",
             "Uses the project's design system, or records the direction it chose when none exists.",
             "Captures the rendered result at 320 CSS px and at one wide width, in each supported theme.",
             "Records each minimum evidence item as done, or as NOT RUN or NOT APPLICABLE with a reason.",
@@ -1428,7 +1544,7 @@
           "split": "train",
           "expected_output": "Keeps the existing design system. Fixes the overflow and verifies the dashboard at phone widths.",
           "assertions": [
-            "The agent activates the ui-design skill when appropriate",
+            "The agent activates the ui-design skill",
             "Shows no horizontal scroll on the dashboard at 320 CSS px after the fix.",
             "Captures the rendered result at 320 CSS px and at one wide width, in each supported theme.",
             "Records each minimum evidence item as done, or as NOT RUN or NOT APPLICABLE with a reason.",
@@ -1444,7 +1560,7 @@
           "split": "validation",
           "expected_output": "Reuses the existing design tokens and components, and verifies the rendered desktop UI.",
           "assertions": [
-            "The agent activates the ui-design skill when appropriate",
+            "The agent activates the ui-design skill",
             "Reuses the existing design tokens and components.",
             "Captures the rendered result at 320 CSS px and at one wide width, in each supported theme.",
             "Records each minimum evidence item as done, or as NOT RUN or NOT APPLICABLE with a reason.",
@@ -1498,7 +1614,7 @@
           "split": "train",
           "expected_output": "A code-review report with findings per surface, state, size and theme, and a verdict. No file changes.",
           "assertions": [
-            "The agent activates the ui-review skill when appropriate",
+            "The agent activates the ui-review skill",
             "Reports the findings through the code-review severity table and gives a verdict.",
             "Gives each finding its surface, state, size and theme, with evidence.",
             "Reads only: the agent changes no files and does not approve or merge.",
@@ -1513,7 +1629,7 @@
           "split": "train",
           "expected_output": "A code-review report with findings per surface, state, size and theme, and a verdict. No file changes.",
           "assertions": [
-            "The agent activates the ui-review skill when appropriate",
+            "The agent activates the ui-review skill",
             "Reports the findings through the code-review severity table and gives a verdict.",
             "Gives each finding its surface, state, size and theme, with evidence.",
             "Reads only: the agent changes no files and does not approve or merge.",
@@ -1528,7 +1644,7 @@
           "split": "validation",
           "expected_output": "A code-review report with findings per surface, state, size and theme, and a verdict. No file changes.",
           "assertions": [
-            "The agent activates the ui-review skill when appropriate",
+            "The agent activates the ui-review skill",
             "Reports the findings through the code-review severity table and gives a verdict.",
             "Gives each finding its surface, state, size and theme, with evidence.",
             "Reads only: the agent changes no files and does not approve or merge.",
@@ -1581,8 +1697,10 @@
           "split": "train",
           "expected_output": "Classifies claims by evidence level and never treats unexecuted tests as passing.",
           "assertions": [
-            "The agent activates the verify-claim skill when appropriate",
-            "Classifies claims by evidence level and never treats unexecuted tests as passing."
+            "The agent activates the verify-claim skill",
+            "States the evidence level that each key claim reached.",
+            "Writes NOT RUN with a reason for each check that it could not run.",
+            "Does not report an unexecuted test as passing."
           ]
         },
         {
@@ -1592,8 +1710,10 @@
           "split": "validation",
           "expected_output": "Classifies claims by evidence level and never treats unexecuted tests as passing.",
           "assertions": [
-            "The agent activates the verify-claim skill when appropriate",
-            "Classifies claims by evidence level and never treats unexecuted tests as passing."
+            "The agent activates the verify-claim skill",
+            "States the evidence level that each key claim reached.",
+            "Writes NOT RUN with a reason for each check that it could not run.",
+            "Does not report an unexecuted test as passing."
           ]
         },
         {
@@ -1630,8 +1750,10 @@
           "split": "train",
           "expected_output": "Records an architecture decision, its alternatives, tradeoffs, status, and consequences.",
           "assertions": [
-            "The agent activates the write-adr skill when appropriate",
-            "Records an architecture decision, its alternatives, tradeoffs, status, and consequences."
+            "The agent activates the write-adr skill",
+            "Checks that the decision meets the ADR test first.",
+            "Writes Status, Affects, Context, Options considered, Decision and Consequences.",
+            "Runs check-adrs and fixes each finding."
           ]
         },
         {
@@ -1641,8 +1763,10 @@
           "split": "validation",
           "expected_output": "Records an architecture decision, its alternatives, tradeoffs, status, and consequences.",
           "assertions": [
-            "The agent activates the write-adr skill when appropriate",
-            "Records an architecture decision, its alternatives, tradeoffs, status, and consequences."
+            "The agent activates the write-adr skill",
+            "Checks that the decision meets the ADR test first.",
+            "Writes Status, Affects, Context, Options considered, Decision and Consequences.",
+            "Runs check-adrs and fixes each finding."
           ]
         },
         {
@@ -1679,8 +1803,10 @@
           "split": "train",
           "expected_output": "Produces a pull request body with issue links, evidence, observability, and merge risk.",
           "assertions": [
-            "The agent activates the write-pr skill when appropriate",
-            "Produces a pull request body with issue links, evidence, observability, and merge risk."
+            "The agent activates the write-pr skill",
+            "Links the issue in the body.",
+            "Writes an Evidence section and one Observability line.",
+            "Writes a conventional commit title of 50 characters or fewer."
           ]
         },
         {
@@ -1690,8 +1816,10 @@
           "split": "validation",
           "expected_output": "Produces a pull request body with issue links, evidence, observability, and merge risk.",
           "assertions": [
-            "The agent activates the write-pr skill when appropriate",
-            "Produces a pull request body with issue links, evidence, observability, and merge risk."
+            "The agent activates the write-pr skill",
+            "Links the issue in the body.",
+            "Writes an Evidence section and one Observability line.",
+            "Writes a conventional commit title of 50 characters or fewer."
           ]
         },
         {
@@ -1728,8 +1856,10 @@
           "split": "train",
           "expected_output": "Applies approved technical writing standards while preserving meaning and accuracy.",
           "assertions": [
-            "The agent activates the writing-check skill when appropriate",
-            "Applies approved technical writing standards while preserving meaning and accuracy."
+            "The agent activates the writing-check skill",
+            "Checks the text against each rule in writing/index.md and the AI prose patterns.",
+            "Rewrites each sentence that breaks a rule.",
+            "Keeps the meaning of the text."
           ]
         },
         {
@@ -1739,8 +1869,10 @@
           "split": "validation",
           "expected_output": "Applies approved technical writing standards while preserving meaning and accuracy.",
           "assertions": [
-            "The agent activates the writing-check skill when appropriate",
-            "Applies approved technical writing standards while preserving meaning and accuracy."
+            "The agent activates the writing-check skill",
+            "Checks the text against each rule in writing/index.md and the AI prose patterns.",
+            "Rewrites each sentence that breaks a rule.",
+            "Keeps the meaning of the text."
           ]
         },
         {
