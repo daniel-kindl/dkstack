@@ -34,6 +34,8 @@ To see available skills before installing:
 npx skills add https://github.com/daniel-kindl/dkstack/tree/v1 --list
 ```
 
+For offline skill bundles and the reference check, read the [interoperability guide](agent-skills-compatibility.md).
+
 Installed skills do not update by themselves.
 For skills installed from `v1`, run `npx skills update` after a release.
 
@@ -71,6 +73,10 @@ See [how consumers follow versions](adr/0001-how-consumers-follow-versions.md) f
 | Commits, reviews, and releases. | [Version control](../version-control/index.md) · [Workflow](../workflow/index.md) · [Versioning](../versioning/index.md) |
 | Clear text and learning. | [Writing](../writing/index.md) · [Learning](../learning/index.md) |
 | Task instructions and practical advice. | [Skills](../skills/index.md) · [Tips](../tips/index.md) |
+
+## Evaluations
+
+- Skill activation and behavior: [skill evaluation cases](skill-evaluation-cases.md).
 
 ## Contributing and checks
 
