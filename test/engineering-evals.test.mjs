@@ -416,3 +416,45 @@ test("gradeScenario gives the candidate no other environment variable", async ()
     delete process.env.DKSTACK_TEST_SECRET;
   }
 });
+
+// A candidate that starts a child process. The child records its PID and waits 417 s.
+function spawningCandidate(after) {
+  return [
+    'import { spawn } from "node:child_process";',
+    'import { writeFileSync } from "node:fs";',
+    'const child = spawn(process.execPath, ["-e", "setTimeout(() => {}, 417000)"], { stdio: "ignore" });',
+    "child.unref();",
+    'writeFileSync(process.env.DKSTACK_CANDIDATE_ROOT + "/child-pid", String(child.pid));',
+    after,
+    "export const value = 1;",
+  ].join("\n");
+}
+
+function alive(pid) {
+  try { process.kill(pid, 0); return true; } catch (error) { if (error.code === "ESRCH") return false; throw error; }
+}
+
+for (const [name, after, timeoutMs, passed] of [
+  ["after the time limit", "while (true) {}", 1500, false],
+  ["after a candidate that ends", "", 10000, true],
+]) {
+  test(`gradeScenario leaves no child process of the candidate ${name}`, { timeout: 20000 }, async () => {
+    await scenarioRoot(async (base, temp) => {
+      const candidate = join(temp, "candidate");
+      await mkdir(candidate);
+      await writeFile(join(candidate, "subject.mjs"), spawningCandidate(after));
+      let pid;
+      try {
+        const result = await gradeScenario(ITEM, candidate, base, { timeoutMs });
+        assert.equal(result.passed, passed);
+        pid = Number(await readFile(join(candidate, "child-pid"), "utf8"));
+        assert.ok(pid > 0);
+        await new Promise((done) => setTimeout(done, 200));
+        assert.equal(alive(pid), false, "the child process of the candidate is gone");
+      } finally {
+        // Stop the child if the runner left it, so the test leaves no process.
+        if (pid && alive(pid)) process.kill(pid, "SIGKILL");
+      }
+    });
+  });
+}

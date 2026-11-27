@@ -55,11 +55,10 @@ export async function gradeScenario(item, candidate, base = root, { timeoutMs = 
   const entry = await lstat(subject);
   if (!entry.isFile() || entry.isSymbolicLink()) throw new Error("Candidate must contain a regular subject.mjs");
   const oracle = resolve(base, item.oracle);
-  // The oracle runs in the same process as the test runner, so the time limit stops the candidate too.
+  // The oracle runs in the same process as the test runner. The runner kills its whole process
+  // group, so the time limit also stops each process that the candidate starts.
   const result = await run(process.execPath, ["--test", "--test-isolation=none", oracle], {
     timeout: timeoutMs,
-    // SIGKILL, because the test runner handles SIGTERM only when the busy candidate yields.
-    killSignal: "SIGKILL",
     env: { PATH: process.env.PATH || "", DKSTACK_CANDIDATE_ROOT: resolvedCandidate },
   });
   return {
@@ -70,20 +69,31 @@ export async function gradeScenario(item, candidate, base = root, { timeoutMs = 
   };
 }
 
-// Run a child process without blocking the event loop. Keep only the last 1 MiB of output.
-function run(command, args, options) {
+// Send SIGKILL to each process in the group. SIGKILL, because the test runner handles SIGTERM
+// only when a busy candidate yields. A group with no process left is not an error.
+function killGroup(pid) {
+  if (!pid) return;
+  try { process.kill(-pid, "SIGKILL"); } catch (error) { if (error.code !== "ESRCH") throw error; }
+}
+
+// Run a child process in its own process group without blocking the event loop.
+// At the time limit, and when the child ends, kill the group, so no process that it started remains.
+// Keep only the last 1 MiB of output.
+function run(command, args, { timeout, env }) {
   return new Promise((done) => {
-    const child = spawn(command, args, { ...options, stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(command, args, { env, detached: true, stdio: ["ignore", "pipe", "pipe"] });
     let output = "";
     const keep = (chunk) => { output = (output + chunk).slice(-1024 * 1024); };
     child.stdout.on("data", keep);
     child.stderr.on("data", keep);
     let error = null;
-    child.on("error", (value) => { error = value; });
-    child.on("close", (status, signal) => {
-      if (!error && signal) error = new Error(`Stopped by ${signal} after the time limit of ${options.timeout} ms (ETIMEDOUT)`);
-      done({ status, error, output });
-    });
+    const timer = setTimeout(() => {
+      error = new Error(`Stopped by SIGKILL after the time limit of ${timeout} ms (ETIMEDOUT)`);
+      killGroup(child.pid);
+    }, timeout);
+    child.on("error", (value) => { error ??= value; });
+    child.on("exit", () => { clearTimeout(timer); killGroup(child.pid); });
+    child.on("close", (status) => { clearTimeout(timer); done({ status, error, output }); });
   });
 }
 
