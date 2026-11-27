@@ -41,3 +41,34 @@ test("one npm script runs the Python tests and the reference check, in CI and lo
   );
   assert.ok(!workflow.includes("python3 -m unittest"), "CI uses the npm script, not a second command");
 });
+
+const AUDIT_REQUIREMENTS = ".github/pip-audit-requirements.txt";
+const AUDIT_STEP = "Audit the Python packages for known vulnerabilities";
+
+test("each Python package for the audit tool has an exact version and a hash", async () => {
+  const text = await readFile(join(repoRoot, AUDIT_REQUIREMENTS), "utf8");
+  const lines = text.split("\n").filter((line) => line.trim() && !line.startsWith("#"));
+  for (const line of lines) {
+    assert.match(line, /^[a-z0-9-]+==[0-9][0-9A-Za-z.]*( --hash=sha256:[0-9a-f]{64})+$/, line);
+  }
+  assert.ok(lines.some((line) => line.startsWith("pip-audit==")), `${AUDIT_REQUIREMENTS} pins pip-audit`);
+});
+
+test("CI audits the pinned Python packages and fails on a known vulnerability", () => {
+  const step = steps.find((s) => s.startsWith(`      - name: ${AUDIT_STEP}\n`));
+  assert.ok(step, `validate has the step "${AUDIT_STEP}"`);
+  assert.match(step, new RegExp(`--require-hashes --only-binary :all: -r ${AUDIT_REQUIREMENTS.replace(/\./g, "\\.")}`));
+  assert.match(step, new RegExp(`pip-audit --strict --require-hashes --disable-pip -r ${REQUIREMENTS.replace(/\./g, "\\.")}$`, "m"));
+  // Nothing may hide a finding: no ignore list, no forced success and no soft failure.
+  assert.doesNotMatch(step, /--ignore-vuln|\|\| *true|continue-on-error|set \+e/);
+  assert.equal((step.match(/pip install/g) ?? []).length, 1, "only the one pinned install");
+});
+
+test("Dependabot proposes updates for the pinned Python packages", async () => {
+  const text = await readFile(join(repoRoot, ".github/dependabot.yml"), "utf8");
+  const entries = text.split(/\n(?=  - package-ecosystem: )/).slice(1);
+  const pip = entries.find((e) => e.includes('package-ecosystem: "pip"'));
+  assert.ok(pip, "dependabot.yml has a pip entry");
+  assert.match(pip, /directory: "\/\.github"/);
+  assert.match(pip, /interval: "weekly"/);
+});

@@ -89,6 +89,8 @@ The workflow checks the following:
 - Each skill has the correct folder and frontmatter.
 - `Validate core Agent Skills specification`: the Python adapter tests pass, and each skill passes the
   pinned Agent Skills reference validator.
+- `Audit the Python packages for known vulnerabilities`: pip-audit finds no known vulnerability in the
+  pinned Python packages.
 - `Validate skill evaluation manifest`: each skill has a valid evaluation suite.
 - `Build offline skill bundles for every skill`: each skill builds as an offline bundle.
 - Relative links and links to this repository resolve, including anchors.
