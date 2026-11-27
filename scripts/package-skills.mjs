@@ -3,6 +3,7 @@
 import { copyFile, lstat, mkdtemp, mkdir, readFile, readdir, realpath, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join, posix, relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
+import { linksIn } from "./check-links.mjs";
 const LINKS = /https:\/\/raw\.githubusercontent\.com\/daniel-kindl\/dkstack\/v1\/([^\s)\]\x60"'<>]+)/g;
 const MARKDOWN = /!?\[[^\]]*\]\(\s*<?([^\s)>]+)>?(?:\s+"[^"]*")?\s*\)/g;
 const CODE_FENCE = /(\x60{3}[^]*?\x60{3}|~{3}[^]*?~{3})/g;
@@ -16,12 +17,20 @@ function pathPart(value) {
   if (!decoded || decoded.startsWith("/") || decoded.includes("\\") || decoded.includes("\0") || decoded.split("/").includes("..")) throw Error("Unsafe link: " + value);
   return decoded;
 }
+const RAW_PREFIX = "https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/";
+function activeTargets(text) {
+  const active = new Set([...linksIn(text)].map(x => x.target));
+  const clean = text.replace(CODE_FENCE, "").replace(/`[^`\n]*`/g, "");
+  for (const line of clean.split(/\r?\n/)) {
+    if (!/^ {0,3}<(?:img|source)\b/i.test(line)) continue;
+    for (const match of line.matchAll(HTML)) active.add(match[1]);
+  }
+  return active;
+}
 function pathsIn(text, origin) {
   const found = new Set();
-  const prose = text.replace(CODE_FENCE, "");
-  for (const match of prose.matchAll(LINKS)) found.add(pathPart(match[1]));
-  for (const pattern of [MARKDOWN, HTML]) for (const match of prose.matchAll(pattern)) {
-    const value = match[1];
+  for (const value of activeTargets(text)) {
+    if (value.startsWith(RAW_PREFIX)) { found.add(pathPart(value.slice(RAW_PREFIX.length))); continue; }
     if (!value || value.startsWith("#") || value.startsWith("/") || /^[a-z][a-z0-9+.-]*:/i.test(value)) continue;
     if (value.includes("{") || value.includes("}")) continue;
     const part = value.split(/[?#]/)[0];
@@ -59,12 +68,13 @@ async function build(root, name, target) {
   await copySkill(source, target, pending);
   const dependencies = new Set();
   const queue = new Set();
-  const rewrite = (text, from) => text.split(CODE_FENCE).map((part, i) => i % 2 ? part : part.replace(LINKS, (_match, raw) => {
+  const rewrite = (text, from) => { const allowed = activeTargets(text); return text.replace(LINKS, (full, raw) => {
+    if (!allowed.has(full)) return full;
     const dep = pathPart(raw);
     queue.add(dep);
     const suffix = raw.slice(raw.split(/[?#]/)[0].length);
     return relative(dirname(from), join(target, "references", "dkstack", dep)).split(sep).join("/") + suffix;
-  })).join("");
+  }); };
   for (const original of pending) {
     const text = await readFile(original, "utf8");
     const rel = relative(target, original);
