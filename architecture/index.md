@@ -36,6 +36,8 @@ Use this rule as the tie-breaker when other principles do not decide between two
 - [state-machines.md](state-machines.md): Model events as explicit states and transitions. Related: [temporal-coupling.md](temporal-coupling.md).
 - [configuration.md](configuration.md): Keep configuration outside the code and secrets outside the repository. Related: [reversibility.md](reversibility.md).
 
+- [api-contracts.md](api-contracts.md): Evolve public and wire contracts with consumers in mind.
+
 ## Application
 
 Apply these rules when you design or change system structure.
