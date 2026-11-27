@@ -231,3 +231,36 @@ test("ui-review positive cases assert the code-review output and a read-only rev
   const screenshot = positives.find((q) => /one screenshot|a screenshot/i.test(q.query));
   assert.match(screenshot.assertions.join("\n"), /one screenshot is not enough evidence for PASS/);
 });
+
+test("a suite needs two positive cases, not one", () => {
+  const onePositive = structuredClone(sample);
+  onePositive.skills[0].queries[1].should_trigger = false;
+  assert.match(validateSuite(onePositive, ["tdd-loop"]).join(" "), /need at least two positive and two negative cases/);
+});
+
+function activations(caseId, hits, runs = 3) {
+  const records = [];
+  for (let i = 0; i < runs; i++) {
+    records.push({ case_id: caseId, mode: "with_skill", status: "COMPLETED", activated_skills: i < hits ? ["tdd-loop"] : [] });
+    records.push({ case_id: caseId, mode: "without_skill", status: "COMPLETED", activated_skills: [] });
+  }
+  return records;
+}
+
+test("the activation threshold is two of three runs", () => {
+  const positive = { version: 1, skills: [{ skill: "tdd-loop", queries: [sample.skills[0].queries[0]] }] };
+  const negative = { version: 1, skills: [{ skill: "tdd-loop", queries: [sample.skills[0].queries[2]] }] };
+  assert.equal(summarize(positive, activations("tdd-p1", 2), 3)[0].status, "PASS");
+  assert.equal(summarize(positive, activations("tdd-p1", 1), 3)[0].status, "FAIL");
+  assert.equal(summarize(negative, activations("tdd-n1", 1), 3)[0].status, "PASS");
+  assert.equal(summarize(negative, activations("tdd-n1", 2), 3)[0].status, "FAIL");
+});
+
+test("an assertion result must match the case text and cite evidence", () => {
+  const suite = { version: 1, skills: [{ skill: "tdd-loop", queries: [sample.skills[0].queries[0]] }] };
+  const graded = (text, evidence) => activations("tdd-p1", 3).map((r) =>
+    r.mode === "with_skill" ? { ...r, assertion_results: [{ text, passed: true, evidence }] } : r);
+  assert.equal(summarize(suite, graded("Test fails before implementation", "log"), 3)[0].assertion_status, "PASS");
+  assert.equal(summarize(suite, graded("Another assertion text", "log"), 3)[0].assertion_status, "FAIL");
+  assert.equal(summarize(suite, graded("Test fails before implementation", ""), 3)[0].assertion_status, "FAIL");
+});
