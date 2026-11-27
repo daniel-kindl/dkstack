@@ -1,19 +1,19 @@
 # Agent Skills interoperability
 
-DKSTACK follows the [Agent Skills specification](https://agentskills.io/specification).
-Engineering rules and client-specific invocation policies remain separate.
+dkstack follows the [Agent Skills specification](https://agentskills.io/specification).
+Engineering rules and client-specific invocation policies stay separate.
 
 ## Validation layers
 
 1. **Core specification:** run the reference validator against normalized skill metadata.
-2. **DKSTACK policy:** `npm run check:skills` checks directory layout and invocation hints.
+2. **dkstack policy:** `npm run check:skills` checks directory layout and invocation hints.
 3. **Runtime behavior:** test skill selection and execution with real agents and evidence.
 
 The source `SKILL.md` files include Claude-specific keys.
 The reference format permits only its listed core fields.
 `scripts/check-agent-skills-ref.py` removes only those known client keys in a temporary copy.
 It then runs the upstream reference validator against every copy.
-The source files remain unchanged.
+The source files stay unchanged.
 This checks core format compatibility, not strict validation of the unmodified files.
 
 ### Reference validator setup
@@ -23,15 +23,19 @@ Install it from the official repository at a pinned commit.
 The CI uses commit `83021e2be457a9b6679148719c1f6074f0ad975e`.
 It does not use the unrelated PyPI package named `skills-ref`.
 
-The `validate` workflow installs it into an isolated Python virtual environment.
-Then it runs `scripts/check-agent-skills-ref.py`.
-The Python adapter also has a standard-library unittest suite.
+Run the reference check with `npm run validate:skills-ref`.
+It runs the Python adapter tests, then `scripts/check-agent-skills-ref.py`.
+It needs Python 3 and the pinned skills-ref.
+Without skills-ref, it prints NOT RUN and exits with code 2.
+`npm run check` does not run it.
+
+The `validate` workflow makes an isolated Python virtual environment.
+It installs the packages in `.github/skills-ref-requirements.txt`, with exact versions and hashes.
+Then it installs skills-ref at the pinned commit and runs `npm run validate:skills-ref`.
 
 ## Client compatibility
 
-`disable-model-invocation` and `user-invocable` are Claude-specific settings.
-Codex has a separate `agents/openai.yaml` policy.
-Other agents may ignore both.
+The invocation keys are client hints. See [invocation](../skills/index.md#invocation).
 Never rely on these metadata hints for authorization or security.
 
 Each skill description must permit independent discovery.
@@ -40,7 +44,7 @@ A simple request can activate a matching skill directly.
 
 ## Offline skill distribution
 
-Source skill links use DKSTACK release URLs.
+Source skill links use dkstack release URLs.
 An ordinary `npx skills` installation still requires network access to open these links.
 
 Build portable copies with local rule and skill dependencies:
@@ -50,26 +54,32 @@ node scripts/package-skills.mjs --out dist/agent-skills
 node scripts/package-skills.mjs --out dist/offline-code-review code-review
 ```
 
-The command creates one folder per selected skill.
+The command creates one folder for each selected skill.
 Each folder contains the entrypoint, original optional resources, and rewritten references.
-Recursive dependencies are placed in `references/dkstack/`.
-The command rejects missing files, unsafe paths, symlinks, and existing output directories.
-It stages the bundle before publishing it to the output folder.
-Run it again in a new output directory to avoid overwriting existing artifacts.
+The command puts each recursive dependency in `references/dkstack/`.
+Each folder also gets `dkstack-source.json` with the source commit and its refs.
+The command rejects missing files, unsafe paths, and symlinks.
+The output folder must be inside the dkstack checkout, and not the checkout root.
+The command stages the bundle before it moves the bundle to the output folder.
+A new run replaces an output folder that an earlier run made.
+The command refuses any other existing output folder.
 
-Do not modify the generated references independently.
-Keep the DKSTACK source repository as the only authoritative source.
-Check the bundle with the reference validator before distributing it.
-The generator resolves DKSTACK raw URLs and supported local file links.
-External web links remain external and are not guaranteed offline.
-Install the generated folders in the skill location supported by each client.
+If HEAD is not `v1` or a `vX.Y.Z` tag, the command shows a warning.
+The bundle can then contain rules that are not released.
+
+Do not change the generated references by hand.
+Change the rules only in the dkstack source repository.
+Check the bundle with the reference validator before you distribute it.
+The generator resolves dkstack raw URLs and supported local file links.
+External web links stay external. They need network access.
+Install the generated folders in the skill location that each client supports.
 The command creates **directories**, not ZIP archives or published releases.
 
 ## Skill evaluation
 
-`evals/skill-cases.json` defines 144 positive and negative cases for all 31 skills.
+`evals/skill-cases.json` defines positive and negative cases for each skill.
 Cases include training and held-out validation prompts.
-Descriptions must be evaluated with competing skills discoverable.
+Evaluate each description while the other skills are available.
 
 Validate the manifest with:
 
@@ -87,7 +97,7 @@ The adapter must be an executable program.
 It receives one JSON request on stdin.
 Required request properties are `case_id`, `skill`, `query`, `mode`, and `iteration`.
 The `mode` is `with_skill` or `without_skill`.
-It must isolate each run and expose the appropriate available skills.
+It must isolate each run and give the agent only the skills for that mode.
 
 The adapter returns one JSON object on stdout.
 It must include `activated_skills` as a string array and `evidence` as nonempty text.
@@ -98,8 +108,9 @@ When grading is present, `graded_by` must be `independent-llm`,
 
 The runner records each result and a `summary.json`.
 It checks activation rates across at least three repetitions.
-It marks incomplete runs `NOT_RUN`.
+It marks an incomplete run NOT RUN. The JSON value is `NOT_RUN`.
 It marks unevaluated behavioral assertions `NOT_GRADED`.
+A trigger result other than PASS, or a failed assertion, makes the command exit with code 1.
 A trigger PASS is not a behavioral quality pass.
 The project does not ship an agent adapter or claim real model evaluations.
 The caller supplies model access and independent grading.
@@ -111,9 +122,9 @@ See [skill evaluation cases](skill-evaluation-cases.md) for the testing rubric.
 - Repository format checks and unit tests pass.
 - The pinned reference validator passes normalized metadata.
 - All selected offline bundles contain the full dependency closure.
-- Client-specific invocation rules remain unchanged.
+- Client-specific invocation rules stay unchanged.
 - Regression scenarios pass against a real agent before recording behavioral success.
-- Every unrun check is reported as NOT RUN.
+- Report each check that did not run as the [quality gates](../coding/quality-gates.md) page says.
 
 ## Sources
 
