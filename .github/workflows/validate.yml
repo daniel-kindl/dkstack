@@ -94,6 +94,10 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:skill-evals
 
+      - name: Build offline skill bundles for every skill
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run bundle:skills
+
       - name: Check that relative and repository links resolve
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:links
