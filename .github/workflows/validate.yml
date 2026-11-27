@@ -78,6 +78,22 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:skills
 
+      - name: Test Agent Skills reference adapter
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: python3 -m unittest discover -s test -p 'test_ref_spec.py'
+
+      - name: Validate core Agent Skills specification
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: |
+          python3 -m venv "$RUNNER_TEMP/skills-ref-venv"
+          "$RUNNER_TEMP/skills-ref-venv/bin/python" -m pip install --disable-pip-version-check \
+            'git+https://github.com/agentskills/agentskills.git@83021e2be457a9b6679148719c1f6074f0ad975e#subdirectory=skills-ref'
+          "$RUNNER_TEMP/skills-ref-venv/bin/python" scripts/check-agent-skills-ref.py
+
+      - name: Validate skill evaluation manifest
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:skill-evals
+
       - name: Check that relative and repository links resolve
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:links
