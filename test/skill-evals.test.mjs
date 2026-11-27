@@ -187,3 +187,16 @@ test("an adapter cannot change the case, mode or run number of a record", async 
     assert.equal(run.status, 1);
   } finally { await rm(dir, { recursive: true, force: true }); }
 });
+
+test("a failed assertion fails the run and the CLI reports the assertion counts", async () => {
+  const { dir, run } = await cliRun(
+    "const hit=input.mode==='with_skill'&&input.case_id.includes('-p');" +
+    "const text=input.case_id.includes('-p')?'Test fails before implementation':'TDD skill not activated';" +
+    "console.log(JSON.stringify({activated_skills:hit?[input.skill]:[],evidence:'tool record',graded_by:'deterministic',assertion_results:[{text,passed:input.case_id!=='tdd-p1',evidence:'grader log'}]}));\n",
+  );
+  try {
+    assert.match(run.stdout, /4\/4 trigger cases passed/);
+    assert.match(run.stdout, /Assertions: 3 PASS, 1 FAIL, 0 NOT_GRADED, 0 NOT_RUN/);
+    assert.equal(run.status, 1, run.stdout + run.stderr);
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});

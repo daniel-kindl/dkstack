@@ -152,8 +152,10 @@ async function main(args) {
   const rel = relative(root, out);
   if (!rel || rel.startsWith(`..${sep}`) || rel === ".." || isAbsolute(rel)) throw new Error("Results must be inside repository");
   const outcomes = await runEvaluation(suite, resolve(options["--adapter"]), out, Number(options["--runs"] || MIN_RUNS));
-  if (outcomes.some(x => x.status !== "PASS")) process.exitCode = 1;
+  const count = value => outcomes.filter(x => x.assertion_status === value).length;
+  if (outcomes.some(x => x.status !== "PASS") || count("FAIL")) process.exitCode = 1;
   console.log(`${outcomes.filter(x => x.status === "PASS").length}/${outcomes.length} trigger cases passed`);
+  console.log(`Assertions: ${count("PASS")} PASS, ${count("FAIL")} FAIL, ${count("NOT_GRADED")} NOT_GRADED, ${count("NOT_RUN")} NOT_RUN`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
