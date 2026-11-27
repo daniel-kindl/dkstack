@@ -22,6 +22,12 @@ test("bounded attempts propagate terminal failure", async () => {
   await assert.rejects(submitWithRetry(async () => { calls += 1; throw new Error("down"); }, "id", 2), /down/);
   assert.equal(calls, 2);
 });
+test("a permanent error is not retried", async () => {
+  let calls = 0;
+  const permanent = Object.assign(new Error("rejected"), { permanent: true });
+  await assert.rejects(submitWithRetry(async () => { calls += 1; throw permanent; }, "id", 3), /rejected/);
+  assert.equal(calls, 1);
+});
 test("rejects unsafe retry count", async () => {
   await assert.rejects(submitWithRetry(async () => "ok", "id", 0), RangeError);
 });

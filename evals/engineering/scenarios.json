@@ -1,21 +1,21 @@
 [
   {
     "id": "framed-transport",
-    "goal": "Parse bounded length-prefixed frames across arbitrary network chunks.",
+    "goal": "Parse length-prefixed frames of at most 1024 bytes across arbitrary network chunks. Throw a RangeError for a larger frame, and an Error with \"truncated\" in its message for an incomplete frame.",
     "oracle": "scenarios/framed-transport/oracle.test.mjs",
     "starter": "scenarios/framed-transport/starter",
     "topic": "networking"
   },
   {
     "id": "retry-idempotency",
-    "goal": "Retry transient operations with stable idempotency identity and bounded attempts.",
+    "goal": "Retry transient operations with stable idempotency identity and bounded attempts. Do not retry an error marked permanent.",
     "oracle": "scenarios/retry-idempotency/oracle.test.mjs",
     "starter": "scenarios/retry-idempotency/starter",
     "topic": "reliability"
   },
   {
     "id": "async-cancellation",
-    "goal": "Propagate cancellation and prevent further work after abort.",
+    "goal": "Pass the signal to each job, propagate cancellation and prevent further work after abort.",
     "oracle": "scenarios/async-cancellation/oracle.test.mjs",
     "starter": "scenarios/async-cancellation/starter",
     "topic": "concurrency"

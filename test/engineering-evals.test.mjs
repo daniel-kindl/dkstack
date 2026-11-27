@@ -60,7 +60,7 @@ test("candidate solutions pass independent oracles", async () => {
         try {
           return await send(key);
         } catch (error) {
-          if (count === attempts - 1) throw error;
+          if (error.permanent || count === attempts - 1) throw error;
         }
       }
     }`,
@@ -68,7 +68,7 @@ test("candidate solutions pass independent oracles", async () => {
       const results = [];
       for (const job of jobs) {
         if (signal.aborted) throw signal.reason;
-        results.push(await job());
+        results.push(await job(signal));
       }
       if (signal.aborted) throw signal.reason;
       return results;
@@ -184,4 +184,87 @@ test("a scenario whose starter already passes cannot give PASS", async () => {
     assert.equal(result.candidate_passed, true);
     assert.equal(result.outcome, "FAIL");
   }, { starter: "export const value = 1;\n" });
+});
+
+// Each near miss is a wrong solution that an oracle must catch.
+const NEAR_MISSES = {
+  "framed-transport": {
+    "no size limit": `export function decodeFrames(chunks) {
+      const buffer = Buffer.concat(chunks.map((value) => Buffer.from(value)));
+      const frames = [];
+      let at = 0;
+      while (at < buffer.length) {
+        if (at + 2 > buffer.length) throw new Error("truncated header");
+        const size = buffer.readUInt16BE(at);
+        at += 2;
+        if (at + size > buffer.length) throw new RangeError("truncated payload");
+        frames.push(buffer.subarray(at, at + size));
+        at += size;
+      }
+      return frames;
+    }`,
+    "a crash, not a truncated frame error": `export function decodeFrames(chunks) {
+      const buffer = Buffer.concat(chunks.map((value) => Buffer.from(value)));
+      const frames = [];
+      let at = 0;
+      while (at < buffer.length) {
+        const size = buffer.readUInt16BE(at);
+        if (size > 1024) throw new RangeError("frame too large");
+        at += 2;
+        if (at + size > buffer.length) null.crash;
+        frames.push(buffer.subarray(at, at + size));
+        at += size;
+      }
+      return frames;
+    }`,
+  },
+  "retry-idempotency": {
+    "retries a permanent error": `export async function submitWithRetry(send, key, attempts = 3) {
+      if (!Number.isInteger(attempts) || attempts < 1) throw new RangeError("attempts");
+      for (let count = 0; count < attempts; count += 1) {
+        try {
+          return await send(key);
+        } catch (error) {
+          if (count === attempts - 1) throw error;
+        }
+      }
+    }`,
+  },
+  "async-cancellation": {
+    "does not pass the signal to a job": `export async function runJobs(jobs, signal) {
+      const results = [];
+      for (const job of jobs) {
+        if (signal.aborted) throw signal.reason;
+        results.push(await job());
+      }
+      if (signal.aborted) throw signal.reason;
+      return results;
+    }`,
+  },
+};
+
+test("each oracle rejects the near misses for its goal", async () => {
+  const items = await loadScenarios();
+  for (const [id, cases] of Object.entries(NEAR_MISSES)) {
+    const item = items.find((value) => value.id === id);
+    for (const [name, source] of Object.entries(cases)) {
+      const temp = await mkdtemp(join(tmpdir(), "dkstack-candidate-"));
+      try {
+        await writeFile(join(temp, "subject.mjs"), source);
+        const result = await gradeScenario(item, temp);
+        assert.equal(result.passed, false, `${id}: ${name}\n${result.output}`);
+      } finally {
+        await rm(temp, { recursive: true, force: true });
+      }
+    }
+  }
+});
+
+test("each scenario goal states the rule that its oracle checks", async () => {
+  const goals = Object.fromEntries((await loadScenarios()).map((item) => [item.id, item.goal]));
+  assert.match(goals["framed-transport"], /at most 1024 bytes/);
+  assert.match(goals["framed-transport"], /RangeError/);
+  assert.match(goals["framed-transport"], /"truncated"/);
+  assert.match(goals["retry-idempotency"], /permanent/);
+  assert.match(goals["async-cancellation"], /Pass the signal to each job/);
 });

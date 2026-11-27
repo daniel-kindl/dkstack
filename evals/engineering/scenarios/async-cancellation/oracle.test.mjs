@@ -23,6 +23,14 @@ test("abort between jobs stops further work", async () => {
   ], controller.signal), { name: "AbortError" });
   assert.equal(called, 1);
 });
+test("a running job gets the signal and can stop", async () => {
+  const controller = new AbortController();
+  const seen = [];
+  await assert.rejects(runJobs([
+    async (signal) => { seen.push(signal); controller.abort(); if (signal?.aborted) throw signal.reason; return "late"; },
+  ], controller.signal), { name: "AbortError" });
+  assert.deepEqual(seen, [controller.signal]);
+});
 test("successful jobs preserve input order", async () => {
   assert.deepEqual(await runJobs([async () => 1, async () => 2], new AbortController().signal), [1, 2]);
 });
