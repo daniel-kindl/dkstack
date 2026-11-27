@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Build self-contained skill folders by resolving DKSTACK link dependencies.
 import { copyFile, lstat, mkdtemp, mkdir, readFile, readdir, realpath, rename, rm, writeFile } from "node:fs/promises";
-import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
+import { dirname, isAbsolute, join, posix, relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 const LINKS = /https:\/\/raw\.githubusercontent\.com\/daniel-kindl\/dkstack\/v1\/([^\s)\]\x60"'<>]+)/g;
 const MARKDOWN = /!?\[[^\]]*\]\(\s*<?([^\s)>]+)>?(?:\s+"[^"]*")?\s*\)/g;
@@ -17,16 +17,16 @@ function pathPart(value) {
 }
 function pathsIn(text, origin) {
   const found = new Set();
-  for (const match of text.matchAll(LINKS)) found.add(pathPart(match[1]));
   const prose = text.replace(/\x60{3}[^]*?\x60{3}/g, "");
+  for (const match of prose.matchAll(LINKS)) found.add(pathPart(match[1]));
   for (const pattern of [MARKDOWN, HTML]) for (const match of prose.matchAll(pattern)) {
     const value = match[1];
     if (!value || value.startsWith("#") || value.startsWith("/") || /^[a-z][a-z0-9+.-]*:/i.test(value)) continue;
     if (value.includes("{") || value.includes("}")) continue;
     const part = value.split(/[?#]/)[0];
     if (!part) continue;
-    const target = resolve("/", dirname(origin), decodeURIComponent(part)).slice(1);
-    if (target.startsWith("..") || target.includes("\0")) throw Error("Unsafe relative link: " + value);
+    const target = posix.normalize(posix.join(posix.dirname(origin), decodeURIComponent(part)));
+    if (target === ".." || target.startsWith("../") || target.startsWith("/") || target.includes("\0")) throw Error("Unsafe relative link: " + value);
     found.add(target);
   }
   return found;
@@ -95,7 +95,9 @@ export async function packageSkills(root, output, requested = []) {
   const names = requested.length ? requested : (await readdir(join(root,"skills"),{withFileTypes:true})).filter(x=>x.isDirectory()).map(x=>x.name).sort();
   if (!names.length) throw Error("No skills selected");
   await mkdir(dirname(output),{recursive:true});
-  const stage = await mkdtemp(join(dirname(output),".dkstack-stage-"));
+  const parent = await realpath(dirname(output));
+  if (!inside(root, parent)) throw Error("Output parent must stay inside DKSTACK");
+  const stage = await mkdtemp(join(parent,".dkstack-stage-"));
   try {
     const result = [];
     for (const name of names) { const target = join(stage,name); await mkdir(target); result.push(await build(root,name,target)); }
