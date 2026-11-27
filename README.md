@@ -74,6 +74,7 @@ Read the [latest release notes](https://github.com/daniel-kindl/dkstack/releases
 | --- | --- |
 | Set up manually or manage updates. | [Usage guide](docs/index.md) |
 | Install optional skills. | [Skill installation](docs/index.md#install-the-skills) |
+| Build offline skill bundles and check interoperability. | [Agent Skills guide](docs/agent-skills-compatibility.md) |
 | Find guidance for code, tests, UI, and other work. | [Rule directory](docs/index.md#what-is-in-each-section) |
 | Propose a change or run repository checks. | [Contribution guide](CONTRIBUTING.md) |
 | Use the logos, icons, or banners. | [Brand assets](assets/brand/README.md) |
