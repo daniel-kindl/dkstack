@@ -5,7 +5,6 @@ import { dirname, isAbsolute, join, posix, relative, resolve, sep } from "node:p
 import { pathToFileURL } from "node:url";
 import { linksIn } from "./check-links.mjs";
 const LINKS = /https:\/\/raw\.githubusercontent\.com\/daniel-kindl\/dkstack\/v1\/([^\s)\]\x60"'<>]+)/g;
-const MARKDOWN = /!?\[[^\]]*\]\(\s*<?([^\s)>]+)>?(?:\s+"[^"]*")?\s*\)/g;
 const CODE_FENCE = /(\x60{3}[^]*?\x60{3}|~{3}[^]*?~{3})/g;
 const HTML = /<(?:a|img|source)\b[^>]*\b(?:href|src|srcset)=["']([^"']+)["']/gi;
 const MAX_DEPS = 1000;
