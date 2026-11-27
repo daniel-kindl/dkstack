@@ -2,7 +2,12 @@
 import importlib.util
 from pathlib import Path
 from tempfile import TemporaryDirectory
+import io
+import sys
+import types
 import unittest
+from contextlib import redirect_stderr, redirect_stdout
+from unittest import mock
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "check-agent-skills-ref.py"
 SPEC = importlib.util.spec_from_file_location("dkstack_ref_validator", SCRIPT)
@@ -63,6 +68,36 @@ class NormalizeTests(unittest.TestCase):
         with TemporaryDirectory() as tmp:
             self.assertEqual(MODULE.check_all(Path(tmp), lambda path: []),
                              ["No Agent Skills found"])
+
+
+class MainTests(unittest.TestCase):
+    def run_main(self, module, errors=None):
+        out, err = io.StringIO(), io.StringIO()
+        with mock.patch.dict(sys.modules, {"skills_ref": module}):
+            patch = mock.patch.object(MODULE, "check_all", return_value=errors or [])
+            with patch, redirect_stdout(out), redirect_stderr(err):
+                code = MODULE.main()
+        return code, out.getvalue(), err.getvalue()
+
+    def test_missing_reference_validator_is_not_run_and_exits_2(self):
+        code, out, err = self.run_main(None)
+        self.assertEqual(code, 2)
+        self.assertIn("NOT RUN", err)
+        self.assertEqual(out, "")
+
+    def test_reference_errors_are_printed_and_exit_1(self):
+        fake = types.SimpleNamespace(validate=lambda path: [])
+        code, out, err = self.run_main(fake, ["skills/a/SKILL.md: bad name"])
+        self.assertEqual(code, 1)
+        self.assertIn("skills/a/SKILL.md: bad name", err)
+        self.assertEqual(out, "")
+
+    def test_no_reference_errors_exit_0(self):
+        fake = types.SimpleNamespace(validate=lambda path: [])
+        code, out, err = self.run_main(fake)
+        self.assertEqual(code, 0)
+        self.assertIn("pass core Agent Skills reference validation", out)
+        self.assertEqual(err, "")
 
 
 if __name__ == "__main__":

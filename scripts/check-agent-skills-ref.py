@@ -57,7 +57,7 @@ def main() -> int:
     try:
         from skills_ref import validate
     except ImportError:
-        print("Official skills-ref unavailable: install from the pinned upstream commit", file=sys.stderr)
+        print("NOT RUN: the official skills-ref is not installed. Install it from the pinned upstream commit.", file=sys.stderr)
         return 2
     root = Path(__file__).resolve().parents[1]
     errors = check_all(root, validate)
