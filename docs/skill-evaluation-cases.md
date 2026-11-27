@@ -34,3 +34,20 @@ Test against **all available skill descriptions**, not an isolated skill.
 9. Keep a separate held-out set of natural-language prompts for regression.
 
 A check on syntax or metadata alone cannot pass a behavioral evaluation.
+
+## Executable cases
+
+The machine-readable suite is in [skill-cases.json](../evals/skill-cases.json).
+It contains 60 scenarios across ten high-impact skills.
+Every skill has three positive and three negative scenarios.
+The last example in each group is held out for validation.
+
+Run `npm run check:skill-evals` for suite format checks.
+Run the adapter-based evaluation from [interoperability](agent-skills-compatibility.md#skill-evaluation).
+The adapter must record actual client activity, not simulated activation.
+A real baseline runs the same task without DKSTACK.
+Model, client, execution environment, and prompt must otherwise remain constant.
+
+A sample adapter is deliberately not included.
+An adapter needs access to a real agent runtime and its events.
+Never treat synthetic fixture tests as agent quality measurements.
