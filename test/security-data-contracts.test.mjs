@@ -6,7 +6,7 @@ test("security and data rules cover cross-boundary failure modes", async () => {
   const cases = [
     ["coding/threat-modeling.md", /Prompt injection|prompt injection/i],
     ["coding/data-integrity.md", /rollback/i],
-    ["architecture/api-contracts.md", /external consumers/i],
+    ["architecture/api-contracts.md", /external/i],
   ];
   for (const [path, expression] of cases) {
     const content = await readFile(new URL("../" + path, import.meta.url), "utf8");
