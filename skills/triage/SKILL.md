@@ -54,7 +54,6 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 - Review: [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md)
 - Bug, flaky test, regression, or unexpected behavior: [investigate-bug](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/investigate-bug/SKILL.md)
 - Incident or service outage: [incident analysis](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/incident-analysis.md)
-- Debugging principles: [coding/debugging.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/debugging.md)
 - Domain term to define, resolve or check: [domain-glossary](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/domain-glossary/SKILL.md)
 - Domain design, modeling or specification: [model-domain](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/model-domain/SKILL.md)
 - Durable decision: [write-adr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-adr/SKILL.md)
@@ -69,7 +68,7 @@ The ladder is a guide, not a gate. Use the smallest set of skills. A small task 
 
 Each task in the ladder starts with [start-issue](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/start-issue/SKILL.md): one issue, one branch, one pull request.
 
-- Bug fix: [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md), then [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md).
+- Bug fix: [investigate-bug](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/investigate-bug/SKILL.md) when the cause is unknown, then [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md), then [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md).
 - Feature: start with [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md)
   and [apply-architecture](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/apply-architecture/SKILL.md).
   Then use
