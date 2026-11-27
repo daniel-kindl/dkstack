@@ -36,6 +36,7 @@ test("the repository skills use the folder layout and valid frontmatter", async 
     "make-diagram",
     "model-domain",
     "plan-work",
+    "profile-performance",
     "release",
     "review-blast-radius",
     "review-spec",

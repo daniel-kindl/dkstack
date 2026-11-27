@@ -21,6 +21,13 @@ Coding standards and practices.
 - [time.md](time.md): Time and dates in production code.
 - [debugging.md](debugging.md): Reproduce the problem and fix the cause.
 
+- [performance.md](performance.md): Measure first and establish reproducible performance budgets.
+- [reliability.md](reliability.md): Handle retries, deadlines, idempotency and overload.
+- [observability.md](observability.md): Design metrics and traces with bounded cost and safe fields.
+- [networking.md](networking.md): Handle framing, partial reads, disconnects and hostile inputs.
+- [concurrency-practices.md](concurrency-practices.md): Make ownership, synchronization and cancellation explicit.
+- [reproducible-builds.md](reproducible-builds.md): Build from declared, pinned inputs.
+
 ## Application
 
 Apply these rules to all code changes.

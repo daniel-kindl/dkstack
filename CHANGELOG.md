@@ -12,6 +12,9 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- Performance, resilience, metrics, tracing, networking, concurrency and reproducible-build guidance (#387).
+- A profile-performance skill with measurement evidence and triage routing (#387).
+
 - SVG logos, section icons, a favicon, banners, and a brand asset guide (#381).
 - Light and dark README headers, plus Shields.io badges for the latest release, license, and checks on main (#381).
 
