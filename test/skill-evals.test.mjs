@@ -146,3 +146,11 @@ test("manifest rejects missing suites, prompts and booleans",()=>{
   invalid.skills[0].queries[2].id="bad id";
   assert.match(validateSuite(invalid,["tdd-loop"]).join(" "),/should_trigger/);
 });
+
+test("each repository skill requires an evaluation suite", () => {
+  const result = validateSuite(sample, ["tdd-loop", "code-review"]);
+  assert.match(result.join(" "), /code-review: missing evaluation suite/);
+  const duplicate = structuredClone(sample);
+  duplicate.skills.push(structuredClone(sample.skills[0]));
+  assert.match(validateSuite(duplicate, ["tdd-loop"]).join(" "), /duplicate skill suite/);
+});
