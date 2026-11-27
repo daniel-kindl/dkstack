@@ -1,0 +1,1919 @@
+{
+  "version": 1,
+  "skills": [
+    {
+      "skill": "apply-architecture",
+      "queries": [
+        {
+          "id": "apply-architecture-p1",
+          "query": "Before coding this new module, check the proposed dependencies against architecture rules.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Checks proposed changes against explicit architecture principles and identifies affected boundaries.",
+          "assertions": [
+            "The agent activates the apply-architecture skill",
+            "Lists each design decision in the task.",
+            "For each decision, names the architecture principle that it follows or violates.",
+            "Proposes a smaller or more reversible option for each violation."
+          ]
+        },
+        {
+          "id": "apply-architecture-p2",
+          "query": "Assess whether the new cross-layer data access design violates dkstack architecture boundaries.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Checks proposed changes against explicit architecture principles and identifies affected boundaries.",
+          "assertions": [
+            "The agent activates the apply-architecture skill",
+            "Lists each design decision in the task.",
+            "For each decision, names the architecture principle that it follows or violates.",
+            "Proposes a smaller or more reversible option for each violation."
+          ]
+        },
+        {
+          "id": "apply-architecture-n1",
+          "query": "Explain briefly what an architecture decision is in software engineering.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking apply-architecture.",
+          "assertions": [
+            "The agent does not activate apply-architecture for this task",
+            "Answers with a short definition of an architecture decision and changes no files."
+          ]
+        },
+        {
+          "id": "apply-architecture-n2",
+          "query": "Review the rendered mobile UI for contrast issues without changing architecture.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking apply-architecture.",
+          "assertions": [
+            "The agent does not activate apply-architecture for this task",
+            "Routes the request to ui-review and reports contrast findings with measured ratios."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "bootstrap",
+      "queries": [
+        {
+          "id": "bootstrap-p1",
+          "query": "Create an empty code repository with versioning, lint, test, and release conventions.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Sets repository standards and deterministic checks without weakening existing protections.",
+          "assertions": [
+            "The agent activates the bootstrap skill",
+            "Runs setup-dkstack first, then the other setup building blocks in the order of the skill.",
+            "Checks that the README says what the project is, how to install and run it, and how to contribute.",
+            "Does not weaken or remove an existing protection or quality gate."
+          ]
+        },
+        {
+          "id": "bootstrap-p2",
+          "query": "This legacy project has no branch protections, semantic versioning, or CI. Bring it to dkstack baseline.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Sets repository standards and deterministic checks without weakening existing protections.",
+          "assertions": [
+            "The agent activates the bootstrap skill",
+            "Runs setup-dkstack first, then the other setup building blocks in the order of the skill.",
+            "Checks that the README says what the project is, how to install and run it, and how to contribute.",
+            "Does not weaken or remove an existing protection or quality gate."
+          ]
+        },
+        {
+          "id": "bootstrap-p3",
+          "query": "Bootstrap the fresh .NET repository with strict editorconfig and supply chain rules.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Sets repository standards and deterministic checks without weakening existing protections.",
+          "assertions": [
+            "The agent activates the bootstrap skill",
+            "Runs setup-dkstack first, then the other setup building blocks in the order of the skill.",
+            "Checks that the README says what the project is, how to install and run it, and how to contribute.",
+            "Does not weaken or remove an existing protection or quality gate."
+          ]
+        },
+        {
+          "id": "bootstrap-n1",
+          "query": "The repository already has CI; review this single code diff only.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking bootstrap.",
+          "assertions": [
+            "The agent does not activate bootstrap for this task",
+            "Routes the diff to code-review and reports findings with a verdict, with no CI or repository setup changes."
+          ]
+        },
+        {
+          "id": "bootstrap-n2",
+          "query": "What is semantic versioning and when should I bump MINOR?",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking bootstrap.",
+          "assertions": [
+            "The agent does not activate bootstrap for this task",
+            "Explains that a MINOR bump adds backward-compatible features, and changes no files."
+          ]
+        },
+        {
+          "id": "bootstrap-n3",
+          "query": "I only want to set up a dkstack pointer in an existing configured repository.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking bootstrap.",
+          "assertions": [
+            "The agent does not activate bootstrap for this task",
+            "Uses setup-dkstack for the pointer and does not change CI, labels or branch protection."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "chart-route",
+      "queries": [
+        {
+          "id": "chart-route-p1",
+          "query": "This project goal is uncertain across multiple milestones. Build a route map to settle scope over sessions.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Captures major open decisions in a route map without inventing scope or acceptance criteria.",
+          "assertions": [
+            "The agent activates the chart-route skill",
+            "Names the destination with the owner before it writes the map.",
+            "Writes the map in docs/maps/<slug>.md and runs check-maps.",
+            "Does not invent scope, decisions or acceptance criteria that the owner did not give."
+          ]
+        },
+        {
+          "id": "chart-route-p2",
+          "query": "We cannot plan implementation yet because multiple major outcomes remain unknown. Chart a route first.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Captures major open decisions in a route map without inventing scope or acceptance criteria.",
+          "assertions": [
+            "The agent activates the chart-route skill",
+            "Names the destination with the owner before it writes the map.",
+            "Writes the map in docs/maps/<slug>.md and runs check-maps.",
+            "Does not invent scope, decisions or acceptance criteria that the owner did not give."
+          ]
+        },
+        {
+          "id": "chart-route-n1",
+          "query": "Implement the already approved one-line parser fix with an existing regression test.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking chart-route.",
+          "assertions": [
+            "The agent does not activate chart-route for this task",
+            "Implements the parser fix with tdd-loop and writes no roadmap or route file."
+          ]
+        },
+        {
+          "id": "chart-route-n2",
+          "query": "Describe the purpose of a project roadmap in two sentences.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking chart-route.",
+          "assertions": [
+            "The agent does not activate chart-route for this task",
+            "Answers in two sentences and creates no roadmap file."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "clarify-intent",
+      "queries": [
+        {
+          "id": "clarify-intent-p1",
+          "query": "The issue uses unclear domain terms. Clarify requirements and acceptance criteria before implementation.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Identifies material ambiguities and resolves requirements before coding or planning.",
+          "assertions": [
+            "The agent activates the clarify-intent skill",
+            "Restates the request in its own words.",
+            "Lists open questions about behavior, edge cases and constraints, and asks them.",
+            "Does not start design or code before the owner answers."
+          ]
+        },
+        {
+          "id": "clarify-intent-p2",
+          "query": "Before planning this new capability, identify ambiguous behaviors and resolve questions with me.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Identifies material ambiguities and resolves requirements before coding or planning.",
+          "assertions": [
+            "The agent activates the clarify-intent skill",
+            "Restates the request in its own words.",
+            "Lists open questions about behavior, edge cases and constraints, and asks them.",
+            "Does not start design or code before the owner answers."
+          ]
+        },
+        {
+          "id": "clarify-intent-n1",
+          "query": "The feature specification is approved. Implement it exactly as written with tests.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking clarify-intent.",
+          "assertions": [
+            "The agent does not activate clarify-intent for this task",
+            "Implements the approved specification test-first and asks no clarifying questions about intent."
+          ]
+        },
+        {
+          "id": "clarify-intent-n2",
+          "query": "What is a software requirement? Provide a short definition only.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking clarify-intent.",
+          "assertions": [
+            "The agent does not activate clarify-intent for this task",
+            "Gives a short definition of a software requirement and asks no questions."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "code-review",
+      "queries": [
+        {
+          "id": "code-review-p1",
+          "query": "Review PR #42 against acceptance criteria and project coding rules.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Reports standards and specification findings separately with source-based evidence.",
+          "assertions": [
+            "The agent activates the code-review skill",
+            "Reports the standards axis and the specification axis separately.",
+            "Gives each finding a severity from the severity table and a file:line.",
+            "Gives a verdict and does not merge or approve."
+          ]
+        },
+        {
+          "id": "code-review-p2",
+          "query": "Here is the diff and issue text. Look for defects and regressions before I merge.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Reports standards and specification findings separately with source-based evidence.",
+          "assertions": [
+            "The agent activates the code-review skill",
+            "Reports the standards axis and the specification axis separately.",
+            "Gives each finding a severity from the severity table and a file:line.",
+            "Gives a verdict and does not merge or approve."
+          ]
+        },
+        {
+          "id": "code-review-p3",
+          "query": "Inspect my uncommitted changes for hidden side effects and missing requirements.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Reports standards and specification findings separately with source-based evidence.",
+          "assertions": [
+            "The agent activates the code-review skill",
+            "Reports the standards axis and the specification axis separately.",
+            "Gives each finding a severity from the severity table and a file:line.",
+            "Gives a verdict and does not merge or approve."
+          ]
+        },
+        {
+          "id": "code-review-n1",
+          "query": "Summarize what changed in the latest release notes; no review needed.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking code-review.",
+          "assertions": [
+            "The agent does not activate code-review for this task",
+            "Gives a summary of the release notes with no findings, severities or verdict."
+          ]
+        },
+        {
+          "id": "code-review-n2",
+          "query": "Please write the PR description and link its evidence.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking code-review.",
+          "assertions": [
+            "The agent does not activate code-review for this task",
+            "Routes the request to write-pr and edits the PR body with linked evidence, with no review verdict."
+          ]
+        },
+        {
+          "id": "code-review-n3",
+          "query": "Implement the bug fix with tests first, not a review.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking code-review.",
+          "assertions": [
+            "The agent does not activate code-review for this task",
+            "Writes a failing test first with tdd-loop, then the fix, and gives no review verdict."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "domain-glossary",
+      "queries": [
+        {
+          "id": "domain-glossary-p1",
+          "query": "Compare these proposed domain terms with CONTEXT.md and flag inconsistent language.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Uses CONTEXT.md to detect terminology conflicts and record resolved domain terms.",
+          "assertions": [
+            "The agent activates the domain-glossary skill",
+            "Reads CONTEXT.md before it compares the terms.",
+            "Asks the owner when a word gives a term a second meaning.",
+            "Writes each resolved term in CONTEXT.md when the owner resolves it."
+          ]
+        },
+        {
+          "id": "domain-glossary-p2",
+          "query": "Record the resolved meaning of an order lifecycle term in the project glossary.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Uses CONTEXT.md to detect terminology conflicts and record resolved domain terms.",
+          "assertions": [
+            "The agent activates the domain-glossary skill",
+            "Reads CONTEXT.md before it compares the terms.",
+            "Asks the owner when a word gives a term a second meaning.",
+            "Writes each resolved term in CONTEXT.md when the owner resolves it."
+          ]
+        },
+        {
+          "id": "domain-glossary-n1",
+          "query": "Give a general dictionary definition of the word aggregate.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking domain-glossary.",
+          "assertions": [
+            "The agent does not activate domain-glossary for this task",
+            "Gives a general dictionary definition and does not create or edit a glossary file."
+          ]
+        },
+        {
+          "id": "domain-glossary-n2",
+          "query": "Review this CSS contrast regression; domain terminology is not in scope.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking domain-glossary.",
+          "assertions": [
+            "The agent does not activate domain-glossary for this task",
+            "Reports the CSS contrast regression with measured ratios and adds no glossary terms."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "improve-agents",
+      "queries": [
+        {
+          "id": "improve-agents-p1",
+          "query": "As owner, review the last coding session and suggest updates to our agent instructions.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Reports environment improvements to the owner without unauthorized repository edits.",
+          "assertions": [
+            "The agent activates the improve-agents skill",
+            "Lists each event in the session that cost time or caused a mistake.",
+            "Finds a cause in the environment for each event and grades the evidence.",
+            "Writes the report for the owner and changes no files."
+          ]
+        },
+        {
+          "id": "improve-agents-p2",
+          "query": "I explicitly request an improvement retrospective for the completed agent workflow.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Reports environment improvements to the owner without unauthorized repository edits.",
+          "assertions": [
+            "The agent activates the improve-agents skill",
+            "Lists each event in the session that cost time or caused a mistake.",
+            "Finds a cause in the environment for each event and grades the evidence.",
+            "Writes the report for the owner and changes no files."
+          ]
+        },
+        {
+          "id": "improve-agents-n1",
+          "query": "Automatically revise agent instructions without my request after every test run.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking improve-agents.",
+          "assertions": [
+            "The agent does not activate improve-agents for this task",
+            "Refuses to change agent instructions without a request from the user, and changes no instruction file."
+          ]
+        },
+        {
+          "id": "improve-agents-n2",
+          "query": "Summarize how an AI coding agent works in general.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking improve-agents.",
+          "assertions": [
+            "The agent does not activate improve-agents for this task",
+            "Gives a general summary of how a coding agent works and edits no AGENTS.md or skill file."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "learn",
+      "queries": [
+        {
+          "id": "learn-p1",
+          "query": "Quiz me on C# async programming and adjust to my answers.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Adapts teaching to the learner's responses and assesses progress only from evidence.",
+          "assertions": [
+            "The agent activates the learn skill",
+            "Teaches one concept at a time and responds to each answer.",
+            "Records a level for a concept only from evidence in the learner's answers.",
+            "Does not mark a concept as known without evidence."
+          ]
+        },
+        {
+          "id": "learn-p2",
+          "query": "Teach me networking concepts one at a time, checking what I understand.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Adapts teaching to the learner's responses and assesses progress only from evidence.",
+          "assertions": [
+            "The agent activates the learn skill",
+            "Teaches one concept at a time and responds to each answer.",
+            "Records a level for a concept only from evidence in the learner's answers.",
+            "Does not mark a concept as known without evidence."
+          ]
+        },
+        {
+          "id": "learn-p3",
+          "query": "Build a learning curriculum for SQL and revisit weak topics later.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Adapts teaching to the learner's responses and assesses progress only from evidence.",
+          "assertions": [
+            "The agent activates the learn skill",
+            "Teaches one concept at a time and responds to each answer.",
+            "Records a level for a concept only from evidence in the learner's answers.",
+            "Does not mark a concept as known without evidence."
+          ]
+        },
+        {
+          "id": "learn-n1",
+          "query": "What does await do in C#? Please answer briefly.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking learn.",
+          "assertions": [
+            "The agent does not activate learn for this task",
+            "Answers what await does in C# in a few sentences, with no lesson plan or exercises."
+          ]
+        },
+        {
+          "id": "learn-n2",
+          "query": "I need a code snippet for parsing JSON; no lesson needed.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking learn.",
+          "assertions": [
+            "The agent does not activate learn for this task",
+            "Gives a JSON parsing code snippet with no lesson, quiz or study plan."
+          ]
+        },
+        {
+          "id": "learn-n3",
+          "query": "Compare two online courses; I am not asking to study yet.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking learn.",
+          "assertions": [
+            "The agent does not activate learn for this task",
+            "Compares the two courses on stated facts and starts no study session or lesson plan."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "make-diagram",
+      "queries": [
+        {
+          "id": "make-diagram-p1",
+          "query": "Create and verify a diagram showing the interactions between these three services.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Creates a readable diagram and verifies syntax and intended relationships.",
+          "assertions": [
+            "The agent activates the make-diagram skill",
+            "Uses the names from the code or the text in the diagram.",
+            "Writes a text alternative for the diagram.",
+            "Does the checks of the skill and fixes each problem before it publishes the diagram."
+          ]
+        },
+        {
+          "id": "make-diagram-p2",
+          "query": "Draw a readable Mermaid workflow for this pull request and validate its layout.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Creates a readable diagram and verifies syntax and intended relationships.",
+          "assertions": [
+            "The agent activates the make-diagram skill",
+            "Uses the names from the code or the text in the diagram.",
+            "Writes a text alternative for the diagram.",
+            "Does the checks of the skill and fixes each problem before it publishes the diagram."
+          ]
+        },
+        {
+          "id": "make-diagram-n1",
+          "query": "Explain what a sequence diagram represents without creating an artifact.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking make-diagram.",
+          "assertions": [
+            "The agent does not activate make-diagram for this task",
+            "Explains in prose what a sequence diagram shows and creates no diagram file."
+          ]
+        },
+        {
+          "id": "make-diagram-n2",
+          "query": "Review this single code change for performance without visuals.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking make-diagram.",
+          "assertions": [
+            "The agent does not activate make-diagram for this task",
+            "Reports performance findings for the change in text and creates no diagram."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "model-domain",
+      "queries": [
+        {
+          "id": "model-domain-p1",
+          "query": "Derive bounded contexts, aggregates, and invariants from this order processing specification.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Defines bounded contexts, invariants, and aggregate boundaries before implementation.",
+          "assertions": [
+            "The agent activates the model-domain skill",
+            "Finds the bounded contexts before it models an aggregate.",
+            "States the invariants and the root of each aggregate.",
+            "Writes the Domain model block in the issue."
+          ]
+        },
+        {
+          "id": "model-domain-p2",
+          "query": "Develop a Domain model block for the issue before deciding technical implementation.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Defines bounded contexts, invariants, and aggregate boundaries before implementation.",
+          "assertions": [
+            "The agent activates the model-domain skill",
+            "Finds the bounded contexts before it models an aggregate.",
+            "States the invariants and the root of each aggregate.",
+            "Writes the Domain model block in the issue."
+          ]
+        },
+        {
+          "id": "model-domain-n1",
+          "query": "Implement a straightforward nullable parameter check with tests.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking model-domain.",
+          "assertions": [
+            "The agent does not activate model-domain for this task",
+            "Adds the null check with a test and creates no domain model, aggregate or glossary."
+          ]
+        },
+        {
+          "id": "model-domain-n2",
+          "query": "Explain in general what domain-driven design means.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking model-domain.",
+          "assertions": [
+            "The agent does not activate model-domain for this task",
+            "Gives a general explanation of domain-driven design and creates no model file."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "plan-work",
+      "queries": [
+        {
+          "id": "plan-work-p1",
+          "query": "Before implementation, turn this approved export feature into small commits with tests first.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Maps each acceptance criterion to verification and small test-first increments.",
+          "assertions": [
+            "The agent activates the plan-work skill",
+            "Maps each acceptance criterion to a verification.",
+            "Divides the work into small increments, each a conventional commit with its dependencies and risks.",
+            "Puts the tests before the behavior change in each increment."
+          ]
+        },
+        {
+          "id": "plan-work-p2",
+          "query": "Our milestone has three dependent issues. Build an ordered implementation plan with risks.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Maps each acceptance criterion to verification and small test-first increments.",
+          "assertions": [
+            "The agent activates the plan-work skill",
+            "Maps each acceptance criterion to a verification.",
+            "Divides the work into small increments, each a conventional commit with its dependencies and risks.",
+            "Puts the tests before the behavior change in each increment."
+          ]
+        },
+        {
+          "id": "plan-work-p3",
+          "query": "Write a plan for fixing the caching bug before editing any source files.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Maps each acceptance criterion to verification and small test-first increments.",
+          "assertions": [
+            "The agent activates the plan-work skill",
+            "Maps each acceptance criterion to a verification.",
+            "Divides the work into small increments, each a conventional commit with its dependencies and risks.",
+            "Puts the tests before the behavior change in each increment."
+          ]
+        },
+        {
+          "id": "plan-work-n1",
+          "query": "Please implement this one-line typo fix right now, no planning requested.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking plan-work.",
+          "assertions": [
+            "The agent does not activate plan-work for this task",
+            "Fixes the typo at once and writes no plan, task list or issue."
+          ]
+        },
+        {
+          "id": "plan-work-n2",
+          "query": "What is the difference between planning and scheduling?",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking plan-work.",
+          "assertions": [
+            "The agent does not activate plan-work for this task",
+            "Explains the difference between planning and scheduling and writes no plan."
+          ]
+        },
+        {
+          "id": "plan-work-n3",
+          "query": "I already have a plan; review the pull request diff for defects.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking plan-work.",
+          "assertions": [
+            "The agent does not activate plan-work for this task",
+            "Routes the diff to code-review and reports defects with a verdict, with no new plan."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "release",
+      "queries": [
+        {
+          "id": "release-p1",
+          "query": "As the owner, prepare the release version and changelog, but do not publish.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Checks compatibility, proposes a release version, and never publishes or tags.",
+          "assertions": [
+            "The agent activates the release skill",
+            "Lists the changes in the release and checks for breaking changes.",
+            "Proposes a version number by the versioning rules and a changelog entry.",
+            "Stops after the proposal and does not tag, publish or start the release."
+          ]
+        },
+        {
+          "id": "release-p2",
+          "query": "I want you to propose the next semver for these commits and check compatibility before release.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Checks compatibility, proposes a release version, and never publishes or tags.",
+          "assertions": [
+            "The agent activates the release skill",
+            "Lists the changes in the release and checks for breaking changes.",
+            "Proposes a version number by the versioning rules and a changelog entry.",
+            "Stops after the proposal and does not tag, publish or start the release."
+          ]
+        },
+        {
+          "id": "release-p3",
+          "query": "Prepare a release plan for 2.3.0 and stop before creating tags.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Checks compatibility, proposes a release version, and never publishes or tags.",
+          "assertions": [
+            "The agent activates the release skill",
+            "Lists the changes in the release and checks for breaking changes.",
+            "Proposes a version number by the versioning rules and a changelog entry.",
+            "Stops after the proposal and does not tag, publish or start the release."
+          ]
+        },
+        {
+          "id": "release-n1",
+          "query": "Publish the release automatically without my explicit owner authorization.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking release.",
+          "assertions": [
+            "The agent does not activate release for this task",
+            "Refuses to publish without explicit owner authorization, and creates no tag or release."
+          ]
+        },
+        {
+          "id": "release-n2",
+          "query": "Explain the difference between release and deployment in general.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking release.",
+          "assertions": [
+            "The agent does not activate release for this task",
+            "Explains release and deployment in general and runs no release command."
+          ]
+        },
+        {
+          "id": "release-n3",
+          "query": "Only review the last PR for correctness; do not prepare a release.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking release.",
+          "assertions": [
+            "The agent does not activate release for this task",
+            "Reviews the PR for correctness with code-review and creates no changelog, tag or version bump."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "review-blast-radius",
+      "queries": [
+        {
+          "id": "review-blast-radius-p1",
+          "query": "During PR review, analyze downstream callers and contracts this API change could break.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Examines transitive callers and contracts beyond the immediate diff.",
+          "assertions": [
+            "The agent activates the review-blast-radius skill",
+            "Names the callers and consumers outside the diff with file:line.",
+            "Reports confirmed risks and cleared risks separately.",
+            "Does not report a caller or an API that it did not find in the code."
+          ]
+        },
+        {
+          "id": "review-blast-radius-p2",
+          "query": "Inspect the behavior outside this diff and assess the potential regression blast radius.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Examines transitive callers and contracts beyond the immediate diff.",
+          "assertions": [
+            "The agent activates the review-blast-radius skill",
+            "Names the callers and consumers outside the diff with file:line.",
+            "Reports confirmed risks and cleared risks separately.",
+            "Does not report a caller or an API that it did not find in the code."
+          ]
+        },
+        {
+          "id": "review-blast-radius-n1",
+          "query": "Create a basic JSON parsing helper with a unit test.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking review-blast-radius.",
+          "assertions": [
+            "The agent does not activate review-blast-radius for this task",
+            "Writes the JSON helper test-first and produces no impact or blast radius report."
+          ]
+        },
+        {
+          "id": "review-blast-radius-n2",
+          "query": "Define what a regression is without reviewing a repository.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking review-blast-radius.",
+          "assertions": [
+            "The agent does not activate review-blast-radius for this task",
+            "Gives a definition of a regression and reads no repository files."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "review-spec",
+      "queries": [
+        {
+          "id": "review-spec-p1",
+          "query": "Check this PR implementation against the linked issue acceptance criteria.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Identifies missing, extra, or incorrect behavior against the actual task specification.",
+          "assertions": [
+            "The agent activates the review-spec skill",
+            "Finds the specification from the issue references first.",
+            "Quotes the specification line for each finding.",
+            "Classifies each finding as missing or partial, not asked for, or wrong."
+          ]
+        },
+        {
+          "id": "review-spec-p2",
+          "query": "Identify missing, extra, or incorrect work relative to the written feature specification.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Identifies missing, extra, or incorrect behavior against the actual task specification.",
+          "assertions": [
+            "The agent activates the review-spec skill",
+            "Finds the specification from the issue references first.",
+            "Quotes the specification line for each finding.",
+            "Classifies each finding as missing or partial, not asked for, or wrong."
+          ]
+        },
+        {
+          "id": "review-spec-n1",
+          "query": "Review only code formatting and naming conventions.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking review-spec.",
+          "assertions": [
+            "The agent does not activate review-spec for this task",
+            "Routes the request to review-standards and reports only formatting and naming findings."
+          ]
+        },
+        {
+          "id": "review-spec-n2",
+          "query": "Write the issue acceptance criteria for a future feature, not a review.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking review-spec.",
+          "assertions": [
+            "The agent does not activate review-spec for this task",
+            "Writes acceptance criteria for the future feature and gives no review verdict."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "review-standards",
+      "queries": [
+        {
+          "id": "review-standards-p1",
+          "query": "Audit this patch for violations of our documented engineering and coding rules.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Cites engineering rule sources and grounds each reported violation in the diff.",
+          "assertions": [
+            "The agent activates the review-standards skill",
+            "Links the rule for each finding and does not copy it.",
+            "Grounds each finding in a file:line of the diff.",
+            "Does not repeat a check that an automated check in the project already enforces."
+          ]
+        },
+        {
+          "id": "review-standards-p2",
+          "query": "Compare PR changes against the dkstack standards and list grounded violations.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Cites engineering rule sources and grounds each reported violation in the diff.",
+          "assertions": [
+            "The agent activates the review-standards skill",
+            "Links the rule for each finding and does not copy it.",
+            "Grounds each finding in a file:line of the diff.",
+            "Does not repeat a check that an automated check in the project already enforces."
+          ]
+        },
+        {
+          "id": "review-standards-n1",
+          "query": "Compare implementation outcomes with feature acceptance criteria only.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking review-standards.",
+          "assertions": [
+            "The agent does not activate review-standards for this task",
+            "Routes the request to review-spec and checks the outcomes against each acceptance criterion."
+          ]
+        },
+        {
+          "id": "review-standards-n2",
+          "query": "Explain the difference between style conventions and behavioral requirements.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking review-standards.",
+          "assertions": [
+            "The agent does not activate review-standards for this task",
+            "Explains the difference between style conventions and behavior requirements, with no findings."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "setup-dkstack",
+      "queries": [
+        {
+          "id": "setup-dkstack-p1",
+          "query": "Please add dkstack to my repository, preserving the existing AGENTS.md rules.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Preserves project instructions, checks client pointers, and requests consent for installation.",
+          "assertions": [
+            "The agent activates the setup-dkstack skill",
+            "Reads the existing AGENTS.md and the other agent instruction files first.",
+            "Does not delete project text, and asks the owner about each conflicting rule.",
+            "Asks the owner before it installs skill copies or changes a version URL."
+          ]
+        },
+        {
+          "id": "setup-dkstack-p2",
+          "query": "The dkstack link in AGENTS.md is broken. Fix setup without changing other project policy.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Preserves project instructions, checks client pointers, and requests consent for installation.",
+          "assertions": [
+            "The agent activates the setup-dkstack skill",
+            "Reads the existing AGENTS.md and the other agent instruction files first.",
+            "Does not delete project text, and asks the owner about each conflicting rule.",
+            "Asks the owner before it installs skill copies or changes a version URL."
+          ]
+        },
+        {
+          "id": "setup-dkstack-p3",
+          "query": "Install dkstack for Claude Code and Codex here; ask before installing skill copies.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Preserves project instructions, checks client pointers, and requests consent for installation.",
+          "assertions": [
+            "The agent activates the setup-dkstack skill",
+            "Reads the existing AGENTS.md and the other agent instruction files first.",
+            "Does not delete project text, and asks the owner about each conflicting rule.",
+            "Asks the owner before it installs skill copies or changes a version URL."
+          ]
+        },
+        {
+          "id": "setup-dkstack-n1",
+          "query": "What does dkstack mean and what problems does it solve?",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking setup-dkstack.",
+          "assertions": [
+            "The agent does not activate setup-dkstack for this task",
+            "Explains what dkstack is and installs no pointer or skill copies."
+          ]
+        },
+        {
+          "id": "setup-dkstack-n2",
+          "query": "Review this feature issue in a repository that already uses dkstack.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking setup-dkstack.",
+          "assertions": [
+            "The agent does not activate setup-dkstack for this task",
+            "Reviews the feature issue and changes no AGENTS.md or dkstack pointer file."
+          ]
+        },
+        {
+          "id": "setup-dkstack-n3",
+          "query": "I want a full repository quality bootstrap; pointer setup is already complete.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking setup-dkstack.",
+          "assertions": [
+            "The agent does not activate setup-dkstack for this task",
+            "Routes the request to bootstrap and does not edit the existing dkstack pointer."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "setup-editorconfig",
+      "queries": [
+        {
+          "id": "setup-editorconfig-p1",
+          "query": "Configure strict editorconfig and LF line endings during repository bootstrap.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Configures strict editor standards and consistent LF line endings.",
+          "assertions": [
+            "The agent activates the setup-editorconfig skill",
+            "Writes .editorconfig with root = true, charset = utf-8 and end_of_line = lf.",
+            "Adds .gitattributes with * text=auto eol=lf.",
+            "Keeps the existing quality gates."
+          ]
+        },
+        {
+          "id": "setup-editorconfig-p2",
+          "query": "Apply the project's editor formatting standards and verify .editorconfig coverage.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Configures strict editor standards and consistent LF line endings.",
+          "assertions": [
+            "The agent activates the setup-editorconfig skill",
+            "Writes .editorconfig with root = true, charset = utf-8 and end_of_line = lf.",
+            "Adds .gitattributes with * text=auto eol=lf.",
+            "Keeps the existing quality gates."
+          ]
+        },
+        {
+          "id": "setup-editorconfig-n1",
+          "query": "Help me choose a domain-driven design aggregate from requirements.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking setup-editorconfig.",
+          "assertions": [
+            "The agent does not activate setup-editorconfig for this task",
+            "Routes the request to model-domain and creates no .editorconfig file."
+          ]
+        },
+        {
+          "id": "setup-editorconfig-n2",
+          "query": "Explain why programmers use EditorConfig without changing a repository.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking setup-editorconfig.",
+          "assertions": [
+            "The agent does not activate setup-editorconfig for this task",
+            "Explains the purpose of EditorConfig and writes no .editorconfig file."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "setup-labels",
+      "queries": [
+        {
+          "id": "setup-labels-p1",
+          "query": "Find missing repository issue priority and type labels and ask before creating them.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Identifies missing labels and obtains owner approval before creating them.",
+          "assertions": [
+            "The agent activates the setup-labels skill",
+            "Lists each dkstack type and priority label that the project does not have.",
+            "Asks the owner before it creates or renames a label.",
+            "Does not change or delete an existing label without the owner's OK."
+          ]
+        },
+        {
+          "id": "setup-labels-p2",
+          "query": "During bootstrap, assess the project's label taxonomy and propose additions.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Identifies missing labels and obtains owner approval before creating them.",
+          "assertions": [
+            "The agent activates the setup-labels skill",
+            "Lists each dkstack type and priority label that the project does not have.",
+            "Asks the owner before it creates or renames a label.",
+            "Does not change or delete an existing label without the owner's OK."
+          ]
+        },
+        {
+          "id": "setup-labels-n1",
+          "query": "Suggest a descriptive commit title for an existing fix.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking setup-labels.",
+          "assertions": [
+            "The agent does not activate setup-labels for this task",
+            "Suggests a Conventional Commits title for the fix and creates or changes no labels."
+          ]
+        },
+        {
+          "id": "setup-labels-n2",
+          "query": "Explain how issue labels help developers organize work.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking setup-labels.",
+          "assertions": [
+            "The agent does not activate setup-labels for this task",
+            "Explains how labels organize issues and runs no label command."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "setup-quality-gates",
+      "queries": [
+        {
+          "id": "setup-quality-gates-p1",
+          "query": "Bootstrap deterministic repository CI with warnings as errors and test gates.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Sets deterministic quality gates with warnings treated as errors.",
+          "assertions": [
+            "The agent activates the setup-quality-gates skill",
+            "Makes the build treat warnings as errors.",
+            "Sets up CI that runs the full check on each push to the default branch and each pull request.",
+            "Does not weaken an existing gate."
+          ]
+        },
+        {
+          "id": "setup-quality-gates-p2",
+          "query": "Check current validation gates and configure strict reproducible quality checks.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Sets deterministic quality gates with warnings treated as errors.",
+          "assertions": [
+            "The agent activates the setup-quality-gates skill",
+            "Makes the build treat warnings as errors.",
+            "Sets up CI that runs the full check on each push to the default branch and each pull request.",
+            "Does not weaken an existing gate."
+          ]
+        },
+        {
+          "id": "setup-quality-gates-n1",
+          "query": "Review an existing PR's acceptance criteria without modifying CI.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking setup-quality-gates.",
+          "assertions": [
+            "The agent does not activate setup-quality-gates for this task",
+            "Checks the PR against its acceptance criteria and changes no CI workflow file."
+          ]
+        },
+        {
+          "id": "setup-quality-gates-n2",
+          "query": "What does a quality gate mean in general software teams?",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking setup-quality-gates.",
+          "assertions": [
+            "The agent does not activate setup-quality-gates for this task",
+            "Gives a general definition of a quality gate and adds no check or workflow."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "setup-repo-protection",
+      "queries": [
+        {
+          "id": "setup-repo-protection-p1",
+          "query": "List appropriate branch protection and security rules for this new repository.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Reports branch and security protections for owner action without bypassing restrictions.",
+          "assertions": [
+            "The agent activates the setup-repo-protection skill",
+            "Lists each missing or weaker protection setting.",
+            "Gives the settings to the owner as steps and does not change them itself.",
+            "Does not bypass a branch rule or a ruleset."
+          ]
+        },
+        {
+          "id": "setup-repo-protection-p2",
+          "query": "During bootstrap, propose repository rulesets without bypassing owner approvals.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Reports branch and security protections for owner action without bypassing restrictions.",
+          "assertions": [
+            "The agent activates the setup-repo-protection skill",
+            "Lists each missing or weaker protection setting.",
+            "Gives the settings to the owner as steps and does not change them itself.",
+            "Does not bypass a branch rule or a ruleset."
+          ]
+        },
+        {
+          "id": "setup-repo-protection-n1",
+          "query": "Fix a unit test failure in an existing code repository.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking setup-repo-protection.",
+          "assertions": [
+            "The agent does not activate setup-repo-protection for this task",
+            "Fixes the failing unit test and changes no branch protection or ruleset."
+          ]
+        },
+        {
+          "id": "setup-repo-protection-n2",
+          "query": "Explain what branch protection is in a general tutorial.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking setup-repo-protection.",
+          "assertions": [
+            "The agent does not activate setup-repo-protection for this task",
+            "Explains branch protection as a tutorial and calls no repository settings API."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "setup-supply-chain",
+      "queries": [
+        {
+          "id": "setup-supply-chain-p1",
+          "query": "Apply the dkstack dependency and supply chain security rules to this new project.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Applies dependency provenance, pins, and approved supply chain security rules.",
+          "assertions": [
+            "The agent activates the setup-supply-chain skill",
+            "Pins each third-party CI action to a full commit SHA.",
+            "Commits the lockfile and installs from the lockfile in CI.",
+            "Does not keep credentials in the checked-out code when a later step does not need them."
+          ]
+        },
+        {
+          "id": "setup-supply-chain-p2",
+          "query": "Audit package provenance, dependency pins, and secret handling during repository setup.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Applies dependency provenance, pins, and approved supply chain security rules.",
+          "assertions": [
+            "The agent activates the setup-supply-chain skill",
+            "Pins each third-party CI action to a full commit SHA.",
+            "Commits the lockfile and installs from the lockfile in CI.",
+            "Does not keep credentials in the checked-out code when a later step does not need them."
+          ]
+        },
+        {
+          "id": "setup-supply-chain-n1",
+          "query": "Write a component diagram for the current domain services.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking setup-supply-chain.",
+          "assertions": [
+            "The agent does not activate setup-supply-chain for this task",
+            "Routes the request to make-diagram and changes no dependency, lockfile or Dependabot file."
+          ]
+        },
+        {
+          "id": "setup-supply-chain-n2",
+          "query": "Compare two build tools in prose without changing dependencies.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking setup-supply-chain.",
+          "assertions": [
+            "The agent does not activate setup-supply-chain for this task",
+            "Compares the two build tools in prose and changes no dependency file."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "setup-versioning",
+      "queries": [
+        {
+          "id": "setup-versioning-p1",
+          "query": "Initialize conventional commit rules, branch conventions, and semantic versioning.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Configures commit and branch conventions, semantic versions, and changelog rules.",
+          "assertions": [
+            "The agent activates the setup-versioning skill",
+            "Documents conventional commits and short-lived feature branches.",
+            "Puts the version in the project manifest and adds CHANGELOG.md.",
+            "Links version-control/index.md and versioning/index.md."
+          ]
+        },
+        {
+          "id": "setup-versioning-p2",
+          "query": "During repository bootstrap, set up release numbering and changelog conventions.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Configures commit and branch conventions, semantic versions, and changelog rules.",
+          "assertions": [
+            "The agent activates the setup-versioning skill",
+            "Documents conventional commits and short-lived feature branches.",
+            "Puts the version in the project manifest and adds CHANGELOG.md.",
+            "Links version-control/index.md and versioning/index.md."
+          ]
+        },
+        {
+          "id": "setup-versioning-n1",
+          "query": "Choose a proposed release version as owner without changing repository setup.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking setup-versioning.",
+          "assertions": [
+            "The agent does not activate setup-versioning for this task",
+            "Leaves the version choice to the owner and changes no versioning setup or release config."
+          ]
+        },
+        {
+          "id": "setup-versioning-n2",
+          "query": "Explain when to increment a major version in SemVer.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking setup-versioning.",
+          "assertions": [
+            "The agent does not activate setup-versioning for this task",
+            "Explains that a MAJOR bump marks a breaking change, and changes no version file."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "start-issue",
+      "queries": [
+        {
+          "id": "start-issue-p1",
+          "query": "Create an issue for this implementation task, assign scope and labels, then start a branch.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Finds existing work before opening an issue, and coordinates a scoped branch.",
+          "assertions": [
+            "The agent activates the start-issue skill",
+            "Searches the open issues before it opens a new one.",
+            "Gives a new issue a goal, acceptance criteria and the required labels.",
+            "Creates one branch for the issue from the default branch."
+          ]
+        },
+        {
+          "id": "start-issue-p2",
+          "query": "Before coding, check whether a duplicate issue exists and start tracking this change.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Finds existing work before opening an issue, and coordinates a scoped branch.",
+          "assertions": [
+            "The agent activates the start-issue skill",
+            "Searches the open issues before it opens a new one.",
+            "Gives a new issue a goal, acceptance criteria and the required labels.",
+            "Creates one branch for the issue from the default branch."
+          ]
+        },
+        {
+          "id": "start-issue-n1",
+          "query": "Explain what a GitHub issue is without opening one.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking start-issue.",
+          "assertions": [
+            "The agent does not activate start-issue for this task",
+            "Explains what a GitHub issue is and creates no issue or branch."
+          ]
+        },
+        {
+          "id": "start-issue-n2",
+          "query": "Review an existing PR diff without making any issue or branch changes.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking start-issue.",
+          "assertions": [
+            "The agent does not activate start-issue for this task",
+            "Reviews the PR diff and creates no issue, branch or worktree."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "tdd-loop",
+      "queries": [
+        {
+          "id": "tdd-loop-p1",
+          "query": "Add a regression test for the CSV parser bug, then fix its implementation.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Demonstrates a failing regression test before implementation, then green and refactor.",
+          "assertions": [
+            "The agent activates the tdd-loop skill",
+            "Writes a focused test and runs it before the production code.",
+            "Shows that the test fails for the expected reason.",
+            "Runs the tests and the quality gates, and marks each check that did not run as NOT RUN."
+          ]
+        },
+        {
+          "id": "tdd-loop-p2",
+          "query": "Implement input validation for this API using a red-green-refactor cycle.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Demonstrates a failing regression test before implementation, then green and refactor.",
+          "assertions": [
+            "The agent activates the tdd-loop skill",
+            "Writes a focused test and runs it before the production code.",
+            "Shows that the test fails for the expected reason.",
+            "Runs the tests and the quality gates, and marks each check that did not run as NOT RUN."
+          ]
+        },
+        {
+          "id": "tdd-loop-p3",
+          "query": "Change this function behavior using test-first incremental work.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Demonstrates a failing regression test before implementation, then green and refactor.",
+          "assertions": [
+            "The agent activates the tdd-loop skill",
+            "Writes a focused test and runs it before the production code.",
+            "Shows that the test fails for the expected reason.",
+            "Runs the tests and the quality gates, and marks each check that did not run as NOT RUN."
+          ]
+        },
+        {
+          "id": "tdd-loop-n1",
+          "query": "Can you describe why red-green-refactor helps teams?",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking tdd-loop.",
+          "assertions": [
+            "The agent does not activate tdd-loop for this task",
+            "Explains why red-green-refactor helps teams and writes no test or code."
+          ]
+        },
+        {
+          "id": "tdd-loop-n2",
+          "query": "Review this PR for hidden regressions and report findings only.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking tdd-loop.",
+          "assertions": [
+            "The agent does not activate tdd-loop for this task",
+            "Reports regression findings with a verdict through code-review and writes no test."
+          ]
+        },
+        {
+          "id": "tdd-loop-n3",
+          "query": "Write a feature plan but do not modify any code or tests.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking tdd-loop.",
+          "assertions": [
+            "The agent does not activate tdd-loop for this task",
+            "Writes the feature plan with plan-work and changes no code or test file."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "triage",
+      "queries": [
+        {
+          "id": "triage-p1",
+          "query": "We use dkstack. Which instructions apply to a new settings page that also changes database writes?",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Selects the smallest relevant set of rules and skills for the actual task.",
+          "assertions": [
+            "The agent activates the triage skill",
+            "Names the type of work.",
+            "Lists the sections and skills that apply, and only those.",
+            "Does not load a section or a skill that does not apply to the task."
+          ]
+        },
+        {
+          "id": "triage-p2",
+          "query": "Before making changes to this dkstack repository, route my feature through the minimum relevant skills.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Selects the smallest relevant set of rules and skills for the actual task.",
+          "assertions": [
+            "The agent activates the triage skill",
+            "Names the type of work.",
+            "Lists the sections and skills that apply, and only those.",
+            "Does not load a section or a skill that does not apply to the task."
+          ]
+        },
+        {
+          "id": "triage-p3",
+          "query": "This dkstack consumer needs a PR review plus rendered UI inspection. What should the agent load?",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Selects the smallest relevant set of rules and skills for the actual task.",
+          "assertions": [
+            "The agent activates the triage skill",
+            "Names the type of work.",
+            "Lists the sections and skills that apply, and only those.",
+            "Does not load a section or a skill that does not apply to the task."
+          ]
+        },
+        {
+          "id": "triage-n1",
+          "query": "Please define the word refactoring and give one short example.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking triage.",
+          "assertions": [
+            "The agent does not activate triage for this task",
+            "Defines refactoring with one short example and routes to no skill."
+          ]
+        },
+        {
+          "id": "triage-n2",
+          "query": "Explain in general what a skill is without opening a repository.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking triage.",
+          "assertions": [
+            "The agent does not activate triage for this task",
+            "Explains what a skill is and opens no repository file."
+          ]
+        },
+        {
+          "id": "triage-n3",
+          "query": "We have a simple programming question: what does a null coalescing operator do?",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking triage.",
+          "assertions": [
+            "The agent does not activate triage for this task",
+            "Explains the null coalescing operator with one example and loads no other skill."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "ui-design",
+      "queries": [
+        {
+          "id": "ui-design-p1",
+          "query": "Build a responsive accessible mobile settings screen and verify light and dark states.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Uses the project's design system, or records the direction it chose when none exists. Verifies the screen in light and dark themes.",
+          "assertions": [
+            "The agent activates the ui-design skill",
+            "Uses the project's design system, or records the direction it chose when none exists.",
+            "Captures the rendered result at 320 CSS px and at one wide width, in each supported theme.",
+            "Records each minimum evidence item as done, or as NOT RUN or NOT APPLICABLE with a reason.",
+            "Reports the measured contrast ratio of each new or changed color pair.",
+            "Writes the `Visual verification:` line with PASS, FAIL or NOT RUN and its evidence.",
+            "Does not claim a check on a platform that it could not run."
+          ]
+        },
+        {
+          "id": "ui-design-p2",
+          "query": "Our dashboard buttons overflow on phones. Fix the layout and inspect the rendered result.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Keeps the existing design system. Fixes the overflow and verifies the dashboard at phone widths.",
+          "assertions": [
+            "The agent activates the ui-design skill",
+            "Shows no horizontal scroll on the dashboard at 320 CSS px after the fix.",
+            "Captures the rendered result at 320 CSS px and at one wide width, in each supported theme.",
+            "Records each minimum evidence item as done, or as NOT RUN or NOT APPLICABLE with a reason.",
+            "Reports the measured contrast ratio of each new or changed color pair.",
+            "Writes the `Visual verification:` line with PASS, FAIL or NOT RUN and its evidence.",
+            "Does not claim a check on a platform that it could not run."
+          ]
+        },
+        {
+          "id": "ui-design-p3",
+          "query": "Make the new desktop UI using existing design tokens and run visual checks.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Reuses the existing design tokens and components, and verifies the rendered desktop UI.",
+          "assertions": [
+            "The agent activates the ui-design skill",
+            "Reuses the existing design tokens and components.",
+            "Captures the rendered result at 320 CSS px and at one wide width, in each supported theme.",
+            "Records each minimum evidence item as done, or as NOT RUN or NOT APPLICABLE with a reason.",
+            "Reports the measured contrast ratio of each new or changed color pair.",
+            "Writes the `Visual verification:` line with PASS, FAIL or NOT RUN and its evidence.",
+            "Does not claim a check on a platform that it could not run."
+          ]
+        },
+        {
+          "id": "ui-design-n1",
+          "query": "Describe the difference between a design system and a style guide.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking ui-design.",
+          "assertions": [
+            "The agent does not activate ui-design for this task",
+            "Explains the difference between a design system and a style guide, with no UI file changes."
+          ]
+        },
+        {
+          "id": "ui-design-n2",
+          "query": "Review this screenshot for contrast and accessibility only; do not make changes.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking ui-design.",
+          "assertions": [
+            "The agent does not activate ui-design for this task",
+            "Routes the request to ui-review and reports contrast and accessibility findings with no file changes."
+          ]
+        },
+        {
+          "id": "ui-design-n3",
+          "query": "Generate a backend SQL query with no interface changes.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking ui-design.",
+          "assertions": [
+            "The agent does not activate ui-design for this task",
+            "Writes the SQL query and changes no UI file or design token."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "ui-review",
+      "queries": [
+        {
+          "id": "ui-review-p1",
+          "query": "Audit this rendered page at mobile widths for contrast, keyboard use, and layout defects.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "A code-review report with findings per surface, state, size and theme, and a verdict. No file changes.",
+          "assertions": [
+            "The agent activates the ui-review skill",
+            "Reports the findings through the code-review severity table and gives a verdict.",
+            "Gives each finding its surface, state, size and theme, with evidence.",
+            "Reads only: the agent changes no files and does not approve or merge.",
+            "Gives no numeric score for taste.",
+            "Checks the page at 320 CSS px, with a keyboard walk-through and measured contrast ratios."
+          ]
+        },
+        {
+          "id": "ui-review-p2",
+          "query": "I have a screenshot of a desktop dashboard. Please review design consistency.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "A code-review report with findings per surface, state, size and theme, and a verdict. No file changes.",
+          "assertions": [
+            "The agent activates the ui-review skill",
+            "Reports the findings through the code-review severity table and gives a verdict.",
+            "Gives each finding its surface, state, size and theme, with evidence.",
+            "Reads only: the agent changes no files and does not approve or merge.",
+            "Gives no numeric score for taste.",
+            "States that one screenshot is not enough evidence for PASS, and marks the missing checks NOT RUN."
+          ]
+        },
+        {
+          "id": "ui-review-p3",
+          "query": "Review this PR screen in dark mode and high zoom for issues.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "A code-review report with findings per surface, state, size and theme, and a verdict. No file changes.",
+          "assertions": [
+            "The agent activates the ui-review skill",
+            "Reports the findings through the code-review severity table and gives a verdict.",
+            "Gives each finding its surface, state, size and theme, with evidence.",
+            "Reads only: the agent changes no files and does not approve or merge.",
+            "Gives no numeric score for taste.",
+            "Checks the dark theme and text at 200%, and reports each check as PASS, FAIL or NOT RUN."
+          ]
+        },
+        {
+          "id": "ui-review-p4",
+          "query": "I changed the settings page layout. Review my own UI change before I open the pull request.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "A self-review report with findings per surface, state, size and theme, before the pull request exists. The author fixes each finding and gives no verdict on the pull request.",
+          "assertions": [
+            "The agent activates the ui-review skill",
+            "Follows the self-review rule in code-review: it uses the same review steps on its own change before the pull request exists.",
+            "Reports the findings through the code-review severity table, with surface, state, size and theme, and fixes each finding.",
+            "Gives no numeric score for taste.",
+            "Checks the planned title, body and commit messages, or writes NOT RUN for the pull request text step if none exists.",
+            "States that the self-review does not replace the review by another reviewer.",
+            "The agent does not give the verdict on, approve or merge its own pull request."
+          ]
+        },
+        {
+          "id": "ui-review-n1",
+          "query": "Create a fresh accessible UI implementation from these requirements.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking ui-review.",
+          "assertions": [
+            "The agent does not activate ui-review for this task",
+            "Routes the request to ui-design and builds the UI with its visual verification, with no review verdict."
+          ]
+        },
+        {
+          "id": "ui-review-n2",
+          "query": "Tell me how CSS grid minmax works, no UI attached.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking ui-review.",
+          "assertions": [
+            "The agent does not activate ui-review for this task",
+            "Explains CSS grid minmax with one example and gives no UI findings."
+          ]
+        },
+        {
+          "id": "ui-review-n3",
+          "query": "Review the backend service diff; it contains no rendered UI.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking ui-review.",
+          "assertions": [
+            "The agent does not activate ui-review for this task",
+            "Reviews the backend diff with code-review and reports no rendered UI checks."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "verify-claim",
+      "queries": [
+        {
+          "id": "verify-claim-p1",
+          "query": "Verify whether the claimed test pass actually happened and cite executable evidence.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Classifies claims by evidence level and never treats unexecuted tests as passing.",
+          "assertions": [
+            "The agent activates the verify-claim skill",
+            "States the evidence level that each key claim reached.",
+            "Writes NOT RUN with a reason for each check that it could not run.",
+            "Does not report an unexecuted test as passing."
+          ]
+        },
+        {
+          "id": "verify-claim-p2",
+          "query": "Before reporting this benchmark result, classify and prove its evidence level.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Classifies claims by evidence level and never treats unexecuted tests as passing.",
+          "assertions": [
+            "The agent activates the verify-claim skill",
+            "States the evidence level that each key claim reached.",
+            "Writes NOT RUN with a reason for each check that it could not run.",
+            "Does not report an unexecuted test as passing."
+          ]
+        },
+        {
+          "id": "verify-claim-n1",
+          "query": "Explain what a smoke test is in one paragraph.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking verify-claim.",
+          "assertions": [
+            "The agent does not activate verify-claim for this task",
+            "Explains a smoke test in one paragraph and runs no command."
+          ]
+        },
+        {
+          "id": "verify-claim-n2",
+          "query": "Create a roadmap for a large feature without validating existing claims.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking verify-claim.",
+          "assertions": [
+            "The agent does not activate verify-claim for this task",
+            "Writes the roadmap with chart-route and gives no evidence levels for claims."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "write-adr",
+      "queries": [
+        {
+          "id": "write-adr-p1",
+          "query": "Record this approved architecture tradeoff in a new Architecture Decision Record.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Records an architecture decision, its alternatives, tradeoffs, status, and consequences.",
+          "assertions": [
+            "The agent activates the write-adr skill",
+            "Checks that the decision meets the ADR test first.",
+            "Writes Status, Affects, Context, Options considered, Decision and Consequences.",
+            "Runs check-adrs and fixes each finding."
+          ]
+        },
+        {
+          "id": "write-adr-p2",
+          "query": "Document why the team chose SQLite over a server database as a durable ADR.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Records an architecture decision, its alternatives, tradeoffs, status, and consequences.",
+          "assertions": [
+            "The agent activates the write-adr skill",
+            "Checks that the decision meets the ADR test first.",
+            "Writes Status, Affects, Context, Options considered, Decision and Consequences.",
+            "Runs check-adrs and fixes each finding."
+          ]
+        },
+        {
+          "id": "write-adr-n1",
+          "query": "Explain what an ADR means without writing a document.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking write-adr.",
+          "assertions": [
+            "The agent does not activate write-adr for this task",
+            "Explains what an ADR is and writes no ADR file."
+          ]
+        },
+        {
+          "id": "write-adr-n2",
+          "query": "Implement a small bug fix and run unit tests, no architecture decision.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking write-adr.",
+          "assertions": [
+            "The agent does not activate write-adr for this task",
+            "Fixes the bug, runs the unit tests and writes no ADR."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "write-pr",
+      "queries": [
+        {
+          "id": "write-pr-p1",
+          "query": "Write the PR description with issue links, verification evidence, and merge risk.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Produces a pull request body with issue links, evidence, observability, and merge risk.",
+          "assertions": [
+            "The agent activates the write-pr skill",
+            "Links the issue in the body.",
+            "Writes an Evidence section and one Observability line.",
+            "Writes a conventional commit title of 50 characters or fewer."
+          ]
+        },
+        {
+          "id": "write-pr-p2",
+          "query": "Update this pull request body to reflect tests, observability, and dependencies.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Produces a pull request body with issue links, evidence, observability, and merge risk.",
+          "assertions": [
+            "The agent activates the write-pr skill",
+            "Links the issue in the body.",
+            "Writes an Evidence section and one Observability line.",
+            "Writes a conventional commit title of 50 characters or fewer."
+          ]
+        },
+        {
+          "id": "write-pr-n1",
+          "query": "Perform an independent review of code implementation instead of editing the PR body.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking write-pr.",
+          "assertions": [
+            "The agent does not activate write-pr for this task",
+            "Reviews the code with code-review, gives a verdict and does not edit the PR body."
+          ]
+        },
+        {
+          "id": "write-pr-n2",
+          "query": "Explain what a pull request is in general terms.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking write-pr.",
+          "assertions": [
+            "The agent does not activate write-pr for this task",
+            "Explains pull requests in general and edits no PR title or body."
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "writing-check",
+      "queries": [
+        {
+          "id": "writing-check-p1",
+          "query": "Check these release notes against the project's ASD-STE100 writing rules.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Applies approved technical writing standards while preserving meaning and accuracy.",
+          "assertions": [
+            "The agent activates the writing-check skill",
+            "Checks the text against each rule in writing/index.md and the AI prose patterns.",
+            "Rewrites each sentence that breaks a rule.",
+            "Keeps the meaning of the text."
+          ]
+        },
+        {
+          "id": "writing-check-p2",
+          "query": "Edit the documentation text for plain language and approved technical style.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Applies approved technical writing standards while preserving meaning and accuracy.",
+          "assertions": [
+            "The agent activates the writing-check skill",
+            "Checks the text against each rule in writing/index.md and the AI prose patterns.",
+            "Rewrites each sentence that breaks a rule.",
+            "Keeps the meaning of the text."
+          ]
+        },
+        {
+          "id": "writing-check-n1",
+          "query": "Fix the implementation of a C# arithmetic error with tests.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking writing-check.",
+          "assertions": [
+            "The agent does not activate writing-check for this task",
+            "Fixes the C# arithmetic error test-first and runs no writing check on prose."
+          ]
+        },
+        {
+          "id": "writing-check-n2",
+          "query": "Explain the goals of simplified technical English without editing text.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking writing-check.",
+          "assertions": [
+            "The agent does not activate writing-check for this task",
+            "Explains the goals of simplified technical English and edits no text file."
+          ]
+        }
+      ]
+    }
+  ]
+}

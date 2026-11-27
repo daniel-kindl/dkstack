@@ -153,7 +153,7 @@ test("parseFrontmatter rejects an invalid escape, a duplicate key and an unknown
   );
   assert.throws(
     () => parseFrontmatter('---\nname: a\ndescription: "x"\nversion: 1\n---\n'),
-    { message: 'line 4: unknown key "version". Use only name, description, disable-model-invocation and user-invocable.' },
+    { message: 'line 4: unknown key "version".' },
   );
   assert.throws(
     () => parseFrontmatter('---\nname: a\n  continued\ndescription: "x"\n---\n'),
@@ -305,4 +305,59 @@ test("the Codex policy key counts only in the policy block", () => {
   assert.equal(codexPolicyOff("interface:\n  allow_implicit_invocation: false\n"), false);
   assert.equal(codexPolicyOff("policy:\n  allow_implicit_invocation: true\n"), false);
   assert.equal(codexPolicyOff("policy:\ninterface:\n  allow_implicit_invocation: false\n"), false);
+});
+
+test("the standard optional fields are accepted as double-quoted strings", async () => {
+  const result = await errorsFor({
+    "skills/standard/SKILL.md": [
+      "---",
+      "name: standard",
+      'description: "Helps review repository changes. Use for PR reviews."',
+      'license: "MIT"',
+      'compatibility: "Requires git"',
+      'allowed-tools: "Bash(git:*) Read"',
+      "metadata:",
+      '  author: "example"',
+      '  version: "1.0"',
+      "---",
+      "# Instructions",
+      "",
+    ].join("\n"),
+  });
+  assert.deepEqual(result.errors, []);
+  assert.deepEqual(result.skills, ["standard"]);
+});
+
+test("a compatibility field longer than 500 characters is rejected", async () => {
+  const result = await errorsFor({
+    "skills/long/SKILL.md": skill("long", '"Use for testing."').replace(
+      "---\n\n#",
+      `compatibility: "${"x".repeat(501)}"\n---\n\n#`,
+    ),
+  });
+  assert.match(result.errors.join("\n"), /compatibility must have 1-500 characters/);
+});
+
+test("a string value that is not double-quoted is rejected, so the subset stays valid YAML", () => {
+  const cases = [
+    ['description: >\n  Folded text.', 'line 3: description must be a double-quoted string.'],
+    ['description: |\n  Literal text.', 'line 3: description must be a double-quoted string.'],
+    ["description: 'single'", "line 3: description must be a double-quoted string."],
+    ["description: *alias", "line 3: description must be a double-quoted string."],
+    ["description: yes", "line 3: description must be a double-quoted string."],
+    ["license: MIT", "line 3: license must be a double-quoted string."],
+    ["compatibility: Requires git", "line 3: compatibility must be a double-quoted string."],
+    ["allowed-tools: Read", "line 3: allowed-tools must be a double-quoted string."],
+    ['license: "bad \\q"', "line 3: license is not a valid double-quoted string."],
+    ["metadata:\n  author: example", "line 4: metadata value must be a double-quoted string."],
+    ["metadata: x", "line 3: metadata must be a mapping."],
+  ];
+  for (const [line, message] of cases) {
+    assert.throws(() => parseFrontmatter(`---\nname: a\n${line}\n---\n`), { message }, line);
+  }
+  assert.deepEqual(parseFrontmatter('---\nname: a\ndescription: "x"\nmetadata:\n  author: "me"\n---\n'), {
+    name: "a",
+    description: "x",
+    metadata: { author: "me" },
+  });
 });
