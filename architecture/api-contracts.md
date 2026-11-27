@@ -13,7 +13,7 @@ dkstack. For that policy, see [versioning](../versioning/index.md).
 - Define encoding, absent values, ordering, and retry semantics.
 - Prefer additive evolution when consumers cannot update together.
 - State the compatibility impact of schema, enum, error, or wire-format changes.
-- Avoid relying on undocumented behavior.
+- Do not rely on undocumented behavior.
 - Document deprecation and migration paths before removing a public contract.
 
 ## Verification
