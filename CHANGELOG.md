@@ -12,8 +12,7 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
-- Threat modeling, prompt-injection boundaries, data integrity, and API contract guidance (#388).
-- assess-threats and migrate-data skills with triage routing (#388).
+- Pages for threat modeling, data integrity and API contracts, and the `assess-threats` and `migrate-data` skills (#388).
 - SVG logos, section icons, a favicon, banners, and a brand asset guide (#381).
 - Light and dark README headers, plus Shields.io badges for the latest release, license, and checks on main (#381).
 
