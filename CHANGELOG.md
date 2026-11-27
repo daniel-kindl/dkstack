@@ -12,6 +12,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Added
 
+- Hypothesis-driven debugging, incident analysis, and investigate-bug skill (#386).
+
 - SVG logos, section icons, a favicon, banners, and a brand asset guide (#381).
 - Light and dark README headers, plus Shields.io badges for the latest release, license, and checks on main (#381).
 

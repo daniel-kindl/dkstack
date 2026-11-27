@@ -58,3 +58,10 @@ only with the checks in
 [after the merge](../workflow/review-and-merge.md#after-the-merge).
 
 These commands were checked with `git` 2.55.0.
+
+## Isolate a regression with git bisect
+
+When a stable test distinguishes good from bad, use `git bisect` in a clean worktree.
+Start with a known good and a known bad commit. Run a deterministic test at each step.
+Use `git bisect skip` for commits that cannot be tested. Verify the selected change
+manually, then run `git bisect reset`. Never alter another worker's worktree.

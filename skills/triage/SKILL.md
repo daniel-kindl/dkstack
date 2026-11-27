@@ -52,7 +52,9 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 - New or changed rendered UI: [ui-design](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/ui-design/SKILL.md).
 - Review of a rendered UI: [ui-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/ui-review/SKILL.md). Use it with `code-review` for a pull request.
 - Review: [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md)
-- Bug or unexpected behavior: [coding/debugging.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/debugging.md)
+- Bug, flaky test, regression, or unexpected behavior: [investigate-bug](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/investigate-bug/SKILL.md)
+- Incident or service outage: [incident analysis](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/incident-analysis.md)
+- Debugging principles: [coding/debugging.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/debugging.md)
 - Domain term to define, resolve or check: [domain-glossary](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/domain-glossary/SKILL.md)
 - Domain design, modeling or specification: [model-domain](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/model-domain/SKILL.md)
 - Durable decision: [write-adr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-adr/SKILL.md)
