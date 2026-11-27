@@ -43,6 +43,23 @@ export function validateSuite(suite, names) {
   return errors;
 }
 
+// Grade the assertion results of the with_skill runs of one case.
+function assertionStatus(testcase, matching, complete) {
+  if (!complete) return "NOT_RUN";
+  const graded = matching.every(r => Array.isArray(r.assertion_results) && r.assertion_results.length === testcase.assertions.length);
+  if (!graded) return "NOT_GRADED";
+  const passed = matching.every(r => r.assertion_results.every((a, i) => a.text === testcase.assertions[i] && a.passed && a.evidence));
+  return passed ? "PASS" : "FAIL";
+}
+
+// Compare the activation rate of one case with the threshold.
+function triggerStatus(testcase, rate, complete, baselineInvoked) {
+  if (!complete) return "NOT_RUN";
+  if (baselineInvoked) return "INVALID_BASELINE";
+  const passed = testcase.should_trigger ? rate >= ACTIVATION_THRESHOLD : rate <= 1 - ACTIVATION_THRESHOLD;
+  return passed ? "PASS" : "FAIL";
+}
+
 export function summarize(cases, records, runs) {
   const outcomes = [];
   for (const skill of cases.skills) {
@@ -57,10 +74,8 @@ export function summarize(cases, records, runs) {
         skill: skill.skill, case_id: testcase.id, split: testcase.split,
         should_trigger: testcase.should_trigger, observed_runs: matching.length,
         baseline_runs: baseline.length, trigger_rate: rate,
-        assertion_status: !complete ? "NOT_RUN" : matching.every(r => Array.isArray(r.assertion_results) && r.assertion_results.length === testcase.assertions.length) ?
-          (matching.every(r => r.assertion_results.every((a, i) => a.text === testcase.assertions[i] && a.passed && a.evidence)) ? "PASS" : "FAIL") : "NOT_GRADED",
-        status: !complete ? "NOT_RUN" : baselineInvoked ? "INVALID_BASELINE" :
-          ((testcase.should_trigger && rate >= ACTIVATION_THRESHOLD) || (!testcase.should_trigger && rate <= 1 - ACTIVATION_THRESHOLD)) ? "PASS" : "FAIL",
+        assertion_status: assertionStatus(testcase, matching, complete),
+        status: triggerStatus(testcase, rate, complete, baselineInvoked),
       });
     }
   }
