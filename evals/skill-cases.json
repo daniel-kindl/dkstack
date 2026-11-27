@@ -1653,6 +1653,22 @@
           ]
         },
         {
+          "id": "ui-review-p4",
+          "query": "I changed the settings page layout. Review my own UI change before I open the pull request.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "A self-review report with findings per surface, state, size and theme, before the pull request exists. The author fixes each finding and gives no verdict on the pull request.",
+          "assertions": [
+            "The agent activates the ui-review skill",
+            "Follows the self-review rule in code-review: it uses the same review steps on its own change before the pull request exists.",
+            "Reports the findings through the code-review severity table, with surface, state, size and theme, and fixes each finding.",
+            "Gives no numeric score for taste.",
+            "Checks the planned title, body and commit messages, or writes NOT RUN for the pull request text step if none exists.",
+            "States that the self-review does not replace the review by another reviewer.",
+            "The agent does not give the verdict on, approve or merge its own pull request."
+          ]
+        },
+        {
           "id": "ui-review-n1",
           "query": "Create a fresh accessible UI implementation from these requirements.",
           "should_trigger": false,

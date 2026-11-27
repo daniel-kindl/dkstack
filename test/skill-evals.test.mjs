@@ -221,7 +221,8 @@ test("ui-design positive cases assert the visual verification evidence", async (
 });
 
 test("ui-review positive cases assert the code-review output and a read-only review", async () => {
-  const positives = await positivesFor("ui-review");
+  // A self-review fixes its own findings and gives no verdict, so its own test checks it.
+  const positives = (await positivesFor("ui-review")).filter((q) => !/\bmy own\b/i.test(q.query));
   for (const q of positives) {
     const text = q.assertions.join("\n");
     assert.match(text, /code-review severity table and gives a verdict/, q.id);
@@ -291,4 +292,19 @@ test("eval queries name the project dkstack in lowercase", async () => {
   const suite = JSON.parse(await readFile(new URL("../evals/skill-cases.json", import.meta.url), "utf8"));
   const upper = suite.skills.flatMap((s) => s.queries).filter((q) => /DKSTACK/.test(JSON.stringify(q))).map((q) => q.id);
   assert.deepEqual(upper, []);
+});
+
+test("ui-review has a self-review near-miss case", async () => {
+  const { readFile } = await import("./helpers.mjs");
+  const suite = JSON.parse(await readFile(new URL("../evals/skill-cases.json", import.meta.url), "utf8"));
+  const cases = suite.skills.find((s) => s.skill === "ui-review").queries;
+  const self = cases.find((q) => q.should_trigger && /\bmy own\b/i.test(q.query));
+  assert.ok(self, "a positive case asks the agent to review its own UI change");
+  const text = self.assertions.join("\n");
+  assert.match(text, /self-review rule in code-review/);
+  assert.match(text, /does not give the verdict on, approve or merge its own pull request/);
+  assert.match(text, /does not replace the review/);
+  assert.match(text, /code-review severity table/);
+  assert.match(text, /no numeric score for taste/);
+  assert.doesNotMatch(text, /changes no files/);
 });
