@@ -1,2 +1,5 @@
 # Worktrees that agents make. See workflow/review-and-merge.md#after-the-merge.
 .claude/worktrees/
+
+# Generated bundles and evaluation records.
+dist/
