@@ -101,7 +101,8 @@ test("rejects adapter invalid output, nonzero exits, and unauthorized results",a
 
 test("CLI check and run execute real adapter cases with clean invocation",async()=>{
   const { spawnSync }=await import("node:child_process");
-  const { mkdir, readFile }=await import("node:fs/promises");
+  const { mkdir }=await import("node:fs/promises");
+  const { readFile }=await import("./helpers.mjs");
   const { fileURLToPath }=await import("node:url");
   const dir=await mkdtemp(join(tmpdir(),"dkstack-eval-cli-"));
   try {
