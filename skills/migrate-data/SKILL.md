@@ -21,7 +21,10 @@ Read [data integrity](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/
 
 ## Boundaries
 
-- Do not run production migrations or change infrastructure without owner approval.
+- Do not run production migrations before you test the rollback and verify a backup.
+- After the migration, tell the owner what ran, the result, the rollback test result and the backup check.
+- Only the owner starts a production deploy. See [safety](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md).
+- Do not change infrastructure without the owner's OK.
 - Never assume that reversing schema DDL restores lost data.
 - Do not make a destructive change without tested recovery.
 - Prefer non-destructive tests and isolated datasets.

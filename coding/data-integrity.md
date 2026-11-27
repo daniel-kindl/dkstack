@@ -13,8 +13,13 @@ Stored data has a longer lifetime than the code that writes it.
 - Back up data before destructive operations. Verify that restoration works.
 - Test empty, old, partial, corrupt, and large datasets with safe fixtures.
 - Define rollback only if the previous version can still read the new state.
-- For irreversible migrations, provide forward recovery and require owner approval.
-- Never run a production data migration without owner authorization.
+- For an irreversible migration, provide forward recovery.
+
+## Production migrations
+
+- Do not run production migrations before you test the rollback and verify a backup.
+- After the migration, tell the owner what ran, the result, the rollback test result and the backup check.
+- Only the owner starts a production deploy. See [safety](../workflow/safety.md#rules).
 
 ## Verification
 
