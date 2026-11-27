@@ -2,214 +2,219 @@
   "version": 1,
   "skills": [
     {
-      "skill": "triage",
+      "skill": "apply-architecture",
       "queries": [
         {
-          "id": "triage-p1",
-          "query": "We use DKSTACK. Which instructions apply to a new settings page that also changes database writes?",
+          "id": "apply-architecture-p1",
+          "query": "Before coding this new module, check the proposed dependencies against architecture rules.",
           "should_trigger": true,
           "split": "train",
-          "expected_output": "Agent executes the triage workflow with recorded evidence.",
+          "expected_output": "The agent applies apply-architecture with verified, task-specific evidence.",
           "assertions": [
-            "The triage skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
+            "The apply-architecture skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
           ]
         },
         {
-          "id": "triage-p2",
-          "query": "Before making changes to this DKSTACK repository, route my feature through the minimum relevant skills.",
-          "should_trigger": true,
-          "split": "train",
-          "expected_output": "Agent executes the triage workflow with recorded evidence.",
-          "assertions": [
-            "The triage skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
-          ]
-        },
-        {
-          "id": "triage-p3",
-          "query": "This DKSTACK consumer needs a PR review plus rendered UI inspection. What should the agent load?",
+          "id": "apply-architecture-p2",
+          "query": "Assess whether the new cross-layer data access design violates DKSTACK architecture boundaries.",
           "should_trigger": true,
           "split": "validation",
-          "expected_output": "Agent executes the triage workflow with recorded evidence.",
+          "expected_output": "The agent applies apply-architecture with verified, task-specific evidence.",
           "assertions": [
-            "The triage skill activates for the applicable request",
+            "The apply-architecture skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "apply-architecture-n1",
+          "query": "Explain briefly what an architecture decision is in software engineering.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking apply-architecture.",
+          "assertions": [
+            "The apply-architecture skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "apply-architecture-n2",
+          "query": "Review the rendered mobile UI for contrast issues without changing architecture.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking apply-architecture.",
+          "assertions": [
+            "The apply-architecture skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "bootstrap",
+      "queries": [
+        {
+          "id": "bootstrap-p1",
+          "query": "Create an empty code repository with versioning, lint, test, and release conventions.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Agent executes the bootstrap workflow with recorded evidence.",
+          "assertions": [
+            "The bootstrap skill activates for the applicable request",
             "The output includes verifiable steps and supporting evidence"
           ]
         },
         {
-          "id": "triage-n1",
-          "query": "Please define the word refactoring and give one short example.",
+          "id": "bootstrap-p2",
+          "query": "This legacy project has no branch protections, semantic versioning, or CI. Bring it to DKSTACK baseline.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Agent executes the bootstrap workflow with recorded evidence.",
+          "assertions": [
+            "The bootstrap skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "bootstrap-p3",
+          "query": "Bootstrap the fresh .NET repository with strict editorconfig and supply chain rules.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Agent executes the bootstrap workflow with recorded evidence.",
+          "assertions": [
+            "The bootstrap skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "bootstrap-n1",
+          "query": "The repository already has CI; review this single code diff only.",
           "should_trigger": false,
           "split": "train",
-          "expected_output": "Agent addresses the user's task without activating triage.",
+          "expected_output": "Agent addresses the user's task without activating bootstrap.",
           "assertions": [
-            "The triage skill is not activated for the nonmatching task",
+            "The bootstrap skill is not activated for the nonmatching task",
             "The agent answers or performs the alternative request"
           ]
         },
         {
-          "id": "triage-n2",
-          "query": "Explain in general what a skill is without opening a repository.",
+          "id": "bootstrap-n2",
+          "query": "What is semantic versioning and when should I bump MINOR?",
           "should_trigger": false,
           "split": "train",
-          "expected_output": "Agent addresses the user's task without activating triage.",
+          "expected_output": "Agent addresses the user's task without activating bootstrap.",
           "assertions": [
-            "The triage skill is not activated for the nonmatching task",
+            "The bootstrap skill is not activated for the nonmatching task",
             "The agent answers or performs the alternative request"
           ]
         },
         {
-          "id": "triage-n3",
-          "query": "We have a simple programming question: what does a null coalescing operator do?",
+          "id": "bootstrap-n3",
+          "query": "I only want to set up a dkstack pointer in an existing configured repository.",
           "should_trigger": false,
           "split": "validation",
-          "expected_output": "Agent addresses the user's task without activating triage.",
+          "expected_output": "Agent addresses the user's task without activating bootstrap.",
           "assertions": [
-            "The triage skill is not activated for the nonmatching task",
+            "The bootstrap skill is not activated for the nonmatching task",
             "The agent answers or performs the alternative request"
           ]
         }
       ]
     },
     {
-      "skill": "plan-work",
+      "skill": "chart-route",
       "queries": [
         {
-          "id": "plan-work-p1",
-          "query": "Before implementation, turn this approved export feature into small commits with tests first.",
+          "id": "chart-route-p1",
+          "query": "This project goal is uncertain across multiple milestones. Build a route map to settle scope over sessions.",
           "should_trigger": true,
           "split": "train",
-          "expected_output": "Agent executes the plan-work workflow with recorded evidence.",
+          "expected_output": "The agent applies chart-route with verified, task-specific evidence.",
           "assertions": [
-            "The plan-work skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
+            "The chart-route skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
           ]
         },
         {
-          "id": "plan-work-p2",
-          "query": "Our milestone has three dependent issues. Build an ordered implementation plan with risks.",
-          "should_trigger": true,
-          "split": "train",
-          "expected_output": "Agent executes the plan-work workflow with recorded evidence.",
-          "assertions": [
-            "The plan-work skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
-          ]
-        },
-        {
-          "id": "plan-work-p3",
-          "query": "Write a plan for fixing the caching bug before editing any source files.",
+          "id": "chart-route-p2",
+          "query": "We cannot plan implementation yet because multiple major outcomes remain unknown. Chart a route first.",
           "should_trigger": true,
           "split": "validation",
-          "expected_output": "Agent executes the plan-work workflow with recorded evidence.",
+          "expected_output": "The agent applies chart-route with verified, task-specific evidence.",
           "assertions": [
-            "The plan-work skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
+            "The chart-route skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
           ]
         },
         {
-          "id": "plan-work-n1",
-          "query": "Please implement this one-line typo fix right now, no planning requested.",
+          "id": "chart-route-n1",
+          "query": "Implement the already approved one-line parser fix with an existing regression test.",
           "should_trigger": false,
           "split": "train",
-          "expected_output": "Agent addresses the user's task without activating plan-work.",
+          "expected_output": "The agent handles this task without invoking chart-route.",
           "assertions": [
-            "The plan-work skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
+            "The chart-route skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
           ]
         },
         {
-          "id": "plan-work-n2",
-          "query": "What is the difference between planning and scheduling?",
-          "should_trigger": false,
-          "split": "train",
-          "expected_output": "Agent addresses the user's task without activating plan-work.",
-          "assertions": [
-            "The plan-work skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
-          ]
-        },
-        {
-          "id": "plan-work-n3",
-          "query": "I already have a plan; review the pull request diff for defects.",
+          "id": "chart-route-n2",
+          "query": "Describe the purpose of a project roadmap in two sentences.",
           "should_trigger": false,
           "split": "validation",
-          "expected_output": "Agent addresses the user's task without activating plan-work.",
+          "expected_output": "The agent handles this task without invoking chart-route.",
           "assertions": [
-            "The plan-work skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
+            "The chart-route skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
           ]
         }
       ]
     },
     {
-      "skill": "tdd-loop",
+      "skill": "clarify-intent",
       "queries": [
         {
-          "id": "tdd-loop-p1",
-          "query": "Add a regression test for the CSV parser bug, then fix its implementation.",
+          "id": "clarify-intent-p1",
+          "query": "The issue uses unclear domain terms. Clarify requirements and acceptance criteria before implementation.",
           "should_trigger": true,
           "split": "train",
-          "expected_output": "Agent executes the tdd-loop workflow with recorded evidence.",
+          "expected_output": "The agent applies clarify-intent with verified, task-specific evidence.",
           "assertions": [
-            "The tdd-loop skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
+            "The clarify-intent skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
           ]
         },
         {
-          "id": "tdd-loop-p2",
-          "query": "Implement input validation for this API using a red-green-refactor cycle.",
-          "should_trigger": true,
-          "split": "train",
-          "expected_output": "Agent executes the tdd-loop workflow with recorded evidence.",
-          "assertions": [
-            "The tdd-loop skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
-          ]
-        },
-        {
-          "id": "tdd-loop-p3",
-          "query": "Change this function behavior using test-first incremental work.",
+          "id": "clarify-intent-p2",
+          "query": "Before planning this new capability, identify ambiguous behaviors and resolve questions with me.",
           "should_trigger": true,
           "split": "validation",
-          "expected_output": "Agent executes the tdd-loop workflow with recorded evidence.",
+          "expected_output": "The agent applies clarify-intent with verified, task-specific evidence.",
           "assertions": [
-            "The tdd-loop skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
+            "The clarify-intent skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
           ]
         },
         {
-          "id": "tdd-loop-n1",
-          "query": "Can you describe why red-green-refactor helps teams?",
+          "id": "clarify-intent-n1",
+          "query": "The feature specification is approved. Implement it exactly as written with tests.",
           "should_trigger": false,
           "split": "train",
-          "expected_output": "Agent addresses the user's task without activating tdd-loop.",
+          "expected_output": "The agent handles this task without invoking clarify-intent.",
           "assertions": [
-            "The tdd-loop skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
+            "The clarify-intent skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
           ]
         },
         {
-          "id": "tdd-loop-n2",
-          "query": "Review this PR for hidden regressions and report findings only.",
-          "should_trigger": false,
-          "split": "train",
-          "expected_output": "Agent addresses the user's task without activating tdd-loop.",
-          "assertions": [
-            "The tdd-loop skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
-          ]
-        },
-        {
-          "id": "tdd-loop-n3",
-          "query": "Write a feature plan but do not modify any code or tests.",
+          "id": "clarify-intent-n2",
+          "query": "What is a software requirement? Provide a short definition only.",
           "should_trigger": false,
           "split": "validation",
-          "expected_output": "Agent addresses the user's task without activating tdd-loop.",
+          "expected_output": "The agent handles this task without invoking clarify-intent.",
           "assertions": [
-            "The tdd-loop skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
+            "The clarify-intent skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
           ]
         }
       ]
@@ -286,71 +291,1112 @@
       ]
     },
     {
-      "skill": "bootstrap",
+      "skill": "domain-glossary",
       "queries": [
         {
-          "id": "bootstrap-p1",
-          "query": "Create an empty code repository with versioning, lint, test, and release conventions.",
+          "id": "domain-glossary-p1",
+          "query": "Compare these proposed domain terms with CONTEXT.md and flag inconsistent language.",
           "should_trigger": true,
           "split": "train",
-          "expected_output": "Agent executes the bootstrap workflow with recorded evidence.",
+          "expected_output": "The agent applies domain-glossary with verified, task-specific evidence.",
           "assertions": [
-            "The bootstrap skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
+            "The domain-glossary skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
           ]
         },
         {
-          "id": "bootstrap-p2",
-          "query": "This legacy project has no branch protections, semantic versioning, or CI. Bring it to DKSTACK baseline.",
-          "should_trigger": true,
-          "split": "train",
-          "expected_output": "Agent executes the bootstrap workflow with recorded evidence.",
-          "assertions": [
-            "The bootstrap skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
-          ]
-        },
-        {
-          "id": "bootstrap-p3",
-          "query": "Bootstrap the fresh .NET repository with strict editorconfig and supply chain rules.",
+          "id": "domain-glossary-p2",
+          "query": "Record the resolved meaning of an order lifecycle term in the project glossary.",
           "should_trigger": true,
           "split": "validation",
-          "expected_output": "Agent executes the bootstrap workflow with recorded evidence.",
+          "expected_output": "The agent applies domain-glossary with verified, task-specific evidence.",
           "assertions": [
-            "The bootstrap skill activates for the applicable request",
+            "The domain-glossary skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "domain-glossary-n1",
+          "query": "Give a general dictionary definition of the word aggregate.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking domain-glossary.",
+          "assertions": [
+            "The domain-glossary skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "domain-glossary-n2",
+          "query": "Review this CSS contrast regression; domain terminology is not in scope.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking domain-glossary.",
+          "assertions": [
+            "The domain-glossary skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "improve-agents",
+      "queries": [
+        {
+          "id": "improve-agents-p1",
+          "query": "As owner, review the last coding session and suggest updates to our agent instructions.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "The agent applies improve-agents with verified, task-specific evidence.",
+          "assertions": [
+            "The improve-agents skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "improve-agents-p2",
+          "query": "I explicitly request an improvement retrospective for the completed agent workflow.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "The agent applies improve-agents with verified, task-specific evidence.",
+          "assertions": [
+            "The improve-agents skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "improve-agents-n1",
+          "query": "Automatically revise agent instructions without my request after every test run.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking improve-agents.",
+          "assertions": [
+            "The improve-agents skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "improve-agents-n2",
+          "query": "Summarize how an AI coding agent works in general.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking improve-agents.",
+          "assertions": [
+            "The improve-agents skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "learn",
+      "queries": [
+        {
+          "id": "learn-p1",
+          "query": "Quiz me on C# async programming and adjust to my answers.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Agent executes the learn workflow with recorded evidence.",
+          "assertions": [
+            "The learn skill activates for the applicable request",
             "The output includes verifiable steps and supporting evidence"
           ]
         },
         {
-          "id": "bootstrap-n1",
-          "query": "The repository already has CI; review this single code diff only.",
+          "id": "learn-p2",
+          "query": "Teach me networking concepts one at a time, checking what I understand.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Agent executes the learn workflow with recorded evidence.",
+          "assertions": [
+            "The learn skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "learn-p3",
+          "query": "Build a learning curriculum for SQL and revisit weak topics later.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Agent executes the learn workflow with recorded evidence.",
+          "assertions": [
+            "The learn skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "learn-n1",
+          "query": "What does await do in C#? Please answer briefly.",
           "should_trigger": false,
           "split": "train",
-          "expected_output": "Agent addresses the user's task without activating bootstrap.",
+          "expected_output": "Agent addresses the user's task without activating learn.",
           "assertions": [
-            "The bootstrap skill is not activated for the nonmatching task",
+            "The learn skill is not activated for the nonmatching task",
             "The agent answers or performs the alternative request"
           ]
         },
         {
-          "id": "bootstrap-n2",
-          "query": "What is semantic versioning and when should I bump MINOR?",
+          "id": "learn-n2",
+          "query": "I need a code snippet for parsing JSON; no lesson needed.",
           "should_trigger": false,
           "split": "train",
-          "expected_output": "Agent addresses the user's task without activating bootstrap.",
+          "expected_output": "Agent addresses the user's task without activating learn.",
           "assertions": [
-            "The bootstrap skill is not activated for the nonmatching task",
+            "The learn skill is not activated for the nonmatching task",
             "The agent answers or performs the alternative request"
           ]
         },
         {
-          "id": "bootstrap-n3",
-          "query": "I only want to set up a dkstack pointer in an existing configured repository.",
+          "id": "learn-n3",
+          "query": "Compare two online courses; I am not asking to study yet.",
           "should_trigger": false,
           "split": "validation",
-          "expected_output": "Agent addresses the user's task without activating bootstrap.",
+          "expected_output": "Agent addresses the user's task without activating learn.",
           "assertions": [
-            "The bootstrap skill is not activated for the nonmatching task",
+            "The learn skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "make-diagram",
+      "queries": [
+        {
+          "id": "make-diagram-p1",
+          "query": "Create and verify a diagram showing the interactions between these three services.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "The agent applies make-diagram with verified, task-specific evidence.",
+          "assertions": [
+            "The make-diagram skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "make-diagram-p2",
+          "query": "Draw a readable Mermaid workflow for this pull request and validate its layout.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "The agent applies make-diagram with verified, task-specific evidence.",
+          "assertions": [
+            "The make-diagram skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "make-diagram-n1",
+          "query": "Explain what a sequence diagram represents without creating an artifact.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking make-diagram.",
+          "assertions": [
+            "The make-diagram skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "make-diagram-n2",
+          "query": "Review this single code change for performance without visuals.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking make-diagram.",
+          "assertions": [
+            "The make-diagram skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "model-domain",
+      "queries": [
+        {
+          "id": "model-domain-p1",
+          "query": "Derive bounded contexts, aggregates, and invariants from this order processing specification.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "The agent applies model-domain with verified, task-specific evidence.",
+          "assertions": [
+            "The model-domain skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "model-domain-p2",
+          "query": "Develop a Domain model block for the issue before deciding technical implementation.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "The agent applies model-domain with verified, task-specific evidence.",
+          "assertions": [
+            "The model-domain skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "model-domain-n1",
+          "query": "Implement a straightforward nullable parameter check with tests.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking model-domain.",
+          "assertions": [
+            "The model-domain skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "model-domain-n2",
+          "query": "Explain in general what domain-driven design means.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking model-domain.",
+          "assertions": [
+            "The model-domain skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "plan-work",
+      "queries": [
+        {
+          "id": "plan-work-p1",
+          "query": "Before implementation, turn this approved export feature into small commits with tests first.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Agent executes the plan-work workflow with recorded evidence.",
+          "assertions": [
+            "The plan-work skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "plan-work-p2",
+          "query": "Our milestone has three dependent issues. Build an ordered implementation plan with risks.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Agent executes the plan-work workflow with recorded evidence.",
+          "assertions": [
+            "The plan-work skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "plan-work-p3",
+          "query": "Write a plan for fixing the caching bug before editing any source files.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Agent executes the plan-work workflow with recorded evidence.",
+          "assertions": [
+            "The plan-work skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "plan-work-n1",
+          "query": "Please implement this one-line typo fix right now, no planning requested.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "Agent addresses the user's task without activating plan-work.",
+          "assertions": [
+            "The plan-work skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        },
+        {
+          "id": "plan-work-n2",
+          "query": "What is the difference between planning and scheduling?",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "Agent addresses the user's task without activating plan-work.",
+          "assertions": [
+            "The plan-work skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        },
+        {
+          "id": "plan-work-n3",
+          "query": "I already have a plan; review the pull request diff for defects.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "Agent addresses the user's task without activating plan-work.",
+          "assertions": [
+            "The plan-work skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "release",
+      "queries": [
+        {
+          "id": "release-p1",
+          "query": "As the owner, prepare the release version and changelog, but do not publish.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Agent executes the release workflow with recorded evidence.",
+          "assertions": [
+            "The release skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "release-p2",
+          "query": "I want you to propose the next semver for these commits and check compatibility before release.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Agent executes the release workflow with recorded evidence.",
+          "assertions": [
+            "The release skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "release-p3",
+          "query": "Prepare a release plan for 2.3.0 and stop before creating tags.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Agent executes the release workflow with recorded evidence.",
+          "assertions": [
+            "The release skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "release-n1",
+          "query": "Publish the release automatically without my explicit owner authorization.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "Agent addresses the user's task without activating release.",
+          "assertions": [
+            "The release skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        },
+        {
+          "id": "release-n2",
+          "query": "Explain the difference between release and deployment in general.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "Agent addresses the user's task without activating release.",
+          "assertions": [
+            "The release skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        },
+        {
+          "id": "release-n3",
+          "query": "Only review the last PR for correctness; do not prepare a release.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "Agent addresses the user's task without activating release.",
+          "assertions": [
+            "The release skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "review-blast-radius",
+      "queries": [
+        {
+          "id": "review-blast-radius-p1",
+          "query": "During PR review, analyze downstream callers and contracts this API change could break.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "The agent applies review-blast-radius with verified, task-specific evidence.",
+          "assertions": [
+            "The review-blast-radius skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "review-blast-radius-p2",
+          "query": "Inspect the behavior outside this diff and assess the potential regression blast radius.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "The agent applies review-blast-radius with verified, task-specific evidence.",
+          "assertions": [
+            "The review-blast-radius skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "review-blast-radius-n1",
+          "query": "Create a basic JSON parsing helper with a unit test.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking review-blast-radius.",
+          "assertions": [
+            "The review-blast-radius skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "review-blast-radius-n2",
+          "query": "Define what a regression is without reviewing a repository.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking review-blast-radius.",
+          "assertions": [
+            "The review-blast-radius skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "review-spec",
+      "queries": [
+        {
+          "id": "review-spec-p1",
+          "query": "Check this PR implementation against the linked issue acceptance criteria.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "The agent applies review-spec with verified, task-specific evidence.",
+          "assertions": [
+            "The review-spec skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "review-spec-p2",
+          "query": "Identify missing, extra, or incorrect work relative to the written feature specification.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "The agent applies review-spec with verified, task-specific evidence.",
+          "assertions": [
+            "The review-spec skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "review-spec-n1",
+          "query": "Review only code formatting and naming conventions.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking review-spec.",
+          "assertions": [
+            "The review-spec skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "review-spec-n2",
+          "query": "Write the issue acceptance criteria for a future feature, not a review.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking review-spec.",
+          "assertions": [
+            "The review-spec skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "review-standards",
+      "queries": [
+        {
+          "id": "review-standards-p1",
+          "query": "Audit this patch for violations of our documented engineering and coding rules.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "The agent applies review-standards with verified, task-specific evidence.",
+          "assertions": [
+            "The review-standards skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "review-standards-p2",
+          "query": "Compare PR changes against the DKSTACK standards and list grounded violations.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "The agent applies review-standards with verified, task-specific evidence.",
+          "assertions": [
+            "The review-standards skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "review-standards-n1",
+          "query": "Compare implementation outcomes with feature acceptance criteria only.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking review-standards.",
+          "assertions": [
+            "The review-standards skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "review-standards-n2",
+          "query": "Explain the difference between style conventions and behavioral requirements.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking review-standards.",
+          "assertions": [
+            "The review-standards skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "setup-dkstack",
+      "queries": [
+        {
+          "id": "setup-dkstack-p1",
+          "query": "Please add DKSTACK to my repository, preserving the existing AGENTS.md rules.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Agent executes the setup-dkstack workflow with recorded evidence.",
+          "assertions": [
+            "The setup-dkstack skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "setup-dkstack-p2",
+          "query": "The dkstack link in AGENTS.md is broken. Fix setup without changing other project policy.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Agent executes the setup-dkstack workflow with recorded evidence.",
+          "assertions": [
+            "The setup-dkstack skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "setup-dkstack-p3",
+          "query": "Install DKSTACK for Claude Code and Codex here; ask before installing skill copies.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Agent executes the setup-dkstack workflow with recorded evidence.",
+          "assertions": [
+            "The setup-dkstack skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "setup-dkstack-n1",
+          "query": "What does DKSTACK mean and what problems does it solve?",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "Agent addresses the user's task without activating setup-dkstack.",
+          "assertions": [
+            "The setup-dkstack skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        },
+        {
+          "id": "setup-dkstack-n2",
+          "query": "Review this feature issue in a repository that already uses DKSTACK.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "Agent addresses the user's task without activating setup-dkstack.",
+          "assertions": [
+            "The setup-dkstack skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        },
+        {
+          "id": "setup-dkstack-n3",
+          "query": "I want a full repository quality bootstrap; pointer setup is already complete.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "Agent addresses the user's task without activating setup-dkstack.",
+          "assertions": [
+            "The setup-dkstack skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "setup-editorconfig",
+      "queries": [
+        {
+          "id": "setup-editorconfig-p1",
+          "query": "Configure strict editorconfig and LF line endings during repository bootstrap.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "The agent applies setup-editorconfig with verified, task-specific evidence.",
+          "assertions": [
+            "The setup-editorconfig skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "setup-editorconfig-p2",
+          "query": "Apply the project's editor formatting standards and verify .editorconfig coverage.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "The agent applies setup-editorconfig with verified, task-specific evidence.",
+          "assertions": [
+            "The setup-editorconfig skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "setup-editorconfig-n1",
+          "query": "Help me choose a domain-driven design aggregate from requirements.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking setup-editorconfig.",
+          "assertions": [
+            "The setup-editorconfig skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "setup-editorconfig-n2",
+          "query": "Explain why programmers use EditorConfig without changing a repository.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking setup-editorconfig.",
+          "assertions": [
+            "The setup-editorconfig skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "setup-labels",
+      "queries": [
+        {
+          "id": "setup-labels-p1",
+          "query": "Find missing repository issue priority and type labels and ask before creating them.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "The agent applies setup-labels with verified, task-specific evidence.",
+          "assertions": [
+            "The setup-labels skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "setup-labels-p2",
+          "query": "During bootstrap, assess the project's label taxonomy and propose additions.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "The agent applies setup-labels with verified, task-specific evidence.",
+          "assertions": [
+            "The setup-labels skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "setup-labels-n1",
+          "query": "Suggest a descriptive commit title for an existing fix.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking setup-labels.",
+          "assertions": [
+            "The setup-labels skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "setup-labels-n2",
+          "query": "Explain how issue labels help developers organize work.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking setup-labels.",
+          "assertions": [
+            "The setup-labels skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "setup-quality-gates",
+      "queries": [
+        {
+          "id": "setup-quality-gates-p1",
+          "query": "Bootstrap deterministic repository CI with warnings as errors and test gates.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "The agent applies setup-quality-gates with verified, task-specific evidence.",
+          "assertions": [
+            "The setup-quality-gates skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "setup-quality-gates-p2",
+          "query": "Check current validation gates and configure strict reproducible quality checks.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "The agent applies setup-quality-gates with verified, task-specific evidence.",
+          "assertions": [
+            "The setup-quality-gates skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "setup-quality-gates-n1",
+          "query": "Review an existing PR's acceptance criteria without modifying CI.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking setup-quality-gates.",
+          "assertions": [
+            "The setup-quality-gates skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "setup-quality-gates-n2",
+          "query": "What does a quality gate mean in general software teams?",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking setup-quality-gates.",
+          "assertions": [
+            "The setup-quality-gates skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "setup-repo-protection",
+      "queries": [
+        {
+          "id": "setup-repo-protection-p1",
+          "query": "List appropriate branch protection and security rules for this new repository.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "The agent applies setup-repo-protection with verified, task-specific evidence.",
+          "assertions": [
+            "The setup-repo-protection skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "setup-repo-protection-p2",
+          "query": "During bootstrap, propose repository rulesets without bypassing owner approvals.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "The agent applies setup-repo-protection with verified, task-specific evidence.",
+          "assertions": [
+            "The setup-repo-protection skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "setup-repo-protection-n1",
+          "query": "Fix a unit test failure in an existing code repository.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking setup-repo-protection.",
+          "assertions": [
+            "The setup-repo-protection skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "setup-repo-protection-n2",
+          "query": "Explain what branch protection is in a general tutorial.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking setup-repo-protection.",
+          "assertions": [
+            "The setup-repo-protection skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "setup-supply-chain",
+      "queries": [
+        {
+          "id": "setup-supply-chain-p1",
+          "query": "Apply the DKSTACK dependency and supply chain security rules to this new project.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "The agent applies setup-supply-chain with verified, task-specific evidence.",
+          "assertions": [
+            "The setup-supply-chain skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "setup-supply-chain-p2",
+          "query": "Audit package provenance, dependency pins, and secret handling during repository setup.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "The agent applies setup-supply-chain with verified, task-specific evidence.",
+          "assertions": [
+            "The setup-supply-chain skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "setup-supply-chain-n1",
+          "query": "Write a component diagram for the current domain services.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking setup-supply-chain.",
+          "assertions": [
+            "The setup-supply-chain skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "setup-supply-chain-n2",
+          "query": "Compare two build tools in prose without changing dependencies.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking setup-supply-chain.",
+          "assertions": [
+            "The setup-supply-chain skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "setup-versioning",
+      "queries": [
+        {
+          "id": "setup-versioning-p1",
+          "query": "Initialize conventional commit rules, branch conventions, and semantic versioning.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "The agent applies setup-versioning with verified, task-specific evidence.",
+          "assertions": [
+            "The setup-versioning skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "setup-versioning-p2",
+          "query": "During repository bootstrap, set up release numbering and changelog conventions.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "The agent applies setup-versioning with verified, task-specific evidence.",
+          "assertions": [
+            "The setup-versioning skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "setup-versioning-n1",
+          "query": "Choose a proposed release version as owner without changing repository setup.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking setup-versioning.",
+          "assertions": [
+            "The setup-versioning skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "setup-versioning-n2",
+          "query": "Explain when to increment a major version in SemVer.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking setup-versioning.",
+          "assertions": [
+            "The setup-versioning skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "start-issue",
+      "queries": [
+        {
+          "id": "start-issue-p1",
+          "query": "Create an issue for this implementation task, assign scope and labels, then start a branch.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "The agent applies start-issue with verified, task-specific evidence.",
+          "assertions": [
+            "The start-issue skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "start-issue-p2",
+          "query": "Before coding, check whether a duplicate issue exists and start tracking this change.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "The agent applies start-issue with verified, task-specific evidence.",
+          "assertions": [
+            "The start-issue skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "start-issue-n1",
+          "query": "Explain what a GitHub issue is without opening one.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking start-issue.",
+          "assertions": [
+            "The start-issue skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "start-issue-n2",
+          "query": "Review an existing PR diff without making any issue or branch changes.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking start-issue.",
+          "assertions": [
+            "The start-issue skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "tdd-loop",
+      "queries": [
+        {
+          "id": "tdd-loop-p1",
+          "query": "Add a regression test for the CSV parser bug, then fix its implementation.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Agent executes the tdd-loop workflow with recorded evidence.",
+          "assertions": [
+            "The tdd-loop skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "tdd-loop-p2",
+          "query": "Implement input validation for this API using a red-green-refactor cycle.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Agent executes the tdd-loop workflow with recorded evidence.",
+          "assertions": [
+            "The tdd-loop skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "tdd-loop-p3",
+          "query": "Change this function behavior using test-first incremental work.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Agent executes the tdd-loop workflow with recorded evidence.",
+          "assertions": [
+            "The tdd-loop skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "tdd-loop-n1",
+          "query": "Can you describe why red-green-refactor helps teams?",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "Agent addresses the user's task without activating tdd-loop.",
+          "assertions": [
+            "The tdd-loop skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        },
+        {
+          "id": "tdd-loop-n2",
+          "query": "Review this PR for hidden regressions and report findings only.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "Agent addresses the user's task without activating tdd-loop.",
+          "assertions": [
+            "The tdd-loop skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        },
+        {
+          "id": "tdd-loop-n3",
+          "query": "Write a feature plan but do not modify any code or tests.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "Agent addresses the user's task without activating tdd-loop.",
+          "assertions": [
+            "The tdd-loop skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "triage",
+      "queries": [
+        {
+          "id": "triage-p1",
+          "query": "We use DKSTACK. Which instructions apply to a new settings page that also changes database writes?",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Agent executes the triage workflow with recorded evidence.",
+          "assertions": [
+            "The triage skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "triage-p2",
+          "query": "Before making changes to this DKSTACK repository, route my feature through the minimum relevant skills.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Agent executes the triage workflow with recorded evidence.",
+          "assertions": [
+            "The triage skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "triage-p3",
+          "query": "This DKSTACK consumer needs a PR review plus rendered UI inspection. What should the agent load?",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Agent executes the triage workflow with recorded evidence.",
+          "assertions": [
+            "The triage skill activates for the applicable request",
+            "The output includes verifiable steps and supporting evidence"
+          ]
+        },
+        {
+          "id": "triage-n1",
+          "query": "Please define the word refactoring and give one short example.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "Agent addresses the user's task without activating triage.",
+          "assertions": [
+            "The triage skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        },
+        {
+          "id": "triage-n2",
+          "query": "Explain in general what a skill is without opening a repository.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "Agent addresses the user's task without activating triage.",
+          "assertions": [
+            "The triage skill is not activated for the nonmatching task",
+            "The agent answers or performs the alternative request"
+          ]
+        },
+        {
+          "id": "triage-n3",
+          "query": "We have a simple programming question: what does a null coalescing operator do?",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "Agent addresses the user's task without activating triage.",
+          "assertions": [
+            "The triage skill is not activated for the nonmatching task",
             "The agent answers or performs the alternative request"
           ]
         }
@@ -499,214 +1545,197 @@
       ]
     },
     {
-      "skill": "setup-dkstack",
+      "skill": "verify-claim",
       "queries": [
         {
-          "id": "setup-dkstack-p1",
-          "query": "Please add DKSTACK to my repository, preserving the existing AGENTS.md rules.",
+          "id": "verify-claim-p1",
+          "query": "Verify whether the claimed test pass actually happened and cite executable evidence.",
           "should_trigger": true,
           "split": "train",
-          "expected_output": "Agent executes the setup-dkstack workflow with recorded evidence.",
+          "expected_output": "The agent applies verify-claim with verified, task-specific evidence.",
           "assertions": [
-            "The setup-dkstack skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
+            "The verify-claim skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
           ]
         },
         {
-          "id": "setup-dkstack-p2",
-          "query": "The dkstack link in AGENTS.md is broken. Fix setup without changing other project policy.",
-          "should_trigger": true,
-          "split": "train",
-          "expected_output": "Agent executes the setup-dkstack workflow with recorded evidence.",
-          "assertions": [
-            "The setup-dkstack skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
-          ]
-        },
-        {
-          "id": "setup-dkstack-p3",
-          "query": "Install DKSTACK for Claude Code and Codex here; ask before installing skill copies.",
+          "id": "verify-claim-p2",
+          "query": "Before reporting this benchmark result, classify and prove its evidence level.",
           "should_trigger": true,
           "split": "validation",
-          "expected_output": "Agent executes the setup-dkstack workflow with recorded evidence.",
+          "expected_output": "The agent applies verify-claim with verified, task-specific evidence.",
           "assertions": [
-            "The setup-dkstack skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
+            "The verify-claim skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
           ]
         },
         {
-          "id": "setup-dkstack-n1",
-          "query": "What does DKSTACK mean and what problems does it solve?",
+          "id": "verify-claim-n1",
+          "query": "Explain what a smoke test is in one paragraph.",
           "should_trigger": false,
           "split": "train",
-          "expected_output": "Agent addresses the user's task without activating setup-dkstack.",
+          "expected_output": "The agent handles this task without invoking verify-claim.",
           "assertions": [
-            "The setup-dkstack skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
+            "The verify-claim skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
           ]
         },
         {
-          "id": "setup-dkstack-n2",
-          "query": "Review this feature issue in a repository that already uses DKSTACK.",
-          "should_trigger": false,
-          "split": "train",
-          "expected_output": "Agent addresses the user's task without activating setup-dkstack.",
-          "assertions": [
-            "The setup-dkstack skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
-          ]
-        },
-        {
-          "id": "setup-dkstack-n3",
-          "query": "I want a full repository quality bootstrap; pointer setup is already complete.",
+          "id": "verify-claim-n2",
+          "query": "Create a roadmap for a large feature without validating existing claims.",
           "should_trigger": false,
           "split": "validation",
-          "expected_output": "Agent addresses the user's task without activating setup-dkstack.",
+          "expected_output": "The agent handles this task without invoking verify-claim.",
           "assertions": [
-            "The setup-dkstack skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
+            "The verify-claim skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
           ]
         }
       ]
     },
     {
-      "skill": "learn",
+      "skill": "write-adr",
       "queries": [
         {
-          "id": "learn-p1",
-          "query": "Quiz me on C# async programming and adjust to my answers.",
+          "id": "write-adr-p1",
+          "query": "Record this approved architecture tradeoff in a new Architecture Decision Record.",
           "should_trigger": true,
           "split": "train",
-          "expected_output": "Agent executes the learn workflow with recorded evidence.",
+          "expected_output": "The agent applies write-adr with verified, task-specific evidence.",
           "assertions": [
-            "The learn skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
+            "The write-adr skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
           ]
         },
         {
-          "id": "learn-p2",
-          "query": "Teach me networking concepts one at a time, checking what I understand.",
-          "should_trigger": true,
-          "split": "train",
-          "expected_output": "Agent executes the learn workflow with recorded evidence.",
-          "assertions": [
-            "The learn skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
-          ]
-        },
-        {
-          "id": "learn-p3",
-          "query": "Build a learning curriculum for SQL and revisit weak topics later.",
+          "id": "write-adr-p2",
+          "query": "Document why the team chose SQLite over a server database as a durable ADR.",
           "should_trigger": true,
           "split": "validation",
-          "expected_output": "Agent executes the learn workflow with recorded evidence.",
+          "expected_output": "The agent applies write-adr with verified, task-specific evidence.",
           "assertions": [
-            "The learn skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
+            "The write-adr skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
           ]
         },
         {
-          "id": "learn-n1",
-          "query": "What does await do in C#? Please answer briefly.",
+          "id": "write-adr-n1",
+          "query": "Explain what an ADR means without writing a document.",
           "should_trigger": false,
           "split": "train",
-          "expected_output": "Agent addresses the user's task without activating learn.",
+          "expected_output": "The agent handles this task without invoking write-adr.",
           "assertions": [
-            "The learn skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
+            "The write-adr skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
           ]
         },
         {
-          "id": "learn-n2",
-          "query": "I need a code snippet for parsing JSON; no lesson needed.",
-          "should_trigger": false,
-          "split": "train",
-          "expected_output": "Agent addresses the user's task without activating learn.",
-          "assertions": [
-            "The learn skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
-          ]
-        },
-        {
-          "id": "learn-n3",
-          "query": "Compare two online courses; I am not asking to study yet.",
+          "id": "write-adr-n2",
+          "query": "Implement a small bug fix and run unit tests, no architecture decision.",
           "should_trigger": false,
           "split": "validation",
-          "expected_output": "Agent addresses the user's task without activating learn.",
+          "expected_output": "The agent handles this task without invoking write-adr.",
           "assertions": [
-            "The learn skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
+            "The write-adr skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
           ]
         }
       ]
     },
     {
-      "skill": "release",
+      "skill": "write-pr",
       "queries": [
         {
-          "id": "release-p1",
-          "query": "As the owner, prepare the release version and changelog, but do not publish.",
+          "id": "write-pr-p1",
+          "query": "Write the PR description with issue links, verification evidence, and merge risk.",
           "should_trigger": true,
           "split": "train",
-          "expected_output": "Agent executes the release workflow with recorded evidence.",
+          "expected_output": "The agent applies write-pr with verified, task-specific evidence.",
           "assertions": [
-            "The release skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
+            "The write-pr skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
           ]
         },
         {
-          "id": "release-p2",
-          "query": "I want you to propose the next semver for these commits and check compatibility before release.",
-          "should_trigger": true,
-          "split": "train",
-          "expected_output": "Agent executes the release workflow with recorded evidence.",
-          "assertions": [
-            "The release skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
-          ]
-        },
-        {
-          "id": "release-p3",
-          "query": "Prepare a release plan for 2.3.0 and stop before creating tags.",
+          "id": "write-pr-p2",
+          "query": "Update this pull request body to reflect tests, observability, and dependencies.",
           "should_trigger": true,
           "split": "validation",
-          "expected_output": "Agent executes the release workflow with recorded evidence.",
+          "expected_output": "The agent applies write-pr with verified, task-specific evidence.",
           "assertions": [
-            "The release skill activates for the applicable request",
-            "The output includes verifiable steps and supporting evidence"
+            "The write-pr skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
           ]
         },
         {
-          "id": "release-n1",
-          "query": "Publish the release automatically without my explicit owner authorization.",
+          "id": "write-pr-n1",
+          "query": "Perform an independent review of code implementation instead of editing the PR body.",
           "should_trigger": false,
           "split": "train",
-          "expected_output": "Agent addresses the user's task without activating release.",
+          "expected_output": "The agent handles this task without invoking write-pr.",
           "assertions": [
-            "The release skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
+            "The write-pr skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
           ]
         },
         {
-          "id": "release-n2",
-          "query": "Explain the difference between release and deployment in general.",
-          "should_trigger": false,
-          "split": "train",
-          "expected_output": "Agent addresses the user's task without activating release.",
-          "assertions": [
-            "The release skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
-          ]
-        },
-        {
-          "id": "release-n3",
-          "query": "Only review the last PR for correctness; do not prepare a release.",
+          "id": "write-pr-n2",
+          "query": "Explain what a pull request is in general terms.",
           "should_trigger": false,
           "split": "validation",
-          "expected_output": "Agent addresses the user's task without activating release.",
+          "expected_output": "The agent handles this task without invoking write-pr.",
           "assertions": [
-            "The release skill is not activated for the nonmatching task",
-            "The agent answers or performs the alternative request"
+            "The write-pr skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "writing-check",
+      "queries": [
+        {
+          "id": "writing-check-p1",
+          "query": "Check these release notes against the project's ASD-STE100 writing rules.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "The agent applies writing-check with verified, task-specific evidence.",
+          "assertions": [
+            "The writing-check skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "writing-check-p2",
+          "query": "Edit the documentation text for plain language and approved technical style.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "The agent applies writing-check with verified, task-specific evidence.",
+          "assertions": [
+            "The writing-check skill activates for the applicable request",
+            "The agent follows the relevant procedure and records evidence"
+          ]
+        },
+        {
+          "id": "writing-check-n1",
+          "query": "Fix the implementation of a C# arithmetic error with tests.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent handles this task without invoking writing-check.",
+          "assertions": [
+            "The writing-check skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
+          ]
+        },
+        {
+          "id": "writing-check-n2",
+          "query": "Explain the goals of simplified technical English without editing text.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent handles this task without invoking writing-check.",
+          "assertions": [
+            "The writing-check skill does not activate unnecessarily",
+            "The agent fulfills the requested alternative task"
           ]
         }
       ]
