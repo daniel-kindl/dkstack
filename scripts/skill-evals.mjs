@@ -14,8 +14,11 @@ export function validateSuite(suite, names) {
   const errors = [];
   if (!suite || suite.version !== 1 || !Array.isArray(suite.skills)) return ["Suite must have version 1 and skills array"];
   const seen = new Set();
+  const covered = new Set();
   for (const entry of suite.skills) {
     if (!entry || !names.includes(entry.skill)) { errors.push(`Unknown skill: ${entry?.skill}`); continue; }
+    if (covered.has(entry.skill)) errors.push(`${entry.skill}: duplicate skill suite`);
+    covered.add(entry.skill);
     if (!Array.isArray(entry.queries) || !entry.queries.length) { errors.push(`${entry.skill}: queries missing`); continue; }
     let positives = 0;
     let negatives = 0;
@@ -36,6 +39,7 @@ export function validateSuite(suite, names) {
       errors.push(`${entry.skill}: both splits required`);
     }
   }
+  for (const name of names) if (!covered.has(name)) errors.push(`${name}: missing evaluation suite`);
   return errors;
 }
 
