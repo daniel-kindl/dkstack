@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, writeFile, readFile, lstat, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, lstat, rm } from "node:fs/promises";
+import { readFile } from "./helpers.mjs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { packageSkills } from "../scripts/package-skills.mjs";
