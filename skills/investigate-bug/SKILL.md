@@ -1,6 +1,6 @@
 ---
 name: investigate-bug
-description: "Use when a defect, crash, regression, flaky test, or unexpected behavior needs systematic investigation before a fix. Establish evidence, test hypotheses, and hand off a verified regression to TDD."
+description: "Use when a defect, crash, regression, flaky test, or unexpected behavior needs an investigation before a fix. Collect evidence, test hypotheses and hand off a failing regression test to tdd-loop."
 ---
 
 # Investigate a bug
@@ -15,7 +15,7 @@ Follow [debugging](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/cod
 4. If reproduction fails, identify missing evidence and test plausible alternatives.
 5. Write at least two competing hypotheses when the cause is uncertain.
 6. For each hypothesis, name a result that would falsify it.
-7. Test one variable at a time. Use code history or bisect where useful.
+7. Test one variable at a time. Use `git bisect` when a known good commit exists.
 8. Locate the cause at a source line or boundary, supported by evidence.
 9. Use [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md) for the actual fix.
 10. Re-run the reproduction, regression test, and affected existing checks.
@@ -24,7 +24,8 @@ Follow [debugging](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/cod
 ## When reproduction is unavailable
 
 - Do not claim a confirmed root cause or a verified fix.
-- Preserve diagnostic evidence and explain which checks were NOT RUN.
+- Preserve the diagnostic evidence. Report each check that did not run as NOT RUN, as
+  [quality gates](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/quality-gates.md) says.
 - Prefer non-destructive instrumentation or an isolated experiment.
 - Ask for missing access or input only when it changes the next safe action.
 
