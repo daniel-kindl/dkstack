@@ -322,7 +322,7 @@ test("standard optional fields and valid YAML scalar styles are accepted", async
       "---",
       "# Instructions",
       "",
-    ].join("\\n"),
+    ].join("\n"),
   });
   assert.deepEqual(result.errors, []);
   assert.deepEqual(result.skills, ["standard"]);
@@ -331,9 +331,9 @@ test("standard optional fields and valid YAML scalar styles are accepted", async
 test("a compatibility field longer than 500 characters is rejected", async () => {
   const result = await errorsFor({
     "skills/long/SKILL.md": skill("long", '"Use for testing."').replace(
-      "---\\n\\n#",
-      `compatibility: ${"x".repeat(501)}\\n---\\n\\n#`,
+      "---\n\n#",
+      `compatibility: ${"x".repeat(501)}\n---\n\n#`,
     ),
   });
-  assert.match(result.errors.join("\\n"), /compatibility must have 1-500 characters/);
+  assert.match(result.errors.join("\n"), /compatibility must have 1-500 characters/);
 });
