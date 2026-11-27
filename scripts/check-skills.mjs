@@ -1,21 +1,18 @@
 #!/usr/bin/env node
-// Check that every skill uses the Agent Skills layout that `npx skills` loads:
-// one folder per skill, skills/<name>/SKILL.md, with YAML frontmatter that has
-// a name equal to the folder name and a double-quoted description.
-//
+// Validate dkstack skill layout, frontmatter, and client invocation policy.
 // The frontmatter parser accepts a strict subset of YAML on purpose: one
-// "key: value" per line, only the keys name, description and the two
-// optional invocation keys, a double-quoted description, and true or false
-// for an invocation key. This subset is always valid YAML, so a file
-// that passes this check also parses in the skills CLI. It needs no
-// dependency.
+// "key: value" per line, name as a plain word, each other string value
+// double-quoted, true or false for an invocation key, and metadata as a
+// mapping of double-quoted values. This subset is always valid YAML, so a file
+// that passes this check also parses in the skills CLI. The upstream
+// skills-ref validator checks the full Agent Skills specification.
 
 import { readdir, readFile, stat } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 const INVOCATION_KEYS = new Set(["disable-model-invocation", "user-invocable"]);
-const KEYS = new Set(["name", "description", ...INVOCATION_KEYS]);
+const KEYS = new Set(["name", "description", "license", "compatibility", "metadata", "allowed-tools", ...INVOCATION_KEYS]);
 // Codex reads agents/openai.yaml. The key policy.allow_implicit_invocation:
 // false turns off implicit invocation. The key must be in the policy block.
 export function codexPolicyOff(text) {
@@ -56,44 +53,45 @@ function parseQuoted(raw) {
 
 export function parseFrontmatter(text) {
   const lines = text.split(/\r?\n/);
-  if (lines[0] !== "---") {
-    throw new Error("the file must start with a --- frontmatter line.");
-  }
+  if (lines[0] !== "---") throw new Error("the file must start with a --- frontmatter line.");
   const end = lines.indexOf("---", 1);
-  if (end === -1) {
-    throw new Error("the frontmatter has no closing --- line.");
-  }
+  if (end === -1) throw new Error("the frontmatter has no closing --- line.");
   const fields = {};
   for (let i = 1; i < end; i++) {
     const lineNo = i + 1;
-    const match = /^([A-Za-z][\w-]*): (.*)$/.exec(lines[i]);
+    const match = /^([A-Za-z][\w-]*):(?:\s+(.*))?$/.exec(lines[i]);
     if (!match) throw new Error(`line ${lineNo}: expected "key: value".`);
-    const [, key, raw] = match;
+    const [, key, rawValue = ""] = match;
     if (!KEYS.has(key)) {
-      throw new Error(
-        `line ${lineNo}: unknown key "${key}". Use only name, description, disable-model-invocation and user-invocable.`,
-      );
+      throw new Error(`line ${lineNo}: unknown key "${key}".`);
     }
-    if (Object.hasOwn(fields, key)) {
-      throw new Error(`line ${lineNo}: duplicate key "${key}".`);
+    if (Object.hasOwn(fields, key)) throw new Error(`line ${lineNo}: duplicate key "${key}".`);
+    if (key === "metadata") {
+      if (rawValue.trim()) throw new Error(`line ${lineNo}: metadata must be a mapping.`);
+      const map = {};
+      while (i + 1 < end && /^\s/.test(lines[i + 1])) {
+        i++;
+        const entry = /^  ([A-Za-z0-9_.-]+):\s*(.*)$/.exec(lines[i]);
+        if (!entry) throw new Error(`line ${i + 1}: expected a two-space indented metadata entry.`);
+        if (Object.hasOwn(map, entry[1])) throw new Error(`line ${i + 1}: duplicate metadata key "${entry[1]}".`);
+        const value = parseQuoted(entry[2].trim());
+        if (value === undefined || value === null) throw new Error(`line ${i + 1}: metadata value must be a double-quoted string.`);
+        map[entry[1]] = value;
+      }
+      fields.metadata = map;
+      continue;
     }
+    const value = rawValue.trim();
     if (INVOCATION_KEYS.has(key)) {
-      const value = raw.trim();
-      if (value !== "true" && value !== "false") {
-        throw new Error(`line ${lineNo}: ${key} must be true or false.`);
-      }
+      if (value !== "true" && value !== "false") throw new Error(`line ${lineNo}: ${key} must be true or false.`);
       fields[key] = value === "true";
-    } else if (key === "description") {
-      const value = parseQuoted(raw.trim());
-      if (value === undefined) {
-        throw new Error(`line ${lineNo}: description must be a double-quoted string.`);
-      }
-      if (value === null) {
-        throw new Error(`line ${lineNo}: description is not a valid double-quoted string.`);
-      }
-      fields.description = value;
+    } else if (key === "name") {
+      fields.name = value;
     } else {
-      fields[key] = raw.trim();
+      const parsed = parseQuoted(value);
+      if (parsed === undefined) throw new Error(`line ${lineNo}: ${key} must be a double-quoted string.`);
+      if (parsed === null) throw new Error(`line ${lineNo}: ${key} is not a valid double-quoted string.`);
+      fields[key] = parsed;
     }
   }
   return fields;
@@ -113,6 +111,9 @@ function checkFields(fields, folder) {
     );
   } else if (fields.name !== folder) {
     errors.push(`name "${fields.name}" must be equal to the folder name "${folder}".`);
+  }
+  if (fields.compatibility !== undefined && (fields.compatibility.length === 0 || fields.compatibility.length > 500)) {
+    errors.push("compatibility must have 1-500 characters.");
   }
   if (fields.description === undefined) {
     errors.push("description is missing.");
