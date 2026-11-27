@@ -19,7 +19,8 @@ Use [recovery](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflo
 
 ## Subagents
 
-Do not start write-capable subagents during recovery. Independent read-only checks are allowed when their source and scope are explicit.
+Do not start subagents for this skill. Reason: recovery must use one verified workspace state and one accountable lead.
+See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).
 
 ## Boundaries
 
