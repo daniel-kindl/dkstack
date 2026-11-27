@@ -10,7 +10,7 @@ Read [data integrity](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/
 ## Steps
 
 1. Identify old and new schemas, readers, writers, and invariant requirements.
-2. Determine backward and forward compatibility, including mixed versions.
+2. Find the backward and forward compatibility, including mixed versions.
 3. Choose an atomic, staged, or restartable migration strategy.
 4. Define backups, restore evidence, checkpoints, and failure recovery.
 5. Write migration tests as [data migration testing](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/data-migration-testing.md) says.
@@ -21,8 +21,7 @@ Read [data integrity](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/
 
 ## Boundaries
 
-- Do not run production migrations before you test the rollback and verify a backup.
-- After the migration, tell the owner what ran, the result, the rollback test result and the backup check.
+- Do not run production migrations except as [data integrity](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/data-integrity.md) says in "Production migrations".
 - Only the owner starts a production deploy. See [safety](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md).
 - Do not change infrastructure without the owner's OK.
 - Never assume that reversing schema DDL restores lost data.
