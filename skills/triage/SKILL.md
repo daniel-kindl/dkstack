@@ -53,7 +53,10 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 - Review of a rendered UI: [ui-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/ui-review/SKILL.md). Use it with `code-review` for a pull request.
 - Review: [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md)
 - Performance question, resource regression, or optimization: [profile-performance](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/profile-performance/SKILL.md)
-- Reliability, networking, concurrency or metrics and traces: [coding guidance](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/index.md)
+- Timeouts, retries or overload: [reliability](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/reliability.md)
+- Network protocol code: [networking](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/networking.md)
+- Shared mutable state or parallel work: [concurrency practices](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/concurrency-practices.md)
+- Metrics or traces: [observability](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/observability.md)
 - Bug or unexpected behavior: [coding/debugging.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/debugging.md)
 - Domain term to define, resolve or check: [domain-glossary](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/domain-glossary/SKILL.md)
 - Domain design, modeling or specification: [model-domain](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/model-domain/SKILL.md)
