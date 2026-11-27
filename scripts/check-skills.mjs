@@ -1,14 +1,7 @@
 #!/usr/bin/env node
-// Check that every skill uses the Agent Skills layout that `npx skills` loads:
-// one folder per skill, skills/<name>/SKILL.md, with YAML frontmatter that has
-// a name equal to the folder name and a double-quoted description.
-//
-// The frontmatter parser accepts a strict subset of YAML on purpose: one
-// "key: value" per line, only the keys name, description and the two
-// optional invocation keys, a double-quoted description, and true or false
-// for an invocation key. This subset is always valid YAML, so a file
-// that passes this check also parses in the skills CLI. It needs no
-// dependency.
+// Validate DKSTACK skill layout, frontmatter, and client invocation policy.
+// This parser supports common YAML scalars and metadata mappings; the upstream
+// skills-ref validator is authoritative for the full Agent Skills specification.
 
 import { readdir, readFile, stat } from "node:fs/promises";
 import { join, resolve } from "node:path";
