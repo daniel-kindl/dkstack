@@ -4,7 +4,7 @@ import { mkdtemp, mkdir, writeFile, lstat, readdir, rm } from "node:fs/promises"
 import { readFile } from "./helpers.mjs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { packageSkills } from "../scripts/package-skills.mjs";
+import { packageSkills, sourceOf } from "../scripts/package-skills.mjs";
 
 async function temporary(fn) {
   const root = await mkdtemp(join(tmpdir(), "dkstack-bundle-test-"));
@@ -182,4 +182,38 @@ test("a bundle stops at 1000 dependencies",async()=>temporary(async root=>{
   await put(root,"skills/two/SKILL.md",`---\nname: two\ndescription: Two\n---\n\n${links.slice(0,1000).join("\n")}\n`);
   const [result]=await packageSkills(root,join(root,"dist/two"),["two"]);
   assert.equal(result.dependencies,1000);
+}));
+
+test("each skill bundle records its source commit and refs", async () => temporary(async root => {
+  await put(root, "skills/one/SKILL.md", "---\nname: one\ndescription: One\n---\n");
+  await packageSkills(root, join(root, "dist/out"), ["one"], { commit: "abc123", refs: ["v1.7.0"], released: true });
+  const source = JSON.parse(await readFile(join(root, "dist/out/one/dkstack-source.json"), "utf8"));
+  assert.deepEqual(source, { commit: "abc123", refs: ["v1.7.0"], released: true });
+}));
+
+test("sourceOf marks only v1 and vX.Y.Z refs as released", async () => temporary(async root => {
+  const { execFileSync } = await import("node:child_process");
+  assert.deepEqual(await sourceOf(root), { commit: "unknown", refs: [], released: false });
+  const git = (...args) => execFileSync("git", ["-c", "user.name=t", "-c", "user.email=t@t", ...args], { cwd: root, encoding: "utf8" }).trim();
+  git("init", "-q", "-b", "main");
+  await put(root, "a.txt", "a\n");
+  git("add", "a.txt");
+  git("commit", "-q", "-m", "init");
+  const head = git("rev-parse", "HEAD");
+  assert.deepEqual(await sourceOf(root), { commit: head, refs: ["main"], released: false });
+  git("tag", "v1.2.3");
+  assert.deepEqual(await sourceOf(root), { commit: head, refs: ["main", "v1.2.3"], released: true });
+  git("tag", "-d", "v1.2.3");
+  git("branch", "v1");
+  assert.equal((await sourceOf(root)).released, true);
+}));
+
+test("the CLI warns when the source is not a released ref", async () => temporary(async root => {
+  const { spawnSync } = await import("node:child_process");
+  const { fileURLToPath } = await import("node:url");
+  const script = fileURLToPath(new URL("../scripts/package-skills.mjs", import.meta.url));
+  await put(root, "skills/one/SKILL.md", "---\nname: one\ndescription: One\n---\n");
+  const run = spawnSync(process.execPath, [script, "--out", join(root, "dist/out"), "one"], { cwd: root, encoding: "utf8" });
+  assert.equal(run.status, 0, run.stderr);
+  assert.match(run.stderr, /WARNING: the source is not v1 or a vX\.Y\.Z tag/);
 }));
