@@ -34,6 +34,8 @@ To see available skills before installing:
 npx skills add https://github.com/daniel-kindl/dkstack/tree/v1 --list
 ```
 
+For offline skill bundles and the reference check, read the [interoperability guide](agent-skills-compatibility.md).
+
 Installed skills do not update by themselves.
 For skills installed from `v1`, run `npx skills update` after a release.
 
@@ -72,11 +74,9 @@ See [how consumers follow versions](adr/0001-how-consumers-follow-versions.md) f
 | Clear text and learning. | [Writing](../writing/index.md) · [Learning](../learning/index.md) |
 | Task instructions and practical advice. | [Skills](../skills/index.md) · [Tips](../tips/index.md) |
 
-## Engineering agent evaluations
+## Evaluations
 
-Grade an agent's solution to a fixed engineering task.
-See [engineering evaluations](../evals/engineering/README.md).
-Skill activation checks are separate.
+- Skill activation and behavior: [skill evaluation cases](skill-evaluation-cases.md).
 
 ## Contributing and checks
 

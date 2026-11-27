@@ -7,3 +7,9 @@ updates:
       interval: "weekly"
     commit-message:
       prefix: "ci"
+  - package-ecosystem: "pip"
+    directory: "/.github"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci"

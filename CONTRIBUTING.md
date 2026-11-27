@@ -50,12 +50,24 @@ To audit the open issues and the labels of a repository, run `npm run audit:issu
 A reviewer checks the review file with `node scripts/check-review.mjs <file>` before the review is
 posted. The file is not in the repository, so `npm run check` does not run this check.
 
+## Agent Skills compatibility
+
+Read [the interoperability guide](docs/agent-skills-compatibility.md) for the reference check, offline bundles and evaluation.
+
+- Run `npm run check:skill-evals` to check the evaluation manifest. `npm run check` also runs it.
+- Run `npm run bundle:skills` to build offline skill folders in `dist/agent-skills`.
+- Run `npm run validate:skills-ref` for the reference check. It needs Python 3 and the pinned skills-ref.
+- Real agent evaluations need a trusted external agent adapter.
+- Do not report fixture tests as agent evaluation results.
+
 ## Add a page or a skill
 
 - Add the page to the `index.md` of its section, or the skill to `skills/index.md`.
 - Make the page or the skill reachable from triage. A building block is linked from each larger
   skill that runs it.
 - Add a test that pins the key phrases of each new rule.
+- For a new skill, add a suite to `evals/skill-cases.json`, as
+  [skill evaluation cases](docs/skill-evaluation-cases.md#executable-cases) says. `npm run check:skill-evals` fails without it.
 - Add one line under `## [Unreleased]` in `CHANGELOG.md`.
 - In a skill, link each other dkstack file with its raw URL on `v1`, for example
   `https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/AGENTS.md`.
@@ -75,6 +87,12 @@ The workflow checks the following:
 - The pull request body links an issue and has an Evidence section, one Observability line and a
   valid Visual verification line. A bot author is skipped.
 - Each skill has the correct folder and frontmatter.
+- `Validate core Agent Skills specification`: the Python adapter tests pass, and each skill passes the
+  pinned Agent Skills reference validator.
+- `Audit the Python packages for known vulnerabilities`: pip-audit finds no known vulnerability in the
+  pinned Python packages.
+- `Validate skill evaluation manifest`: each skill has a valid evaluation suite.
+- `Build offline skill bundles for every skill`: each skill builds as an offline bundle.
 - Relative links and links to this repository resolve, including anchors.
 - Markdown files have no em dash or en dash.
 - Workflows pin actions, set permissions and set `timeout-minutes` on each job. A release or deploy
