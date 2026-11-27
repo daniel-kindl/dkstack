@@ -4,14 +4,13 @@ Stored data has a longer lifetime than the code that writes it.
 
 ## Rules
 
-- Define invariants, ownership, retention, recovery objective, and affected versions.
+- Define invariants, ownership, retention and affected versions. Also define the time and the data that a restore can lose.
 - Identify readers and writers before changing a schema or persisted format.
 - Use transactions where atomicity is required and supported.
 - Handle concurrent writers with a documented isolation or conflict policy.
 - Design migrations to be restartable or provide a recoverable checkpoint.
-- Use expand-migrate-contract for incompatible rolling updates when applicable.
-- Back up data before destructive operations. Verify that restoration works.
-- Test empty, old, partial, corrupt, and large datasets with safe fixtures.
+- For a rolling update, use expand and contract. See [data migration testing](../tdd/data-migration-testing.md#database-migrations).
+- Back up data before a destructive operation. Test the backup as [data migration testing](../tdd/data-migration-testing.md#backups) says.
 - Define rollback only if the previous version can still read the new state.
 - For an irreversible migration, provide forward recovery.
 
@@ -23,6 +22,6 @@ Stored data has a longer lifetime than the code that writes it.
 
 ## Verification
 
-Record the initial data version, migration step, invariant checks, row counts or checksums where useful, and restored test result. Run against representative sanitized copies before affecting actual data.
+Record the initial data version, the migration step, the invariant checks and the restore test result. Record row counts or checksums for large tables. Run the migration on sanitized copies before you change real data.
 
 See [data migration testing](../tdd/data-migration-testing.md) and [safety](../workflow/safety.md).

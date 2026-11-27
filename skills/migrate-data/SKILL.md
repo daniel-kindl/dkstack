@@ -13,11 +13,11 @@ Read [data integrity](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/
 2. Determine backward and forward compatibility, including mixed versions.
 3. Choose an atomic, staged, or restartable migration strategy.
 4. Define backups, restore evidence, checkpoints, and failure recovery.
-5. Write migration tests using old, partial, large, and invalid fixtures.
+5. Write migration tests as [data migration testing](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/tdd/data-migration-testing.md) says.
 6. Implement through [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md).
 7. Test a dry run on a sanitized representative dataset.
 8. Verify counts, constraints, compatibility, and rollback or forward recovery.
-9. Report irreversible steps, approval needs, and checks not run.
+9. Report the irreversible steps. Report each check that did not run as NOT RUN.
 
 ## Boundaries
 
