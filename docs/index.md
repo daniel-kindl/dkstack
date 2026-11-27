@@ -75,6 +75,12 @@ See [how consumers follow versions](adr/0001-how-consumers-follow-versions.md) f
 | Clear text and learning. | [Writing](../writing/index.md) · [Learning](../learning/index.md) |
 | Task instructions and practical advice. | [Skills](../skills/index.md) · [Tips](../tips/index.md) |
 
+## Agent Skills quality
+
+Read [interoperability](agent-skills-compatibility.md) and [evaluation cases](skill-evaluation-cases.md).
+The first page explains portable skill bundles and the verification commands.
+The second page describes activation and behavioral evaluation requirements.
+
 ## Contributing and checks
 
 Use the [contribution guide](../CONTRIBUTING.md) to propose a change or [run repository checks](../CONTRIBUTING.md#run-the-checks).
