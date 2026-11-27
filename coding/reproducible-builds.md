@@ -1,13 +1,15 @@
 # Reproducible builds
 
-A build should be explainable from committed source and declared inputs.
+Build only from committed source and declared inputs.
 
-- Pin toolchain and dependency versions using project conventions.
-- Commit lockfiles when the ecosystem supports them.
+Use this page when you change the build, the toolchain, dependency resolution or packaging. This
+page does not add rules for versions and lockfiles. [Dependencies](dependencies.md) owns them.
+
+- Pin versions and commit lockfiles as [dependencies](dependencies.md) says.
 - Make generated artifacts reproducible from documented commands.
 - Keep secrets out of build output and dependency metadata.
-- Avoid depending on the developer's untracked environment.
-- Distinguish expected platform-specific outputs from unexpected drift.
+- Do not depend on untracked files or settings on the developer's computer.
+- Tell expected platform-specific outputs apart from unexpected drift.
 - Validate caches by input identity. A cache hit is not a correctness check.
 - Test clean builds when changing toolchains, dependency resolution, or packaging.
 - Record the actual runtime, SDK, platform, and build command with failures.
