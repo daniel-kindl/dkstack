@@ -34,6 +34,9 @@ To see available skills before installing:
 npx skills add https://github.com/daniel-kindl/dkstack/tree/v1 --list
 ```
 
+For portable offline bundles and skill evaluation, read the [interoperability guide](agent-skills-compatibility.md).
+The bundle command copies local rule dependencies and rewrites DKSTACK raw links.
+
 Installed skills do not update by themselves.
 For skills installed from `v1`, run `npx skills update` after a release.
 
