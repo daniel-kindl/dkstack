@@ -86,28 +86,89 @@ export async function compareScenario(id, candidate, base = root) {
   };
 }
 
-async function main(args) {
+export const ARMS = ["baseline", "dkstack"];
+const NOT_RUN = { status: "NOT_RUN", reason: "No candidate for this arm" };
+
+// Compare the arm without dkstack guidance (baseline) with the arm that has it (dkstack).
+// An arm with no candidate is NOT_RUN, and then the comparison is NOT_RUN too.
+export async function compareArms(id, candidates = {}, base = root, options = {}) {
+  const list = await loadScenarios(base);
+  const item = list.find((value) => value.id === id);
+  if (!item) throw new Error("Unknown scenario");
+  const starter = await gradeScenario(item, resolve(base, item.starter), base, options);
+  const arms = {};
+  for (const arm of ARMS) {
+    if (candidates[arm] === undefined) { arms[arm] = { ...NOT_RUN }; continue; }
+    const result = await gradeScenario(item, candidates[arm], base, options);
+    arms[arm] = { status: !starter.passed && result.passed ? "PASS" : "FAIL", candidate: result };
+  }
+  return { scenario: id, starter_passed: starter.passed, arms, comparison: compareStatus(arms) };
+}
+
+function compareStatus({ baseline, dkstack }) {
+  if (baseline.status === "NOT_RUN" || dkstack.status === "NOT_RUN") return "NOT_RUN";
+  if (baseline.status === dkstack.status) return "SAME";
+  return dkstack.status === "PASS" ? "DKSTACK_BETTER" : "BASELINE_BETTER";
+}
+
+const USAGE = [
+  "Usage: node scripts/engineering-evals.mjs [check | list]",
+  "       node scripts/engineering-evals.mjs grade <id> <candidate-dir> --execute-untrusted",
+  "       node scripts/engineering-evals.mjs compare <id> [--baseline <dir>] [--dkstack <dir>] [--execute-untrusted]",
+  "compare needs --execute-untrusted when it gets a candidate.",
+].join("\n");
+
+class UsageError extends Error {}
+
+function parseCompare(args) {
+  if (!args[0] || args[0].startsWith("--")) throw new UsageError();
+  const candidates = {};
+  let trusted = false;
+  for (let at = 1; at < args.length; at += 1) {
+    if (args[at] === "--execute-untrusted") { trusted = true; continue; }
+    const arm = args[at].slice(2);
+    if (!args[at].startsWith("--") || !ARMS.includes(arm) || !args[at + 1]) throw new UsageError();
+    candidates[arm] = args[at + 1];
+    at += 1;
+  }
+  if (Object.keys(candidates).length && !trusted) throw new UsageError();
+  return { id: args[0], candidates };
+}
+
+// Return the exit code: 0 done, 1 failed result or error, 2 usage error.
+export async function main(args, io = process, base = root) {
   const action = args[0] || "check";
-  if (action === "check") {
-    const list = await loadScenarios();
-    process.stdout.write("Validated " + list.length + " engineering scenarios.\n");
-    return;
+  try {
+    if (action === "check") {
+      io.stdout.write("Validated " + (await loadScenarios(base)).length + " engineering scenarios.\n");
+      return 0;
+    }
+    if (action === "list") {
+      io.stdout.write(JSON.stringify(await loadScenarios(base), null, 2) + "\n");
+      return 0;
+    }
+    if (action === "compare") {
+      const { id, candidates } = parseCompare(args.slice(1));
+      const result = await compareArms(id, candidates, base);
+      io.stdout.write(JSON.stringify(result, null, 2) + "\n");
+      for (const arm of ARMS) {
+        const { status, reason } = result.arms[arm];
+        io.stderr.write(arm + ": " + (status === "NOT_RUN" ? "NOT RUN, " + reason : status) + "\n");
+      }
+      io.stderr.write("comparison: " + result.comparison.replace("_", " ") + "\n");
+      return 0;
+    }
+    if (action !== "grade" || args.length !== 4 || args[3] !== "--execute-untrusted") throw new UsageError();
+    const result = await compareScenario(args[1], args[2], base);
+    io.stdout.write(JSON.stringify(result, null, 2) + "\n");
+    return result.outcome === "PASS" ? 0 : 1;
+  } catch (error) {
+    if (error instanceof UsageError) { io.stderr.write(USAGE + "\n"); return 2; }
+    io.stderr.write(error.message + "\n");
+    return 1;
   }
-  if (action === "list") {
-    process.stdout.write(JSON.stringify(await loadScenarios(), null, 2) + "\n");
-    return;
-  }
-  if (action !== "grade" || args.length !== 4 || args[3] !== "--execute-untrusted") {
-    throw new Error("Usage: node scripts/engineering-evals.mjs grade <id> <candidate-dir> --execute-untrusted");
-  }
-  const result = await compareScenario(args[1], args[2]);
-  process.stdout.write(JSON.stringify(result, null, 2) + "\n");
-  if (result.outcome !== "PASS") process.exitCode = 1;
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  main(process.argv.slice(2)).catch((error) => {
-    process.stderr.write(error.message + "\n");
-    process.exitCode = 1;
-  });
+  process.exitCode = await main(process.argv.slice(2));
 }
