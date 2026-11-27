@@ -3,3 +3,6 @@
 
 # Generated bundles and evaluation records.
 dist/
+
+# Python cache from test/test_ref_spec.py.
+__pycache__/
