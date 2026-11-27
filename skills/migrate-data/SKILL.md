@@ -28,4 +28,5 @@ Read [data integrity](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/
 
 ## Subagents
 
-Read-only review may check compatibility and invariant coverage. Only the lead integrates migrations and reports the result.
+Do not start subagents for this skill. Reason: migration steps depend on one controlled dataset and ordered checkpoints.
+See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).
