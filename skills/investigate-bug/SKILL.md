@@ -30,7 +30,8 @@ Follow [debugging](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/cod
 
 ## Subagents
 
-A read-only subagent can investigate an independent hypothesis. Give each a full brief, input evidence, and an explicit no-write limit. The lead verifies findings before code changes.
+Do not start subagents for this skill. Reason: hypothesis tests must follow one controlled investigation and shared evidence record.
+See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).
 
 ## Boundaries
 
