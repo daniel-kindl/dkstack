@@ -19,7 +19,7 @@ Inspect the repository before editing it. Scope the investigation to the task.
 - Keep failures visible. Never report an unrun command as passing.
 - After an unexpected tool result, inspect its effects before retrying.
 - When the scope or the authority changes, follow [safety](safety.md#rules).
-- Avoid repetitive searches. Record discovered paths and commands for a later session.
+- Record the paths and commands that you found, for a later session.
 
 ## Before handing off
 

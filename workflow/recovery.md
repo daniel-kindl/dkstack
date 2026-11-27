@@ -1,6 +1,6 @@
 # Recovery from interrupted work
 
-Recover a known state before attempting another write.
+Get back to a known state before you try another write.
 
 ## Procedure
 
@@ -18,6 +18,7 @@ Recover a known state before attempting another write.
 - An ambiguous network write: read the remote state before retrying creation or deletion.
 - A partial migration: stop new writes and inspect the durable migration state.
 - A merge conflict: preserve the two sides and resolve against the specification.
-- An unexpected workspace modification: establish ownership before changing it.
+- An unexpected change in the workspace: find its owner before you change it.
 
+Do not resume, retry or roll back a production deploy or a release. Stop and tell the owner.
 Do not discard the changes of another agent. Follow the hard limits in [safety](safety.md#rules) while you recover.
