@@ -98,6 +98,15 @@ async function build(root, name, target) {
   }
   return { name, dependencies: dependencies.size };
 }
+const MARKER = ".dkstack-bundle";
+// Return true for a folder that an earlier run made. Refuse any other existing path.
+async function earlierBundle(output) {
+  let entry;
+  try { entry = await lstat(output); } catch(e) { if (e.code==="ENOENT") return false; throw e; }
+  const marker = entry.isDirectory() && !entry.isSymbolicLink() ? await lstat(join(output,MARKER)).catch(()=>null) : null;
+  if (!marker || !marker.isFile()) throw Error("Output already exists: " + output);
+  return true;
+}
 export async function packageSkills(root, output, requested = []) {
   root = await realpath(root);
   output = resolve(output);
@@ -111,8 +120,10 @@ export async function packageSkills(root, output, requested = []) {
   try {
     const result = [];
     for (const name of names) { const target = join(stage,name); await mkdir(target); result.push(await build(root,name,target)); }
-    try { await lstat(output); throw Error("Output already exists: " + output); } catch(e) { if(e.code!=="ENOENT") throw e; }
-    await rename(stage,output);
+    await writeFile(join(stage,MARKER),"Made by scripts/package-skills.mjs. A new run replaces this folder.\n");
+    const old=await earlierBundle(output);
+    if (old) { const aside=await mkdtemp(join(parent,".dkstack-old-")); await rename(output,join(aside,"bundle")); await rename(stage,output); await rm(aside,{recursive:true,force:true}); }
+    else await rename(stage,output);
     return result;
   } catch(e) { await rm(stage,{recursive:true,force:true}); throw e; }
 }

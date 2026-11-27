@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, writeFile, lstat, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, lstat, readdir, rm } from "node:fs/promises";
 import { readFile } from "./helpers.mjs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -42,12 +42,25 @@ test("a missing dependency fails and leaves no output directory", async () => te
   await assert.rejects(lstat(out));
 }));
 
-test("refuses an unsafe or existing destination",async () => temporary(async root => {
+test("refuses an unsafe destination or an existing folder that is not a bundle",async () => temporary(async root => {
   await put(root,"skills/one/SKILL.md","---\nname: one\ndescription: One\n---\n\nText\n");
   await assert.rejects(packageSkills(root,join(tmpdir(),"outside"),["one"]), /inside DKSTACK/);
   const output=join(root,"dist/out");
-  await packageSkills(root,output,["one"]);
+  await put(root,"dist/out/keep.txt","user file\n");
   await assert.rejects(packageSkills(root,output,["one"]), /already exists/);
+  assert.equal(await readFile(join(output,"keep.txt"),"utf8"),"user file\n");
+}));
+
+test("a second run replaces the bundle that an earlier run made",async () => temporary(async root => {
+  await put(root,"skills/one/SKILL.md","---\nname: one\ndescription: One\n---\n\nText\n");
+  const output=join(root,"dist/out");
+  await packageSkills(root,output,["one"]);
+  await put(root,"dist/out/stale.txt","old\n");
+  await packageSkills(root,output,["one"]);
+  await assert.rejects(lstat(join(output,"stale.txt")));
+  assert.match(await readFile(join(output,"one","SKILL.md"),"utf8"),/Text/);
+  const left=(await readdir(join(root,"dist"))).filter(x=>x!=="out");
+  assert.deepEqual(left,[]);
 }));
 
 test("refuses path traversal in raw URLs",async () => temporary(async root => {
