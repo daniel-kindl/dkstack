@@ -20,8 +20,7 @@ Coding standards and practices.
 - [dependencies.md](dependencies.md): No unjustified dependencies.
 - [time.md](time.md): Time and dates in production code.
 - [debugging.md](debugging.md): Reproduce the problem and fix the cause.
-
-- [performance.md](performance.md): Measure first and establish reproducible performance budgets.
+- [performance.md](performance.md): Measure first and set reproducible performance budgets.
 - [reliability.md](reliability.md): Handle retries, deadlines, idempotency and overload.
 - [observability.md](observability.md): Design metrics and traces with bounded cost and safe fields.
 - [networking.md](networking.md): Handle framing, partial reads, disconnects and hostile inputs.
