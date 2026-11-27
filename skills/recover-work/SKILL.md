@@ -13,7 +13,7 @@ Use [recovery](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflo
 2. Inspect the worktree and remote state with read-only operations.
 3. Find possible side effects, ownership conflicts, and changed assumptions.
 4. Choose resume, repair, or stop. Explain the evidence for the choice.
-5. Execute only an authorized and idempotent safe action.
+5. Do only an authorized action that is safe to repeat.
 6. Run affected checks. Report PASS, FAIL, and NOT RUN with evidence.
 7. Give a handoff with the remaining risk and next safe action.
 
@@ -25,6 +25,6 @@ See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/
 ## Boundaries
 
 - Never assume that a timeout means a remote write failed.
-- Never discard unknown changes, force-push, or bypass a safety gate.
-- Do not initiate releases, deploys, or infrastructure changes.
+- Never discard unknown changes.
+- Obey the hard limits in [safety.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/safety.md).
 - If authority or state cannot be verified, stop and ask the owner.
