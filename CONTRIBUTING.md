@@ -50,6 +50,19 @@ To audit the open issues and the labels of a repository, run `npm run audit:issu
 A reviewer checks the review file with `node scripts/check-review.mjs <file>` before the review is
 posted. The file is not in the repository, so `npm run check` does not run this check.
 
+## Agent Skills compatibility
+
+Use [the interoperability guide](docs/agent-skills-compatibility.md) for offline bundles and evaluation.
+The format validator compares core metadata with the official Agent Skills reference implementation.
+It strips only client invocation hints from a temporary copy.
+Local checks still enforce those client hints.
+
+Run `npm run check:skill-evals` for the evaluation manifest.
+Run `npm run bundle:skills` to create local skill packages.
+The reference format check uses the pinned Python implementation in CI.
+Real agent activation evaluations need a trusted external agent adapter.
+Do not report fixture tests as agent evaluation results.
+
 ## Add a page or a skill
 
 - Add the page to the `index.md` of its section, or the skill to `skills/index.md`.
