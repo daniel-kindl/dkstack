@@ -131,3 +131,25 @@ test("rejects percent escapes in relative paths and ignores external href",async
   const result=await packageSkills(root,join(root,"dist/good"),["one"]);
   assert.equal(result[0].dependencies,0);
 }));
+
+test("ignores raw example links inside code fences",async()=>temporary(async root=>{
+  const raw="https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/";
+  await put(root,"skills/one/SKILL.md","---\nname: one\ndescription: One\n---\n\n"+ "```\n" + raw+"does/not/exist.md\n" + "```\n");
+  const result=await packageSkills(root,join(root,"dist/out"),["one"]);
+  assert.equal(result[0].dependencies,0);
+}));
+
+test("rejects relative links escaping the source root",async()=>temporary(async root=>{
+  await put(root,"skills/one/SKILL.md","---\nname: one\ndescription: One\n---\n[bad](../../../secrets.txt)\n");
+  await assert.rejects(packageSkills(root,join(root,"dist/out"),["one"]),/Unsafe relative link/);
+}));
+
+test("does not create bundles through an external parent symlink",async()=>temporary(async root=>{
+  const { symlink }=await import("node:fs/promises");
+  const outside=await mkdtemp(join(tmpdir(),"dkstack-outside-"));
+  try {
+    await put(root,"skills/one/SKILL.md","---\nname: one\ndescription: One\n---\n");
+    await symlink(outside,join(root,"external"));
+    await assert.rejects(packageSkills(root,join(root,"external/dist/bundle"),["one"]),/Output parent must stay inside/);
+  } finally { await rm(outside,{recursive:true,force:true}); }
+}));
