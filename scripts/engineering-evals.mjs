@@ -2,7 +2,7 @@
 import { readFile, lstat, realpath } from "node:fs/promises";
 import { resolve, dirname, join, relative, isAbsolute, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 
 // The runner is in scripts/. The scenario data is in evals/engineering/.
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "evals", "engineering");
@@ -55,18 +55,36 @@ export async function gradeScenario(item, candidate, base = root, { timeoutMs = 
   const entry = await lstat(subject);
   if (!entry.isFile() || entry.isSymbolicLink()) throw new Error("Candidate must contain a regular subject.mjs");
   const oracle = resolve(base, item.oracle);
-  const result = spawnSync(process.execPath, ["--test", oracle], {
+  // The oracle runs in the same process as the test runner, so the time limit stops the candidate too.
+  const result = await run(process.execPath, ["--test", "--test-isolation=none", oracle], {
     timeout: timeoutMs,
-    maxBuffer: 1024 * 1024,
-    encoding: "utf8",
+    // SIGKILL, because the test runner handles SIGTERM only when the busy candidate yields.
+    killSignal: "SIGKILL",
     env: { PATH: process.env.PATH || "", DKSTACK_CANDIDATE_ROOT: resolvedCandidate },
   });
   return {
     passed: result.status === 0 && !result.error,
     exit_code: result.status,
     error: result.error?.message || null,
-    output: (result.stdout + result.stderr).slice(-6000),
+    output: result.output.slice(-6000),
   };
+}
+
+// Run a child process without blocking the event loop. Keep only the last 1 MiB of output.
+function run(command, args, options) {
+  return new Promise((done) => {
+    const child = spawn(command, args, { ...options, stdio: ["ignore", "pipe", "pipe"] });
+    let output = "";
+    const keep = (chunk) => { output = (output + chunk).slice(-1024 * 1024); };
+    child.stdout.on("data", keep);
+    child.stderr.on("data", keep);
+    let error = null;
+    child.on("error", (value) => { error = value; });
+    child.on("close", (status, signal) => {
+      if (!error && signal) error = new Error(`Stopped by ${signal} after the time limit of ${options.timeout} ms (ETIMEDOUT)`);
+      done({ status, error, output });
+    });
+  });
 }
 
 export async function compareScenario(id, candidate, base = root) {

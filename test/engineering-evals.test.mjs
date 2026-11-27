@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, mkdir, writeFile, rm, symlink } from "node:fs/promises";
+import { readFile } from "./helpers.mjs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { loadScenarios, safeRelativePath, gradeScenario, compareScenario, compareArms, main } from "../scripts/engineering-evals.mjs";
@@ -167,7 +168,11 @@ test("gradeScenario stops a candidate that runs past the time limit", { timeout:
     await mkdir(candidate);
     await writeFile(join(candidate, "subject.mjs"), "// A busy loop: only the runner time limit can stop it.\nwhile (true) {}\nexport const value = 1;\n");
     const started = Date.now();
-    const result = await gradeScenario(ITEM, candidate, base, { timeoutMs: 500 });
+    // The runner must not block the event loop, so a timer still fires while the candidate runs.
+    let ticked = Infinity;
+    setTimeout(() => { ticked = Date.now() - started; }, 50);
+    const result = await gradeScenario(ITEM, candidate, base, { timeoutMs: 1500 });
+    assert.ok(ticked < 1000, `the event loop runs during grading, the timer fired after ${ticked} ms`);
     assert.equal(result.passed, false);
     assert.match(result.error, /ETIMEDOUT/);
     assert.ok(Date.now() - started < 10000, "the runner stops the candidate");
@@ -378,4 +383,36 @@ test("the CLI exits 1 with the message for a manifest error", async () => {
     assert.equal(await main(["check"], run, base), 1);
     assert.match(run.out.stderr, /No scenarios/);
   }, { list: [] });
+});
+
+test("gradeScenario leaves no candidate process after the time limit", async () => {
+  await scenarioRoot(async (base, temp) => {
+    const candidate = join(temp, "candidate");
+    await mkdir(candidate);
+    await writeFile(join(candidate, "subject.mjs"), [
+      'import { writeFileSync } from "node:fs";',
+      'writeFileSync(process.env.DKSTACK_CANDIDATE_ROOT + "/pid", String(process.pid));',
+      "while (true) {}",
+      "export const value = 1;",
+    ].join("\n"));
+    const result = await gradeScenario(ITEM, candidate, base, { timeoutMs: 1000 });
+    assert.equal(result.passed, false);
+    const pid = Number(await readFile(join(candidate, "pid"), "utf8"));
+    await new Promise((done) => setTimeout(done, 200));
+    assert.throws(() => process.kill(pid, 0), { code: "ESRCH" }, "the candidate process is gone");
+  });
+});
+
+test("gradeScenario gives the candidate no other environment variable", async () => {
+  process.env.DKSTACK_TEST_SECRET = "secret";
+  try {
+    await scenarioRoot(async (base, temp) => {
+      const candidate = join(temp, "candidate");
+      await mkdir(candidate);
+      await writeFile(join(candidate, "subject.mjs"), "export const value = process.env.DKSTACK_TEST_SECRET ? 0 : 1;\n");
+      assert.equal((await gradeScenario(ITEM, candidate, base)).passed, true);
+    });
+  } finally {
+    delete process.env.DKSTACK_TEST_SECRET;
+  }
 });
