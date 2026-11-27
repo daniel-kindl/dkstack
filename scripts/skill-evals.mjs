@@ -19,11 +19,24 @@ function positiveAssertionErrors(query) {
   return errors;
 }
 
+// A negative case needs one behavior assertion that only fits that case.
+function negativeAssertionErrors(query, behaviors) {
+  const errors = [];
+  if (query.assertions.length < 2) errors.push(`${query.id}: a negative case needs a behavior assertion`);
+  if (query.assertions.some(x => x.includes("unnecessary"))) errors.push(`${query.id}: "unnecessary" cannot be graded`);
+  for (const text of query.assertions.slice(1)) {
+    if (behaviors.has(text)) errors.push(`${query.id}: behavior assertion repeats ${behaviors.get(text)}`);
+    else behaviors.set(text, query.id);
+  }
+  return errors;
+}
+
 export function validateSuite(suite, names) {
   const errors = [];
   if (!suite || suite.version !== 1 || !Array.isArray(suite.skills)) return ["Suite must have version 1 and skills array"];
   const seen = new Set();
   const covered = new Set();
+  const behaviors = new Map();
   for (const entry of suite.skills) {
     if (!entry || !names.includes(entry.skill)) { errors.push(`Unknown skill: ${entry?.skill}`); continue; }
     if (covered.has(entry.skill)) errors.push(`${entry.skill}: duplicate skill suite`);
@@ -43,6 +56,8 @@ export function validateSuite(suite, names) {
         errors.push(`${query.id}: assertions missing`);
       } else if (query.should_trigger === true) {
         errors.push(...positiveAssertionErrors(query));
+      } else if (query.should_trigger === false) {
+        errors.push(...negativeAssertionErrors(query, behaviors));
       }
     }
     if (positives < 2 || negatives < 2) errors.push(`${entry.skill}: need at least two positive and two negative cases`);

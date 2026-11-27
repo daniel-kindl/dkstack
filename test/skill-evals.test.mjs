@@ -8,8 +8,8 @@ import { runAdapter, summarize, validateAdapterResult, validateSuite } from "../
 const sample = {version:1, skills:[{skill:"tdd-loop",queries:[
   {id:"tdd-p1",query:"Implement a parser test-first",should_trigger:true,split:"train",expected_output:"Tests first and source changed",assertions:["Test fails before implementation","Runs the focused test and sees it fail","Writes only the code that makes it pass"]},
   {id:"tdd-p2",query:"Write test before code change",should_trigger:true,split:"validation",expected_output:"Tests first and verified",assertions:["Test fails before implementation","Runs the focused test and sees it fail","Writes only the code that makes it pass"]},
-  {id:"tdd-n1",query:"Explain red green refactor",should_trigger:false,split:"train",expected_output:"Explain red green refactor",assertions:["TDD skill not activated"]},
-  {id:"tdd-n2",query:"Summarize this release changelog",should_trigger:false,split:"validation",expected_output:"Changelog summary",assertions:["TDD skill not activated"]},
+  {id:"tdd-n1",query:"Explain red green refactor",should_trigger:false,split:"train",expected_output:"Explain red green refactor",assertions:["TDD skill not activated","Explains the red, green and refactor steps and changes no files"]},
+  {id:"tdd-n2",query:"Summarize this release changelog",should_trigger:false,split:"validation",expected_output:"Changelog summary",assertions:["TDD skill not activated","Lists the changes of the release from the changelog and writes no test"]},
 ]}]};
 
 test("manifest validates and rejects missing coverage", () => {
@@ -191,7 +191,7 @@ test("an adapter cannot change the case, mode or run number of a record", async 
 test("a failed assertion fails the run and the CLI reports the assertion counts", async () => {
   const { dir, run } = await cliRun(
     "const hit=input.mode==='with_skill'&&input.case_id.includes('-p');" +
-    "const texts=input.case_id.includes('-p')?['Test fails before implementation','Runs the focused test and sees it fail','Writes only the code that makes it pass']:['TDD skill not activated'];" +
+    "const texts=input.case_id.includes('-p')?['Test fails before implementation','Runs the focused test and sees it fail','Writes only the code that makes it pass']:['TDD skill not activated',input.case_id==='tdd-n1'?'Explains the red, green and refactor steps and changes no files':'Lists the changes of the release from the changelog and writes no test'];" +
     "console.log(JSON.stringify({activated_skills:hit?[input.skill]:[],evidence:'tool record',graded_by:'deterministic',assertion_results:texts.map(text=>({text,passed:input.case_id!=='tdd-p1',evidence:'grader log'}))}));\n",
   );
   try {
@@ -307,4 +307,16 @@ test("ui-review has a self-review near-miss case", async () => {
   assert.match(text, /code-review severity table/);
   assert.match(text, /no numeric score for taste/);
   assert.doesNotMatch(text, /changes no files/);
+});
+
+test("a negative case needs its own gradable behavior assertion", () => {
+  const one = structuredClone(sample);
+  one.skills[0].queries[2].assertions = ["TDD skill not activated"];
+  assert.match(validateSuite(one, ["tdd-loop"]).join(" "), /tdd-n1: a negative case needs a behavior assertion/);
+  const vague = structuredClone(sample);
+  vague.skills[0].queries[2].assertions = ["TDD skill not activated", "The request is addressed without unnecessary workflow steps."];
+  assert.match(validateSuite(vague, ["tdd-loop"]).join(" "), /tdd-n1: "unnecessary" cannot be graded/);
+  const shared = structuredClone(sample);
+  shared.skills[0].queries[3].assertions = [...shared.skills[0].queries[2].assertions];
+  assert.match(validateSuite(shared, ["tdd-loop"]).join(" "), /tdd-n2: behavior assertion repeats tdd-n1/);
 });

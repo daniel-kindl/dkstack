@@ -38,7 +38,7 @@
           "expected_output": "The agent completes the alternative task without invoking apply-architecture.",
           "assertions": [
             "The agent does not activate apply-architecture for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Answers with a short definition of an architecture decision and changes no files."
           ]
         },
         {
@@ -49,7 +49,7 @@
           "expected_output": "The agent completes the alternative task without invoking apply-architecture.",
           "assertions": [
             "The agent does not activate apply-architecture for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Routes the request to ui-review and reports contrast findings with measured ratios."
           ]
         }
       ]
@@ -104,7 +104,7 @@
           "expected_output": "The agent completes the alternative task without invoking bootstrap.",
           "assertions": [
             "The agent does not activate bootstrap for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Routes the diff to code-review and reports findings with a verdict, with no CI or repository setup changes."
           ]
         },
         {
@@ -115,7 +115,7 @@
           "expected_output": "The agent completes the alternative task without invoking bootstrap.",
           "assertions": [
             "The agent does not activate bootstrap for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains that a MINOR bump adds backward-compatible features, and changes no files."
           ]
         },
         {
@@ -126,7 +126,7 @@
           "expected_output": "The agent completes the alternative task without invoking bootstrap.",
           "assertions": [
             "The agent does not activate bootstrap for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Uses setup-dkstack for the pointer and does not change CI, labels or branch protection."
           ]
         }
       ]
@@ -168,7 +168,7 @@
           "expected_output": "The agent completes the alternative task without invoking chart-route.",
           "assertions": [
             "The agent does not activate chart-route for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Implements the parser fix with tdd-loop and writes no roadmap or route file."
           ]
         },
         {
@@ -179,7 +179,7 @@
           "expected_output": "The agent completes the alternative task without invoking chart-route.",
           "assertions": [
             "The agent does not activate chart-route for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Answers in two sentences and creates no roadmap file."
           ]
         }
       ]
@@ -221,7 +221,7 @@
           "expected_output": "The agent completes the alternative task without invoking clarify-intent.",
           "assertions": [
             "The agent does not activate clarify-intent for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Implements the approved specification test-first and asks no clarifying questions about intent."
           ]
         },
         {
@@ -232,7 +232,7 @@
           "expected_output": "The agent completes the alternative task without invoking clarify-intent.",
           "assertions": [
             "The agent does not activate clarify-intent for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Gives a short definition of a software requirement and asks no questions."
           ]
         }
       ]
@@ -287,7 +287,7 @@
           "expected_output": "The agent completes the alternative task without invoking code-review.",
           "assertions": [
             "The agent does not activate code-review for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Gives a summary of the release notes with no findings, severities or verdict."
           ]
         },
         {
@@ -298,7 +298,7 @@
           "expected_output": "The agent completes the alternative task without invoking code-review.",
           "assertions": [
             "The agent does not activate code-review for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Routes the request to write-pr and edits the PR body with linked evidence, with no review verdict."
           ]
         },
         {
@@ -309,7 +309,7 @@
           "expected_output": "The agent completes the alternative task without invoking code-review.",
           "assertions": [
             "The agent does not activate code-review for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Writes a failing test first with tdd-loop, then the fix, and gives no review verdict."
           ]
         }
       ]
@@ -351,7 +351,7 @@
           "expected_output": "The agent completes the alternative task without invoking domain-glossary.",
           "assertions": [
             "The agent does not activate domain-glossary for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Gives a general dictionary definition and does not create or edit a glossary file."
           ]
         },
         {
@@ -362,7 +362,7 @@
           "expected_output": "The agent completes the alternative task without invoking domain-glossary.",
           "assertions": [
             "The agent does not activate domain-glossary for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Reports the CSS contrast regression with measured ratios and adds no glossary terms."
           ]
         }
       ]
@@ -404,7 +404,7 @@
           "expected_output": "The agent completes the alternative task without invoking improve-agents.",
           "assertions": [
             "The agent does not activate improve-agents for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Refuses to change agent instructions without a request from the user, and changes no instruction file."
           ]
         },
         {
@@ -415,7 +415,7 @@
           "expected_output": "The agent completes the alternative task without invoking improve-agents.",
           "assertions": [
             "The agent does not activate improve-agents for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Gives a general summary of how a coding agent works and edits no AGENTS.md or skill file."
           ]
         }
       ]
@@ -470,7 +470,7 @@
           "expected_output": "The agent completes the alternative task without invoking learn.",
           "assertions": [
             "The agent does not activate learn for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Answers what await does in C# in a few sentences, with no lesson plan or exercises."
           ]
         },
         {
@@ -481,7 +481,7 @@
           "expected_output": "The agent completes the alternative task without invoking learn.",
           "assertions": [
             "The agent does not activate learn for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Gives a JSON parsing code snippet with no lesson, quiz or study plan."
           ]
         },
         {
@@ -492,7 +492,7 @@
           "expected_output": "The agent completes the alternative task without invoking learn.",
           "assertions": [
             "The agent does not activate learn for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Compares the two courses on stated facts and starts no study session or lesson plan."
           ]
         }
       ]
@@ -534,7 +534,7 @@
           "expected_output": "The agent completes the alternative task without invoking make-diagram.",
           "assertions": [
             "The agent does not activate make-diagram for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains in prose what a sequence diagram shows and creates no diagram file."
           ]
         },
         {
@@ -545,7 +545,7 @@
           "expected_output": "The agent completes the alternative task without invoking make-diagram.",
           "assertions": [
             "The agent does not activate make-diagram for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Reports performance findings for the change in text and creates no diagram."
           ]
         }
       ]
@@ -587,7 +587,7 @@
           "expected_output": "The agent completes the alternative task without invoking model-domain.",
           "assertions": [
             "The agent does not activate model-domain for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Adds the null check with a test and creates no domain model, aggregate or glossary."
           ]
         },
         {
@@ -598,7 +598,7 @@
           "expected_output": "The agent completes the alternative task without invoking model-domain.",
           "assertions": [
             "The agent does not activate model-domain for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Gives a general explanation of domain-driven design and creates no model file."
           ]
         }
       ]
@@ -653,7 +653,7 @@
           "expected_output": "The agent completes the alternative task without invoking plan-work.",
           "assertions": [
             "The agent does not activate plan-work for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Fixes the typo at once and writes no plan, task list or issue."
           ]
         },
         {
@@ -664,7 +664,7 @@
           "expected_output": "The agent completes the alternative task without invoking plan-work.",
           "assertions": [
             "The agent does not activate plan-work for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains the difference between planning and scheduling and writes no plan."
           ]
         },
         {
@@ -675,7 +675,7 @@
           "expected_output": "The agent completes the alternative task without invoking plan-work.",
           "assertions": [
             "The agent does not activate plan-work for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Routes the diff to code-review and reports defects with a verdict, with no new plan."
           ]
         }
       ]
@@ -730,7 +730,7 @@
           "expected_output": "The agent completes the alternative task without invoking release.",
           "assertions": [
             "The agent does not activate release for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Refuses to publish without explicit owner authorization, and creates no tag or release."
           ]
         },
         {
@@ -741,7 +741,7 @@
           "expected_output": "The agent completes the alternative task without invoking release.",
           "assertions": [
             "The agent does not activate release for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains release and deployment in general and runs no release command."
           ]
         },
         {
@@ -752,7 +752,7 @@
           "expected_output": "The agent completes the alternative task without invoking release.",
           "assertions": [
             "The agent does not activate release for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Reviews the PR for correctness with code-review and creates no changelog, tag or version bump."
           ]
         }
       ]
@@ -794,7 +794,7 @@
           "expected_output": "The agent completes the alternative task without invoking review-blast-radius.",
           "assertions": [
             "The agent does not activate review-blast-radius for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Writes the JSON helper test-first and produces no impact or blast radius report."
           ]
         },
         {
@@ -805,7 +805,7 @@
           "expected_output": "The agent completes the alternative task without invoking review-blast-radius.",
           "assertions": [
             "The agent does not activate review-blast-radius for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Gives a definition of a regression and reads no repository files."
           ]
         }
       ]
@@ -847,7 +847,7 @@
           "expected_output": "The agent completes the alternative task without invoking review-spec.",
           "assertions": [
             "The agent does not activate review-spec for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Routes the request to review-standards and reports only formatting and naming findings."
           ]
         },
         {
@@ -858,7 +858,7 @@
           "expected_output": "The agent completes the alternative task without invoking review-spec.",
           "assertions": [
             "The agent does not activate review-spec for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Writes acceptance criteria for the future feature and gives no review verdict."
           ]
         }
       ]
@@ -900,7 +900,7 @@
           "expected_output": "The agent completes the alternative task without invoking review-standards.",
           "assertions": [
             "The agent does not activate review-standards for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Routes the request to review-spec and checks the outcomes against each acceptance criterion."
           ]
         },
         {
@@ -911,7 +911,7 @@
           "expected_output": "The agent completes the alternative task without invoking review-standards.",
           "assertions": [
             "The agent does not activate review-standards for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains the difference between style conventions and behavior requirements, with no findings."
           ]
         }
       ]
@@ -966,7 +966,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-dkstack.",
           "assertions": [
             "The agent does not activate setup-dkstack for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains what dkstack is and installs no pointer or skill copies."
           ]
         },
         {
@@ -977,7 +977,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-dkstack.",
           "assertions": [
             "The agent does not activate setup-dkstack for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Reviews the feature issue and changes no AGENTS.md or dkstack pointer file."
           ]
         },
         {
@@ -988,7 +988,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-dkstack.",
           "assertions": [
             "The agent does not activate setup-dkstack for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Routes the request to bootstrap and does not edit the existing dkstack pointer."
           ]
         }
       ]
@@ -1030,7 +1030,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-editorconfig.",
           "assertions": [
             "The agent does not activate setup-editorconfig for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Routes the request to model-domain and creates no .editorconfig file."
           ]
         },
         {
@@ -1041,7 +1041,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-editorconfig.",
           "assertions": [
             "The agent does not activate setup-editorconfig for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains the purpose of EditorConfig and writes no .editorconfig file."
           ]
         }
       ]
@@ -1083,7 +1083,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-labels.",
           "assertions": [
             "The agent does not activate setup-labels for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Suggests a Conventional Commits title for the fix and creates or changes no labels."
           ]
         },
         {
@@ -1094,7 +1094,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-labels.",
           "assertions": [
             "The agent does not activate setup-labels for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains how labels organize issues and runs no label command."
           ]
         }
       ]
@@ -1136,7 +1136,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-quality-gates.",
           "assertions": [
             "The agent does not activate setup-quality-gates for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Checks the PR against its acceptance criteria and changes no CI workflow file."
           ]
         },
         {
@@ -1147,7 +1147,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-quality-gates.",
           "assertions": [
             "The agent does not activate setup-quality-gates for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Gives a general definition of a quality gate and adds no check or workflow."
           ]
         }
       ]
@@ -1189,7 +1189,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-repo-protection.",
           "assertions": [
             "The agent does not activate setup-repo-protection for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Fixes the failing unit test and changes no branch protection or ruleset."
           ]
         },
         {
@@ -1200,7 +1200,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-repo-protection.",
           "assertions": [
             "The agent does not activate setup-repo-protection for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains branch protection as a tutorial and calls no repository settings API."
           ]
         }
       ]
@@ -1242,7 +1242,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-supply-chain.",
           "assertions": [
             "The agent does not activate setup-supply-chain for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Routes the request to make-diagram and changes no dependency, lockfile or Dependabot file."
           ]
         },
         {
@@ -1253,7 +1253,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-supply-chain.",
           "assertions": [
             "The agent does not activate setup-supply-chain for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Compares the two build tools in prose and changes no dependency file."
           ]
         }
       ]
@@ -1295,7 +1295,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-versioning.",
           "assertions": [
             "The agent does not activate setup-versioning for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Leaves the version choice to the owner and changes no versioning setup or release config."
           ]
         },
         {
@@ -1306,7 +1306,7 @@
           "expected_output": "The agent completes the alternative task without invoking setup-versioning.",
           "assertions": [
             "The agent does not activate setup-versioning for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains that a MAJOR bump marks a breaking change, and changes no version file."
           ]
         }
       ]
@@ -1348,7 +1348,7 @@
           "expected_output": "The agent completes the alternative task without invoking start-issue.",
           "assertions": [
             "The agent does not activate start-issue for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains what a GitHub issue is and creates no issue or branch."
           ]
         },
         {
@@ -1359,7 +1359,7 @@
           "expected_output": "The agent completes the alternative task without invoking start-issue.",
           "assertions": [
             "The agent does not activate start-issue for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Reviews the PR diff and creates no issue, branch or worktree."
           ]
         }
       ]
@@ -1414,7 +1414,7 @@
           "expected_output": "The agent completes the alternative task without invoking tdd-loop.",
           "assertions": [
             "The agent does not activate tdd-loop for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains why red-green-refactor helps teams and writes no test or code."
           ]
         },
         {
@@ -1425,7 +1425,7 @@
           "expected_output": "The agent completes the alternative task without invoking tdd-loop.",
           "assertions": [
             "The agent does not activate tdd-loop for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Reports regression findings with a verdict through code-review and writes no test."
           ]
         },
         {
@@ -1436,7 +1436,7 @@
           "expected_output": "The agent completes the alternative task without invoking tdd-loop.",
           "assertions": [
             "The agent does not activate tdd-loop for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Writes the feature plan with plan-work and changes no code or test file."
           ]
         }
       ]
@@ -1491,7 +1491,7 @@
           "expected_output": "The agent completes the alternative task without invoking triage.",
           "assertions": [
             "The agent does not activate triage for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Defines refactoring with one short example and routes to no skill."
           ]
         },
         {
@@ -1502,7 +1502,7 @@
           "expected_output": "The agent completes the alternative task without invoking triage.",
           "assertions": [
             "The agent does not activate triage for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains what a skill is and opens no repository file."
           ]
         },
         {
@@ -1513,7 +1513,7 @@
           "expected_output": "The agent completes the alternative task without invoking triage.",
           "assertions": [
             "The agent does not activate triage for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains the null coalescing operator with one example and loads no other skill."
           ]
         }
       ]
@@ -1577,7 +1577,7 @@
           "expected_output": "The agent completes the alternative task without invoking ui-design.",
           "assertions": [
             "The agent does not activate ui-design for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains the difference between a design system and a style guide, with no UI file changes."
           ]
         },
         {
@@ -1588,7 +1588,7 @@
           "expected_output": "The agent completes the alternative task without invoking ui-design.",
           "assertions": [
             "The agent does not activate ui-design for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Routes the request to ui-review and reports contrast and accessibility findings with no file changes."
           ]
         },
         {
@@ -1599,7 +1599,7 @@
           "expected_output": "The agent completes the alternative task without invoking ui-design.",
           "assertions": [
             "The agent does not activate ui-design for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Writes the SQL query and changes no UI file or design token."
           ]
         }
       ]
@@ -1676,7 +1676,7 @@
           "expected_output": "The agent completes the alternative task without invoking ui-review.",
           "assertions": [
             "The agent does not activate ui-review for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Routes the request to ui-design and builds the UI with its visual verification, with no review verdict."
           ]
         },
         {
@@ -1687,7 +1687,7 @@
           "expected_output": "The agent completes the alternative task without invoking ui-review.",
           "assertions": [
             "The agent does not activate ui-review for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains CSS grid minmax with one example and gives no UI findings."
           ]
         },
         {
@@ -1698,7 +1698,7 @@
           "expected_output": "The agent completes the alternative task without invoking ui-review.",
           "assertions": [
             "The agent does not activate ui-review for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Reviews the backend diff with code-review and reports no rendered UI checks."
           ]
         }
       ]
@@ -1740,7 +1740,7 @@
           "expected_output": "The agent completes the alternative task without invoking verify-claim.",
           "assertions": [
             "The agent does not activate verify-claim for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains a smoke test in one paragraph and runs no command."
           ]
         },
         {
@@ -1751,7 +1751,7 @@
           "expected_output": "The agent completes the alternative task without invoking verify-claim.",
           "assertions": [
             "The agent does not activate verify-claim for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Writes the roadmap with chart-route and gives no evidence levels for claims."
           ]
         }
       ]
@@ -1793,7 +1793,7 @@
           "expected_output": "The agent completes the alternative task without invoking write-adr.",
           "assertions": [
             "The agent does not activate write-adr for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains what an ADR is and writes no ADR file."
           ]
         },
         {
@@ -1804,7 +1804,7 @@
           "expected_output": "The agent completes the alternative task without invoking write-adr.",
           "assertions": [
             "The agent does not activate write-adr for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Fixes the bug, runs the unit tests and writes no ADR."
           ]
         }
       ]
@@ -1846,7 +1846,7 @@
           "expected_output": "The agent completes the alternative task without invoking write-pr.",
           "assertions": [
             "The agent does not activate write-pr for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Reviews the code with code-review, gives a verdict and does not edit the PR body."
           ]
         },
         {
@@ -1857,7 +1857,7 @@
           "expected_output": "The agent completes the alternative task without invoking write-pr.",
           "assertions": [
             "The agent does not activate write-pr for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains pull requests in general and edits no PR title or body."
           ]
         }
       ]
@@ -1899,7 +1899,7 @@
           "expected_output": "The agent completes the alternative task without invoking writing-check.",
           "assertions": [
             "The agent does not activate writing-check for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Fixes the C# arithmetic error test-first and runs no writing check on prose."
           ]
         },
         {
@@ -1910,7 +1910,7 @@
           "expected_output": "The agent completes the alternative task without invoking writing-check.",
           "assertions": [
             "The agent does not activate writing-check for this task",
-            "The alternative request is addressed without unnecessary workflow steps."
+            "Explains the goals of simplified technical English and edits no text file."
           ]
         }
       ]
