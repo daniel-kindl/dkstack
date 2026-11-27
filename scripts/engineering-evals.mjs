@@ -4,7 +4,8 @@ import { resolve, dirname, join, relative, isAbsolute, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
-const root = dirname(fileURLToPath(import.meta.url));
+// The runner is in scripts/. The scenario data is in evals/engineering/.
+const root = join(dirname(fileURLToPath(import.meta.url)), "..", "evals", "engineering");
 const manifest = join(root, "scenarios.json");
 const validId = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -88,7 +89,7 @@ async function main(args) {
     return;
   }
   if (action !== "grade" || args.length !== 4 || args[3] !== "--execute-untrusted") {
-    throw new Error("Usage: node evals/engineering/run.mjs grade <id> <candidate-dir> --execute-untrusted");
+    throw new Error("Usage: node scripts/engineering-evals.mjs grade <id> <candidate-dir> --execute-untrusted");
   }
   const result = await compareScenario(args[1], args[2]);
   process.stdout.write(JSON.stringify(result, null, 2) + "\n");

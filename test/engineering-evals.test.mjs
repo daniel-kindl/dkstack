@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { loadScenarios, safeRelativePath, gradeScenario, compareScenario } from "../evals/engineering/run.mjs";
+import { loadScenarios, safeRelativePath, gradeScenario, compareScenario } from "../scripts/engineering-evals.mjs";
 
 test("engineering scenario manifest is valid", async () => {
   const cases = await loadScenarios();

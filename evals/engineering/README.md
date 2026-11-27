@@ -22,14 +22,14 @@ Use the same agent, model, tools, time budget, and task prompt for both arms.
 Check the scenario manifest without running fixture code:
 
 ```bash
-node evals/engineering/run.mjs check
-node evals/engineering/run.mjs list
+node scripts/engineering-evals.mjs check
+node scripts/engineering-evals.mjs list
 ```
 
 Grade a candidate after isolating it in a disposable, network-restricted sandbox:
 
 ```bash
-node evals/engineering/run.mjs grade framed-transport /sandbox/agent-output --execute-untrusted
+node scripts/engineering-evals.mjs grade framed-transport /sandbox/agent-output --execute-untrusted
 ```
 
 This command executes the candidate code through a child Node.js process.
