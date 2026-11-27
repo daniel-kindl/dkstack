@@ -77,7 +77,7 @@ async function build(root, name, target) {
   for (const original of pending) {
     const text = await readFile(original, "utf8");
     const rel = relative(target, original);
-    const origin = join("skills", name, rel);
+    const origin = ["skills", name, rel.split(sep).join("/")].join("/");
     for (const path of pathsIn(text, origin)) queue.add(path);
     await writeFile(original, rewrite(text, original));
   }
