@@ -123,7 +123,10 @@ function checkFields(fields, folder) {
   } else if (fields.name !== folder) {
     errors.push(`name "${fields.name}" must be equal to the folder name "${folder}".`);
   }
-  if (fields.compatibility !== undefined && (fields.compatibility.length === 0 || fields.compatibility.length > 500)) {\n    errors.push("compatibility must have 1-500 characters.");\n  }\n  if (fields.description === undefined) {
+  if (fields.compatibility !== undefined && (fields.compatibility.length === 0 || fields.compatibility.length > 500)) {
+    errors.push("compatibility must have 1-500 characters.");
+  }
+  if (fields.description === undefined) {
     errors.push("description is missing.");
   } else if (fields.description.trim() === "") {
     errors.push("description must not be empty.");
