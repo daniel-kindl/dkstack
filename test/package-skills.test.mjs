@@ -154,3 +154,9 @@ test("does not create bundles through an external parent symlink",async()=>tempo
     await assert.rejects(packageSkills(root,join(root,"external/dist/bundle"),["one"]),/Output parent must stay inside/);
   } finally { await rm(outside,{recursive:true,force:true}); }
 }));
+
+test("does not treat inline or indented examples as dependencies", async()=>temporary(async root=>{
+  await put(root,"skills/one/SKILL.md","---\nname: one\ndescription: One\n---\n\n"+ "`[example](docs/missing.md)`\n\n    [example](docs/missing.md)\n");
+  const result=await packageSkills(root,join(root,"dist/out"),["one"]);
+  assert.equal(result[0].dependencies,0);
+}));
