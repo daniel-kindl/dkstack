@@ -28,4 +28,5 @@ Read [performance](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/cod
 
 ## Subagents
 
-Independent read-only subagents may profile different candidate paths. The lead compares results using the same baseline and validates each claim.
+Do not start subagents for this skill. Reason: measurements need one controlled baseline, environment, and workload.
+See the [subagent guide](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/subagents.md).
