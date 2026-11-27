@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 // Validate DKSTACK skill layout, frontmatter, and client invocation policy.
-// This parser supports common YAML scalars and metadata mappings; the upstream
-// skills-ref validator is authoritative for the full Agent Skills specification.
+// The frontmatter parser accepts a strict subset of YAML on purpose: one
+// "key: value" per line, name as a plain word, each other string value
+// double-quoted, true or false for an invocation key, and metadata as a
+// mapping of double-quoted values. This subset is always valid YAML, so a file
+// that passes this check also parses in the skills CLI. The upstream
+// skills-ref validator checks the full Agent Skills specification.
 
 import { readdir, readFile, stat } from "node:fs/promises";
 import { join, resolve } from "node:path";
@@ -47,9 +51,6 @@ function parseQuoted(raw) {
   }
 }
 
-// Parse the supported frontmatter fields without pretending to implement all of YAML.
-// Block scalars and nested metadata require a YAML parser. Reject unsupported forms
-// explicitly; the upstream skills-ref validator remains the format authority.
 export function parseFrontmatter(text) {
   const lines = text.split(/\r?\n/);
   if (lines[0] !== "---") throw new Error("the file must start with a --- frontmatter line.");
@@ -73,7 +74,9 @@ export function parseFrontmatter(text) {
         const entry = /^  ([A-Za-z0-9_.-]+):\s*(.*)$/.exec(lines[i]);
         if (!entry) throw new Error(`line ${i + 1}: expected a two-space indented metadata entry.`);
         if (Object.hasOwn(map, entry[1])) throw new Error(`line ${i + 1}: duplicate metadata key "${entry[1]}".`);
-        map[entry[1]] = parseScalar(entry[2], i + 1);
+        const value = parseQuoted(entry[2].trim());
+        if (value === undefined || value === null) throw new Error(`line ${i + 1}: metadata value must be a double-quoted string.`);
+        map[entry[1]] = value;
       }
       fields.metadata = map;
       continue;
@@ -82,30 +85,16 @@ export function parseFrontmatter(text) {
     if (INVOCATION_KEYS.has(key)) {
       if (value !== "true" && value !== "false") throw new Error(`line ${lineNo}: ${key} must be true or false.`);
       fields[key] = value === "true";
-    } else if (value === "|" || value === ">") {
-      const blocks = [];
-      while (i + 1 < end && /^  /.test(lines[i + 1])) blocks.push(lines[++i].slice(2));
-      if (!blocks.length) throw new Error(`line ${lineNo}: empty block scalar.`);
-      fields[key] = value === "|" ? blocks.join("\n") + "\n" : blocks.join(" ") + "\n";
+    } else if (key === "name") {
+      fields.name = value;
     } else {
-      fields[key] = parseScalar(value, lineNo);
+      const parsed = parseQuoted(value);
+      if (parsed === undefined) throw new Error(`line ${lineNo}: ${key} must be a double-quoted string.`);
+      if (parsed === null) throw new Error(`line ${lineNo}: ${key} is not a valid double-quoted string.`);
+      fields[key] = parsed;
     }
   }
   return fields;
-}
-
-function parseScalar(raw, lineNo) {
-  if (raw.startsWith('"')) {
-    const value = parseQuoted(raw);
-    if (value === null || value === undefined) throw new Error(`line ${lineNo}: invalid double-quoted string.`);
-    return value;
-  }
-  if (raw.startsWith("'")) {
-    if (!/^'(?:[^']|'')*'$/.test(raw)) throw new Error(`line ${lineNo}: invalid single-quoted string.`);
-    return raw.slice(1, -1).replace(/''/g, "'");
-  }
-  if (!raw || /:\s|\s#|[\[\]{}]/.test(raw)) throw new Error(`line ${lineNo}: unsupported or invalid plain scalar.`);
-  return raw;
 }
 
 function checkFields(fields, folder) {
