@@ -106,7 +106,7 @@ test("a name with characters other than lowercase letters, digits and hyphens is
   ]);
 });
 
-test("an unquoted description with a second colon is rejected (the code-review bug)", async () => {
+test("a plain description with an embedded colon is rejected without YAML quoting", async () => {
   const result = await errorsFor({
     "skills/code-review/SKILL.md": skill(
       "code-review",
@@ -114,7 +114,7 @@ test("an unquoted description with a second colon is rejected (the code-review b
     ),
   });
   assert.deepEqual(result.errors, [
-    "skills/code-review/SKILL.md: line 3: description must be a double-quoted string.",
+    "skills/code-review/SKILL.md: line 3: unsupported or invalid plain scalar.",
   ]);
 });
 
@@ -143,7 +143,7 @@ test("parseFrontmatter reads a double-quoted value with escapes", () => {
 test("parseFrontmatter rejects an invalid escape, a duplicate key and an unknown key", () => {
   assert.throws(
     () => parseFrontmatter('---\nname: a\ndescription: "bad \\q escape"\n---\n'),
-    { message: "line 3: description is not a valid double-quoted string." },
+    { message: "line 3: invalid double-quoted string." },
   );
   assert.throws(
     () => parseFrontmatter('---\nname: a\nname: b\ndescription: "x"\n---\n'),
@@ -151,7 +151,7 @@ test("parseFrontmatter rejects an invalid escape, a duplicate key and an unknown
   );
   assert.throws(
     () => parseFrontmatter('---\nname: a\ndescription: "x"\nversion: 1\n---\n'),
-    { message: 'line 4: unknown key "version". Use only name, description, disable-model-invocation and user-invocable.' },
+    { message: 'line 4: unknown key "version".' },
   );
   assert.throws(
     () => parseFrontmatter('---\nname: a\n  continued\ndescription: "x"\n---\n'),
@@ -303,4 +303,37 @@ test("the Codex policy key counts only in the policy block", () => {
   assert.equal(codexPolicyOff("interface:\n  allow_implicit_invocation: false\n"), false);
   assert.equal(codexPolicyOff("policy:\n  allow_implicit_invocation: true\n"), false);
   assert.equal(codexPolicyOff("policy:\ninterface:\n  allow_implicit_invocation: false\n"), false);
+});
+
+test("standard optional fields and valid YAML scalar styles are accepted", async () => {
+  const result = await errorsFor({
+    "skills/standard/SKILL.md": [
+      "---",
+      "name: standard",
+      "description: >",
+      "  Helps review repository changes.",
+      "  Use for PR reviews.",
+      "license: MIT",
+      "compatibility: Requires git",
+      "allowed-tools: Bash(git:*) Read",
+      "metadata:",
+      "  author: example",
+      "  version: '1.0'",
+      "---",
+      "# Instructions",
+      "",
+    ].join("\\n"),
+  });
+  assert.deepEqual(result.errors, []);
+  assert.deepEqual(result.skills, ["standard"]);
+});
+
+test("a compatibility field longer than 500 characters is rejected", async () => {
+  const result = await errorsFor({
+    "skills/long/SKILL.md": skill("long", '"Use for testing."').replace(
+      "---\\n\\n#",
+      `compatibility: ${"x".repeat(501)}\\n---\\n\\n#`,
+    ),
+  });
+  assert.match(result.errors.join("\\n"), /compatibility must have 1-500 characters/);
 });
