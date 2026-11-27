@@ -2,6 +2,9 @@
 
 An interface is a promise to consumers outside the changed implementation.
 
+This page is for the contracts of a consumer project. It does not set the versioning policy of
+dkstack. For that policy, see [versioning](../versioning/index.md).
+
 ## Design
 
 - Identify known and external consumers, supported versions, and compatibility requirements.
