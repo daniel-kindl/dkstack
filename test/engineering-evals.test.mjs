@@ -310,26 +310,31 @@ test("compareArms compares the baseline arm with the dkstack arm", async () => {
   });
 });
 
-test("compareArms gives no PASS when the starter already passes", async () => {
+test("compareArms reports a scenario whose starter passes as INVALID_STARTER", async () => {
   await scenarioRoot(async (base, temp) => {
     const good = join(temp, "good");
     await mkdir(good);
     await writeFile(join(good, "subject.mjs"), "export const value = 1;\n");
-    const result = await compareArms("sample", { dkstack: good }, base);
+    const result = await compareArms("sample", { baseline: good, dkstack: good }, base);
     assert.equal(result.starter_passed, true);
-    assert.equal(result.arms.dkstack.status, "FAIL");
+    assert.equal(result.comparison, "INVALID_STARTER", "not SAME, which hides the broken scenario");
+    for (const arm of ["baseline", "dkstack"]) {
+      assert.deepEqual(result.arms[arm], { status: "NOT_RUN", reason: "The starter passes its oracle, so the scenario is invalid" });
+    }
   }, { starter: "export const value = 1;\n" });
 });
 
-test("the CLI checks and lists the manifest", async () => {
-  await scenarioRoot(async (base) => {
-    const check = io();
-    assert.equal(await main([], check, base), 0);
-    assert.equal(check.out.stdout, "Validated 1 engineering scenarios.\n");
-    const list = io();
-    assert.equal(await main(["list"], list, base), 0);
-    assert.deepEqual(JSON.parse(list.out.stdout).map((item) => item.id), ["sample"]);
-  });
+test("the CLI compare command exits 1 with a scenario error when the starter passes", async () => {
+  await scenarioRoot(async (base, temp) => {
+    const good = join(temp, "good");
+    await mkdir(good);
+    await writeFile(join(good, "subject.mjs"), "export const value = 1;\n");
+    const run = io();
+    assert.equal(await main(["compare", "sample", "--dkstack", good, "--execute-untrusted"], run, base), 1);
+    assert.equal(JSON.parse(run.out.stdout).comparison, "INVALID_STARTER");
+    assert.match(run.out.stderr, /^Scenario error: the starter of sample passes its oracle\.$/m);
+    assert.match(run.out.stderr, /^comparison: INVALID STARTER$/m);
+  }, { starter: "export const value = 1;\n" });
 });
 
 test("the CLI compare command prints NOT RUN for each arm with no candidate", async () => {

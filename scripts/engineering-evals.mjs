@@ -116,19 +116,25 @@ export async function compareScenario(id, candidate, base = root) {
 
 export const ARMS = ["baseline", "dkstack"];
 const NOT_RUN = { status: "NOT_RUN", reason: "No candidate for this arm" };
+const INVALID = { status: "NOT_RUN", reason: "The starter passes its oracle, so the scenario is invalid" };
 
 // Compare the arm without dkstack guidance (baseline) with the arm that has it (dkstack).
 // An arm with no candidate is NOT_RUN, and then the comparison is NOT_RUN too.
+// When the starter passes its oracle, the oracle proves nothing. Then no arm runs, and the
+// comparison is INVALID_STARTER, not SAME.
 export async function compareArms(id, candidates = {}, base = root, options = {}) {
   const list = await loadScenarios(base);
   const item = list.find((value) => value.id === id);
   if (!item) throw new Error("Unknown scenario");
   const starter = await gradeScenario(item, resolve(base, item.starter), base, options);
+  if (starter.passed) {
+    return { scenario: id, starter_passed: true, arms: { baseline: { ...INVALID }, dkstack: { ...INVALID } }, comparison: "INVALID_STARTER" };
+  }
   const arms = {};
   for (const arm of ARMS) {
     if (candidates[arm] === undefined) { arms[arm] = { ...NOT_RUN }; continue; }
     const result = await gradeScenario(item, candidates[arm], base, options);
-    arms[arm] = { status: !starter.passed && result.passed ? "PASS" : "FAIL", candidate: result };
+    arms[arm] = { status: result.passed ? "PASS" : "FAIL", candidate: result };
   }
   return { scenario: id, starter_passed: starter.passed, arms, comparison: compareStatus(arms) };
 }
@@ -163,7 +169,7 @@ function parseCompare(args) {
   return { id: args[0], candidates };
 }
 
-// Return the exit code: 0 done, 1 failed result or error, 2 usage error.
+// Return the exit code: 0 done, 1 failed result, scenario error or other error, 2 usage error.
 export async function main(args, io = process, base = root) {
   const action = args[0] || "check";
   try {
@@ -184,6 +190,10 @@ export async function main(args, io = process, base = root) {
         io.stderr.write(arm + ": " + (status === "NOT_RUN" ? "NOT RUN, " + reason : status) + "\n");
       }
       io.stderr.write("comparison: " + result.comparison.replace("_", " ") + "\n");
+      if (result.comparison === "INVALID_STARTER") {
+        io.stderr.write("Scenario error: the starter of " + id + " passes its oracle.\n");
+        return 1;
+      }
       return 0;
     }
     if (action !== "grade" || args.length !== 4 || args[3] !== "--execute-untrusted") throw new UsageError();
