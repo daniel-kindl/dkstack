@@ -44,7 +44,7 @@ test("a missing dependency fails and leaves no output directory", async () => te
 
 test("refuses an unsafe destination or an existing folder that is not a bundle",async () => temporary(async root => {
   await put(root,"skills/one/SKILL.md","---\nname: one\ndescription: One\n---\n\nText\n");
-  await assert.rejects(packageSkills(root,join(tmpdir(),"outside"),["one"]), /inside DKSTACK/);
+  await assert.rejects(packageSkills(root,join(tmpdir(),"outside"),["one"]), /inside dkstack/);
   const output=join(root,"dist/out");
   await put(root,"dist/out/keep.txt","user file\n");
   await assert.rejects(packageSkills(root,output,["one"]), /already exists/);
@@ -134,7 +134,7 @@ test("CLI accepts a valid explicit skill and reports the result",async()=>tempor
 
 test("rejects output at the root and a missing skill entrypoint",async()=>temporary(async root=>{
   await put(root,"skills/one/readme.md","hi\n");
-  await assert.rejects(packageSkills(root,root,["one"]),/inside DKSTACK/);
+  await assert.rejects(packageSkills(root,root,["one"]),/inside dkstack/);
   await assert.rejects(packageSkills(root,join(root,"dist/out"),["one"]));
 }));
 

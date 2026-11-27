@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Validate DKSTACK skill layout, frontmatter, and client invocation policy.
+// Validate dkstack skill layout, frontmatter, and client invocation policy.
 // The frontmatter parser accepts a strict subset of YAML on purpose: one
 // "key: value" per line, name as a plain word, each other string value
 // double-quoted, true or false for an invocation key, and metadata as a

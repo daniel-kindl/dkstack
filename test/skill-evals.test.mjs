@@ -285,3 +285,10 @@ test("the repository manifest has gradable positive cases", async () => {
   const names = (await readdir(new URL("../skills/", import.meta.url), { withFileTypes: true })).filter((x) => x.isDirectory()).map((x) => x.name);
   assert.deepEqual(validateSuite(suite, names), []);
 });
+
+test("eval queries name the project dkstack in lowercase", async () => {
+  const { readFile } = await import("./helpers.mjs");
+  const suite = JSON.parse(await readFile(new URL("../evals/skill-cases.json", import.meta.url), "utf8"));
+  const upper = suite.skills.flatMap((s) => s.queries).filter((q) => /DKSTACK/.test(JSON.stringify(q))).map((q) => q.id);
+  assert.deepEqual(upper, []);
+});

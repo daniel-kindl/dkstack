@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check core Agent Skills conformance while preserving client extension fields.
 
-The reference validator accepts only fields from the standard. DKSTACK also
+The reference validator accepts only fields from the standard. dkstack also
 ships Claude-specific invocation hints. Normalize those hints in a temporary
 copy before calling the official validator. Policy checks remain separate.
 """
@@ -64,7 +64,7 @@ def main() -> int:
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    print("All DKSTACK skills pass core Agent Skills reference validation")
+    print("All dkstack skills pass core Agent Skills reference validation")
     return 0
 
 

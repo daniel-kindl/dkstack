@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Build self-contained skill folders by resolving DKSTACK link dependencies.
+// Build self-contained skill folders by resolving dkstack link dependencies.
 import { copyFile, lstat, mkdtemp, mkdir, readFile, readdir, realpath, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join, posix, relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -125,12 +125,12 @@ export async function packageSkills(root, output, requested = [], source) {
   root = await realpath(root);
   source ??= await sourceOf(root);
   output = resolve(output);
-  if (!inside(root, output)) throw Error("Output must be inside DKSTACK, not at its root");
+  if (!inside(root, output)) throw Error("Output must be inside dkstack, not at its root");
   const names = requested.length ? requested : (await readdir(join(root,"skills"),{withFileTypes:true})).filter(x=>x.isDirectory()).map(x=>x.name).sort();
   if (!names.length) throw Error("No skills selected");
   await mkdir(dirname(output),{recursive:true});
   const parent = await realpath(dirname(output));
-  if (!inside(root, parent)) throw Error("Output parent must stay inside DKSTACK");
+  if (!inside(root, parent)) throw Error("Output parent must stay inside dkstack");
   const stage = await mkdtemp(join(parent,".dkstack-stage-"));
   try {
     const result = [];

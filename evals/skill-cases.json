@@ -19,7 +19,7 @@
         },
         {
           "id": "apply-architecture-p2",
-          "query": "Assess whether the new cross-layer data access design violates DKSTACK architecture boundaries.",
+          "query": "Assess whether the new cross-layer data access design violates dkstack architecture boundaries.",
           "should_trigger": true,
           "split": "validation",
           "expected_output": "Checks proposed changes against explicit architecture principles and identifies affected boundaries.",
@@ -72,7 +72,7 @@
         },
         {
           "id": "bootstrap-p2",
-          "query": "This legacy project has no branch protections, semantic versioning, or CI. Bring it to DKSTACK baseline.",
+          "query": "This legacy project has no branch protections, semantic versioning, or CI. Bring it to dkstack baseline.",
           "should_trigger": true,
           "split": "train",
           "expected_output": "Sets repository standards and deterministic checks without weakening existing protections.",
@@ -881,7 +881,7 @@
         },
         {
           "id": "review-standards-p2",
-          "query": "Compare PR changes against the DKSTACK standards and list grounded violations.",
+          "query": "Compare PR changes against the dkstack standards and list grounded violations.",
           "should_trigger": true,
           "split": "validation",
           "expected_output": "Cites engineering rule sources and grounds each reported violation in the diff.",
@@ -921,7 +921,7 @@
       "queries": [
         {
           "id": "setup-dkstack-p1",
-          "query": "Please add DKSTACK to my repository, preserving the existing AGENTS.md rules.",
+          "query": "Please add dkstack to my repository, preserving the existing AGENTS.md rules.",
           "should_trigger": true,
           "split": "train",
           "expected_output": "Preserves project instructions, checks client pointers, and requests consent for installation.",
@@ -947,7 +947,7 @@
         },
         {
           "id": "setup-dkstack-p3",
-          "query": "Install DKSTACK for Claude Code and Codex here; ask before installing skill copies.",
+          "query": "Install dkstack for Claude Code and Codex here; ask before installing skill copies.",
           "should_trigger": true,
           "split": "validation",
           "expected_output": "Preserves project instructions, checks client pointers, and requests consent for installation.",
@@ -960,7 +960,7 @@
         },
         {
           "id": "setup-dkstack-n1",
-          "query": "What does DKSTACK mean and what problems does it solve?",
+          "query": "What does dkstack mean and what problems does it solve?",
           "should_trigger": false,
           "split": "train",
           "expected_output": "The agent completes the alternative task without invoking setup-dkstack.",
@@ -971,7 +971,7 @@
         },
         {
           "id": "setup-dkstack-n2",
-          "query": "Review this feature issue in a repository that already uses DKSTACK.",
+          "query": "Review this feature issue in a repository that already uses dkstack.",
           "should_trigger": false,
           "split": "train",
           "expected_output": "The agent completes the alternative task without invoking setup-dkstack.",
@@ -1210,7 +1210,7 @@
       "queries": [
         {
           "id": "setup-supply-chain-p1",
-          "query": "Apply the DKSTACK dependency and supply chain security rules to this new project.",
+          "query": "Apply the dkstack dependency and supply chain security rules to this new project.",
           "should_trigger": true,
           "split": "train",
           "expected_output": "Applies dependency provenance, pins, and approved supply chain security rules.",
@@ -1446,7 +1446,7 @@
       "queries": [
         {
           "id": "triage-p1",
-          "query": "We use DKSTACK. Which instructions apply to a new settings page that also changes database writes?",
+          "query": "We use dkstack. Which instructions apply to a new settings page that also changes database writes?",
           "should_trigger": true,
           "split": "train",
           "expected_output": "Selects the smallest relevant set of rules and skills for the actual task.",
@@ -1459,7 +1459,7 @@
         },
         {
           "id": "triage-p2",
-          "query": "Before making changes to this DKSTACK repository, route my feature through the minimum relevant skills.",
+          "query": "Before making changes to this dkstack repository, route my feature through the minimum relevant skills.",
           "should_trigger": true,
           "split": "train",
           "expected_output": "Selects the smallest relevant set of rules and skills for the actual task.",
@@ -1472,7 +1472,7 @@
         },
         {
           "id": "triage-p3",
-          "query": "This DKSTACK consumer needs a PR review plus rendered UI inspection. What should the agent load?",
+          "query": "This dkstack consumer needs a PR review plus rendered UI inspection. What should the agent load?",
           "should_trigger": true,
           "split": "validation",
           "expected_output": "Selects the smallest relevant set of rules and skills for the actual task.",

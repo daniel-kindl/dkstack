@@ -96,7 +96,7 @@ class MainTests(unittest.TestCase):
         fake = types.SimpleNamespace(validate=lambda path: [])
         code, out, err = self.run_main(fake)
         self.assertEqual(code, 0)
-        self.assertIn("pass core Agent Skills reference validation", out)
+        self.assertIn("All dkstack skills pass core Agent Skills reference validation", out)
         self.assertEqual(err, "")
 
 
