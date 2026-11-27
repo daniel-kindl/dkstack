@@ -16,10 +16,16 @@ export function safeRelativePath(value) {
   return !normalized.startsWith("/") && !normalized.includes("\0");
 }
 
+function inside(root, path) {
+  const rel = relative(root, path);
+  return Boolean(rel) && rel !== ".." && !rel.startsWith(".." + sep) && !isAbsolute(rel);
+}
+
 export async function loadScenarios(base = root) {
   const list = JSON.parse(await readFile(join(base, "scenarios.json"), "utf8"));
   if (!Array.isArray(list) || list.length === 0) throw new Error("No scenarios");
   const ids = new Set();
+  const realBase = await realpath(base);
   for (const item of list) {
     if (!item || !validId.test(item.id) || ids.has(item.id)) throw new Error("Invalid or duplicate scenario ID");
     ids.add(item.id);
@@ -29,26 +35,28 @@ export async function loadScenarios(base = root) {
     for (const key of ["oracle", "starter"]) {
       if (!safeRelativePath(item[key])) throw new Error("Unsafe " + key);
       const full = resolve(base, item[key]);
-      const rel = relative(base, full);
-      if (rel.startsWith(".." + sep) || rel === "..") throw new Error("Outside evaluation root");
       const entry = await lstat(full);
       if (entry.isSymbolicLink()) throw new Error("Symlink not allowed");
+      // A symlinked parent folder can point outside the root, so compare the real paths.
+      if (!inside(realBase, await realpath(full))) throw new Error("Outside evaluation root");
     }
     if (!item.oracle.endsWith(".test.mjs")) throw new Error("Oracle must be a test module");
-    const starter = join(base, item.starter, "subject.mjs");
-    if (!(await lstat(starter)).isFile()) throw new Error("Starter subject missing");
+    const starter = await lstat(join(base, item.starter, "subject.mjs")).catch(() => null);
+    if (!starter?.isFile()) throw new Error("Starter subject missing");
   }
   return list;
 }
 
-export async function gradeScenario(item, candidate, base = root) {
+export const TIMEOUT_MS = 30000;
+
+export async function gradeScenario(item, candidate, base = root, { timeoutMs = TIMEOUT_MS } = {}) {
   const resolvedCandidate = await realpath(candidate);
   const subject = join(resolvedCandidate, "subject.mjs");
   const entry = await lstat(subject);
   if (!entry.isFile() || entry.isSymbolicLink()) throw new Error("Candidate must contain a regular subject.mjs");
   const oracle = resolve(base, item.oracle);
   const result = spawnSync(process.execPath, ["--test", oracle], {
-    timeout: 30000,
+    timeout: timeoutMs,
     maxBuffer: 1024 * 1024,
     encoding: "utf8",
     env: { PATH: process.env.PATH || "", DKSTACK_CANDIDATE_ROOT: resolvedCandidate },
@@ -65,14 +73,15 @@ export async function compareScenario(id, candidate, base = root) {
   const list = await loadScenarios(base);
   const item = list.find((value) => value.id === id);
   if (!item) throw new Error("Unknown scenario");
-  const baseline = await gradeScenario(item, resolve(base, item.starter), base);
+  // The starter is the broken module. It must fail, or the oracle proves nothing.
+  const starter = await gradeScenario(item, resolve(base, item.starter), base);
   const updated = await gradeScenario(item, candidate, base);
   return {
     scenario: id,
-    baseline_passed: baseline.passed,
+    starter_passed: starter.passed,
     candidate_passed: updated.passed,
-    outcome: !baseline.passed && updated.passed ? "PASS" : "FAIL",
-    baseline,
+    outcome: !starter.passed && updated.passed ? "PASS" : "FAIL",
+    starter,
     candidate: updated,
   };
 }
