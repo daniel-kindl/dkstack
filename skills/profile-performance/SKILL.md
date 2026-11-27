@@ -17,7 +17,7 @@ Read [performance](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/cod
 6. Implement through [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md) when behavior changes.
 7. Compare distributions and resource costs under matching conditions.
 8. Check correctness, regressions, and worst-case resource use.
-9. Report data, confidence, trade-offs, and each NOT RUN check.
+9. Report the data, the confidence and the trade-offs. Report each check that did not run as NOT RUN.
 
 ## Boundaries
 
