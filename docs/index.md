@@ -77,6 +77,7 @@ See [how consumers follow versions](adr/0001-how-consumers-follow-versions.md) f
 ## Evaluations
 
 - Skill activation and behavior: [skill evaluation cases](skill-evaluation-cases.md).
+- Engineering outcomes: [engineering agent evaluations](../evals/engineering/README.md).
 
 ## Contributing and checks
 

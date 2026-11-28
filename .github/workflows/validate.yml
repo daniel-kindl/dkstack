@@ -106,6 +106,10 @@ jobs:
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run bundle:skills
 
+      - name: Validate engineering evaluation scenarios
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: npm run check:engineering-evals
+
       - name: Check that relative and repository links resolve
         if: ${{ !cancelled() && steps.node.outcome == 'success' }}
         run: npm run check:links
