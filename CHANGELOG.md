@@ -14,6 +14,8 @@ change that a consumer must act on has a "Consumer action:" line.
 
 - Agent Skills interoperability guide, offline skill bundles and a pinned core specification check (#383).
 - Activation evaluation cases for each skill. Standard optional frontmatter fields pass `check:skills` (#383).
+- Engineering evaluation scenarios with oracle grading. `npm run check` validates their manifest (#389).
+- Workflow pages for agent execution, coordination, recovery and risk-based verification, and the `recover-work` skill (#385).
 - Incident analysis page and the `investigate-bug` skill (#386).
 - SVG logos, section icons, a favicon, banners, and a brand asset guide (#381).
 - Light and dark README headers, plus Shields.io badges for the latest release, license, and checks on main (#381).
