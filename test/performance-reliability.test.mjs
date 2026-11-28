@@ -95,3 +95,31 @@ test("triage routes each new page to its own owner", async () => {
     && line.includes(`(${RAW}coding/index.md)`));
   assert.deepEqual(indexRoutes, [], "no reliability route to the coding index");
 });
+
+// The eval suite of one skill, from evals/skill-cases.json.
+async function evalSuite(skill) {
+  const suite = JSON.parse(await read("evals/skill-cases.json"));
+  const entry = suite.skills.find((item) => item.skill === skill);
+  assert.ok(entry, `${skill} has an eval suite`);
+  const positives = entry.queries.filter((q) => q.should_trigger);
+  const negatives = entry.queries.filter((q) => !q.should_trigger);
+  assert.ok(positives.length >= 2 && negatives.length >= 2, `${skill}: two positive and two negative cases`);
+  return { positives, negatives };
+}
+
+// The positive case whose assertions match each pattern. Each path needs its own case.
+function caseFor(positives, ...patterns) {
+  const found = positives.find((q) => patterns.every((p) => p.test(q.assertions.join("\n"))));
+  assert.ok(found, `a positive case asserts ${patterns.join(" and ")}`);
+  return found.id;
+}
+
+test("profile-performance eval cases cover a baseline, an isolated change and the proof", async () => {
+  const { positives } = await evalSuite("profile-performance");
+  const ids = [
+    caseFor(positives, /Records a baseline/, /Claims no speedup without before and after measurements under matching conditions/),
+    caseFor(positives, /Changes one factor in each experiment/, /Does not weaken tests, validation, safety or resource limits/),
+    caseFor(positives, /distributions of repeated before and after runs/, /NOT RUN/),
+  ];
+  assert.equal(new Set(ids).size, 3, "each path has its own case");
+});
