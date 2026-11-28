@@ -17,6 +17,14 @@ Use the same agent, model, tools, time budget, and task prompt for both arms.
 - Report negative outcomes, unsupported claims, and unrun checks separately.
 - Evaluate the same held-out tasks after improving the rules.
 
+## Scenarios
+
+Each scenario below names the coding page that owns its rule.
+
+- `framed-transport` parses length-prefixed frames across network chunks. See [networking](../../coding/networking.md).
+- `retry-idempotency` retries transient work with a stable identity and a bound on attempts. See [reliability](../../coding/reliability.md).
+- `async-cancellation` passes a cancellation signal and stops further work after abort. See [concurrency practices](../../coding/concurrency-practices.md).
+
 ## Commands
 
 Check the scenario manifest without running fixture code:

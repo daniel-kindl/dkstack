@@ -24,6 +24,7 @@ change that a consumer must act on has a "Consumer action:" line.
 
 ### Changed
 
+- `evals/engineering/README.md` links each scenario to the coding page that owns its rule (#399).
 - `coding/debugging.md` has an investigation method. Triage sends a bug to `investigate-bug` (#386).
 - The README leads with setup, a success check, and task examples (#381).
 - `docs/index.md` holds manual setup, optional skill installation, versions, and the rule directory. Validation details move to `CONTRIBUTING.md` (#381).
