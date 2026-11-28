@@ -97,3 +97,31 @@ test("triage and AGENTS.md route to the new pages", async () => {
   ], "skills/triage/SKILL.md");
   assert.ok((await lines("AGENTS.md")).includes("2. Before you change a file, read [workflow/agent-execution.md](workflow/agent-execution.md)."));
 });
+
+// The eval suite of one skill, from evals/skill-cases.json.
+async function evalSuite(skill) {
+  const suite = JSON.parse(await read("evals/skill-cases.json"));
+  const entry = suite.skills.find((item) => item.skill === skill);
+  assert.ok(entry, `${skill} has an eval suite`);
+  const positives = entry.queries.filter((q) => q.should_trigger);
+  const negatives = entry.queries.filter((q) => !q.should_trigger);
+  assert.ok(positives.length >= 2 && negatives.length >= 2, `${skill}: two positive and two negative cases`);
+  return { positives, negatives };
+}
+
+// The positive case whose assertions match each pattern. Each path needs its own case.
+function caseFor(positives, ...patterns) {
+  const found = positives.find((q) => patterns.every((p) => p.test(q.assertions.join("\n"))));
+  assert.ok(found, `a positive case asserts ${patterns.join(" and ")}`);
+  return found.id;
+}
+
+test("recover-work eval cases cover a timeout, unknown changes and an owner action", async () => {
+  const { positives } = await evalSuite("recover-work");
+  const ids = [
+    caseFor(positives, /read-only commands before it pushes again/, /Does not treat the timeout as proof that the push failed/),
+    caseFor(positives, /without modifying files/, /Keeps the unknown changes and does not reset, stash or discard them/),
+    caseFor(positives, /Does not resume, retry or roll back the release/, /Stops and asks the owner/),
+  ];
+  assert.equal(new Set(ids).size, 3, "each path has its own case");
+});
