@@ -1,6 +1,6 @@
 # Logging
 
-This page covers log events. Metrics and traces are out of scope.
+This page covers log events. For metrics and traces, see [observability](observability.md).
 
 Assess logging for each change that adds or changes behavior. You must always do the assessment. Add an event only when it answers a diagnostic or operational question. Do not require a minimum number of events. Do not require each level. Pure functions and routine internal operations usually need no event.
 
@@ -74,7 +74,7 @@ Use the levels of the project. The table gives the .NET name and the OpenTelemet
 - Do not format an expensive message when its level is off. Use the templates or the level checks of the library.
 - Do not let the event volume grow without a limit. Use filtering, sampling or rate limits when the project supports them.
 - Do not block a latency-sensitive path with a logging call.
-- A resource ID in a log field is allowed. The limit on high-cardinality values applies to metric labels and indexed attributes, not to log fields.
+- A resource ID in a log field is allowed. The limit on high-cardinality values applies to metric labels and indexed attributes, not to log fields. See [metrics](observability.md#metrics).
 - A logging call must not change the result of an operation or hide its failure.
 
 ## Verification
