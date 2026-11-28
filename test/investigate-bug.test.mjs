@@ -11,9 +11,12 @@ test("incident analysis names each owner-only mitigation and stops the agent", a
   const page = await read("coding/incident-analysis.md");
   const flat = page.replace(/\s+/g, " ");
   assert.ok(flat.includes(
-    "Some mitigations are owner-only: a production deploy or redeploy, a rollback, a release, a " +
-    "production migration, and a change to production settings or infrastructure. Do not start one. " +
+    "Some mitigations are owner-only: a production deploy, redeploy or deploy rollback, a release, and " +
+    "a change to production settings or infrastructure. Do not start one. " +
     "Stop and ask the owner, and give the evidence. See [safety](../workflow/safety.md#rules).",
+  ));
+  assert.ok(flat.includes(
+    "A production migration follows [production migrations](data-integrity.md#production-migrations).",
   ));
   assert.ok(flat.includes("An incident does not give permission to deploy or to change infrastructure."));
 });

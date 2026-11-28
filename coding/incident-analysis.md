@@ -8,9 +8,10 @@ does not give permission to deploy or to change infrastructure.
 - Find the impact, the affected versions, the start time and the current evidence.
 - Preserve the relevant logs and timestamps. Do not collect credentials or personal data.
 - Diagnose with read-only actions first.
-- Some mitigations are owner-only: a production deploy or redeploy, a rollback, a release, a
-  production migration, and a change to production settings or infrastructure. Do not start one.
-  Stop and ask the owner, and give the evidence. See [safety](../workflow/safety.md#rules). See [production migrations](data-integrity.md#production-migrations).
+- Some mitigations are owner-only: a production deploy, redeploy or deploy rollback, a release, and
+  a change to production settings or infrastructure. Do not start one.
+  Stop and ask the owner, and give the evidence. See [safety](../workflow/safety.md#rules).
+  A production migration follows [production migrations](data-integrity.md#production-migrations).
 - Keep a mitigation that reduces the impact apart from a verified fix of the root cause.
 - Record each action, its authorization, its result and the open questions.
 
