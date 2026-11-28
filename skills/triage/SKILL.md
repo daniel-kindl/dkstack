@@ -52,10 +52,19 @@ If you cannot start subagents, do the steps one at a time in the order of this s
 - New or changed rendered UI: [ui-design](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/ui-design/SKILL.md).
 - Review of a rendered UI: [ui-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/ui-review/SKILL.md). Use it with `code-review` for a pull request.
 - Review: [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md)
+- Interrupted work, ambiguous remote write, or unexpected workspace edits: [recover-work](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/recover-work/SKILL.md)
+- Concurrent agents or shared worktrees: [coordination](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/coordination.md)
+- Change with data, security, or external effects: [risk assessment](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/workflow/risk-assessment.md)
+- Bug, flaky test, regression, or unexpected behavior: [investigate-bug](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/investigate-bug/SKILL.md)
+- Incident or service outage: [incident analysis](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/incident-analysis.md)
+- Performance question, resource regression, or optimization: [profile-performance](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/profile-performance/SKILL.md)
+- Timeouts, retries or overload: [reliability](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/reliability.md)
+- Network protocol code: [networking](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/networking.md)
+- Shared mutable state or parallel work: [concurrency practices](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/concurrency-practices.md)
+- Metrics or traces: [observability](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/observability.md)
 - Authentication, authorization, trust boundary, or privileged tools: [assess-threats](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/assess-threats/SKILL.md)
 - Database migration or stored-format change: [migrate-data](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/migrate-data/SKILL.md)
 - Public API or protocol compatibility: [API contracts](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/architecture/api-contracts.md)
-- Bug or unexpected behavior: [coding/debugging.md](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/coding/debugging.md)
 - Domain term to define, resolve or check: [domain-glossary](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/domain-glossary/SKILL.md)
 - Domain design, modeling or specification: [model-domain](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/model-domain/SKILL.md)
 - Durable decision: [write-adr](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/write-adr/SKILL.md)
@@ -70,7 +79,7 @@ The ladder is a guide, not a gate. Use the smallest set of skills. A small task 
 
 Each task in the ladder starts with [start-issue](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/start-issue/SKILL.md): one issue, one branch, one pull request.
 
-- Bug fix: [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md), then [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md).
+- Bug fix: [investigate-bug](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/investigate-bug/SKILL.md) when the cause is unknown, then [tdd-loop](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/tdd-loop/SKILL.md), then [code-review](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/code-review/SKILL.md).
 - Feature: start with [clarify-intent](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/clarify-intent/SKILL.md)
   and [apply-architecture](https://raw.githubusercontent.com/daniel-kindl/dkstack/v1/skills/apply-architecture/SKILL.md).
   Then use

@@ -10,8 +10,9 @@ consumer. A consumer is a repository whose `AGENTS.md` points to this file.
 
 1. Read [skills/triage/SKILL.md](skills/triage/SKILL.md). It tells you which sections and skills
    apply to the task.
-2. Read only those sections and skills.
-3. If a rule is unclear, do not guess. Ask the owner. Use
+2. Before you change a file, read [workflow/agent-execution.md](workflow/agent-execution.md).
+3. Read only the sections and skills that triage names.
+4. If a rule is unclear, do not guess. Ask the owner. Use
    [skills/clarify-intent/SKILL.md](skills/clarify-intent/SKILL.md).
 
 ## Version

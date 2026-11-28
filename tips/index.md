@@ -10,6 +10,7 @@ conflict, follow the rule.
 - [Check the exit code of each step](#check-the-exit-code-of-each-step)
 - [Check for a breaking change before you push](#check-for-a-breaking-change-before-you-push)
 - [Find worktrees and branches that are left](#find-worktrees-and-branches-that-are-left)
+- [Isolate a regression with git bisect](#isolate-a-regression-with-git-bisect)
 
 ## Check the exit code of each step
 
@@ -58,3 +59,19 @@ only with the checks in
 [after the merge](../workflow/review-and-merge.md#after-the-merge).
 
 These commands were checked with `git` 2.55.0.
+
+## Isolate a regression with git bisect
+
+`git bisect` finds the first bad commit with a binary search. Use it when a stable test tells a good
+commit from a bad one. Run it in a clean worktree of your own.
+
+```bash
+git bisect start <bad-commit> <good-commit>
+git bisect run <test-command>   # exit 0: good, 125: skip, any other code from 1 to 127: bad, 128 or more: bisect stops
+git bisect reset
+```
+
+Use `git bisect skip` for a commit that you cannot test. Check the first bad commit by hand before
+you trust it.
+
+These commands were checked with `git` 2.47.3.

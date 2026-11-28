@@ -6,6 +6,10 @@ These rules prevent real damage in a shared repository. Read them before you cha
 
 ## Sections
 
+- [agent-execution.md](agent-execution.md): Inspect before editing and verify claims.
+- [coordination.md](coordination.md): Own shared writes and hand off work.
+- [recovery.md](recovery.md): Restore safe state after failed operations.
+- [risk-assessment.md](risk-assessment.md): Select verification by the possible damage of a change.
 - [issues.md](issues.md): One issue for each task, its labels and its assignee.
 - [review-and-merge.md](review-and-merge.md): The issue to merge flow, review and merge.
 - [safety.md](safety.md): Actions that no agent does, what counts as approval, and the owner.

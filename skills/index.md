@@ -42,6 +42,8 @@ A building block does one job. A larger skill, such as `code-review` or `bootstr
 - [domain-glossary](domain-glossary/SKILL.md) (both): Read `CONTEXT.md`, flag a word that conflicts with it, and record a resolved domain term.
 - [model-domain](model-domain/SKILL.md) (both): Find the bounded contexts first, then the aggregates, value objects and events. Writes a Domain model block in the issue.
 - [apply-architecture](apply-architecture/SKILL.md) (both): Check design changes against architecture principles.
+- [investigate-bug](investigate-bug/SKILL.md) (both): Isolate defects through falsifiable hypotheses before a regression fix.
+- [profile-performance](profile-performance/SKILL.md) (both): Measure bottlenecks and verify real performance changes.
 - [assess-threats](assess-threats/SKILL.md) (both): Review trust boundaries and negative security cases.
 - [migrate-data](migrate-data/SKILL.md) (both): Plan and verify safe persistent data migrations.
 - [tdd-loop](tdd-loop/SKILL.md) (both): Enforce the red-green-refactor cycle.
@@ -57,6 +59,7 @@ A building block does one job. A larger skill, such as `code-review` or `bootstr
 - [plan-work](plan-work/SKILL.md) (both): Plan a goal as small, reviewable increments with tests first.
 - [chart-route](chart-route/SKILL.md) (both): Settle a large, unclear effort in a map in `docs/maps/`, one question per session, then hand off to `plan-work`.
 - [improve-agents](improve-agents/SKILL.md) (user): Find changes to the agents' environment after a session, a pull request or an issue. Report them to the owner. Do not edit dkstack.
+- [recover-work](recover-work/SKILL.md) (both): Resume interrupted or partially failed work without losing other changes.
 - [release](release/SKILL.md) (user): Prepare a release. Link the versioning and safety rules. Do not publish.
 - [learn](learn/SKILL.md) (both): Teach, practice, assess and review any topic with an adaptive curriculum. The rules are in [learning/](../learning/index.md).
 - [ui-design](ui-design/SKILL.md) (both): Make or change a rendered UI and check the rendered result.
