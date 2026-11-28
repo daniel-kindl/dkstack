@@ -1,7 +1,7 @@
 # Engineering agent evaluations
 
 These scenarios test completed engineering outcomes, not only skill activation.
-Skill activation checks are a separate suite.
+Skill activation checks are a separate suite in [skill evaluation cases](../../docs/skill-evaluation-cases.md).
 
 ## Contract
 
@@ -12,7 +12,7 @@ Use the same agent, model, tools, time budget, and task prompt for both arms.
 
 - Baseline arm: run without dkstack guidance.
 - dkstack arm: run with the pinned dkstack version.
-- Repeat each arm at least three times with a clean workspace.
+- Run each candidate in a clean workspace.
 - Keep model version, wall time, token use, attempts, and tool-call records.
 - Report negative outcomes, unsupported claims, and unrun checks separately.
 - Evaluate the same held-out tasks after improving the rules.
@@ -34,9 +34,12 @@ node scripts/engineering-evals.mjs grade framed-transport /sandbox/agent-output 
 
 This command executes the candidate code through a child Node.js process.
 The runner passes only `PATH` and `DKSTACK_CANDIDATE_ROOT` to the child process.
-It kills the candidate with SIGKILL after 30 seconds.
-No candidate process remains after the time limit.
-It is NOT a security sandbox. Run it only inside a suitable external sandbox.
+The runner starts the oracle in its own process group.
+It sends SIGKILL to that group at the 30-second time limit, and when the oracle exits.
+This stops every process that remains in the group.
+A candidate that starts its own session or process group can outlive the time limit.
+The runner is not a security sandbox.
+Run untrusted candidates only inside a suitable external sandbox.
 Do not pass a production checkout, secret-bearing environment, or untrusted host.
 
 A scenario passes only when the broken starter fails its oracle and the candidate passes.
@@ -50,13 +53,18 @@ node scripts/engineering-evals.mjs compare <id> [--baseline <dir>] [--dkstack <d
 
 The command writes a JSON report to standard output.
 The report has `starter_passed`, one record per arm, and `comparison`.
+Compare grades one candidate per arm. That is one graded run per arm.
 An arm status is PASS, FAIL or NOT_RUN.
-The comparison is `DKSTACK_BETTER`, `BASELINE_BETTER`, `SAME` or `NOT_RUN`.
+The comparison is `DKSTACK_BETTER`, `BASELINE_BETTER`, `SAME`, `NOT_RUN` or `INVALID_STARTER`.
 Standard error prints one line per arm, then a comparison line.
 An arm with no candidate is NOT RUN, and then the comparison is NOT RUN.
+When the starter already passes its oracle, no arm runs.
+Each arm is then NOT RUN, and the comparison is INVALID_STARTER.
+The command prints a scenario error.
 A candidate also needs `--execute-untrusted`.
-The command exits 0 when it writes the report.
-It exits 1 on an error. A usage error exits 2.
+The command exits 0 after a valid comparison, including NOT RUN.
+It exits 1 for an invalid starter, or on another error.
+A usage error exits 2.
 
 Until a real agent runs, report the comparison as NOT RUN.
 There is no isolated agent adapter yet.
