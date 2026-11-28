@@ -45,6 +45,31 @@ test("only data integrity states the production migration rule", async () => {
   }
 });
 
+test("no page outside data integrity forbids or gates a production migration", async () => {
+  const recovery = await read("workflow/recovery.md");
+  const incident = await read("coding/incident-analysis.md");
+  const sentences = (text) => text.replace(/\s+/g, " ").split(/(?<=\.)\s+/).filter(Boolean);
+  const isLink = (sentence) => /follow \[production migrations\]\([^)]*data-integrity\.md#production-migrations\)/.test(sentence);
+  for (const sentence of sentences(recovery)) {
+    if (isLink(sentence)) continue;
+    const forbids = /(resume|retry|roll back)/i.test(sentence);
+    const namesMigration = /migration/i.test(sentence);
+    assert.ok(!(forbids && namesMigration), `recovery.md must not forbid a production migration: ${sentence.trim()}`);
+  }
+
+  const ownerOnly = sentences(incident).find((sentence) => sentence.includes("Some mitigations are owner-only"));
+  assert.ok(ownerOnly, "incident analysis names the owner-only list");
+  assert.doesNotMatch(ownerOnly, /migration/i, "the owner-only list must not include a migration");
+  assert.doesNotMatch(ownerOnly, /(?<!deploy )a rollback\b/, 'the owner-only list must not say a bare "a rollback"');
+
+  for (const [path, text] of [
+    ["workflow/recovery.md", recovery],
+    ["coding/incident-analysis.md", incident],
+  ]) {
+    assert.match(text, /data-integrity\.md#production-migrations/, `${path} links the production migrations rule`);
+  }
+});
+
 test("data integrity keeps transactions, staged migrations and backups", async () => {
   const rules = section(await read("coding/data-integrity.md"), "Rules");
   for (const line of [
