@@ -15,6 +15,8 @@ Coding standards and practices.
 - [absent-values.md](absent-values.md): Show an absent value in its type.
 - [logging.md](logging.md): Logging events and the observability assessment.
 - [security.md](security.md): Security basics.
+- [threat-modeling.md](threat-modeling.md): Model trust boundaries and misuse cases.
+- [data-integrity.md](data-integrity.md): Protect stored data and test migrations.
 - [feature-flags.md](feature-flags.md): Each flag has an owner and an issue that removes it.
 - [testing.md](testing.md): A pointer to [tdd/](../tdd/index.md), which has the testing rules.
 - [dependencies.md](dependencies.md): No unjustified dependencies.

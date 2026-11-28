@@ -71,6 +71,11 @@ An agent does not change a secret or a setting without the owner's OK. See
 6. Record the event in an issue. Write what leaked, where and when, what was revoked and rotated,
    and what the audit log showed. Do not put the secret in the record.
 
+## Threat assessment
+
+Before you change a trust boundary, follow [threat modeling](threat-modeling.md).
+For prompt injection, follow [agent-specific threats](threat-modeling.md#agent-specific-threats).
+
 ## Good example
 
 Input is checked before use. Secrets stay in a protected store. An error returns a generic message.

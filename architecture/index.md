@@ -35,6 +35,7 @@ Use this rule as the tie-breaker when other principles do not decide between two
 - [actors-and-blackboards.md](actors-and-blackboards.md): Coordinate work by messages or a shared store. Related: [concurrency.md](concurrency.md), [decoupling.md](decoupling.md).
 - [state-machines.md](state-machines.md): Model events as explicit states and transitions. Related: [temporal-coupling.md](temporal-coupling.md).
 - [configuration.md](configuration.md): Keep configuration outside the code and secrets outside the repository. Related: [reversibility.md](reversibility.md).
+- [api-contracts.md](api-contracts.md): Evolve public and wire contracts with consumers in mind.
 
 ## Application
 

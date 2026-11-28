@@ -3,7 +3,7 @@
 Treat transport boundaries as unreliable and messages as untrusted.
 
 Use this page when code reads or writes a network protocol or another byte stream. This page owns
-how code reads and writes the bytes. It does not define what a public interface promises.
+how code reads and writes the bytes. It does not define what a public interface promises. See [API and protocol contracts](../architecture/api-contracts.md) for that promise.
 
 ## Rules
 

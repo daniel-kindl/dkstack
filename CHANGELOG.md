@@ -18,6 +18,7 @@ change that a consumer must act on has a "Consumer action:" line.
 - Workflow pages for agent execution, coordination, recovery and risk-based verification, and the `recover-work` skill (#385).
 - Incident analysis page and the `investigate-bug` skill (#386).
 - Coding pages for performance, reliability, observability, networking, concurrency and reproducible builds, and the `profile-performance` skill (#387).
+- Pages for threat modeling, data integrity and API contracts, and the `assess-threats` and `migrate-data` skills (#388).
 - SVG logos, section icons, a favicon, banners, and a brand asset guide (#381).
 - Light and dark README headers, plus Shields.io badges for the latest release, license, and checks on main (#381).
 

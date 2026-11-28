@@ -20,5 +20,6 @@ Get back to a known state before you try another write.
 - A merge conflict: preserve the two sides and resolve against the specification.
 - An unexpected change in the workspace: find its owner before you change it.
 
-Do not resume, retry or roll back a production deploy, a production migration or a release. Stop and ask the owner.
+Do not resume, retry or roll back a production deploy or a release. Stop and ask the owner.
+For a production migration, follow [production migrations](../coding/data-integrity.md#production-migrations).
 Do not discard the changes of another agent. Follow the hard limits in [safety](safety.md#rules) while you recover.

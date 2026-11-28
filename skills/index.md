@@ -44,6 +44,8 @@ A building block does one job. A larger skill, such as `code-review` or `bootstr
 - [apply-architecture](apply-architecture/SKILL.md) (both): Check design changes against architecture principles.
 - [investigate-bug](investigate-bug/SKILL.md) (both): Isolate defects through falsifiable hypotheses before a regression fix.
 - [profile-performance](profile-performance/SKILL.md) (both): Measure bottlenecks and verify real performance changes.
+- [assess-threats](assess-threats/SKILL.md) (both): Review trust boundaries and negative security cases.
+- [migrate-data](migrate-data/SKILL.md) (both): Plan and verify safe persistent data migrations.
 - [tdd-loop](tdd-loop/SKILL.md) (both): Enforce the red-green-refactor cycle.
 - [code-review](code-review/SKILL.md) (both): Review a change on two axes (standards and specification) and give one verdict.
   - [review-spec](review-spec/SKILL.md) (agent): Check that the change does what the issue asked for.
