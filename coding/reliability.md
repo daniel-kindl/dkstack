@@ -25,3 +25,4 @@ page does not require retries or a circuit breaker for code without such a call.
 At design time, name the fault domain, the detection, the blast radius and the restore action for each failure. A unit test that passes does not prove availability when a real dependency fails.
 
 See [error handling](error-handling.md), [logging](logging.md), and [debugging](debugging.md) when failures recur.
+After containment, follow [incident analysis](incident-analysis.md#after-containment).
