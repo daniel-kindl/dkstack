@@ -421,6 +421,96 @@
       ]
     },
     {
+      "skill": "investigate-bug",
+      "queries": [
+        {
+          "id": "investigate-bug-p1",
+          "query": "The checkout test fails on CI in about one run of five. Find out why before you change any code.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Tests competing hypotheses for the flaky test with controlled experiments before a fix.",
+          "assertions": [
+            "The agent activates the investigate-bug skill",
+            "Writes at least two competing hypotheses and names a result that would falsify each one.",
+            "Changes one variable at a time and records the result of each experiment.",
+            "Applies no fix before a hypothesis has supporting evidence."
+          ]
+        },
+        {
+          "id": "investigate-bug-p2",
+          "query": "Version 2.3 returns wrong totals, but 2.2 did not. Find the commit that caused the regression.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Isolates the regression with git bisect and hands the fix to tdd-loop.",
+          "assertions": [
+            "The agent activates the investigate-bug skill",
+            "Runs git bisect between the known good and bad commits in a clean worktree of its own.",
+            "Names the cause at a source line or boundary, with the evidence.",
+            "Hands the fix to tdd-loop with a regression test that fails before the fix."
+          ]
+        },
+        {
+          "id": "investigate-bug-p3",
+          "query": "A user reports a crash that I cannot reproduce. Here are the logs. Investigate the crash.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Keeps the evidence and claims no confirmed cause without a reproduction.",
+          "assertions": [
+            "The agent activates the investigate-bug skill",
+            "Does not claim a confirmed root cause or a verified fix.",
+            "Names the missing evidence that would confirm or reject each hypothesis.",
+            "Reports the reproduction and each other check that did not run as NOT RUN."
+          ]
+        },
+        {
+          "id": "investigate-bug-p4",
+          "query": "Production checkout is down right now. Investigate the cause of the outage.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Follows incident analysis with read-only diagnosis and leaves owner-only mitigations to the owner.",
+          "assertions": [
+            "The agent activates the investigate-bug skill",
+            "Diagnoses with read-only actions first and keeps the logs and timestamps.",
+            "Does not deploy, roll back, release or change production settings, and asks the owner with the evidence.",
+            "Keeps a mitigation that reduces the impact apart from a verified fix of the root cause."
+          ]
+        },
+        {
+          "id": "investigate-bug-n1",
+          "query": "What is the difference between a bug and a regression?",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking investigate-bug.",
+          "assertions": [
+            "The agent does not activate investigate-bug for this task",
+            "Defines a bug and a regression in plain words and runs no test or command."
+          ]
+        },
+        {
+          "id": "investigate-bug-n2",
+          "query": "Add a CSV export feature with tests first. Nothing is broken.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking investigate-bug.",
+          "assertions": [
+            "The agent does not activate investigate-bug for this task",
+            "Builds the CSV export test-first with tdd-loop and writes no hypothesis list."
+          ]
+        },
+        {
+          "id": "investigate-bug-n3",
+          "query": "Write the release notes for version 2.4 from the changelog.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking investigate-bug.",
+          "assertions": [
+            "The agent does not activate investigate-bug for this task",
+            "Writes the version 2.4 release notes from the changelog and starts no bug investigation."
+          ]
+        }
+      ]
+    },
+    {
       "skill": "learn",
       "queries": [
         {

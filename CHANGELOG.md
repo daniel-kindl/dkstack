@@ -16,11 +16,13 @@ change that a consumer must act on has a "Consumer action:" line.
 - Activation evaluation cases for each skill. Standard optional frontmatter fields pass `check:skills` (#383).
 - Engineering evaluation scenarios with oracle grading. `npm run check` validates their manifest (#389).
 - Workflow pages for agent execution, coordination, recovery and risk-based verification, and the `recover-work` skill (#385).
+- Incident analysis page and the `investigate-bug` skill (#386).
 - SVG logos, section icons, a favicon, banners, and a brand asset guide (#381).
 - Light and dark README headers, plus Shields.io badges for the latest release, license, and checks on main (#381).
 
 ### Changed
 
+- `coding/debugging.md` has an investigation method. Triage sends a bug to `investigate-bug` (#386).
 - The README leads with setup, a success check, and task examples (#381).
 - `docs/index.md` holds manual setup, optional skill installation, versions, and the rule directory. Validation details move to `CONTRIBUTING.md` (#381).
 
