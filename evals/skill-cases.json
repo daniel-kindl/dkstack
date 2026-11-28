@@ -681,6 +681,83 @@
       ]
     },
     {
+      "skill": "recover-work",
+      "queries": [
+        {
+          "id": "recover-work-p1",
+          "query": "My git push timed out halfway. Find out if the remote branch changed before you try again.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Reads the remote state before it retries, and resumes only with an action that is safe to repeat.",
+          "assertions": [
+            "The agent activates the recover-work skill",
+            "Reads the remote branch with read-only commands before it pushes again.",
+            "Does not treat the timeout as proof that the push failed.",
+            "Reports PASS, FAIL and NOT RUN for the affected checks, and gives the next safe action."
+          ]
+        },
+        {
+          "id": "recover-work-p2",
+          "query": "The agent session crashed during a refactor, and the worktree has changes that I did not make. Recover the work.",
+          "should_trigger": true,
+          "split": "validation",
+          "expected_output": "Finds the workspace state without changes and keeps the unknown changes.",
+          "assertions": [
+            "The agent activates the recover-work skill",
+            "Inspects the branch, status, diff and worktrees without modifying files.",
+            "Keeps the unknown changes and does not reset, stash or discard them.",
+            "Gives a handoff with the remaining risk and the next safe action."
+          ]
+        },
+        {
+          "id": "recover-work-p3",
+          "query": "The release workflow stopped after it created the tag. Resume the release from where it stopped.",
+          "should_trigger": true,
+          "split": "train",
+          "expected_output": "Stops at the release, which is an owner action, and reports the partial state.",
+          "assertions": [
+            "The agent activates the recover-work skill",
+            "Does not resume, retry or roll back the release.",
+            "Stops and asks the owner, and gives the evidence of the partial state.",
+            "Names the tag that exists and the release steps that did not run."
+          ]
+        },
+        {
+          "id": "recover-work-n1",
+          "query": "Explain in two sentences what an idempotent operation is.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking recover-work.",
+          "assertions": [
+            "The agent does not activate recover-work for this task",
+            "Explains idempotency in two sentences and runs no git or recovery command."
+          ]
+        },
+        {
+          "id": "recover-work-n2",
+          "query": "Plan the work for the new export feature. Nothing has failed.",
+          "should_trigger": false,
+          "split": "validation",
+          "expected_output": "The agent completes the alternative task without invoking recover-work.",
+          "assertions": [
+            "The agent does not activate recover-work for this task",
+            "Writes the export feature plan with plan-work and lists no recovery steps."
+          ]
+        },
+        {
+          "id": "recover-work-n3",
+          "query": "Review pull request #50 for defects before it merges.",
+          "should_trigger": false,
+          "split": "train",
+          "expected_output": "The agent completes the alternative task without invoking recover-work.",
+          "assertions": [
+            "The agent does not activate recover-work for this task",
+            "Reviews pull request #50 with code-review and gives a verdict with no recovery actions."
+          ]
+        }
+      ]
+    },
+    {
       "skill": "release",
       "queries": [
         {
